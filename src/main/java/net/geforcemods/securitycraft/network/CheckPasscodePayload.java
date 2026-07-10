@@ -9,7 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 
 /** Client -> server: attempt a passcode on the keypad at {@code pos}. */
 public record CheckPasscodePayload(BlockPos pos, String passcode) implements CustomPacketPayload {
-	public static final Type<CheckPasscodePayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath("securitycraft", "check_passcode"));
+	public static final Type<CheckPasscodePayload> TYPE = new Type<>(new ResourceLocation("securitycraft", "check_passcode"));
 	public static final StreamCodec<RegistryFriendlyByteBuf, CheckPasscodePayload> CODEC = StreamCodec.composite(
 			BlockPos.STREAM_CODEC, CheckPasscodePayload::pos,
 			ByteBufCodecs.STRING_UTF8, CheckPasscodePayload::passcode,

@@ -46,7 +46,7 @@ public class SCContent {
 	public static final ResourceKey<CreativeModeTab> TAB_KEY = ResourceKey.create(Registries.CREATIVE_MODE_TAB, id("general"));
 
 	public static ResourceLocation id(String name) {
-		return ResourceLocation.fromNamespaceAndPath(SecurityCraft.MODID, name);
+		return new ResourceLocation(SecurityCraft.MODID, name);
 	}
 
 	public static void init() {

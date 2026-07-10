@@ -9,7 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 
 /** Client -> server: the owner sets a new passcode on the keypad at {@code pos}. */
 public record SetPasscodePayload(BlockPos pos, String passcode) implements CustomPacketPayload {
-	public static final Type<SetPasscodePayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath("securitycraft", "set_passcode"));
+	public static final Type<SetPasscodePayload> TYPE = new Type<>(new ResourceLocation("securitycraft", "set_passcode"));
 	public static final StreamCodec<RegistryFriendlyByteBuf, SetPasscodePayload> CODEC = StreamCodec.composite(
 			BlockPos.STREAM_CODEC, SetPasscodePayload::pos,
 			ByteBufCodecs.STRING_UTF8, SetPasscodePayload::passcode,
