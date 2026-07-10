@@ -1,0 +1,39 @@
+{
+	"schemaVersion": 1,
+	"id": "securitycraft",
+	"version": "${version}",
+	"name": "SecurityCraft",
+	"description": "Adds a load of things to keep your house safe with and defend yourself from attackers. Fabric port of the original NeoForge/Forge mod by the SecurityCraft team.",
+	"authors": [
+		"Geforce",
+		"bl4ckscor3",
+		"Redstone_Dubstep",
+		"ChainmailPickaxe"
+	],
+	"contributors": [
+		"Fabric port maintainer"
+	],
+	"contact": {
+		"homepage": "https://github.com/VerkoSK/SecurityCraftFabric",
+		"sources": "https://github.com/VerkoSK/SecurityCraftFabric",
+		"issues": "https://github.com/VerkoSK/SecurityCraftFabric/issues"
+	},
+	"license": "MIT",
+	"icon": "sc_logo.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"net.geforcemods.securitycraft.SecurityCraft"
+		],
+		"client": [
+			"net.geforcemods.securitycraft.SecurityCraftClient"
+		]
+	},
+	"depends": {
+		"fabricloader": ">=0.16.0",
+		"fabric-api": "*",
+		"minecraft": "~1.21.1",
+		"java": ">=21"
+	},
+	"suggests": {}
+}

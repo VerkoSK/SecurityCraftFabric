@@ -1,0 +1,12 @@
+{
+	"variants": {
+		"facing=north,powered=false": { "model": "securitycraft:block/keypad" },
+		"facing=east,powered=false":  { "model": "securitycraft:block/keypad", "y": 90 },
+		"facing=south,powered=false": { "model": "securitycraft:block/keypad", "y": 180 },
+		"facing=west,powered=false":  { "model": "securitycraft:block/keypad", "y": 270 },
+		"facing=north,powered=true": { "model": "securitycraft:block/keypad_powered" },
+		"facing=east,powered=true":  { "model": "securitycraft:block/keypad_powered", "y": 90 },
+		"facing=south,powered=true": { "model": "securitycraft:block/keypad_powered", "y": 180 },
+		"facing=west,powered=true":  { "model": "securitycraft:block/keypad_powered", "y": 270 }
+	}
+}

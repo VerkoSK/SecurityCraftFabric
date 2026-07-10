@@ -1,0 +1,27 @@
+{
+	"itemGroup.securitycraft.general": "SecurityCraft",
+
+	"block.securitycraft.keypad": "Keypad",
+	"block.securitycraft.reinforced_stone": "Reinforced Stone",
+	"block.securitycraft.reinforced_cobblestone": "Reinforced Cobblestone",
+	"block.securitycraft.reinforced_stone_bricks": "Reinforced Stone Bricks",
+	"block.securitycraft.reinforced_smooth_stone": "Reinforced Smooth Stone",
+	"block.securitycraft.reinforced_oak_planks": "Reinforced Oak Planks",
+	"block.securitycraft.reinforced_dirt": "Reinforced Dirt",
+	"block.securitycraft.reinforced_iron_block": "Reinforced Block of Iron",
+	"block.securitycraft.reinforced_glass": "Reinforced Glass",
+
+	"gui.securitycraft:keypad.setup": "Set a passcode",
+	"gui.securitycraft:keypad.enter": "Enter passcode",
+	"gui.securitycraft:keypad.field": "Passcode",
+	"gui.securitycraft:keypad.save": "Save",
+	"gui.securitycraft:keypad.submit": "Enter",
+	"gui.securitycraft:keypad.owner": "Owner: %s",
+
+	"messages.securitycraft:passcode.set": "Passcode set.",
+	"messages.securitycraft:passcode.correct": "Correct passcode!",
+	"messages.securitycraft:passcode.incorrect": "Incorrect passcode.",
+	"messages.securitycraft:passcode.notSetUp": "This keypad has not been set up by its owner yet.",
+
+	"commands.securitycraft:help": "SecurityCraft commands: /securitycraft version, /securitycraft help"
+}
