@@ -40,12 +40,33 @@ Requires JDK 21.
 
 The built jar lands in `build/libs/`. Run the dev client with `./gradlew runClient`.
 
-## Target versions
+## Versions (one branch per Minecraft version)
 
-The port is being carried across the last ~10 Minecraft releases the upstream mod supports.
-The base branch targets **1.21.1**; each additional version is added as its own branch/target
-(see [PORTING.md](PORTING.md)). Newer versions (1.21.2+) require extra work because Mojang made
-block/item registration IDs mandatory — that is tracked per-version.
+The port is carried across the last ~10 Minecraft releases the upstream mod supports. Each
+version is its own branch (matching upstream's own branch-per-version layout). Check out the
+branch for your Minecraft version and run `./gradlew build`.
+
+| Minecraft | Branch | Build |
+|---|---|---|
+| 1.20.6 | [`1.20.6`](../../tree/1.20.6) | ✅ |
+| 1.21.1 | [`1.21.1`](../../tree/1.21.1) | ✅ |
+| 1.21.3 | [`1.21.3`](../../tree/1.21.3) | ✅ |
+| 1.21.4 | [`1.21.4`](../../tree/1.21.4) | ✅ |
+| 1.21.5 | [`1.21.5`](../../tree/1.21.5) | ✅ |
+| 1.21.6 | [`1.21.6`](../../tree/1.21.6) | ✅ |
+| 1.21.7 | [`1.21.7`](../../tree/1.21.7) | ✅ |
+| 1.21.8 | [`1.21.8`](../../tree/1.21.8) | ✅ |
+| 1.21.10 | [`1.21.10`](../../tree/1.21.10) | ✅ |
+| 1.21.11 | [`1.21.11`](../../tree/1.21.11) | ⛔ blocked by a Loom↔Fabric-API toolchain bug — [details](PORTING.md#known-toolchain-issue-1219) |
+
+9 of the 10 targets build green. The newest, 1.21.11, is fully written and configured; only a
+Fabric Loom / Fabric API javadoc-namespace bug (under Mojang mappings, 1.21.9+) blocks its build —
+not the mod code, which is identical to the green 1.21.10 branch. See [PORTING.md](PORTING.md).
+
+Each newer version required real API adaptation — mandatory registration IDs (1.21.2),
+`EnumProperty<Direction>` (1.21.2), the `items/` model system (1.21.4), `Optional` NBT getters
+(1.21.5), `ValueInput`/`ValueOutput` serialization (1.21.6), and the `isClientSide()` / `KeyEvent`
+input changes (1.21.9). PORTING.md lists each delta per version.
 
 ## Credits
 
