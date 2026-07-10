@@ -61,8 +61,9 @@ public class Owner {
 	public static Owner fromCompound(CompoundTag tag) {
 		Owner owner = new Owner();
 
-		if (tag != null && tag.contains(DEFAULT_OWNER_NAME) && tag.contains(DEFAULT_OWNER_UUID))
-			owner.set(tag.getString(DEFAULT_OWNER_NAME), tag.getString(DEFAULT_OWNER_UUID));
+		// Since 1.21.5 CompoundTag#getString returns Optional<String>.
+		if (tag != null)
+			owner.set(tag.getString(DEFAULT_OWNER_NAME).orElse(DEFAULT_OWNER_NAME), tag.getString(DEFAULT_OWNER_UUID).orElse(DEFAULT_OWNER_UUID));
 
 		return owner;
 	}

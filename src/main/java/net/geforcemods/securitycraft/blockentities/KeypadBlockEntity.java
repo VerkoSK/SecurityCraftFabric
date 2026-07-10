@@ -66,11 +66,9 @@ public class KeypadBlockEntity extends OwnableBlockEntity {
 	@Override
 	protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
 		super.loadAdditional(tag, registries);
-
-		if (tag.contains("salt"))
-			salt = tag.getString("salt");
-
-		passcodeHash = tag.contains("passcodeHash") ? tag.getString("passcodeHash") : null;
+		// Since 1.21.5 CompoundTag#getString returns Optional<String>.
+		salt = tag.getString("salt").orElse(salt);
+		passcodeHash = tag.getString("passcodeHash").orElse(null);
 	}
 
 	/**
