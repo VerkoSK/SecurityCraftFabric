@@ -58,6 +58,8 @@ branch for your Minecraft version and run `./gradlew build`.
 | 1.21.8 | [`1.21.8`](../../tree/1.21.8) | Mojang | ✅ |
 | 1.21.10 | [`1.21.10`](../../tree/1.21.10) | Mojang | ✅ |
 | 1.21.11 | [`1.21.11`](../../tree/1.21.11) | **Yarn** | ✅ |
+| 26.1 | [`26.1`](../../tree/26.1) | — | ⛔ no mappings published for 26.x yet |
+| 26.1.1 | [`26.1.1`](../../tree/26.1.1) | — | ⛔ no mappings published for 26.x yet |
 | 26.1.2 | [`26.1.2`](../../tree/26.1.2) | — | ⛔ no mappings published for 26.x yet |
 | 26.2 | [`26.2`](../../tree/26.2) | — | ⛔ no mappings published for 26.x yet |
 
