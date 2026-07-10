@@ -6,21 +6,20 @@ import net.geforcemods.securitycraft.SCContent;
 import net.geforcemods.securitycraft.api.OwnableBlockEntity;
 import net.geforcemods.securitycraft.blocks.KeypadBlock;
 import net.geforcemods.securitycraft.util.PasscodeUtils;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.block.BlockState;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.RegistryWrapper;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.storage.ReadView;
+import net.minecraft.storage.WriteView;
+import net.minecraft.util.math.BlockPos;
 
 /**
- * Stores the keypad's owner, its salted passcode hash and drives the redstone pulse when the
- * correct code is entered. The signal length (how long it stays powered) is fixed here; the
- * upstream mod exposes it as a configurable module option, which is on the roadmap.
+ * Stores the keypad owner, its salted passcode hash and drives the redstone pulse when the correct
+ * code is entered.
  */
 public class KeypadBlockEntity extends OwnableBlockEntity {
-	public static final int SIGNAL_LENGTH = 60; // ticks the keypad stays powered after a correct code
+	public static final int SIGNAL_LENGTH = 60;
 
 	private String salt = UUID.randomUUID().toString();
 	private String passcodeHash = null;
@@ -33,11 +32,10 @@ public class KeypadBlockEntity extends OwnableBlockEntity {
 		return passcodeHash != null;
 	}
 
-	/** Sets (or replaces) the passcode. Salt is rotated on every set. */
 	public void setPasscode(String passcode) {
 		salt = UUID.randomUUID().toString();
 		passcodeHash = PasscodeUtils.hash(passcode, salt);
-		setChanged();
+		markDirty();
 		sync();
 	}
 
@@ -45,42 +43,37 @@ public class KeypadBlockEntity extends OwnableBlockEntity {
 		return hasPasscode() && PasscodeUtils.matches(passcodeHash, PasscodeUtils.hash(attempt, salt));
 	}
 
-	/** Powers the block for {@link #SIGNAL_LENGTH} ticks and schedules the reset. */
-	public void activate(ServerLevel level) {
-		BlockState state = getBlockState();
+	public void activate(ServerWorld world) {
+		BlockState state = getCachedState();
 
-		if (state.getBlock() instanceof KeypadBlock && !state.getValue(KeypadBlock.POWERED)) {
-			level.setBlock(worldPosition, state.setValue(KeypadBlock.POWERED, true), 3);
-			level.updateNeighborsAt(worldPosition, state.getBlock());
-			level.scheduleTick(worldPosition, state.getBlock(), SIGNAL_LENGTH);
+		if (state.getBlock() instanceof KeypadBlock && !state.get(KeypadBlock.POWERED)) {
+			world.setBlockState(getPos(), state.with(KeypadBlock.POWERED, true), 3);
+			world.updateNeighborsAlways(getPos(), state.getBlock(), null);
+			world.scheduleBlockTick(getPos(), state.getBlock(), SIGNAL_LENGTH);
 		}
 	}
 
 	@Override
-	protected void saveAdditional(ValueOutput output) {
-		super.saveAdditional(output);
-		output.putString("salt", salt);
+	protected void writeData(WriteView view) {
+		super.writeData(view);
+		view.putString("salt", salt);
 
 		if (passcodeHash != null)
-			output.putString("passcodeHash", passcodeHash);
+			view.putString("passcodeHash", passcodeHash);
 	}
 
 	@Override
-	protected void loadAdditional(ValueInput input) {
-		super.loadAdditional(input);
-		// Since 1.21.6 block entities serialize through ValueInput/ValueOutput.
-		salt = input.getStringOr("salt", salt);
-		passcodeHash = input.getString("passcodeHash").orElse(null);
+	protected void readData(ReadView view) {
+		super.readData(view);
+		salt = view.getString("salt", salt);
+
+		String hash = view.getString("passcodeHash", "");
+		passcodeHash = hash.isEmpty() ? null : hash;
 	}
 
-	/**
-	 * The passcode hash is intentionally NOT written to the update tag sent to clients, so the
-	 * secret never leaves the server. {@link #hasPasscode()} state that the client needs is
-	 * carried in the open-screen packet instead.
-	 */
 	@Override
-	public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
-		CompoundTag tag = super.getUpdateTag(registries);
+	public NbtCompound toInitialChunkDataNbt(RegistryWrapper.WrapperLookup registries) {
+		NbtCompound tag = super.toInitialChunkDataNbt(registries);
 		tag.remove("passcodeHash");
 		tag.remove("salt");
 		return tag;

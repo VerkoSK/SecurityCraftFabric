@@ -7,12 +7,11 @@ import net.geforcemods.securitycraft.screen.KeypadScreen;
 
 /**
  * Client entrypoint. Wires the keypad screen packet. Reinforced-glass translucency is declared
- * natively in its block model ({@code "render_type": "minecraft:translucent"}) since Fabric's
- * BlockRenderLayerMap was removed once Mojang added model render types.
+ * natively in its block model ({@code "render_type": "minecraft:translucent"}).
  */
 public class SecurityCraftClient implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
-		ClientPlayNetworking.registerGlobalReceiver(OpenKeypadScreenPayload.TYPE, (payload, context) -> context.client().execute(() -> context.client().setScreen(new KeypadScreen(payload.pos(), payload.setup(), payload.ownerName()))));
+		ClientPlayNetworking.registerGlobalReceiver(OpenKeypadScreenPayload.ID, (payload, context) -> context.client().execute(() -> context.client().setScreen(new KeypadScreen(payload.pos(), payload.setup(), payload.ownerName()))));
 	}
 }

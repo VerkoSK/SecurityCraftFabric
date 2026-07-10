@@ -3,11 +3,11 @@ package net.geforcemods.securitycraft.network;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.geforcemods.securitycraft.blockentities.KeypadBlockEntity;
-import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.text.Text;
+import net.minecraft.util.math.BlockPos;
 
 /** Registers SecurityCraft's payload types and the server-side receivers. */
 public final class NetworkHandler {
@@ -16,56 +16,54 @@ public final class NetworkHandler {
 
 	private NetworkHandler() {}
 
-	/** Registers all payload codecs. Must run on both sides, so it is called from the common initializer. */
 	public static void registerPayloads() {
-		PayloadTypeRegistry.playS2C().register(OpenKeypadScreenPayload.TYPE, OpenKeypadScreenPayload.CODEC);
-		PayloadTypeRegistry.playC2S().register(SetPasscodePayload.TYPE, SetPasscodePayload.CODEC);
-		PayloadTypeRegistry.playC2S().register(CheckPasscodePayload.TYPE, CheckPasscodePayload.CODEC);
+		PayloadTypeRegistry.playS2C().register(OpenKeypadScreenPayload.ID, OpenKeypadScreenPayload.CODEC);
+		PayloadTypeRegistry.playC2S().register(SetPasscodePayload.ID, SetPasscodePayload.CODEC);
+		PayloadTypeRegistry.playC2S().register(CheckPasscodePayload.ID, CheckPasscodePayload.CODEC);
 	}
 
-	/** Registers the server-side handlers for the client -> server passcode packets. */
 	public static void registerServerReceivers() {
-		ServerPlayNetworking.registerGlobalReceiver(SetPasscodePayload.TYPE, (payload, context) -> {
-			ServerPlayer player = context.player();
-			MinecraftServer server = player.level().getServer();
+		ServerPlayNetworking.registerGlobalReceiver(SetPasscodePayload.ID, (payload, context) -> {
+			ServerPlayerEntity player = context.player();
+			MinecraftServer server = player.getEntityWorld().getServer();
 
 			if (server != null)
 				server.execute(() -> handleSetPasscode(player, payload));
 		});
-		ServerPlayNetworking.registerGlobalReceiver(CheckPasscodePayload.TYPE, (payload, context) -> {
-			ServerPlayer player = context.player();
-			MinecraftServer server = player.level().getServer();
+		ServerPlayNetworking.registerGlobalReceiver(CheckPasscodePayload.ID, (payload, context) -> {
+			ServerPlayerEntity player = context.player();
+			MinecraftServer server = player.getEntityWorld().getServer();
 
 			if (server != null)
 				server.execute(() -> handleCheckPasscode(player, payload));
 		});
 	}
 
-	public static void openKeypadScreen(ServerPlayer player, BlockPos pos, boolean setup, String ownerName) {
+	public static void openKeypadScreen(ServerPlayerEntity player, BlockPos pos, boolean setup, String ownerName) {
 		ServerPlayNetworking.send(player, new OpenKeypadScreenPayload(pos, setup, ownerName));
 	}
 
-	private static void handleSetPasscode(ServerPlayer player, SetPasscodePayload payload) {
+	private static void handleSetPasscode(ServerPlayerEntity player, SetPasscodePayload payload) {
 		if (!validPasscode(payload.passcode()) || !inReach(player, payload.pos()))
 			return;
 
-		if (player.level().getBlockEntity(payload.pos()) instanceof KeypadBlockEntity keypad && keypad.getOwner().isOwner(player)) {
+		if (player.getEntityWorld().getBlockEntity(payload.pos()) instanceof KeypadBlockEntity keypad && keypad.getOwner().isOwner(player)) {
 			keypad.setPasscode(payload.passcode());
-			player.displayClientMessage(Component.translatable("messages.securitycraft:passcode.set"), true);
+			player.sendMessage(Text.translatable("messages.securitycraft:passcode.set"), true);
 		}
 	}
 
-	private static void handleCheckPasscode(ServerPlayer player, CheckPasscodePayload payload) {
+	private static void handleCheckPasscode(ServerPlayerEntity player, CheckPasscodePayload payload) {
 		if (!validPasscode(payload.passcode()) || !inReach(player, payload.pos()))
 			return;
 
-		if (player.level().getBlockEntity(payload.pos()) instanceof KeypadBlockEntity keypad && keypad.hasPasscode()) {
+		if (player.getEntityWorld().getBlockEntity(payload.pos()) instanceof KeypadBlockEntity keypad && keypad.hasPasscode()) {
 			if (keypad.checkPasscode(payload.passcode())) {
-				keypad.activate((ServerLevel) player.level());
-				player.displayClientMessage(Component.translatable("messages.securitycraft:passcode.correct"), true);
+				keypad.activate((ServerWorld) player.getEntityWorld());
+				player.sendMessage(Text.translatable("messages.securitycraft:passcode.correct"), true);
 			}
 			else
-				player.displayClientMessage(Component.translatable("messages.securitycraft:passcode.incorrect"), true);
+				player.sendMessage(Text.translatable("messages.securitycraft:passcode.incorrect"), true);
 		}
 	}
 
@@ -73,7 +71,7 @@ public final class NetworkHandler {
 		return passcode != null && !passcode.isBlank() && passcode.length() <= MAX_PASSCODE_LENGTH;
 	}
 
-	private static boolean inReach(ServerPlayer player, BlockPos pos) {
-		return pos.closerThan(player.blockPosition(), REACH);
+	private static boolean inReach(ServerPlayerEntity player, BlockPos pos) {
+		return pos.isWithinDistance(player.getBlockPos(), REACH);
 	}
 }

@@ -3,112 +3,107 @@ package net.geforcemods.securitycraft.blocks;
 import net.geforcemods.securitycraft.api.Owner;
 import net.geforcemods.securitycraft.blockentities.KeypadBlockEntity;
 import net.geforcemods.securitycraft.network.NetworkHandler;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.util.RandomSource;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.EntityBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.EnumProperty;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockEntityProvider;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemPlacementContext;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.state.StateManager;
+import net.minecraft.state.property.BooleanProperty;
+import net.minecraft.state.property.EnumProperty;
+import net.minecraft.state.property.Properties;
+import net.minecraft.text.Text;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.random.Random;
+import net.minecraft.world.BlockView;
+import net.minecraft.world.World;
 
 /**
  * The keypad: an ownable, passcode-protected block. First player to use it becomes the owner and
- * sets a code; afterwards anyone may attempt the code, and a correct attempt emits a redstone
- * pulse. The owner can reprogram it by sneak-using. Faithful core of the upstream KeypadBlock,
- * minus disguise/module systems (roadmapped).
+ * sets a code; afterwards anyone may attempt the code, and a correct attempt emits a redstone pulse.
  */
-public class KeypadBlock extends Block implements EntityBlock {
-	public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
-	public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
+public class KeypadBlock extends Block implements BlockEntityProvider {
+	public static final EnumProperty<Direction> FACING = Properties.HORIZONTAL_FACING;
+	public static final BooleanProperty POWERED = Properties.POWERED;
 
-	public KeypadBlock(Properties properties) {
-		super(properties);
-		registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(POWERED, false));
+	public KeypadBlock(Settings settings) {
+		super(settings);
+		setDefaultState(getStateManager().getDefaultState().with(FACING, Direction.NORTH).with(POWERED, false));
 	}
 
 	@Override
-	protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
-		if (state.getValue(POWERED))
-			return InteractionResult.PASS;
+	protected ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
+		if (state.get(POWERED))
+			return ActionResult.PASS;
 
-		if (level.isClientSide())
-			return InteractionResult.SUCCESS;
+		if (world.isClient())
+			return ActionResult.SUCCESS;
 
-		if (!(level.getBlockEntity(pos) instanceof KeypadBlockEntity be) || !(player instanceof ServerPlayer serverPlayer))
-			return InteractionResult.PASS;
+		if (!(world.getBlockEntity(pos) instanceof KeypadBlockEntity be) || !(player instanceof ServerPlayerEntity serverPlayer))
+			return ActionResult.PASS;
 
 		Owner owner = be.getOwner();
 
 		if (!owner.owns()) {
-			// First interactor claims ownership and is prompted to set the code.
-			be.setOwner(player.getName().getString(), player.getUUID().toString());
+			be.setOwner(player.getName().getString(), player.getUuid().toString());
 			NetworkHandler.openKeypadScreen(serverPlayer, pos, true, player.getName().getString());
 		}
-		else if (owner.isOwner(player) && player.isShiftKeyDown()) {
-			// Owner reprograms the code.
+		else if (owner.isOwner(player) && player.isSneaking()) {
 			NetworkHandler.openKeypadScreen(serverPlayer, pos, true, owner.getName());
 		}
 		else if (!be.hasPasscode()) {
 			if (owner.isOwner(player))
 				NetworkHandler.openKeypadScreen(serverPlayer, pos, true, owner.getName());
 			else
-				player.displayClientMessage(Component.translatable("messages.securitycraft:passcode.notSetUp"), true);
+				player.sendMessage(Text.translatable("messages.securitycraft:passcode.notSetUp"), true);
 		}
 		else
 			NetworkHandler.openKeypadScreen(serverPlayer, pos, false, owner.getName());
 
-		return InteractionResult.CONSUME;
+		return ActionResult.CONSUME;
 	}
 
 	@Override
-	protected void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
-		// End of the redstone pulse.
-		if (state.getValue(POWERED)) {
-			level.setBlock(pos, state.setValue(POWERED, false), 3);
-			level.updateNeighborsAt(pos, this);
+	protected void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
+		if (state.get(POWERED)) {
+			world.setBlockState(pos, state.with(POWERED, false), 3);
+			world.updateNeighborsAlways(pos, this, null);
 		}
 	}
 
 	@Override
-	protected boolean isSignalSource(BlockState state) {
+	protected boolean emitsRedstonePower(BlockState state) {
 		return true;
 	}
 
 	@Override
-	protected int getSignal(BlockState state, BlockGetter level, BlockPos pos, Direction direction) {
-		return state.getValue(POWERED) ? 15 : 0;
+	protected int getWeakRedstonePower(BlockState state, BlockView world, BlockPos pos, Direction direction) {
+		return state.get(POWERED) ? 15 : 0;
 	}
 
 	@Override
-	protected int getDirectSignal(BlockState state, BlockGetter level, BlockPos pos, Direction direction) {
-		return getSignal(state, level, pos, direction);
+	protected int getStrongRedstonePower(BlockState state, BlockView world, BlockPos pos, Direction direction) {
+		return getWeakRedstonePower(state, world, pos, direction);
 	}
 
 	@Override
-	public BlockState getStateForPlacement(BlockPlaceContext ctx) {
-		return defaultBlockState().setValue(FACING, ctx.getHorizontalDirection().getOpposite());
+	public BlockState getPlacementState(ItemPlacementContext ctx) {
+		return getDefaultState().with(FACING, ctx.getHorizontalPlayerFacing().getOpposite());
 	}
 
 	@Override
-	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+	protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
 		builder.add(FACING, POWERED);
 	}
 
 	@Override
-	public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+	public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
 		return new KeypadBlockEntity(pos, state);
 	}
 }

@@ -1,13 +1,10 @@
 package net.geforcemods.securitycraft.api;
 
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.storage.ReadView;
+import net.minecraft.storage.WriteView;
 
-/**
- * Holds the owner of an ownable block (name + UUID). Faithful port of the concept from the
- * original SecurityCraft {@code api.Owner}, trimmed to what the Fabric core slice needs.
- */
+/** Holds the owner of an ownable block (name + UUID). */
 public class Owner {
 	public static final String DEFAULT_OWNER_NAME = "owner";
 	public static final String DEFAULT_OWNER_UUID = "ownerUUID";
@@ -41,29 +38,27 @@ public class Owner {
 		return uuid;
 	}
 
-	/** Whether an owner has actually been assigned yet. */
 	public boolean owns() {
 		return !DEFAULT_OWNER_UUID.equals(uuid);
 	}
 
-	/** True if the given player is this owner. Matched by UUID. */
-	public boolean isOwner(Player player) {
+	public boolean isOwner(PlayerEntity player) {
 		if (!owns() || player == null)
 			return false;
 
-		return uuid.equals(player.getUUID().toString());
+		return uuid.equals(player.getUuid().toString());
 	}
 
-	public void save(ValueOutput output) {
-		output.putString(DEFAULT_OWNER_NAME, name);
-		output.putString(DEFAULT_OWNER_UUID, uuid);
+	public void save(WriteView view) {
+		view.putString(DEFAULT_OWNER_NAME, name);
+		view.putString(DEFAULT_OWNER_UUID, uuid);
 	}
 
-	// Since 1.21.6 block entities serialize through ValueInput/ValueOutput.
-	public static Owner load(ValueInput input) {
+	// Since 1.21.6 block entities serialize through ReadView/WriteView.
+	public static Owner load(ReadView view) {
 		Owner owner = new Owner();
 
-		owner.set(input.getStringOr(DEFAULT_OWNER_NAME, DEFAULT_OWNER_NAME), input.getStringOr(DEFAULT_OWNER_UUID, DEFAULT_OWNER_UUID));
+		owner.set(view.getString(DEFAULT_OWNER_NAME, DEFAULT_OWNER_NAME), view.getString(DEFAULT_OWNER_UUID, DEFAULT_OWNER_UUID));
 		return owner;
 	}
 }

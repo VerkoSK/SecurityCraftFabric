@@ -1,6 +1,6 @@
 package net.geforcemods.securitycraft.api;
 
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.entity.player.PlayerEntity;
 
 /** Anything (block entity) that can be owned by a player. */
 public interface IOwnable {
@@ -8,7 +8,7 @@ public interface IOwnable {
 
 	void setOwner(String name, String uuid);
 
-	default boolean isOwnedBy(Player player) {
+	default boolean isOwnedBy(PlayerEntity player) {
 		return getOwner().isOwner(player);
 	}
 }
