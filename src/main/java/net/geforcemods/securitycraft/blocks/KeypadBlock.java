@@ -44,7 +44,7 @@ public class KeypadBlock extends Block implements EntityBlock {
 		if (state.getValue(POWERED))
 			return InteractionResult.PASS;
 
-		if (level.isClientSide)
+		if (level.isClientSide())
 			return InteractionResult.SUCCESS;
 
 		if (!(level.getBlockEntity(pos) instanceof KeypadBlockEntity be) || !(player instanceof ServerPlayer serverPlayer))

@@ -59,16 +59,6 @@ public class KeypadScreen extends Screen {
 	}
 
 	@Override
-	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-		if (keyCode == 257 || keyCode == 335) { // Enter / numpad Enter
-			submit();
-			return true;
-		}
-
-		return super.keyPressed(keyCode, scanCode, modifiers);
-	}
-
-	@Override
 	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
 		super.render(guiGraphics, mouseX, mouseY, partialTick);
 		guiGraphics.drawCenteredString(font, title, width / 2, height / 2 - 40, 0xFFFFFF);

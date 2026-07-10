@@ -27,14 +27,14 @@ public final class NetworkHandler {
 	public static void registerServerReceivers() {
 		ServerPlayNetworking.registerGlobalReceiver(SetPasscodePayload.TYPE, (payload, context) -> {
 			ServerPlayer player = context.player();
-			MinecraftServer server = player.getServer();
+			MinecraftServer server = player.level().getServer();
 
 			if (server != null)
 				server.execute(() -> handleSetPasscode(player, payload));
 		});
 		ServerPlayNetworking.registerGlobalReceiver(CheckPasscodePayload.TYPE, (payload, context) -> {
 			ServerPlayer player = context.player();
-			MinecraftServer server = player.getServer();
+			MinecraftServer server = player.level().getServer();
 
 			if (server != null)
 				server.execute(() -> handleCheckPasscode(player, payload));
