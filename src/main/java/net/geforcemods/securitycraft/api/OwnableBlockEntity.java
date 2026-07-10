@@ -9,6 +9,8 @@ import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 /** Base block entity that remembers its owner and keeps the client copy in sync. */
 public class OwnableBlockEntity extends BlockEntity implements IOwnable {
@@ -37,15 +39,15 @@ public class OwnableBlockEntity extends BlockEntity implements IOwnable {
 	}
 
 	@Override
-	protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-		super.saveAdditional(tag, registries);
-		owner.save(tag);
+	protected void saveAdditional(ValueOutput output) {
+		super.saveAdditional(output);
+		owner.save(output);
 	}
 
 	@Override
-	protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-		super.loadAdditional(tag, registries);
-		owner = Owner.fromCompound(tag);
+	protected void loadAdditional(ValueInput input) {
+		super.loadAdditional(input);
+		owner = Owner.load(input);
 	}
 
 	@Override

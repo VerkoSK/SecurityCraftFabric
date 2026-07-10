@@ -11,6 +11,8 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 /**
  * Stores the keypad's owner, its salted passcode hash and drives the redstone pulse when the
@@ -55,20 +57,20 @@ public class KeypadBlockEntity extends OwnableBlockEntity {
 	}
 
 	@Override
-	protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-		super.saveAdditional(tag, registries);
-		tag.putString("salt", salt);
+	protected void saveAdditional(ValueOutput output) {
+		super.saveAdditional(output);
+		output.putString("salt", salt);
 
 		if (passcodeHash != null)
-			tag.putString("passcodeHash", passcodeHash);
+			output.putString("passcodeHash", passcodeHash);
 	}
 
 	@Override
-	protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-		super.loadAdditional(tag, registries);
-		// Since 1.21.5 CompoundTag#getString returns Optional<String>.
-		salt = tag.getString("salt").orElse(salt);
-		passcodeHash = tag.getString("passcodeHash").orElse(null);
+	protected void loadAdditional(ValueInput input) {
+		super.loadAdditional(input);
+		// Since 1.21.6 block entities serialize through ValueInput/ValueOutput.
+		salt = input.getStringOr("salt", salt);
+		passcodeHash = input.getString("passcodeHash").orElse(null);
 	}
 
 	/**

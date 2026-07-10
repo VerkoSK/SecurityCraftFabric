@@ -1,7 +1,8 @@
 package net.geforcemods.securitycraft.api;
 
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 /**
  * Holds the owner of an ownable block (name + UUID). Faithful port of the concept from the
@@ -53,18 +54,16 @@ public class Owner {
 		return uuid.equals(player.getUUID().toString());
 	}
 
-	public void save(CompoundTag tag) {
-		tag.putString(DEFAULT_OWNER_NAME, name);
-		tag.putString(DEFAULT_OWNER_UUID, uuid);
+	public void save(ValueOutput output) {
+		output.putString(DEFAULT_OWNER_NAME, name);
+		output.putString(DEFAULT_OWNER_UUID, uuid);
 	}
 
-	public static Owner fromCompound(CompoundTag tag) {
+	// Since 1.21.6 block entities serialize through ValueInput/ValueOutput.
+	public static Owner load(ValueInput input) {
 		Owner owner = new Owner();
 
-		// Since 1.21.5 CompoundTag#getString returns Optional<String>.
-		if (tag != null)
-			owner.set(tag.getString(DEFAULT_OWNER_NAME).orElse(DEFAULT_OWNER_NAME), tag.getString(DEFAULT_OWNER_UUID).orElse(DEFAULT_OWNER_UUID));
-
+		owner.set(input.getStringOr(DEFAULT_OWNER_NAME, DEFAULT_OWNER_NAME), input.getStringOr(DEFAULT_OWNER_UUID, DEFAULT_OWNER_UUID));
 		return owner;
 	}
 }
