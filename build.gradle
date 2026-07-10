@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '1.10-SNAPSHOT'
+	id 'fabric-loom' version '1.11-SNAPSHOT'
 	id 'java'
 }
 
@@ -24,7 +24,11 @@ repositories {
 dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
 	// Use official Mojang mappings so the code matches the upstream NeoForge source names 1:1.
-	mappings loom.officialMojangMappings()
+	// Layered form keeps the intermediary namespace in the mapping tree, which newer Fabric API
+	// modules (1.21.11) require when they ship remapped javadoc.
+	mappings loom.layered {
+		officialMojangMappings()
+	}
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 }
