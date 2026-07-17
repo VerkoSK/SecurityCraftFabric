@@ -1,5 +1,5 @@
 {
-  "variants": {
-    "": { "model": "securitycraft:block/reinforced_smooth_stone" }
-  }
+    "variants": {
+        "": { "model": "securitycraft:block/reinforced_smooth_stone" }
+    }
 }
