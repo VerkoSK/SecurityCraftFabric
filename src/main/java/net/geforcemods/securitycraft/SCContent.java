@@ -27,17 +27,17 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 
-/** Central registration. Registers the keypad plus the full reinforced-block set copied from upstream. */
+/** Central registration. Keypad + full reinforced block set. */
 public class SCContent {
 	private static final List<ItemLike> TAB_ITEMS = new ArrayList<>();
 	public static final List<Block> GLASS_BLOCKS = new ArrayList<>();
+	public static final List<Block> REINFORCED_BLOCKS = new ArrayList<>();
 
 	public static Block KEYPAD;
 	public static BlockEntityType<KeypadBlockEntity> KEYPAD_BLOCK_ENTITY;
 
 	public static final ResourceKey<CreativeModeTab> TAB_KEY = ResourceKey.create(Registries.CREATIVE_MODE_TAB, id("general"));
 
-	// name, category (generated from upstream SecurityCraft reinforced blocks)
 	private static final String[][] REINFORCED = {
 			{"reinforced_acacia_log", "pillar"},
 			{"reinforced_acacia_planks", "cube"},
@@ -278,7 +278,6 @@ public class SCContent {
 			registerReinforced(entry[0], entry[1]);
 
 		KEYPAD_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("keypad"), FabricBlockEntityTypeBuilder.create(KeypadBlockEntity::new, KEYPAD).build());
-
 		registerCreativeTab();
 	}
 
@@ -291,6 +290,7 @@ public class SCContent {
 			default -> new BaseReinforcedBlock(cubeProps(name));
 		};
 		register(name, block);
+		REINFORCED_BLOCKS.add(block);
 
 		if (category.equals("glass"))
 			GLASS_BLOCKS.add(block);
@@ -335,14 +335,7 @@ public class SCContent {
 	}
 
 	private static BlockBehaviour.Properties glassProps() {
-		return BlockBehaviour.Properties.of()
-				.strength(1.5F, 12000.0F)
-				.sound(SoundType.GLASS)
-				.noOcclusion()
-				.isValidSpawn((state, level, pos, type) -> false)
-				.isRedstoneConductor((state, level, pos) -> false)
-				.isSuffocating((state, level, pos) -> false)
-				.isViewBlocking((state, level, pos) -> false);
+		return BlockBehaviour.Properties.of().strength(1.5F, 12000.0F).sound(SoundType.GLASS).noOcclusion().isValidSpawn((state, level, pos, type) -> false).isRedstoneConductor((state, level, pos) -> false).isSuffocating((state, level, pos) -> false).isViewBlocking((state, level, pos) -> false);
 	}
 
 	private static BlockBehaviour.Properties paneProps() {
