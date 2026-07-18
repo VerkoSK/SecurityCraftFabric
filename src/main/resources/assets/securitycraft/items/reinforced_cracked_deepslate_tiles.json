@@ -1,6 +1,9 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "securitycraft:item/reinforced_cracked_deepslate_tiles"
+    "model": "securitycraft:item/reinforced_cracked_deepslate_tiles",
+    "tints": [
+      { "type": "minecraft:constant", "value": 10066329 }
+    ]
   }
 }
