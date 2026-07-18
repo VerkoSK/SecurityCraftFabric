@@ -1,6 +1,9 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "securitycraft:item/reinforced_obsidian"
+    "model": "securitycraft:item/reinforced_obsidian",
+    "tints": [
+      { "type": "minecraft:constant", "value": 10066329 }
+    ]
   }
 }

@@ -1,6 +1,9 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "securitycraft:item/reinforced_dark_oak_wood"
+    "model": "securitycraft:item/reinforced_dark_oak_wood",
+    "tints": [
+      { "type": "minecraft:constant", "value": 10066329 }
+    ]
   }
 }

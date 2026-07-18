@@ -1,6 +1,9 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "securitycraft:item/reinforced_ochre_froglight"
+    "model": "securitycraft:item/reinforced_ochre_froglight",
+    "tints": [
+      { "type": "minecraft:constant", "value": 10066329 }
+    ]
   }
 }

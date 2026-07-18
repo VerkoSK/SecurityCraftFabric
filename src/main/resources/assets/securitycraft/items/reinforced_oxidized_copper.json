@@ -1,6 +1,9 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "securitycraft:item/reinforced_oxidized_copper"
+    "model": "securitycraft:item/reinforced_oxidized_copper",
+    "tints": [
+      { "type": "minecraft:constant", "value": 10066329 }
+    ]
   }
 }
