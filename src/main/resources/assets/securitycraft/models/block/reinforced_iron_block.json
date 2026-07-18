@@ -1,6 +1,6 @@
 {
-  "parent": "minecraft:block/cube_all",
-  "textures": {
-    "all": "minecraft:block/iron_block"
-  }
+    "parent": "securitycraft:block/reinforced_cube_all",
+    "textures": {
+        "all": "block/iron_block"
+    }
 }
