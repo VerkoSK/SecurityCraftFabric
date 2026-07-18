@@ -31,6 +31,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 public class SCContent {
 	private static final List<ItemLike> TAB_ITEMS = new ArrayList<>();
 	public static final List<Block> GLASS_BLOCKS = new ArrayList<>();
+	public static final List<Block> REINFORCED_BLOCKS = new ArrayList<>();
 
 	public static Block KEYPAD;
 	public static BlockEntityType<KeypadBlockEntity> KEYPAD_BLOCK_ENTITY;
@@ -289,6 +290,7 @@ public class SCContent {
 			default -> new BaseReinforcedBlock(cubeProps(name));
 		};
 		register(name, block);
+		REINFORCED_BLOCKS.add(block);
 
 		if (category.equals("glass"))
 			GLASS_BLOCKS.add(block);
