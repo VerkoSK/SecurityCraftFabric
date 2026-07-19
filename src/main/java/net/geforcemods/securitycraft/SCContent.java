@@ -437,8 +437,6 @@ public class SCContent {
 			{"reinforced_stone_brick_wall", "wall"},
 			{"reinforced_stone_bricks", "cube"},
 			{"reinforced_stone_button", "button"},
-			{"reinforced_stone_polished_andesite", "cube"},
-			{"reinforced_stone_polished_granite", "cube"},
 			{"reinforced_stone_pressure_plate", "pressure_plate"},
 			{"reinforced_stone_slab", "slab"},
 			{"reinforced_stone_stairs", "stairs"},
