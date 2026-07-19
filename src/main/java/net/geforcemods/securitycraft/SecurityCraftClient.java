@@ -9,7 +9,7 @@ import net.geforcemods.securitycraft.screen.KeypadScreen;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.client.renderer.RenderType;
 
-/** Client entrypoint: keypad screen packet + reinforced grey tint + glass render layer. */
+/** Client entrypoint: keypad screen packet + reinforced grey tint. */
 public class SecurityCraftClient implements ClientModInitializer {
 	private static final int REINFORCED_TINT = 0x999999;
 
