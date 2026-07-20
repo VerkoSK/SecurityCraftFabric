@@ -22,6 +22,8 @@ public final class NetworkHandler {
 		PayloadTypeRegistry.playC2S().register(SetPasscodePayload.TYPE, SetPasscodePayload.CODEC);
 		PayloadTypeRegistry.playC2S().register(CheckPasscodePayload.TYPE, CheckPasscodePayload.CODEC);
 		PayloadTypeRegistry.playC2S().register(SyncBlockReinforcerPayload.TYPE, SyncBlockReinforcerPayload.CODEC);
+		PayloadTypeRegistry.playC2S().register(SyncLaserSideConfigPayload.TYPE, SyncLaserSideConfigPayload.CODEC);
+		PayloadTypeRegistry.playS2C().register(UpdateLaserColorsPayload.TYPE, UpdateLaserColorsPayload.CODEC);
 	}
 
 	/** Registers the server-side handlers for the client -> server passcode packets. */
@@ -47,6 +49,24 @@ public final class NetworkHandler {
 			if (server != null)
 				server.execute(() -> handleSyncBlockReinforcer(player, payload));
 		});
+		ServerPlayNetworking.registerGlobalReceiver(SyncLaserSideConfigPayload.TYPE, (payload, context) -> {
+			ServerPlayer player = context.player();
+			MinecraftServer server = player.getServer();
+
+			if (server != null)
+				server.execute(() -> handleSyncLaserSideConfig(player, payload));
+		});
+	}
+
+	private static void handleSyncLaserSideConfig(ServerPlayer player, SyncLaserSideConfigPayload payload) {
+		ServerLevel level = player.serverLevel();
+
+		if (!player.isSpectator() && level.getBlockEntity(payload.pos()) instanceof net.geforcemods.securitycraft.blockentities.LaserBlockBlockEntity be && be.isOwnedBy(player)) {
+			net.minecraft.world.level.block.state.BlockState state = level.getBlockState(payload.pos());
+
+			be.applyNewSideConfig(net.geforcemods.securitycraft.blockentities.LaserBlockBlockEntity.loadSideConfig(payload.sideConfig()), player);
+			level.sendBlockUpdated(payload.pos(), state, state, 2);
+		}
 	}
 
 	private static void handleSyncBlockReinforcer(ServerPlayer player, SyncBlockReinforcerPayload payload) {

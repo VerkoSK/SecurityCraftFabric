@@ -1,12 +1,27 @@
 package net.geforcemods.securitycraft.util;
 
+import net.geforcemods.securitycraft.misc.ModuleType;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
+import net.minecraft.world.item.ItemStack;
 
 /** Client-only helpers ported from the original SecurityCraft {@code util.ClientUtils}. */
 public class ClientUtils {
 	private ClientUtils() {}
+
+	/** Draws a module's icon (dimmed if the module is absent) and shows the given tooltip when hovered. */
+	public static void renderModuleInfo(GuiGraphics guiGraphics, Font font, ModuleType module, Component tooltip, boolean hasModule, int x, int y, int mouseX, int mouseY) {
+		guiGraphics.renderFakeItem(new ItemStack(module.getItem()), x, y);
+
+		if (!hasModule)
+			guiGraphics.fill(x, y, x + 16, y + 16, 0xBB222222);
+
+		if (mouseX >= x && mouseX <= x + 16 && mouseY >= y && mouseY <= y + 16)
+			guiGraphics.renderTooltip(font, tooltip, mouseX, mouseY);
+	}
 
 	/** Forces every rendered chunk to rebuild, so a live tint change is reflected immediately. */
 	public static void recompileAllChunksInRange() {

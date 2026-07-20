@@ -503,5 +503,16 @@
 	"tooltip.securitycraft:module.itemAddons.added": "Added: %1$s",
 	"tooltip.securitycraft.component.list_module_data.affects_everyone": "Affects everyone",
 	"tooltip.securitycraft.component.list_module_data.added_players": "Players added: %1$s",
-	"tooltip.securitycraft.component.list_module_data.added_teams": "Teams added: %1$s"
+	"tooltip.securitycraft.component.list_module_data.added_teams": "Teams added: %1$s",
+	"gui.securitycraft:laser.upEnabled": "Top laser enabled",
+	"gui.securitycraft:laser.downEnabled": "Bottom laser enabled",
+	"gui.securitycraft:laser.northEnabled": "North laser enabled",
+	"gui.securitycraft:laser.southEnabled": "South laser enabled",
+	"gui.securitycraft:laser.westEnabled": "West laser enabled",
+	"gui.securitycraft:laser.eastEnabled": "East laser enabled",
+	"gui.securitycraft:laser.smartModule": "Configure which sides emit lasers",
+	"gui.securitycraft:laser.noSmartModule": "Install a Smart Module to configure sides",
+	"gui.securitycraft:scManual.disabled": "This block is disabled",
+	"messages.securitycraft:laser.sync_failed": "Could not connect to the laser at %1$s: conflicting %2$s",
+	"messages.securitycraft:formattedCoordinates": "X: %1$s, Y: %2$s, Z: %3$s"
 }
