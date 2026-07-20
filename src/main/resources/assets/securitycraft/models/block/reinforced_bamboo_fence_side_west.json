@@ -1,6 +1,7 @@
 {
   "parent": "securitycraft:block/custom_reinforced_fence_side_west",
   "textures": {
+    "particle": "minecraft:block/bamboo_fence_particle",
     "texture": "minecraft:block/bamboo_fence"
   }
 }
