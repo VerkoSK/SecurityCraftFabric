@@ -20,6 +20,10 @@ public class BlockReinforcerItem extends Item {
 		this.reinforcing = reinforcing;
 	}
 
+	public boolean isReinforcing() {
+		return reinforcing;
+	}
+
 	@Override
 	public InteractionResult useOn(UseOnContext ctx) {
 		Level level = ctx.getLevel();

@@ -22,6 +22,8 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -48,6 +50,7 @@ public class SCContent {
 	public static final List<Block> REINFORCED_BLOCKS = new ArrayList<>();
 	public static final Map<String, Block> REINFORCED_BY_NAME = new HashMap<>();
 	public static final List<Block> CUTOUT_BLOCKS = new ArrayList<>();
+	public static final List<Block> GLASS_PANE_BLOCKS = new ArrayList<>();
 
 	public static Block KEYPAD;
 	public static Item UNIVERSAL_BLOCK_REINFORCER_LVL1;
@@ -57,6 +60,9 @@ public class SCContent {
 	public static BlockEntityType<KeypadBlockEntity> KEYPAD_BLOCK_ENTITY;
 
 	public static final ResourceKey<CreativeModeTab> TAB_KEY = ResourceKey.create(Registries.CREATIVE_MODE_TAB, id("general"));
+
+	public static RecipeSerializer<?> BLOCK_REINFORCING_SERIALIZER;
+	public static RecipeSerializer<?> BLOCK_UNREINFORCING_SERIALIZER;
 
 	private static final String[][] REINFORCED = {
 			{"reinforced_acacia_button", "button"},
@@ -520,6 +526,9 @@ public class SCContent {
 		UNIVERSAL_BLOCK_REINFORCER_LVL3 = registerConverterItem("universal_block_reinforcer_lvl3", 0, true);
 		UNIVERSAL_BLOCK_REMOVER = registerConverterItem("universal_block_remover", 476, false);
 
+		BLOCK_REINFORCING_SERIALIZER = Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, id("block_reinforcing"), new SimpleCraftingRecipeSerializer<>(net.geforcemods.securitycraft.recipe.ReinforcerRecipe.Reinforcing::new));
+		BLOCK_UNREINFORCING_SERIALIZER = Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, id("block_unreinforcing"), new SimpleCraftingRecipeSerializer<>(net.geforcemods.securitycraft.recipe.ReinforcerRecipe.Unreinforcing::new));
+
 		KEYPAD_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("keypad"), FabricBlockEntityTypeBuilder.create(KeypadBlockEntity::new, KEYPAD).build());
 		registerCreativeTab();
 	}
@@ -556,6 +565,9 @@ public class SCContent {
 
 		if (isCutout(name, category))
 			CUTOUT_BLOCKS.add(block);
+
+		if (category.equals("pane") && name.contains("glass"))
+			GLASS_PANE_BLOCKS.add(block);
 	}
 
 	private static Block register(String name, Block block) {

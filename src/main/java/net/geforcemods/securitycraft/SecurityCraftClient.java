@@ -19,7 +19,11 @@ public class SecurityCraftClient implements ClientModInitializer {
 
 		Block[] reinforced = SCContent.REINFORCED_BLOCKS.toArray(new Block[0]);
 		ColorProviderRegistry.BLOCK.register((state, view, pos, tintIndex) -> tintIndex == 0 ? REINFORCED_TINT : -1, reinforced);
-		ColorProviderRegistry.ITEM.register((stack, tintIndex) -> tintIndex == 0 ? REINFORCED_TINT : -1, reinforced);
+
+		// Glass panes use a flat (item/generated) icon; the grey tint on a translucent texture makes it near-invisible, so skip it for their items.
+		java.util.List<Block> itemTinted = new java.util.ArrayList<>(SCContent.REINFORCED_BLOCKS);
+		itemTinted.removeAll(SCContent.GLASS_PANE_BLOCKS);
+		ColorProviderRegistry.ITEM.register((stack, tintIndex) -> tintIndex == 0 ? REINFORCED_TINT : -1, itemTinted.toArray(new Block[0]));
 
 		for (Block glass : SCContent.GLASS_BLOCKS)
 			BlockRenderLayerMap.INSTANCE.putBlock(glass, RenderType.translucent());
