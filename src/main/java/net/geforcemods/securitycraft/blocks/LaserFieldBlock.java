@@ -2,14 +2,18 @@ package net.geforcemods.securitycraft.blocks;
 
 import com.mojang.serialization.MapCodec;
 
+import net.geforcemods.securitycraft.ConfigHandler;
 import net.geforcemods.securitycraft.SCContent;
+import net.geforcemods.securitycraft.api.ILinkedAction;
 import net.geforcemods.securitycraft.blockentities.LaserBlockBlockEntity;
 import net.geforcemods.securitycraft.misc.CustomDamageSources;
+import net.geforcemods.securitycraft.misc.ModuleType;
 import net.geforcemods.securitycraft.util.BlockUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.OwnableEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -17,6 +21,7 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.SimpleWaterloggedBlock;
@@ -32,8 +37,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-/** The invisible-ish laser beam segment placed between two laser blocks. Damages entities and triggers redstone. */
-public class LaserFieldBlock extends Block implements SimpleWaterloggedBlock {
+public class LaserFieldBlock extends OwnableBlock implements SimpleWaterloggedBlock {
 	public static final MapCodec<LaserFieldBlock> CODEC = simpleCodec(LaserFieldBlock::new);
 	public static final IntegerProperty BOUNDTYPE = IntegerProperty.create("boundtype", 1, 3);
 	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
@@ -47,7 +51,7 @@ public class LaserFieldBlock extends Block implements SimpleWaterloggedBlock {
 	}
 
 	@Override
-	protected MapCodec<? extends Block> codec() {
+	protected MapCodec<? extends BaseEntityBlock> codec() {
 		return CODEC;
 	}
 
@@ -68,45 +72,50 @@ public class LaserFieldBlock extends Block implements SimpleWaterloggedBlock {
 
 	@Override
 	protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
-		if (level.isClientSide() || !(entity instanceof LivingEntity living))
-			return;
+		if (!level.isClientSide && entity instanceof LivingEntity livingEntity) {
+			if (!getShape(state, level, pos, CollisionContext.of(entity)).bounds().move(pos).intersects(entity.getBoundingBox()))
+				return;
 
-		if (!getShape(state, level, pos, CollisionContext.of(entity)).bounds().move(pos).intersects(entity.getBoundingBox()))
-			return;
+			for (int i = 0; i < ConfigHandler.laserBlockRange; i++) {
+				BlockPos offsetPos = pos.relative(getFieldDirection(state), i);
+				BlockState offsetState = level.getBlockState(offsetPos);
+				Block offsetBlock = offsetState.getBlock();
 
-		Direction dir = getFieldDirection(state);
-
-		if (dir == null)
-			return;
-
-		for (int i = 1; i <= net.geforcemods.securitycraft.ConfigHandler.laserBlockRange; i++) {
-			BlockPos offsetPos = pos.relative(dir, i);
-			BlockState offsetState = level.getBlockState(offsetPos);
-			Block offsetBlock = offsetState.getBlock();
-
-			if (offsetBlock == SCContent.LASER_BLOCK) {
-				if (level.getBlockEntity(offsetPos) instanceof LaserBlockBlockEntity laser && laser.isEnabled()) {
-					if (entity instanceof Player player && laser.isOwnedBy(player) && laser.ignoresOwner())
+				if (offsetBlock == SCContent.LASER_BLOCK && level.getBlockEntity(offsetPos) instanceof LaserBlockBlockEntity laser) {
+					if (laser.isAllowed(entity) || laser.isConsideredInvisible(livingEntity))
 						return;
 
-					if (laser.timeSinceLastToggle() >= 500) {
-						laser.setLastToggleTime(System.currentTimeMillis());
-						level.setBlockAndUpdate(offsetPos, offsetState.setValue(LaserBlock.POWERED, true));
-						BlockUtils.updateIndirectNeighbors(level, offsetPos, SCContent.LASER_BLOCK);
+					if (!(entity instanceof Player player && laser.isOwnedBy(player) && laser.ignoresOwner())) {
+						if (entity instanceof OwnableEntity ownableEntity && laser.allowsOwnableEntity(ownableEntity))
+							return;
 
-						int signalLength = laser.getSignalLength();
+						if (laser.isModuleEnabled(ModuleType.REDSTONE)) {
+							if (laser.timeSinceLastToggle() < 500)
+								laser.setLastToggleTime(System.currentTimeMillis());
+							else {
+								int signalLength = laser.getSignalLength();
+								boolean wasPowered = offsetState.getValue(LaserBlock.POWERED);
 
-						if (signalLength > 0)
-							level.scheduleTick(offsetPos, SCContent.LASER_BLOCK, signalLength);
+								laser.setLastToggleTime(System.currentTimeMillis());
+								level.setBlockAndUpdate(offsetPos, offsetState.cycle(LaserBlock.POWERED));
+								BlockUtils.updateIndirectNeighbors(level, offsetPos, SCContent.LASER_BLOCK);
+								laser.propagate(new ILinkedAction.StateChanged<>(LaserBlock.POWERED, wasPowered, !wasPowered), laser);
+
+								if (signalLength > 0)
+									level.scheduleTick(offsetPos, SCContent.LASER_BLOCK, signalLength);
+							}
+						}
+
+						if (laser.isModuleEnabled(ModuleType.HARMING)) {
+							double damage = ConfigHandler.laserDamage;
+
+							livingEntity.hurt(CustomDamageSources.laser(level.registryAccess()), (float) damage);
+						}
 					}
 
-					living.hurt(CustomDamageSources.laser(level.registryAccess()), (float) net.geforcemods.securitycraft.ConfigHandler.laserDamage);
+					break;
 				}
-
-				return;
 			}
-			else if (offsetBlock != SCContent.LASER_FIELD)
-				return;
 		}
 	}
 
