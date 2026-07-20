@@ -68,7 +68,6 @@ public class KeypadBlockEntity extends OwnableBlockEntity {
 	@Override
 	protected void loadAdditional(ValueInput input) {
 		super.loadAdditional(input);
-		// Since 1.21.6 block entities serialize through ValueInput/ValueOutput.
 		salt = input.getStringOr("salt", salt);
 		passcodeHash = input.getString("passcodeHash").orElse(null);
 	}

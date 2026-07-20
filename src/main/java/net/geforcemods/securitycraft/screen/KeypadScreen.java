@@ -3,10 +3,11 @@ package net.geforcemods.securitycraft.screen;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.geforcemods.securitycraft.network.CheckPasscodePayload;
 import net.geforcemods.securitycraft.network.SetPasscodePayload;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.KeyEvent;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 
@@ -36,7 +37,6 @@ public class KeypadScreen extends Screen {
 
 		input = new EditBox(font, centerX - 60, y, 120, 20, Component.translatable("gui.securitycraft:keypad.field"));
 		input.setMaxLength(MAX_LENGTH);
-		input.setFilter(s -> s.matches("[0-9]*"));
 		addRenderableWidget(input);
 		setInitialFocus(input);
 
@@ -59,10 +59,22 @@ public class KeypadScreen extends Screen {
 	}
 
 	@Override
-	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-		super.render(guiGraphics, mouseX, mouseY, partialTick);
-		guiGraphics.drawCenteredString(font, title, width / 2, height / 2 - 40, 0xFFFFFF);
-		guiGraphics.drawCenteredString(font, Component.translatable("gui.securitycraft:keypad.owner", ownerName), width / 2, height / 2 - 28, 0xA0A0A0);
+	public boolean keyPressed(KeyEvent event) {
+		int keyCode = event.key();
+
+		if (keyCode == 257 || keyCode == 335) { // Enter / numpad Enter
+			submit();
+			return true;
+		}
+
+		return super.keyPressed(event);
+	}
+
+	@Override
+	public void extractRenderState(GuiGraphicsExtractor extractor, int mouseX, int mouseY, float partialTick) {
+		super.extractRenderState(extractor, mouseX, mouseY, partialTick);
+		extractor.centeredText(font, title, width / 2, height / 2 - 40, 0xFFFFFF);
+		extractor.centeredText(font, Component.translatable("gui.securitycraft:keypad.owner", ownerName), width / 2, height / 2 - 28, 0xA0A0A0);
 	}
 
 	@Override

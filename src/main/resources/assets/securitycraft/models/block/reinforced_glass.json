@@ -1,7 +1,7 @@
 {
   "parent": "minecraft:block/cube_all",
-  "render_type": "minecraft:translucent",
+  "render_type": "minecraft:cutout",
   "textures": {
-    "all": "minecraft:block/glass"
+    "all": "securitycraft:block/reinforced_glass"
   }
 }

@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '1.17.13'
+	id 'net.fabricmc.fabric-loom' version '1.17.16'
 	id 'java'
 }
 
@@ -22,15 +22,11 @@ repositories {
 }
 
 dependencies {
+	// MC 26.x: the new loom plugin (net.fabricmc.fabric-loom) supplies Mojang official mappings
+	// itself — no `mappings` line, per the Fabric "Porting to 26.1" guide.
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	// Use official Mojang mappings so the code matches the upstream NeoForge source names 1:1.
-	// Layered form keeps the intermediary namespace in the mapping tree, which newer Fabric API
-	// modules (1.21.11) require when they ship remapped javadoc.
-	mappings loom.layered {
-		officialMojangMappings()
-	}
-	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 }
 
 processResources {
