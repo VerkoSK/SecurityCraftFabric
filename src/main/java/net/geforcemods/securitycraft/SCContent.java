@@ -19,8 +19,11 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -46,11 +49,21 @@ public class SCContent {
 	public static final List<Block> GLASS_BLOCKS = new ArrayList<>();
 	public static final List<Block> REINFORCED_BLOCKS = new ArrayList<>();
 	public static final Map<String, Block> REINFORCED_BY_NAME = new HashMap<>();
+	public static final List<Block> CUTOUT_BLOCKS = new ArrayList<>();
+	public static final List<Block> GLASS_PANE_BLOCKS = new ArrayList<>();
 
 	public static Block KEYPAD;
+	public static Item UNIVERSAL_BLOCK_REINFORCER_LVL1;
+	public static Item UNIVERSAL_BLOCK_REINFORCER_LVL2;
+	public static Item UNIVERSAL_BLOCK_REINFORCER_LVL3;
+	public static Item UNIVERSAL_BLOCK_REMOVER;
 	public static BlockEntityType<KeypadBlockEntity> KEYPAD_BLOCK_ENTITY;
 
 	public static final ResourceKey<CreativeModeTab> TAB_KEY = ResourceKey.create(Registries.CREATIVE_MODE_TAB, id("general"));
+
+	public static RecipeSerializer<?> BLOCK_REINFORCING_SERIALIZER;
+	public static RecipeSerializer<?> BLOCK_UNREINFORCING_SERIALIZER;
+
 
 	private static final String[][] REINFORCED = {
 			{"reinforced_acacia_button", "button"},
@@ -509,7 +522,12 @@ public class SCContent {
 		for (String[] entry : REINFORCED)
 			registerReinforced(entry[0], entry[1]);
 
-		TAB_ITEMS.add(Registry.register(BuiltInRegistries.ITEM, id("universal_block_reinforcer"), new BlockReinforcerItem(new Item.Properties())));
+		UNIVERSAL_BLOCK_REINFORCER_LVL1 = registerConverterItem("universal_block_reinforcer_lvl1", 300, true);
+		UNIVERSAL_BLOCK_REINFORCER_LVL2 = registerConverterItem("universal_block_reinforcer_lvl2", 2700, true);
+		UNIVERSAL_BLOCK_REINFORCER_LVL3 = registerConverterItem("universal_block_reinforcer_lvl3", 0, true);
+		UNIVERSAL_BLOCK_REMOVER = registerConverterItem("universal_block_remover", 476, false);
+
+
 
 		KEYPAD_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("keypad"), FabricBlockEntityTypeBuilder.create(KeypadBlockEntity::new, KEYPAD).build());
 		registerCreativeTab();
@@ -517,6 +535,10 @@ public class SCContent {
 
 	private static boolean isGlass(String name, String category) {
 		return category.equals("glass") || (category.equals("pane") && name.contains("glass"));
+	}
+
+	private static boolean isCutout(String name, String category) {
+		return category.equals("trapdoor") || name.equals("reinforced_iron_bars");
 	}
 
 	private static void registerReinforced(String name, String category) {
@@ -531,7 +553,7 @@ public class SCContent {
 			case "stairs" -> new StairBlock(Blocks.STONE.defaultBlockState(), shapeProps(name));
 			case "button" -> new ButtonBlock(BlockSetType.STONE, 20, shapeProps(name));
 			case "pressure_plate" -> new PressurePlateBlock(BlockSetType.STONE, shapeProps(name));
-			case "trapdoor" -> new TrapDoorBlock(BlockSetType.IRON, shapeProps(name));
+			case "trapdoor" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedTrapdoorBlock(BlockSetType.IRON, shapeProps(name));
 			default -> new BaseReinforcedBlock(shapeProps(name));
 		};
 		register(name, block);
@@ -540,6 +562,12 @@ public class SCContent {
 
 		if (isGlass(name, category))
 			GLASS_BLOCKS.add(block);
+
+		if (isCutout(name, category))
+			CUTOUT_BLOCKS.add(block);
+
+		if (category.equals("pane") && name.contains("glass"))
+			GLASS_PANE_BLOCKS.add(block);
 	}
 
 	private static Block register(String name, Block block) {
@@ -551,13 +579,87 @@ public class SCContent {
 	}
 
 	private static void registerCreativeTab() {
-		CreativeModeTab tab = FabricItemGroup.builder()
+		CreativeModeTab technical = FabricItemGroup.builder()
 				.icon(() -> new ItemStack(KEYPAD))
-				.title(Component.translatable("itemGroup.securitycraft.general"))
-				.displayItems((params, output) -> TAB_ITEMS.forEach(output::accept))
+				.title(Component.translatable("itemGroup.securitycraft.technical"))
+				.displayItems((params, output) -> output.accept(KEYPAD))
 				.build();
-		Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, TAB_KEY.location(), tab);
+		Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, id("technical"), technical);
+
+		CreativeModeTab decoration = FabricItemGroup.builder()
+				.icon(() -> new ItemStack(REINFORCED_BY_NAME.getOrDefault("reinforced_oak_stairs", KEYPAD)))
+				.title(Component.translatable("itemGroup.securitycraft.decoration"))
+				.displayItems((params, output) -> {
+					output.accept(UNIVERSAL_BLOCK_REINFORCER_LVL1);
+					output.accept(UNIVERSAL_BLOCK_REINFORCER_LVL2);
+					output.accept(UNIVERSAL_BLOCK_REINFORCER_LVL3);
+					output.accept(UNIVERSAL_BLOCK_REMOVER);
+
+					for (Block block : sortByVanillaOrder(REINFORCED_BLOCKS))
+						output.accept(block);
+				})
+				.build();
+		Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, id("decoration"), decoration);
 	}
+
+	private static List<Block> sortByVanillaOrder(List<Block> blocks) {
+		List<Item> vanillaOrder = new ArrayList<>();
+
+		for (ResourceKey<CreativeModeTab> key : List.of(CreativeModeTabs.BUILDING_BLOCKS, CreativeModeTabs.COLORED_BLOCKS, CreativeModeTabs.NATURAL_BLOCKS, CreativeModeTabs.FUNCTIONAL_BLOCKS, CreativeModeTabs.REDSTONE_BLOCKS)) {
+			CreativeModeTab tab = BuiltInRegistries.CREATIVE_MODE_TAB.get(key);
+
+			if (tab != null)
+				for (ItemStack stack : tab.getDisplayItems())
+					vanillaOrder.add(stack.getItem());
+		}
+
+		java.util.Map<Item, Integer> index = new HashMap<>();
+
+		for (int i = 0; i < vanillaOrder.size(); i++)
+			index.putIfAbsent(vanillaOrder.get(i), i);
+
+		List<Block> sorted = new ArrayList<>(blocks);
+
+		sorted.sort(java.util.Comparator.<Block>comparingInt(block -> {
+			Block vanilla = vanillaCounterpart(block);
+			Integer i = vanilla == null ? null : index.get(vanilla.asItem());
+			return i == null ? Integer.MAX_VALUE : i.intValue();
+		}));
+		return sorted;
+	}
+
+	public static Block vanillaCounterpart(Block reinforced) {
+		net.minecraft.resources.ResourceLocation loc = BuiltInRegistries.BLOCK.getKey(reinforced);
+
+		if (!loc.getNamespace().equals(SecurityCraft.MODID) || !loc.getPath().startsWith("reinforced_"))
+			return null;
+
+		String path = loc.getPath();
+		Block vanilla = BuiltInRegistries.BLOCK.get(new ResourceLocation("minecraft", path.substring("reinforced_".length())));
+
+		return vanilla == Blocks.AIR ? null : vanilla;
+	}
+
+	public static Block reinforcedCounterpart(Block vanilla) {
+		net.minecraft.resources.ResourceLocation loc = BuiltInRegistries.BLOCK.getKey(vanilla);
+
+		if (!loc.getNamespace().equals("minecraft"))
+			return null;
+
+		return REINFORCED_BY_NAME.get("reinforced_" + loc.getPath());
+	}
+
+	private static Item registerConverterItem(String name, int durability, boolean reinforcing) {
+		Item.Properties props = new Item.Properties();
+
+		if (durability > 0)
+			props.durability(durability);
+
+		Item item = new BlockReinforcerItem(props, reinforcing);
+		Registry.register(BuiltInRegistries.ITEM, id(name), item);
+		return item;
+	}
+
 
 	private static boolean isWood(String name) {
 		return name.matches(".*(oak|spruce|birch|jungle|acacia|mangrove|cherry|bamboo|crimson|warped|planks|mosaic).*");
