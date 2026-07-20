@@ -487,5 +487,21 @@
 	"gui.securitycraft:blockReinforcer.tintMode.unowned": "Unowned",
 	"gui.securitycraft:blockReinforcer.tintMode.unowned.tooltip": "Apply tint to reinforced blocks that don't belong to you",
 	"gui.securitycraft:blockReinforcer.chooseTintColorTooltip": "Choose the color that reinforced blocks will be tinted with",
-	"gui.securitycraft:blockReinforcer.saveToConfigTooltip": "Save tint changes to the configuration file"
+	"gui.securitycraft:blockReinforcer.saveToConfigTooltip": "Save tint changes to the configuration file",
+	"item.securitycraft.redstone_module": "Redstone Module",
+	"item.securitycraft.whitelist_module": "Allowlist Module",
+	"item.securitycraft.blacklist_module": "Denylist Module",
+	"item.securitycraft.harming_module": "Harming Module",
+	"item.securitycraft.smart_module": "Smart Module",
+	"item.securitycraft.storage_module": "Storage Module",
+	"item.securitycraft.disguise_module": "Disguise Module",
+	"item.securitycraft.speed_module": "Speed Module",
+	"item.securitycraft.lens": "Lens",
+	"item.securitycraft.colored_lens": "Colored Lens",
+	"tooltip.securitycraft:module.modifiable": "Can be modified",
+	"tooltip.securitycraft:module.notModifiable": "Cannot be modified",
+	"tooltip.securitycraft:module.itemAddons.added": "Added: %1$s",
+	"tooltip.securitycraft.component.list_module_data.affects_everyone": "Affects everyone",
+	"tooltip.securitycraft.component.list_module_data.added_players": "Players added: %1$s",
+	"tooltip.securitycraft.component.list_module_data.added_teams": "Teams added: %1$s"
 }
