@@ -1,9 +1,6 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "securitycraft:item/reinforced_brown_stained_glass_pane",
-    "tints": [
-      { "type": "minecraft:constant", "value": 10066329 }
-    ]
+    "model": "securitycraft:item/reinforced_brown_stained_glass_pane"
   }
 }
