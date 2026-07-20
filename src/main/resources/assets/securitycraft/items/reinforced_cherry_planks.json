@@ -1,0 +1,9 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "securitycraft:item/reinforced_cherry_planks",
+    "tints": [
+      { "type": "minecraft:constant", "value": 10066329 }
+    ]
+  }
+}

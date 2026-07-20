@@ -1,0 +1,9 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "securitycraft:item/reinforced_exposed_chiseled_copper",
+    "tints": [
+      { "type": "minecraft:constant", "value": 10066329 }
+    ]
+  }
+}

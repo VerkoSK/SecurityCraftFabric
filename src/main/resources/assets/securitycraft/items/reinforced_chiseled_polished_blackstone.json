@@ -1,0 +1,9 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "securitycraft:item/reinforced_chiseled_polished_blackstone",
+    "tints": [
+      { "type": "minecraft:constant", "value": 10066329 }
+    ]
+  }
+}

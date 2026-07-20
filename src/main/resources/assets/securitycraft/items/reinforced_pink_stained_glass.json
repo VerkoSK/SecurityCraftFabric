@@ -1,0 +1,9 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "securitycraft:item/reinforced_pink_stained_glass",
+    "tints": [
+      { "type": "minecraft:constant", "value": 10066329 }
+    ]
+  }
+}
