@@ -515,7 +515,7 @@ public class SCContent {
 	}
 
 	public static void init() {
-		KEYPAD = register("keypad", new KeypadBlock(BlockBehaviour.Properties.of().strength(2.0F, 12000.0F).requiresCorrectToolForDrops()));
+		KEYPAD = register("keypad", new KeypadBlock(BlockBehaviour.Properties.of().strength(2.0F, 12000.0F).requiresCorrectToolForDrops().setId(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.BLOCK, id("keypad")))));
 
 		for (String[] entry : REINFORCED)
 			registerReinforced(entry[0], entry[1]);
@@ -542,19 +542,20 @@ public class SCContent {
 	}
 
 	private static void registerReinforced(String name, String category) {
+		net.minecraft.resources.ResourceKey<Block> k = net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.BLOCK, id(name));
 		Block block = switch (category) {
-			case "pillar" -> new RotatedPillarBlock(shapeProps(name));
-			case "glass" -> new BaseReinforcedBlock(glassProps());
-			case "pane" -> new IronBarsBlock((name.contains("glass") ? glassProps() : paneProps()));
-			case "fence" -> new FenceBlock(shapeProps(name));
-			case "fence_gate" -> new FenceGateBlock(WoodType.OAK, shapeProps(name));
-			case "wall" -> new WallBlock(shapeProps(name));
-			case "slab" -> new SlabBlock(shapeProps(name));
-			case "stairs" -> new StairBlock(Blocks.STONE.defaultBlockState(), shapeProps(name));
-			case "button" -> new ButtonBlock(BlockSetType.STONE, 20, shapeProps(name));
-			case "pressure_plate" -> new PressurePlateBlock(BlockSetType.STONE, shapeProps(name));
-			case "trapdoor" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedTrapdoorBlock(BlockSetType.IRON, shapeProps(name));
-			default -> new BaseReinforcedBlock(shapeProps(name));
+			case "pillar" -> new RotatedPillarBlock(shapeProps(name).setId(k));
+			case "glass" -> new BaseReinforcedBlock(glassProps().setId(k));
+			case "pane" -> new IronBarsBlock((name.contains("glass") ? glassProps() : paneProps()).setId(k));
+			case "fence" -> new FenceBlock(shapeProps(name).setId(k));
+			case "fence_gate" -> new FenceGateBlock(WoodType.OAK, shapeProps(name).setId(k));
+			case "wall" -> new WallBlock(shapeProps(name).setId(k));
+			case "slab" -> new SlabBlock(shapeProps(name).setId(k));
+			case "stairs" -> new StairBlock(Blocks.STONE.defaultBlockState(), shapeProps(name).setId(k));
+			case "button" -> new ButtonBlock(BlockSetType.STONE, 20, shapeProps(name).setId(k));
+			case "pressure_plate" -> new PressurePlateBlock(BlockSetType.STONE, shapeProps(name).setId(k));
+			case "trapdoor" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedTrapdoorBlock(BlockSetType.IRON, shapeProps(name).setId(k));
+			default -> new BaseReinforcedBlock(shapeProps(name).setId(k));
 		};
 		register(name, block);
 		REINFORCED_BLOCKS.add(block);
@@ -572,7 +573,7 @@ public class SCContent {
 
 	private static Block register(String name, Block block) {
 		Registry.register(BuiltInRegistries.BLOCK, id(name), block);
-		BlockItem item = new BlockItem(block, new Item.Properties());
+		BlockItem item = new BlockItem(block, new Item.Properties().setId(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ITEM, id(name))));
 		Registry.register(BuiltInRegistries.ITEM, id(name), item);
 		TAB_ITEMS.add(item);
 		return block;
@@ -650,7 +651,7 @@ public class SCContent {
 	}
 
 	private static Item registerConverterItem(String name, int durability, boolean reinforcing) {
-		Item.Properties props = new Item.Properties();
+		Item.Properties props = new Item.Properties().setId(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ITEM, id(name)));
 
 		if (durability > 0)
 			props.durability(durability);
