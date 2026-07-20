@@ -1,0 +1,180 @@
+package net.geforcemods.securitycraft.blocks;
+
+import com.mojang.serialization.MapCodec;
+
+import net.geforcemods.securitycraft.SCContent;
+import net.geforcemods.securitycraft.blockentities.LaserBlockBlockEntity;
+import net.geforcemods.securitycraft.misc.CustomDamageSources;
+import net.geforcemods.securitycraft.util.BlockUtils;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.SimpleWaterloggedBlock;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition.Builder;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
+
+/** The invisible-ish laser beam segment placed between two laser blocks. Damages entities and triggers redstone. */
+public class LaserFieldBlock extends Block implements SimpleWaterloggedBlock {
+	public static final MapCodec<LaserFieldBlock> CODEC = simpleCodec(LaserFieldBlock::new);
+	public static final IntegerProperty BOUNDTYPE = IntegerProperty.create("boundtype", 1, 3);
+	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
+	private static final VoxelShape SHAPE_X = Block.box(0, 6.75, 6.75, 16, 9.25, 9.25);
+	private static final VoxelShape SHAPE_Y = Block.box(6.75, 0, 6.75, 9.25, 16, 9.25);
+	private static final VoxelShape SHAPE_Z = Block.box(6.75, 6.75, 0, 9.25, 9.25, 16);
+
+	public LaserFieldBlock(BlockBehaviour.Properties properties) {
+		super(properties);
+		registerDefaultState(stateDefinition.any().setValue(BOUNDTYPE, 1).setValue(WATERLOGGED, false));
+	}
+
+	@Override
+	protected MapCodec<? extends Block> codec() {
+		return CODEC;
+	}
+
+	@Override
+	protected VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext ctx) {
+		return Shapes.empty();
+	}
+
+	@Override
+	protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext ctx) {
+		return switch (state.getValue(BOUNDTYPE)) {
+			case 1 -> SHAPE_Y;
+			case 2 -> SHAPE_Z;
+			case 3 -> SHAPE_X;
+			default -> Shapes.empty();
+		};
+	}
+
+	@Override
+	protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
+		if (level.isClientSide() || !(entity instanceof LivingEntity living))
+			return;
+
+		if (!getShape(state, level, pos, CollisionContext.of(entity)).bounds().move(pos).intersects(entity.getBoundingBox()))
+			return;
+
+		Direction dir = getFieldDirection(state);
+
+		if (dir == null)
+			return;
+
+		for (int i = 1; i <= LaserBlock.RANGE; i++) {
+			BlockPos offsetPos = pos.relative(dir, i);
+			BlockState offsetState = level.getBlockState(offsetPos);
+			Block offsetBlock = offsetState.getBlock();
+
+			if (offsetBlock == SCContent.LASER_BLOCK) {
+				if (level.getBlockEntity(offsetPos) instanceof LaserBlockBlockEntity laser && laser.isEnabled()) {
+					if (entity instanceof Player player && laser.isOwnedBy(player) && laser.ignoresOwner())
+						return;
+
+					if (laser.timeSinceLastToggle() >= 500) {
+						laser.setLastToggleTime(System.currentTimeMillis());
+						level.setBlockAndUpdate(offsetPos, offsetState.setValue(LaserBlock.POWERED, true));
+						BlockUtils.updateIndirectNeighbors(level, offsetPos, SCContent.LASER_BLOCK);
+
+						int signalLength = laser.getSignalLength();
+
+						if (signalLength > 0)
+							level.scheduleTick(offsetPos, SCContent.LASER_BLOCK, signalLength);
+					}
+
+					living.hurt(CustomDamageSources.laser(level.registryAccess()), (float) LaserBlock.DAMAGE);
+				}
+
+				return;
+			}
+			else if (offsetBlock != SCContent.LASER_FIELD)
+				return;
+		}
+	}
+
+	public static Direction getFieldDirection(BlockState state) {
+		return switch (state.getValue(BOUNDTYPE)) {
+			case 1 -> Direction.UP;
+			case 2 -> Direction.SOUTH;
+			case 3 -> Direction.EAST;
+			default -> null;
+		};
+	}
+
+	public static int getBoundType(Direction direction) {
+		return switch (direction) {
+			case UP, DOWN -> 1;
+			case NORTH, SOUTH -> 2;
+			case EAST, WEST -> 3;
+		};
+	}
+
+	@Override
+	public void destroy(LevelAccessor level, BlockPos pos, BlockState state) {
+		if (!level.isClientSide()) {
+			int boundType = state.getValue(BOUNDTYPE);
+			Direction direction = Direction.from3DDataValue((boundType - 1) * 2);
+
+			BlockUtils.removeInSequence((directionToCheck, stateToCheck) -> stateToCheck.getBlock() == this && stateToCheck.getValue(BOUNDTYPE) == boundType, level, pos, direction, direction.getOpposite());
+		}
+	}
+
+	@Override
+	protected BlockState updateShape(BlockState state, Direction facing, BlockState facingState, LevelAccessor level, BlockPos currentPos, BlockPos facingPos) {
+		if (state.getValue(WATERLOGGED))
+			level.scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
+
+		return super.updateShape(state, facing, facingState, level, currentPos, facingPos);
+	}
+
+	@Override
+	protected FluidState getFluidState(BlockState state) {
+		return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(state);
+	}
+
+	@Override
+	public BlockState getStateForPlacement(BlockPlaceContext ctx) {
+		return getPotentiallyWaterloggedState(1, ctx.getLevel(), ctx.getClickedPos());
+	}
+
+	public BlockState getPotentiallyWaterloggedState(int boundType, Level level, BlockPos pos) {
+		return defaultBlockState().setValue(BOUNDTYPE, boundType).setValue(WATERLOGGED, level.getFluidState(pos).getType() == Fluids.WATER);
+	}
+
+	@Override
+	protected void createBlockStateDefinition(Builder<Block, BlockState> builder) {
+		builder.add(BOUNDTYPE, WATERLOGGED);
+	}
+
+	@Override
+	public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
+		return ItemStack.EMPTY;
+	}
+
+	@Override
+	protected BlockState rotate(BlockState state, Rotation rot) {
+		return rot == Rotation.CLOCKWISE_180 ? state : state.setValue(BOUNDTYPE, switch (state.getValue(BOUNDTYPE)) {
+			case 2 -> 3;
+			case 3 -> 2;
+			default -> 1;
+		});
+	}
+}

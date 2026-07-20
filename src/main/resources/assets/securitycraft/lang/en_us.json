@@ -465,5 +465,10 @@
 	"item.securitycraft.universal_block_reinforcer_lvl3": "Universal Block Reinforcer (Lvl 3)",
 	"item.securitycraft.universal_block_remover": "Universal Block Remover",
 	"gui.securitycraft:reinforcer.reinforcing": "Mode: Reinforcing",
-	"gui.securitycraft:reinforcer.removing": "Mode: Removing"
+	"gui.securitycraft:reinforcer.removing": "Mode: Removing",
+	"block.securitycraft.laser_block": "Laser Block",
+	"block.securitycraft.laser": "Laser",
+	"messages.securitycraft:laser.enabled": "Laser enabled",
+	"messages.securitycraft:laser.disabled": "Laser disabled",
+	"death.attack.securitycraft.laser": "%1$s was fried by a laser"
 }

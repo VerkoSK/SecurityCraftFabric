@@ -31,5 +31,9 @@ public class SecurityCraftClient implements ClientModInitializer {
 
 		for (Block cutout : SCContent.CUTOUT_BLOCKS)
 			BlockRenderLayerMap.INSTANCE.putBlock(cutout, RenderType.cutout());
+
+		// Laser beam: translucent animated texture, tinted red at tintindex 0 (the lens colour).
+		BlockRenderLayerMap.INSTANCE.putBlock(SCContent.LASER_FIELD, RenderType.translucent());
+		ColorProviderRegistry.BLOCK.register((state, view, pos, tintIndex) -> tintIndex == 0 ? 0xFF0000 : -1, SCContent.LASER_FIELD);
 	}
 }

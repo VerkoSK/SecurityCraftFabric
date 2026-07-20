@@ -52,6 +52,9 @@ public class SCContent {
 	public static final List<Block> GLASS_PANE_BLOCKS = new ArrayList<>();
 
 	public static Block KEYPAD;
+	public static net.geforcemods.securitycraft.blocks.LaserBlock LASER_BLOCK;
+	public static net.geforcemods.securitycraft.blocks.LaserFieldBlock LASER_FIELD;
+	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.LaserBlockBlockEntity> LASER_BLOCK_BLOCK_ENTITY;
 	public static Item UNIVERSAL_BLOCK_REINFORCER_LVL1;
 	public static Item UNIVERSAL_BLOCK_REINFORCER_LVL2;
 	public static Item UNIVERSAL_BLOCK_REINFORCER_LVL3;
@@ -517,6 +520,8 @@ public class SCContent {
 
 	public static void init() {
 		KEYPAD = register("keypad", new KeypadBlock(BlockBehaviour.Properties.of().strength(2.0F, 12000.0F).requiresCorrectToolForDrops()));
+		LASER_BLOCK = (net.geforcemods.securitycraft.blocks.LaserBlock) register("laser_block", new net.geforcemods.securitycraft.blocks.LaserBlock(BlockBehaviour.Properties.of().strength(3.5F).requiresCorrectToolForDrops().sound(SoundType.METAL)));
+		LASER_FIELD = (net.geforcemods.securitycraft.blocks.LaserFieldBlock) registerBlockNoItem("laser", new net.geforcemods.securitycraft.blocks.LaserFieldBlock(BlockBehaviour.Properties.of().mapColor(net.minecraft.world.level.material.MapColor.NONE).strength(-1.0F).noLootTable().noOcclusion()));
 
 		for (String[] entry : REINFORCED)
 			registerReinforced(entry[0], entry[1]);
@@ -531,7 +536,13 @@ public class SCContent {
 		BLOCK_REINFORCER_MENU = Registry.register(BuiltInRegistries.MENU, id("block_reinforcer"), new net.minecraft.world.inventory.MenuType<>(net.geforcemods.securitycraft.inventory.BlockReinforcerMenu::new, net.minecraft.world.flag.FeatureFlags.VANILLA_SET));
 
 		KEYPAD_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("keypad"), FabricBlockEntityTypeBuilder.create(KeypadBlockEntity::new, KEYPAD).build());
+		LASER_BLOCK_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("laser_block"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.LaserBlockBlockEntity::new, LASER_BLOCK).build());
 		registerCreativeTab();
+	}
+
+	private static Block registerBlockNoItem(String name, Block block) {
+		Registry.register(BuiltInRegistries.BLOCK, id(name), block);
+		return block;
 	}
 
 	private static boolean isGlass(String name, String category) {
@@ -583,7 +594,10 @@ public class SCContent {
 		CreativeModeTab technical = FabricItemGroup.builder()
 				.icon(() -> new ItemStack(KEYPAD))
 				.title(Component.translatable("itemGroup.securitycraft.technical"))
-				.displayItems((params, output) -> output.accept(KEYPAD))
+				.displayItems((params, output) -> {
+					output.accept(KEYPAD);
+					output.accept(LASER_BLOCK);
+				})
 				.build();
 		Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, id("technical"), technical);
 

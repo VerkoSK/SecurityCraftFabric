@@ -7,7 +7,7 @@
 		"D": { "item": "securitycraft:reinforced_diamond_block" },
 		"G": { "item": "securitycraft:reinforced_black_stained_glass" },
 		"R": { "item": "minecraft:redstone" },
-		"L": { "item": "securitycraft:laser" },
+		"L": { "item": "securitycraft:laser_block" },
 		"S": { "item": "minecraft:stick" }
 	},
 	"result": { "id": "securitycraft:universal_block_reinforcer_lvl2", "count": 1 }
