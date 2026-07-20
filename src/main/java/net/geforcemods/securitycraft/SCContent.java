@@ -65,6 +65,7 @@ public class SCContent {
 	public static net.geforcemods.securitycraft.items.ModuleItem DISGUISE_MODULE;
 	public static net.geforcemods.securitycraft.items.ModuleItem SPEED_MODULE;
 	public static net.minecraft.core.component.DataComponentType<net.geforcemods.securitycraft.components.ListModuleData> LIST_MODULE_DATA;
+	public static Item LENS;
 	public static Item UNIVERSAL_BLOCK_REINFORCER_LVL1;
 	public static Item UNIVERSAL_BLOCK_REINFORCER_LVL2;
 	public static Item UNIVERSAL_BLOCK_REINFORCER_LVL3;
@@ -546,6 +547,7 @@ public class SCContent {
 		STORAGE_MODULE = registerModule("storage_module", net.geforcemods.securitycraft.misc.ModuleType.STORAGE, false, false, false);
 		DISGUISE_MODULE = registerModule("disguise_module", net.geforcemods.securitycraft.misc.ModuleType.DISGUISE, false, true, false);
 		SPEED_MODULE = registerModule("speed_module", net.geforcemods.securitycraft.misc.ModuleType.SPEED, false, false, false);
+		LENS = registerItem("lens", new Item(new Item.Properties()));
 
 		UNIVERSAL_BLOCK_REINFORCER_LVL1 = registerConverterItem("universal_block_reinforcer_lvl1", 300, true);
 		UNIVERSAL_BLOCK_REINFORCER_LVL2 = registerConverterItem("universal_block_reinforcer_lvl2", 2700, true);
@@ -692,6 +694,11 @@ public class SCContent {
 			return null;
 
 		return REINFORCED_BY_NAME.get("reinforced_" + loc.getPath());
+	}
+
+	private static Item registerItem(String name, Item item) {
+		Registry.register(BuiltInRegistries.ITEM, id(name), item);
+		return item;
 	}
 
 	private static net.geforcemods.securitycraft.items.ModuleItem registerModule(String name, net.geforcemods.securitycraft.misc.ModuleType type, boolean containsCustomData, boolean canBeCustomized, boolean hasListData) {
