@@ -65,7 +65,7 @@ public class KeypadBlock extends Block implements EntityBlock {
 			if (owner.isOwner(player))
 				NetworkHandler.openKeypadScreen(serverPlayer, pos, true, owner.getName());
 			else
-				player.displayClientMessage(Component.translatable("messages.securitycraft:passcode.notSetUp"), true);
+				player.sendSystemMessage(Component.translatable("messages.securitycraft:passcode.notSetUp"));
 		}
 		else
 			NetworkHandler.openKeypadScreen(serverPlayer, pos, false, owner.getName());
