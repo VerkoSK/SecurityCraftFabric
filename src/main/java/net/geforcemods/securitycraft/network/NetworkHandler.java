@@ -18,9 +18,9 @@ public final class NetworkHandler {
 
 	/** Registers all payload codecs. Must run on both sides, so it is called from the common initializer. */
 	public static void registerPayloads() {
-		PayloadTypeRegistry.playS2C().register(OpenKeypadScreenPayload.TYPE, OpenKeypadScreenPayload.CODEC);
-		PayloadTypeRegistry.playC2S().register(SetPasscodePayload.TYPE, SetPasscodePayload.CODEC);
-		PayloadTypeRegistry.playC2S().register(CheckPasscodePayload.TYPE, CheckPasscodePayload.CODEC);
+		PayloadTypeRegistry.clientboundPlay().register(OpenKeypadScreenPayload.TYPE, OpenKeypadScreenPayload.CODEC);
+		PayloadTypeRegistry.serverboundPlay().register(SetPasscodePayload.TYPE, SetPasscodePayload.CODEC);
+		PayloadTypeRegistry.serverboundPlay().register(CheckPasscodePayload.TYPE, CheckPasscodePayload.CODEC);
 	}
 
 	/** Registers the server-side handlers for the client -> server passcode packets. */
@@ -51,7 +51,7 @@ public final class NetworkHandler {
 
 		if (player.level().getBlockEntity(payload.pos()) instanceof KeypadBlockEntity keypad && keypad.getOwner().isOwner(player)) {
 			keypad.setPasscode(payload.passcode());
-			player.displayClientMessage(Component.translatable("messages.securitycraft:passcode.set"), true);
+			player.sendSystemMessage(Component.translatable("messages.securitycraft:passcode.set"));
 		}
 	}
 
@@ -62,10 +62,10 @@ public final class NetworkHandler {
 		if (player.level().getBlockEntity(payload.pos()) instanceof KeypadBlockEntity keypad && keypad.hasPasscode()) {
 			if (keypad.checkPasscode(payload.passcode())) {
 				keypad.activate((ServerLevel) player.level());
-				player.displayClientMessage(Component.translatable("messages.securitycraft:passcode.correct"), true);
+				player.sendSystemMessage(Component.translatable("messages.securitycraft:passcode.correct"));
 			}
 			else
-				player.displayClientMessage(Component.translatable("messages.securitycraft:passcode.incorrect"), true);
+				player.sendSystemMessage(Component.translatable("messages.securitycraft:passcode.incorrect"));
 		}
 	}
 

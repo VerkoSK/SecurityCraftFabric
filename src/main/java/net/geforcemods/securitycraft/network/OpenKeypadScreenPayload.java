@@ -5,11 +5,11 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 /** Server -> client: open the keypad screen at {@code pos} in setup or entry mode. */
 public record OpenKeypadScreenPayload(BlockPos pos, boolean setup, String ownerName) implements CustomPacketPayload {
-	public static final Type<OpenKeypadScreenPayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath("securitycraft", "open_keypad_screen"));
+	public static final Type<OpenKeypadScreenPayload> TYPE = new Type<>(Identifier.fromNamespaceAndPath("securitycraft", "open_keypad_screen"));
 	public static final StreamCodec<RegistryFriendlyByteBuf, OpenKeypadScreenPayload> CODEC = StreamCodec.composite(
 			BlockPos.STREAM_CODEC, OpenKeypadScreenPayload::pos,
 			ByteBufCodecs.BOOL, OpenKeypadScreenPayload::setup,
