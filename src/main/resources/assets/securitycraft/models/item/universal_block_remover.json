@@ -1,6 +1,6 @@
 {
 	"parent": "minecraft:item/generated",
 	"textures": {
-		"layer0": "securitycraft:item/universal_block_reinforcer"
+		"layer0": "securitycraft:item/universal_block_remover"
 	}
 }

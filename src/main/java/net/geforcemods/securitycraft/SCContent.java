@@ -50,7 +50,10 @@ public class SCContent {
 	public static final List<Block> CUTOUT_BLOCKS = new ArrayList<>();
 
 	public static Block KEYPAD;
-	public static Item UNIVERSAL_BLOCK_REINFORCER;
+	public static Item UNIVERSAL_BLOCK_REINFORCER_LVL1;
+	public static Item UNIVERSAL_BLOCK_REINFORCER_LVL2;
+	public static Item UNIVERSAL_BLOCK_REINFORCER_LVL3;
+	public static Item UNIVERSAL_BLOCK_REMOVER;
 	public static BlockEntityType<KeypadBlockEntity> KEYPAD_BLOCK_ENTITY;
 
 	public static final ResourceKey<CreativeModeTab> TAB_KEY = ResourceKey.create(Registries.CREATIVE_MODE_TAB, id("general"));
@@ -512,7 +515,10 @@ public class SCContent {
 		for (String[] entry : REINFORCED)
 			registerReinforced(entry[0], entry[1]);
 
-		UNIVERSAL_BLOCK_REINFORCER = Registry.register(BuiltInRegistries.ITEM, id("universal_block_reinforcer"), new BlockReinforcerItem(new Item.Properties()));
+		UNIVERSAL_BLOCK_REINFORCER_LVL1 = registerConverterItem("universal_block_reinforcer_lvl1", 300, true);
+		UNIVERSAL_BLOCK_REINFORCER_LVL2 = registerConverterItem("universal_block_reinforcer_lvl2", 2700, true);
+		UNIVERSAL_BLOCK_REINFORCER_LVL3 = registerConverterItem("universal_block_reinforcer_lvl3", 0, true);
+		UNIVERSAL_BLOCK_REMOVER = registerConverterItem("universal_block_remover", 476, false);
 
 		KEYPAD_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("keypad"), FabricBlockEntityTypeBuilder.create(KeypadBlockEntity::new, KEYPAD).build());
 		registerCreativeTab();
@@ -572,7 +578,10 @@ public class SCContent {
 				.icon(() -> new ItemStack(REINFORCED_BY_NAME.getOrDefault("reinforced_oak_stairs", KEYPAD)))
 				.title(Component.translatable("itemGroup.securitycraft.decoration"))
 				.displayItems((params, output) -> {
-					output.accept(UNIVERSAL_BLOCK_REINFORCER);
+					output.accept(UNIVERSAL_BLOCK_REINFORCER_LVL1);
+					output.accept(UNIVERSAL_BLOCK_REINFORCER_LVL2);
+					output.accept(UNIVERSAL_BLOCK_REINFORCER_LVL3);
+					output.accept(UNIVERSAL_BLOCK_REMOVER);
 
 					for (Block block : sortByVanillaOrder(REINFORCED_BLOCKS))
 						output.accept(block);
@@ -607,16 +616,38 @@ public class SCContent {
 		return sorted;
 	}
 
-	private static Block vanillaCounterpart(Block reinforced) {
-		String path = BuiltInRegistries.BLOCK.getKey(reinforced).getPath();
+	public static Block vanillaCounterpart(Block reinforced) {
+		net.minecraft.resources.ResourceLocation loc = BuiltInRegistries.BLOCK.getKey(reinforced);
 
-		if (!path.startsWith("reinforced_"))
+		if (!loc.getNamespace().equals(SecurityCraft.MODID) || !loc.getPath().startsWith("reinforced_"))
 			return null;
 
+		String path = loc.getPath();
 		Block vanilla = BuiltInRegistries.BLOCK.get(ResourceLocation.fromNamespaceAndPath("minecraft", path.substring("reinforced_".length())));
 
 		return vanilla == Blocks.AIR ? null : vanilla;
 	}
+
+	public static Block reinforcedCounterpart(Block vanilla) {
+		net.minecraft.resources.ResourceLocation loc = BuiltInRegistries.BLOCK.getKey(vanilla);
+
+		if (!loc.getNamespace().equals("minecraft"))
+			return null;
+
+		return REINFORCED_BY_NAME.get("reinforced_" + loc.getPath());
+	}
+
+	private static Item registerConverterItem(String name, int durability, boolean reinforcing) {
+		Item.Properties props = new Item.Properties();
+
+		if (durability > 0)
+			props.durability(durability);
+
+		Item item = new BlockReinforcerItem(props, reinforcing);
+		Registry.register(BuiltInRegistries.ITEM, id(name), item);
+		return item;
+	}
+
 
 	private static boolean isWood(String name) {
 		return name.matches(".*(oak|spruce|birch|jungle|acacia|mangrove|cherry|bamboo|crimson|warped|planks|mosaic).*");

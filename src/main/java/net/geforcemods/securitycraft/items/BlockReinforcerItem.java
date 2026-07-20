@@ -2,20 +2,22 @@ package net.geforcemods.securitycraft.items;
 
 import net.geforcemods.securitycraft.SCContent;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
-/** Converts a vanilla block into its reinforced counterpart on right-click. */
+/** Converts blocks between vanilla and reinforced. reinforcing=true: vanilla->reinforced; false: the reverse. Damages the tool per use when it has durability. */
 public class BlockReinforcerItem extends Item {
-	public BlockReinforcerItem(Item.Properties properties) {
+	private final boolean reinforcing;
+
+	public BlockReinforcerItem(Item.Properties properties, boolean reinforcing) {
 		super(properties);
+		this.reinforcing = reinforcing;
 	}
 
 	@Override
@@ -23,18 +25,25 @@ public class BlockReinforcerItem extends Item {
 		Level level = ctx.getLevel();
 		BlockPos pos = ctx.getClickedPos();
 		BlockState state = level.getBlockState(pos);
-		ResourceLocation key = BuiltInRegistries.BLOCK.getKey(state.getBlock());
+		Block target = reinforcing ? SCContent.reinforcedCounterpart(state.getBlock()) : SCContent.vanillaCounterpart(state.getBlock());
 
-		if (!"minecraft".equals(key.getNamespace()))
+		if (target == null)
 			return InteractionResult.PASS;
 
-		Block reinforced = SCContent.REINFORCED_BY_NAME.get("reinforced_" + key.getPath());
+		if (level instanceof ServerLevel) {
+			level.setBlockAndUpdate(pos, target.withPropertiesOf(state));
 
-		if (reinforced == null)
-			return InteractionResult.PASS;
+			ItemStack stack = ctx.getItemInHand();
 
-		if (level instanceof ServerLevel)
-			level.setBlockAndUpdate(pos, reinforced.withPropertiesOf(state));
+			if (stack.getMaxDamage() > 0) {
+				int dmg = stack.getDamageValue() + 1;
+
+				if (dmg >= stack.getMaxDamage())
+					stack.shrink(1);
+				else
+					stack.setDamageValue(dmg);
+			}
+		}
 
 		return InteractionResult.SUCCESS;
 	}
