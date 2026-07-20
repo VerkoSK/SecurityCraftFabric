@@ -463,5 +463,7 @@
 	"item.securitycraft.universal_block_reinforcer_lvl1": "Universal Block Reinforcer (Lvl 1)",
 	"item.securitycraft.universal_block_reinforcer_lvl2": "Universal Block Reinforcer (Lvl 2)",
 	"item.securitycraft.universal_block_reinforcer_lvl3": "Universal Block Reinforcer (Lvl 3)",
-	"item.securitycraft.universal_block_remover": "Universal Block Remover"
+	"item.securitycraft.universal_block_remover": "Universal Block Remover",
+	"gui.securitycraft:reinforcer.reinforcing": "Mode: Reinforcing",
+	"gui.securitycraft:reinforcer.removing": "Mode: Removing"
 }

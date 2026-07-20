@@ -25,6 +25,16 @@ public class BlockReinforcerItem extends Item {
 	}
 
 	@Override
+	public net.minecraft.world.InteractionResultHolder<ItemStack> use(Level level, net.minecraft.world.entity.player.Player player, net.minecraft.world.InteractionHand hand) {
+		ItemStack held = player.getItemInHand(hand);
+
+		if (!level.isClientSide)
+			player.openMenu(new net.minecraft.world.SimpleMenuProvider((windowId, inv, p) -> new net.geforcemods.securitycraft.inventory.BlockReinforcerMenu(windowId, inv), held.getHoverName()));
+
+		return net.minecraft.world.InteractionResultHolder.sidedSuccess(held, level.isClientSide);
+	}
+
+	@Override
 	public InteractionResult useOn(UseOnContext ctx) {
 		Level level = ctx.getLevel();
 		BlockPos pos = ctx.getClickedPos();
