@@ -53,7 +53,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 
-public class LaserBlockBlockEntity extends LinkableBlockEntity implements ExtendedScreenHandlerFactory<LaserBlockData>, ContainerListener {
+public class LaserBlockBlockEntity extends LinkableBlockEntity implements ExtendedScreenHandlerFactory<LaserBlockData>, ContainerListener, net.fabricmc.fabric.api.blockview.v2.RenderDataBlockEntity {
 	protected List<LinkedBlock> linkedBlocks = new ArrayList<>();
 	private DisabledOption disabled = new DisabledOption(false) {
 		@Override
@@ -277,6 +277,23 @@ public class LaserBlockBlockEntity extends LinkableBlockEntity implements Extend
 
 	public LensContainer getLensContainer() {
 		return lenses;
+	}
+
+	/** The block state this laser is disguised as (from an enabled disguise module), or null. */
+	public BlockState getDisguisedState() {
+		if (isModuleEnabled(ModuleType.DISGUISE)) {
+			net.minecraft.world.level.block.Block addon = ModuleItem.getBlockAddon(getModule(ModuleType.DISGUISE));
+
+			if (addon != null && addon != SCContent.LASER_BLOCK)
+				return addon.defaultBlockState();
+		}
+
+		return null;
+	}
+
+	@Override
+	public Object getRenderData() {
+		return getDisguisedState();
 	}
 
 	@Override

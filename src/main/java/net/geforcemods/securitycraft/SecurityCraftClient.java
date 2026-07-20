@@ -65,6 +65,7 @@ public class SecurityCraftClient implements ClientModInitializer {
 		ClientPlayNetworking.registerGlobalReceiver(OpenKeypadScreenPayload.TYPE, (payload, context) -> context.client().execute(() -> context.client().setScreen(new KeypadScreen(payload.pos(), payload.setup(), payload.ownerName()))));
 		net.minecraft.client.gui.screens.MenuScreens.register(SCContent.BLOCK_REINFORCER_MENU, net.geforcemods.securitycraft.screen.BlockReinforcerScreen::new);
 		net.minecraft.client.gui.screens.MenuScreens.register(SCContent.LASER_BLOCK_MENU, net.geforcemods.securitycraft.screen.LaserBlockScreen::new);
+		net.minecraft.client.gui.screens.MenuScreens.register(SCContent.DISGUISE_MODULE_MENU, net.geforcemods.securitycraft.screen.DisguiseModuleScreen::new);
 		ClientPlayNetworking.registerGlobalReceiver(net.geforcemods.securitycraft.network.UpdateLaserColorsPayload.TYPE, (payload, context) -> context.client().execute(() -> {
 			for (net.minecraft.core.BlockPos pos : payload.positions())
 				context.client().levelRenderer.setBlocksDirty(pos.getX(), pos.getY(), pos.getZ(), pos.getX(), pos.getY(), pos.getZ());
@@ -83,6 +84,16 @@ public class SecurityCraftClient implements ClientModInitializer {
 
 		for (Block cutout : SCContent.CUTOUT_BLOCKS)
 			BlockRenderLayerMap.INSTANCE.putBlock(cutout, RenderType.cutout());
+
+		// Disguise: wrap the laser block model so it can render as the disguised block (from the disguise module).
+		net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin.register(pluginContext -> pluginContext.modifyModelAfterBake().register((model, context) -> {
+			net.minecraft.client.resources.model.ModelResourceLocation id = context.topLevelId();
+
+			if (id != null && id.id().equals(SCContent.id("laser_block")))
+				return new net.geforcemods.securitycraft.models.DisguisableBakedModel(model);
+
+			return model;
+		}));
 
 		// Laser beam: translucent animated texture, tinted at tintindex 0 by the lens colour (red default).
 		BlockRenderLayerMap.INSTANCE.putBlock(SCContent.LASER_FIELD, RenderType.translucent());
