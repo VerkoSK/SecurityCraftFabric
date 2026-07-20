@@ -13,9 +13,50 @@ import net.minecraft.client.renderer.RenderType;
 
 /** Client entrypoint: keypad screen packet + configurable reinforced-block tint (see {@link TintMode}). */
 public class SecurityCraftClient implements ClientModInitializer {
+	/** Opens the allow/deny-list editor for the given module stack (called client-side only). */
+	public static void openEditModuleScreen(net.minecraft.world.item.ItemStack stack) {
+		Minecraft.getInstance().setScreen(new net.geforcemods.securitycraft.screen.EditModuleScreen(stack));
+	}
+
 	/** Live tint colour for reinforced blocks: white base multiplied by the configured tint (grey by default). */
 	private static int reinforcedTint() {
 		return TintMode.tint(Minecraft.getInstance().player, 0xFFFFFFFF, null);
+	}
+
+	/** Colour of a laser beam: the dyed colour of the lens in the source laser for this beam's axis, or red. */
+	private static int laserFieldColor(net.minecraft.world.level.block.state.BlockState state, net.minecraft.world.level.BlockAndTintGetter view, net.minecraft.core.BlockPos pos, int tintIndex) {
+		if (tintIndex != 0)
+			return -1;
+
+		if (view != null && pos != null) {
+			net.minecraft.core.Direction axis = net.geforcemods.securitycraft.blocks.LaserFieldBlock.getFieldDirection(state);
+
+			if (axis != null) {
+				for (net.minecraft.core.Direction dir : new net.minecraft.core.Direction[] {
+						axis, axis.getOpposite()
+				}) {
+					for (int i = 1; i <= ConfigHandler.laserBlockRange; i++) {
+						net.minecraft.core.BlockPos offsetPos = pos.relative(dir, i);
+
+						if (view.getBlockEntity(offsetPos) instanceof net.geforcemods.securitycraft.blockentities.LaserBlockBlockEntity laser) {
+							net.minecraft.world.item.ItemStack lens = laser.getLensContainer().getItem(dir.getOpposite().ordinal());
+
+							if (lens.has(net.minecraft.core.component.DataComponents.DYED_COLOR))
+								return 0xFF000000 | lens.get(net.minecraft.core.component.DataComponents.DYED_COLOR).rgb();
+
+							return 0xFFFF0000;
+						}
+
+						net.minecraft.world.level.block.state.BlockState offsetState = view.getBlockState(offsetPos);
+
+						if (offsetState.getBlock() != SCContent.LASER_FIELD && !offsetState.isAir())
+							break;
+					}
+				}
+			}
+		}
+
+		return 0xFFFF0000;
 	}
 
 	@Override
@@ -43,8 +84,11 @@ public class SecurityCraftClient implements ClientModInitializer {
 		for (Block cutout : SCContent.CUTOUT_BLOCKS)
 			BlockRenderLayerMap.INSTANCE.putBlock(cutout, RenderType.cutout());
 
-		// Laser beam: translucent animated texture, tinted red at tintindex 0 (the lens colour).
+		// Laser beam: translucent animated texture, tinted at tintindex 0 by the lens colour (red default).
 		BlockRenderLayerMap.INSTANCE.putBlock(SCContent.LASER_FIELD, RenderType.translucent());
-		ColorProviderRegistry.BLOCK.register((state, view, pos, tintIndex) -> tintIndex == 0 ? 0xFF0000 : -1, SCContent.LASER_FIELD);
+		ColorProviderRegistry.BLOCK.register(SecurityCraftClient::laserFieldColor, SCContent.LASER_FIELD);
+
+		// Lens item: tinted by its dyed colour (uncolored lens stays untinted).
+		ColorProviderRegistry.ITEM.register((stack, tintIndex) -> tintIndex == 0 && stack.has(net.minecraft.core.component.DataComponents.DYED_COLOR) ? stack.get(net.minecraft.core.component.DataComponents.DYED_COLOR).rgb() : -1, SCContent.LENS);
 	}
 }

@@ -514,5 +514,10 @@
 	"gui.securitycraft:laser.noSmartModule": "Install a Smart Module to configure sides",
 	"gui.securitycraft:scManual.disabled": "This block is disabled",
 	"messages.securitycraft:laser.sync_failed": "Could not connect to the laser at %1$s: conflicting %2$s",
-	"messages.securitycraft:formattedCoordinates": "X: %1$s, Y: %2$s, Z: %3$s"
+	"messages.securitycraft:formattedCoordinates": "X: %1$s, Y: %2$s, Z: %3$s",
+	"gui.securitycraft:editModule": "Edit Module",
+	"gui.securitycraft:editModule.add_player": "Add",
+	"gui.securitycraft:editModule.remove_player": "Remove",
+	"gui.securitycraft:editModule.clear": "Clear",
+	"gui.securitycraft:editModule.affect_everyone": "Everyone"
 }

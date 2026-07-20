@@ -40,6 +40,20 @@ public class ModuleItem extends Item {
 	}
 
 	@Override
+	public net.minecraft.world.InteractionResultHolder<ItemStack> use(net.minecraft.world.level.Level level, net.minecraft.world.entity.player.Player player, net.minecraft.world.InteractionHand hand) {
+		ItemStack stack = player.getItemInHand(hand);
+
+		if (canBeCustomized() && (module == ModuleType.ALLOWLIST || module == ModuleType.DENYLIST)) {
+			if (level.isClientSide)
+				net.geforcemods.securitycraft.SecurityCraftClient.openEditModuleScreen(stack);
+
+			return net.minecraft.world.InteractionResultHolder.consume(stack);
+		}
+
+		return net.minecraft.world.InteractionResultHolder.pass(stack);
+	}
+
+	@Override
 	public InteractionResult useOn(UseOnContext ctx) {
 		if (ctx.getLevel().getBlockEntity(ctx.getClickedPos()) instanceof IModuleInventory inv) {
 			ItemStack stack = ctx.getItemInHand();

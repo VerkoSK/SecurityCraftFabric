@@ -24,6 +24,7 @@ public final class NetworkHandler {
 		PayloadTypeRegistry.playC2S().register(SyncBlockReinforcerPayload.TYPE, SyncBlockReinforcerPayload.CODEC);
 		PayloadTypeRegistry.playC2S().register(SyncLaserSideConfigPayload.TYPE, SyncLaserSideConfigPayload.CODEC);
 		PayloadTypeRegistry.playS2C().register(UpdateLaserColorsPayload.TYPE, UpdateLaserColorsPayload.CODEC);
+		PayloadTypeRegistry.playC2S().register(SetListModuleDataPayload.TYPE, SetListModuleDataPayload.CODEC);
 	}
 
 	/** Registers the server-side handlers for the client -> server passcode packets. */
@@ -56,6 +57,26 @@ public final class NetworkHandler {
 			if (server != null)
 				server.execute(() -> handleSyncLaserSideConfig(player, payload));
 		});
+		ServerPlayNetworking.registerGlobalReceiver(SetListModuleDataPayload.TYPE, (payload, context) -> {
+			ServerPlayer player = context.player();
+			MinecraftServer server = player.getServer();
+
+			if (server != null)
+				server.execute(() -> handleSetListModuleData(player, payload));
+		});
+	}
+
+	private static void handleSetListModuleData(ServerPlayer player, SetListModuleDataPayload payload) {
+		net.minecraft.world.item.ItemStack stack = net.geforcemods.securitycraft.util.PlayerUtils.getItemStackFromAnyHand(player, net.geforcemods.securitycraft.SCContent.ALLOWLIST_MODULE);
+
+		if (stack.isEmpty())
+			stack = net.geforcemods.securitycraft.util.PlayerUtils.getItemStackFromAnyHand(player, net.geforcemods.securitycraft.SCContent.DENYLIST_MODULE);
+
+		if (!player.isSpectator() && !stack.isEmpty()) {
+			net.geforcemods.securitycraft.components.ListModuleData data = payload.listModuleData();
+
+			stack.set(net.geforcemods.securitycraft.SCContent.LIST_MODULE_DATA, new net.geforcemods.securitycraft.components.ListModuleData(data.players().stream().distinct().toList(), data.teams().stream().filter(player.getScoreboard().getTeamNames()::contains).toList(), data.affectEveryone()));
+		}
 	}
 
 	private static void handleSyncLaserSideConfig(ServerPlayer player, SyncLaserSideConfigPayload payload) {
