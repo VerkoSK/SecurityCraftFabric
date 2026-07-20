@@ -470,5 +470,22 @@
 	"block.securitycraft.laser": "Laser",
 	"messages.securitycraft:laser.enabled": "Laser enabled",
 	"messages.securitycraft:laser.disabled": "Laser disabled",
-	"death.attack.securitycraft.laser": "%1$s was fried by a laser"
+	"death.attack.securitycraft.laser": "%1$s was fried by a laser",
+	"gui.securitycraft:blockReinforcer.output": "Output:",
+	"gui.securitycraft:blockReinforcer.mode": "Mining mode:",
+	"gui.securitycraft:blockReinforcer.tint": "Tint:",
+	"gui.securitycraft:blockReinforcer.reinforcing": "Reinforcing",
+	"gui.securitycraft:blockReinforcer.unreinforcing": "Unreinforcing",
+	"gui.securitycraft:blockReinforcer.reinforcing.tooltip": "Reinforces blocks when they are attacked in the world",
+	"gui.securitycraft:blockReinforcer.unreinforcing.tooltip": "Unreinforces blocks when they are attacked in the world",
+	"gui.securitycraft:blockReinforcer.tintMode.all": "All",
+	"gui.securitycraft:blockReinforcer.tintMode.all.tooltip": "Apply tint to all placed reinforced blocks",
+	"gui.securitycraft:blockReinforcer.tintMode.none": "None",
+	"gui.securitycraft:blockReinforcer.tintMode.none.tooltip": "Disable tint of placed reinforced blocks",
+	"gui.securitycraft:blockReinforcer.tintMode.owned": "Owned",
+	"gui.securitycraft:blockReinforcer.tintMode.owned.tooltip": "Apply tint to reinforced blocks that belong to you",
+	"gui.securitycraft:blockReinforcer.tintMode.unowned": "Unowned",
+	"gui.securitycraft:blockReinforcer.tintMode.unowned.tooltip": "Apply tint to reinforced blocks that don't belong to you",
+	"gui.securitycraft:blockReinforcer.chooseTintColorTooltip": "Choose the color that reinforced blocks will be tinted with",
+	"gui.securitycraft:blockReinforcer.saveToConfigTooltip": "Save tint changes to the configuration file"
 }

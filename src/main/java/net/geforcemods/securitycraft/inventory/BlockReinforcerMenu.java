@@ -15,7 +15,7 @@ import net.minecraft.world.level.block.Blocks;
 /** Container for the Universal Block Reinforcer/Remover: put a block in the input slot, take the converted block from the result slot (damages the tool). */
 public class BlockReinforcerMenu extends AbstractContainerMenu {
 	private final ItemStack tool;
-	private final boolean reinforcing;
+	public final boolean isLvl1;
 	private final SimpleContainer itemInventory = new SimpleContainer(2);
 	private final Slot inputSlot;
 	private final Slot resultSlot;
@@ -26,7 +26,7 @@ public class BlockReinforcerMenu extends AbstractContainerMenu {
 		ItemStack selected = inventory.getSelected();
 
 		tool = selected.getItem() instanceof BlockReinforcerItem ? selected : inventory.offhand.get(0);
-		reinforcing = tool.getItem() instanceof BlockReinforcerItem item && item.isReinforcing();
+		isLvl1 = tool.is(SCContent.UNIVERSAL_BLOCK_REINFORCER_LVL1);
 
 		for (int i = 0; i < 3; i++)
 			for (int j = 0; j < 9; j++)
@@ -45,11 +45,19 @@ public class BlockReinforcerMenu extends AbstractContainerMenu {
 		if (block == Blocks.AIR)
 			return null;
 
-		return reinforcing ? SCContent.reinforcedCounterpart(block) : SCContent.vanillaCounterpart(block);
+		return isReinforcing() ? SCContent.reinforcedCounterpart(block) : SCContent.vanillaCounterpart(block);
 	}
 
 	public boolean isReinforcing() {
-		return reinforcing;
+		return tool.getItem() instanceof BlockReinforcerItem item && item.isReinforcing(tool);
+	}
+
+	public boolean canToggleMode() {
+		return tool.getItem() instanceof BlockReinforcerItem item && item.canToggleMode(tool);
+	}
+
+	public ItemStack getResult() {
+		return resultSlot.getItem();
 	}
 
 	@Override

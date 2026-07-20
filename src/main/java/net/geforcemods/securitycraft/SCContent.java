@@ -63,6 +63,7 @@ public class SCContent {
 
 	public static final ResourceKey<CreativeModeTab> TAB_KEY = ResourceKey.create(Registries.CREATIVE_MODE_TAB, id("general"));
 
+	public static net.minecraft.core.component.DataComponentType<net.minecraft.util.Unit> UNREINFORCING;
 	public static RecipeSerializer<?> BLOCK_REINFORCING_SERIALIZER;
 	public static RecipeSerializer<?> BLOCK_UNREINFORCING_SERIALIZER;
 	public static net.minecraft.world.inventory.MenuType<net.geforcemods.securitycraft.inventory.BlockReinforcerMenu> BLOCK_REINFORCER_MENU;
@@ -531,6 +532,7 @@ public class SCContent {
 		UNIVERSAL_BLOCK_REINFORCER_LVL3 = registerConverterItem("universal_block_reinforcer_lvl3", 0, true);
 		UNIVERSAL_BLOCK_REMOVER = registerConverterItem("universal_block_remover", 476, false);
 
+		UNREINFORCING = Registry.register(BuiltInRegistries.DATA_COMPONENT_TYPE, id("unreinforcing"), net.minecraft.core.component.DataComponentType.<net.minecraft.util.Unit>builder().persistent(com.mojang.serialization.Codec.unit(net.minecraft.util.Unit.INSTANCE)).networkSynchronized(net.minecraft.network.codec.StreamCodec.unit(net.minecraft.util.Unit.INSTANCE)).build());
 		BLOCK_REINFORCING_SERIALIZER = Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, id("block_reinforcing"), new net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer<>(net.geforcemods.securitycraft.recipe.ReinforcerRecipe.Reinforcing::new));
 		BLOCK_UNREINFORCING_SERIALIZER = Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, id("block_unreinforcing"), new net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer<>(net.geforcemods.securitycraft.recipe.ReinforcerRecipe.Unreinforcing::new));
 		BLOCK_REINFORCER_MENU = Registry.register(BuiltInRegistries.MENU, id("block_reinforcer"), new net.minecraft.world.inventory.MenuType<>(net.geforcemods.securitycraft.inventory.BlockReinforcerMenu::new, net.minecraft.world.flag.FeatureFlags.VANILLA_SET));

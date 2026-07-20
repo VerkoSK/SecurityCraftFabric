@@ -21,6 +21,7 @@ public final class NetworkHandler {
 		PayloadTypeRegistry.playS2C().register(OpenKeypadScreenPayload.TYPE, OpenKeypadScreenPayload.CODEC);
 		PayloadTypeRegistry.playC2S().register(SetPasscodePayload.TYPE, SetPasscodePayload.CODEC);
 		PayloadTypeRegistry.playC2S().register(CheckPasscodePayload.TYPE, CheckPasscodePayload.CODEC);
+		PayloadTypeRegistry.playC2S().register(SyncBlockReinforcerPayload.TYPE, SyncBlockReinforcerPayload.CODEC);
 	}
 
 	/** Registers the server-side handlers for the client -> server passcode packets. */
@@ -39,6 +40,20 @@ public final class NetworkHandler {
 			if (server != null)
 				server.execute(() -> handleCheckPasscode(player, payload));
 		});
+		ServerPlayNetworking.registerGlobalReceiver(SyncBlockReinforcerPayload.TYPE, (payload, context) -> {
+			ServerPlayer player = context.player();
+			MinecraftServer server = player.getServer();
+
+			if (server != null)
+				server.execute(() -> handleSyncBlockReinforcer(player, payload));
+		});
+	}
+
+	private static void handleSyncBlockReinforcer(ServerPlayer player, SyncBlockReinforcerPayload payload) {
+		net.minecraft.world.item.ItemStack held = player.getMainHandItem().getItem() instanceof net.geforcemods.securitycraft.items.BlockReinforcerItem ? player.getMainHandItem() : player.getOffhandItem();
+
+		if (held.getItem() instanceof net.geforcemods.securitycraft.items.BlockReinforcerItem item && item.canToggleMode(held))
+			net.geforcemods.securitycraft.items.BlockReinforcerItem.setReinforcing(held, payload.isReinforcing());
 	}
 
 	public static void openKeypadScreen(ServerPlayer player, BlockPos pos, boolean setup, String ownerName) {
