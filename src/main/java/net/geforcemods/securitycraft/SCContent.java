@@ -55,6 +55,16 @@ public class SCContent {
 	public static net.geforcemods.securitycraft.blocks.LaserBlock LASER_BLOCK;
 	public static net.geforcemods.securitycraft.blocks.LaserFieldBlock LASER_FIELD;
 	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.LaserBlockBlockEntity> LASER_BLOCK_BLOCK_ENTITY;
+	public static BlockEntityType<net.geforcemods.securitycraft.api.OwnableBlockEntity> ABSTRACT_BLOCK_ENTITY;
+	public static net.geforcemods.securitycraft.items.ModuleItem REDSTONE_MODULE;
+	public static net.geforcemods.securitycraft.items.ModuleItem ALLOWLIST_MODULE;
+	public static net.geforcemods.securitycraft.items.ModuleItem DENYLIST_MODULE;
+	public static net.geforcemods.securitycraft.items.ModuleItem HARMING_MODULE;
+	public static net.geforcemods.securitycraft.items.ModuleItem SMART_MODULE;
+	public static net.geforcemods.securitycraft.items.ModuleItem STORAGE_MODULE;
+	public static net.geforcemods.securitycraft.items.ModuleItem DISGUISE_MODULE;
+	public static net.geforcemods.securitycraft.items.ModuleItem SPEED_MODULE;
+	public static net.minecraft.core.component.DataComponentType<net.geforcemods.securitycraft.components.ListModuleData> LIST_MODULE_DATA;
 	public static Item UNIVERSAL_BLOCK_REINFORCER_LVL1;
 	public static Item UNIVERSAL_BLOCK_REINFORCER_LVL2;
 	public static Item UNIVERSAL_BLOCK_REINFORCER_LVL3;
@@ -527,6 +537,16 @@ public class SCContent {
 		for (String[] entry : REINFORCED)
 			registerReinforced(entry[0], entry[1]);
 
+		LIST_MODULE_DATA = Registry.register(BuiltInRegistries.DATA_COMPONENT_TYPE, id("list_module_data"), net.minecraft.core.component.DataComponentType.<net.geforcemods.securitycraft.components.ListModuleData>builder().persistent(net.geforcemods.securitycraft.components.ListModuleData.CODEC).networkSynchronized(net.geforcemods.securitycraft.components.ListModuleData.STREAM_CODEC).cacheEncoding().build());
+		REDSTONE_MODULE = registerModule("redstone_module", net.geforcemods.securitycraft.misc.ModuleType.REDSTONE, false, false, false);
+		ALLOWLIST_MODULE = registerModule("whitelist_module", net.geforcemods.securitycraft.misc.ModuleType.ALLOWLIST, true, true, true);
+		DENYLIST_MODULE = registerModule("blacklist_module", net.geforcemods.securitycraft.misc.ModuleType.DENYLIST, true, true, true);
+		HARMING_MODULE = registerModule("harming_module", net.geforcemods.securitycraft.misc.ModuleType.HARMING, false, false, false);
+		SMART_MODULE = registerModule("smart_module", net.geforcemods.securitycraft.misc.ModuleType.SMART, false, false, false);
+		STORAGE_MODULE = registerModule("storage_module", net.geforcemods.securitycraft.misc.ModuleType.STORAGE, false, false, false);
+		DISGUISE_MODULE = registerModule("disguise_module", net.geforcemods.securitycraft.misc.ModuleType.DISGUISE, false, true, false);
+		SPEED_MODULE = registerModule("speed_module", net.geforcemods.securitycraft.misc.ModuleType.SPEED, false, false, false);
+
 		UNIVERSAL_BLOCK_REINFORCER_LVL1 = registerConverterItem("universal_block_reinforcer_lvl1", 300, true);
 		UNIVERSAL_BLOCK_REINFORCER_LVL2 = registerConverterItem("universal_block_reinforcer_lvl2", 2700, true);
 		UNIVERSAL_BLOCK_REINFORCER_LVL3 = registerConverterItem("universal_block_reinforcer_lvl3", 0, true);
@@ -599,6 +619,14 @@ public class SCContent {
 				.displayItems((params, output) -> {
 					output.accept(KEYPAD);
 					output.accept(LASER_BLOCK);
+					output.accept(REDSTONE_MODULE);
+					output.accept(ALLOWLIST_MODULE);
+					output.accept(DENYLIST_MODULE);
+					output.accept(HARMING_MODULE);
+					output.accept(SMART_MODULE);
+					output.accept(STORAGE_MODULE);
+					output.accept(DISGUISE_MODULE);
+					output.accept(SPEED_MODULE);
 				})
 				.build();
 		Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, id("technical"), technical);
@@ -664,6 +692,22 @@ public class SCContent {
 			return null;
 
 		return REINFORCED_BY_NAME.get("reinforced_" + loc.getPath());
+	}
+
+	private static net.geforcemods.securitycraft.items.ModuleItem registerModule(String name, net.geforcemods.securitycraft.misc.ModuleType type, boolean containsCustomData, boolean canBeCustomized, boolean hasListData) {
+		Item.Properties props = new Item.Properties().stacksTo(1);
+
+		if (hasListData)
+			props.component(LIST_MODULE_DATA, net.geforcemods.securitycraft.components.ListModuleData.EMPTY);
+
+		if (type == net.geforcemods.securitycraft.misc.ModuleType.DISGUISE)
+			props.component(net.minecraft.core.component.DataComponents.CONTAINER, net.minecraft.world.item.component.ItemContainerContents.EMPTY);
+
+		net.geforcemods.securitycraft.items.ModuleItem item = new net.geforcemods.securitycraft.items.ModuleItem(props, type, containsCustomData, canBeCustomized);
+
+		Registry.register(BuiltInRegistries.ITEM, id(name), item);
+		TAB_ITEMS.add(item);
+		return item;
 	}
 
 	private static Item registerConverterItem(String name, int durability, boolean reinforcing) {

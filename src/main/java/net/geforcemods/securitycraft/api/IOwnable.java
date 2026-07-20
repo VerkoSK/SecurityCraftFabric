@@ -14,6 +14,11 @@ public interface IOwnable {
 		return getOwner().isOwner(player);
 	}
 
+	/** Incognito-mask isn't ported, so {@code ignoreMask} has no effect; kept for upstream-signature parity. */
+	default boolean isOwnedBy(Player player, boolean ignoreMask) {
+		return isOwnedBy(player);
+	}
+
 	default boolean isOwnedBy(Entity entity) {
 		return entity instanceof Player player && isOwnedBy(player);
 	}
