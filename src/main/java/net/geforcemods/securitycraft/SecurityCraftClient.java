@@ -23,5 +23,8 @@ public class SecurityCraftClient implements ClientModInitializer {
 
 		for (Block glass : SCContent.GLASS_BLOCKS)
 			BlockRenderLayerMap.INSTANCE.putBlock(glass, RenderType.translucent());
+
+		for (Block cutout : SCContent.CUTOUT_BLOCKS)
+			BlockRenderLayerMap.INSTANCE.putBlock(cutout, RenderType.cutout());
 	}
 }

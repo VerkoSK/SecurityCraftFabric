@@ -458,5 +458,7 @@
 	"block.securitycraft.reinforced_white_stained_glass_pane": "Reinforced White Stained Glass Pane",
 	"block.securitycraft.reinforced_yellow_stained_glass": "Reinforced Yellow Stained Glass",
 	"block.securitycraft.reinforced_yellow_stained_glass_pane": "Reinforced Yellow Stained Glass Pane",
-	"item.securitycraft.universal_block_reinforcer": "Universal Block Reinforcer"
+	"item.securitycraft.universal_block_reinforcer": "Universal Block Reinforcer",
+	"itemGroup.securitycraft.technical": "SecurityCraft: Technical",
+	"itemGroup.securitycraft.decoration": "SecurityCraft: Decoration"
 }
