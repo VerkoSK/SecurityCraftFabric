@@ -33,7 +33,6 @@ public class BlockReinforcerItem extends Item {
 
 		return net.minecraft.world.InteractionResultHolder.sidedSuccess(held, level.isClientSide);
 	}
-
 	@Override
 	public InteractionResult useOn(UseOnContext ctx) {
 		Level level = ctx.getLevel();
