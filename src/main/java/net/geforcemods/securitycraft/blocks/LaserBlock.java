@@ -4,6 +4,7 @@ import org.joml.Vector3f;
 
 import com.mojang.serialization.MapCodec;
 
+import net.geforcemods.securitycraft.ConfigHandler;
 import net.geforcemods.securitycraft.SCContent;
 import net.geforcemods.securitycraft.api.IOwnable;
 import net.geforcemods.securitycraft.blockentities.LaserBlockBlockEntity;
@@ -40,10 +41,6 @@ import net.minecraft.world.phys.BlockHitResult;
 public class LaserBlock extends BaseEntityBlock {
 	public static final MapCodec<LaserBlock> CODEC = simpleCodec(LaserBlock::new);
 	public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
-	/** At most how many blocks away a laser block connects to another laser block. */
-	public static final int RANGE = 5;
-	/** Damage (in half-hearts) inflicted to an entity passing through a beam. */
-	public static final double DAMAGE = 10.0;
 
 	public LaserBlock(BlockBehaviour.Properties properties) {
 		super(properties);
@@ -99,7 +96,7 @@ public class LaserBlock extends BaseEntityBlock {
 		for (Direction facing : Direction.values()) {
 			int boundType = LaserFieldBlock.getBoundType(facing);
 
-			for (int i = 1; i <= RANGE; i++) {
+			for (int i = 1; i <= ConfigHandler.laserBlockRange; i++) {
 				BlockPos offsetPos = pos.relative(facing, i);
 				BlockState offsetState = level.getBlockState(offsetPos);
 				Block offsetBlock = offsetState.getBlock();

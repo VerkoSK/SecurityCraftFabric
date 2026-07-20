@@ -79,7 +79,7 @@ public class LaserFieldBlock extends Block implements SimpleWaterloggedBlock {
 		if (dir == null)
 			return;
 
-		for (int i = 1; i <= LaserBlock.RANGE; i++) {
+		for (int i = 1; i <= net.geforcemods.securitycraft.ConfigHandler.laserBlockRange; i++) {
 			BlockPos offsetPos = pos.relative(dir, i);
 			BlockState offsetState = level.getBlockState(offsetPos);
 			Block offsetBlock = offsetState.getBlock();
@@ -100,7 +100,7 @@ public class LaserFieldBlock extends Block implements SimpleWaterloggedBlock {
 							level.scheduleTick(offsetPos, SCContent.LASER_BLOCK, signalLength);
 					}
 
-					living.hurt(CustomDamageSources.laser(level.registryAccess()), (float) LaserBlock.DAMAGE);
+					living.hurt(CustomDamageSources.laser(level.registryAccess()), (float) net.geforcemods.securitycraft.ConfigHandler.laserDamage);
 				}
 
 				return;

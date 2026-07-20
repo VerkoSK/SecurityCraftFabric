@@ -98,6 +98,17 @@ public class BlockReinforcerMenu extends AbstractContainerMenu {
 		return copy;
 	}
 
+	@Override
+	public boolean canTakeItemForPickAll(ItemStack carried, Slot target) {
+		return target != resultSlot && super.canTakeItemForPickAll(carried, target);
+	}
+
+	@Override
+	public void clicked(int slot, int dragType, net.minecraft.world.inventory.ClickType clickType, Player player) {
+		if (!(slot >= 0 && getSlot(slot).getItem().getItem() instanceof BlockReinforcerItem))
+			super.clicked(slot, dragType, clickType, player);
+	}
+
 	private class InputSlot extends Slot {
 		InputSlot(Container container, int index, int x, int y) {
 			super(container, index, x, y);

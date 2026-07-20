@@ -1,5 +1,7 @@
 package net.geforcemods.securitycraft.api;
 
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.OwnableEntity;
 import net.minecraft.world.entity.player.Player;
 
 /** Anything (block entity) that can be owned by a player. */
@@ -10,5 +12,23 @@ public interface IOwnable {
 
 	default boolean isOwnedBy(Player player) {
 		return getOwner().isOwner(player);
+	}
+
+	default boolean isOwnedBy(Entity entity) {
+		return entity instanceof Player player && isOwnedBy(player);
+	}
+
+	default boolean isOwnedBy(Owner otherOwner) {
+		return getOwner().isTreatedTheSameAs(otherOwner);
+	}
+
+	/** Whether this ownable ignores its owner (owner is not exempt from its effects). */
+	default boolean ignoresOwner() {
+		return false;
+	}
+
+	/** Whether an ownable entity (e.g. a tamed pet) belongs to the same owner as this. */
+	default boolean allowsOwnableEntity(OwnableEntity entity) {
+		return entity.getOwnerUUID() != null && entity.getOwnerUUID().toString().equals(getOwner().getUUID());
 	}
 }
