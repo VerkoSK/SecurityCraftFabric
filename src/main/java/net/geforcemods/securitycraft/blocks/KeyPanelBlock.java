@@ -56,22 +56,18 @@ public class KeyPanelBlock extends AbstractPanelBlock {
 
 		Owner owner = be.getOwner();
 
-		if (!owner.owns()) {
-			be.setOwner(player.getName().getString(), player.getUUID().toString());
-			NetworkHandler.openKeypadScreen(serverPlayer, pos, true, player.getName().getString());
-		}
-		else if (owner.isOwner(player) && player.isShiftKeyDown())
+		if (owner.isOwner(player) && player.isShiftKeyDown())
 			NetworkHandler.openKeypadScreen(serverPlayer, pos, true, owner.getName());
 		else if (!be.hasPasscode()) {
 			if (owner.isOwner(player))
 				NetworkHandler.openKeypadScreen(serverPlayer, pos, true, owner.getName());
 			else
-				player.displayClientMessage(Component.translatable("messages.securitycraft:passcode.notSetUp"), true);
+				player.displayClientMessage(Component.translatable("messages.securitycraft:passcodeProtected.notSetUp"), true);
 		}
 		else
 			NetworkHandler.openKeypadScreen(serverPlayer, pos, false, owner.getName());
 
-		return InteractionResult.CONSUME;
+		return InteractionResult.SUCCESS;
 	}
 
 	@Override

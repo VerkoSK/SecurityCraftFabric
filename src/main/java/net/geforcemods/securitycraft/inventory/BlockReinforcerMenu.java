@@ -62,7 +62,7 @@ public class BlockReinforcerMenu extends AbstractContainerMenu {
 
 	@Override
 	public boolean stillValid(Player player) {
-		return !tool.isEmpty() && (player.getMainHandItem() == tool || player.getOffhandItem() == tool);
+		return !net.geforcemods.securitycraft.util.PlayerUtils.getItemStackFromAnyHand(player, tool.getItem()).isEmpty();
 	}
 
 	@Override
@@ -93,6 +93,11 @@ public class BlockReinforcerMenu extends AbstractContainerMenu {
 				slot.setByPlayer(ItemStack.EMPTY);
 			else
 				slot.setChanged();
+
+			if (stack.getCount() == copy.getCount())
+				return ItemStack.EMPTY;
+
+			slot.onTake(player, copy.copyWithCount(copy.getCount() - stack.getCount()));
 		}
 
 		return copy;
@@ -137,7 +142,7 @@ public class BlockReinforcerMenu extends AbstractContainerMenu {
 			else {
 				int count = tool.isDamageableItem() ? Math.min(stack.getCount(), tool.getMaxDamage() - tool.getDamageValue()) : stack.getCount();
 
-				resultSlot.set(new ItemStack(out, Math.max(1, count)));
+				resultSlot.set(new ItemStack(out, count));
 			}
 		}
 	}
@@ -156,19 +161,7 @@ public class BlockReinforcerMenu extends AbstractContainerMenu {
 		public void onTake(Player player, ItemStack taken) {
 			super.onTake(player, taken);
 			inputSlot.getItem().shrink(taken.getCount());
-
-			if (tool.isDamageableItem()) {
-				for (int i = 0; i < taken.getCount(); i++) {
-					int dmg = tool.getDamageValue() + 1;
-
-					if (dmg >= tool.getMaxDamage()) {
-						tool.setCount(0);
-						break;
-					}
-
-					tool.setDamageValue(dmg);
-				}
-			}
+			tool.hurtAndBreak(taken.getCount(), player, player.getMainHandItem() == tool ? net.minecraft.world.entity.EquipmentSlot.MAINHAND : net.minecraft.world.entity.EquipmentSlot.OFFHAND);
 
 			if (tool.isEmpty()) {
 				if (player instanceof net.minecraft.server.level.ServerPlayer serverPlayer)

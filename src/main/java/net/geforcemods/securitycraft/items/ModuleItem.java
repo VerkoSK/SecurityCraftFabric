@@ -51,7 +51,7 @@ public class ModuleItem extends Item {
 		}
 		else if (canBeCustomized() && module == ModuleType.DISGUISE) {
 			if (!level.isClientSide)
-				player.openMenu(new net.minecraft.world.SimpleMenuProvider((windowId, inv, p) -> new net.geforcemods.securitycraft.inventory.DisguiseModuleMenu(windowId, inv, new net.geforcemods.securitycraft.inventory.ModuleItemContainer(stack)), stack.getHoverName()));
+				player.openMenu(new net.minecraft.world.SimpleMenuProvider((windowId, inv, p) -> new net.geforcemods.securitycraft.inventory.DisguiseModuleMenu(windowId, inv, new net.geforcemods.securitycraft.inventory.ModuleItemContainer(stack)), Component.translatable(getDescriptionId())));
 
 			return net.minecraft.world.InteractionResultHolder.consume(stack);
 		}

@@ -52,34 +52,44 @@ public class KeypadBlock extends Block implements EntityBlock {
 
 		Owner owner = be.getOwner();
 
-		if (!owner.owns()) {
-			// First interactor claims ownership and is prompted to set the code.
-			be.setOwner(player.getName().getString(), player.getUUID().toString());
-			NetworkHandler.openKeypadScreen(serverPlayer, pos, true, player.getName().getString());
-		}
-		else if (owner.isOwner(player) && player.isShiftKeyDown()) {
+		if (owner.isOwner(player) && player.isShiftKeyDown())
 			// Owner reprograms the code.
 			NetworkHandler.openKeypadScreen(serverPlayer, pos, true, owner.getName());
-		}
 		else if (!be.hasPasscode()) {
 			if (owner.isOwner(player))
 				NetworkHandler.openKeypadScreen(serverPlayer, pos, true, owner.getName());
 			else
-				player.displayClientMessage(Component.translatable("messages.securitycraft:passcode.notSetUp"), true);
+				player.displayClientMessage(Component.translatable("messages.securitycraft:passcodeProtected.notSetUp"), true);
 		}
 		else
 			NetworkHandler.openKeypadScreen(serverPlayer, pos, false, owner.getName());
 
-		return InteractionResult.CONSUME;
+		return InteractionResult.SUCCESS;
+	}
+
+	@Override
+	public void setPlacedBy(Level level, BlockPos pos, BlockState state, net.minecraft.world.entity.LivingEntity placer, net.minecraft.world.item.ItemStack stack) {
+		super.setPlacedBy(level, pos, state, placer, stack);
+
+		if (!level.isClientSide && placer instanceof Player player && level.getBlockEntity(pos) instanceof KeypadBlockEntity be)
+			be.setOwner(player.getName().getString(), player.getUUID().toString());
 	}
 
 	@Override
 	protected void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
 		// End of the redstone pulse.
 		if (state.getValue(POWERED)) {
-			level.setBlock(pos, state.setValue(POWERED, false), 3);
-			level.updateNeighborsAt(pos, this);
+			level.setBlockAndUpdate(pos, state.setValue(POWERED, false));
+			net.geforcemods.securitycraft.util.BlockUtils.updateIndirectNeighbors(level, pos, this);
 		}
+	}
+
+	@Override
+	protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
+		if (!state.is(newState.getBlock()) && state.getValue(POWERED))
+			net.geforcemods.securitycraft.util.BlockUtils.updateIndirectNeighbors(level, pos, this);
+
+		super.onRemove(state, level, pos, newState, isMoving);
 	}
 
 	@Override

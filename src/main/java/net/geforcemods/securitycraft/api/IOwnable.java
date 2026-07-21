@@ -11,8 +11,16 @@ public interface IOwnable {
 	void setOwner(String name, String uuid);
 
 	default boolean isOwnedBy(Player player) {
-		return getOwner().isOwner(player);
+		return player != null && getOwner().owns() && getOwner().isTreatedTheSameAs(new Owner(player));
 	}
+
+	/** @return true if the owner should be invalidated when changed by the Universal Owner Changer (not ported). */
+	default boolean needsValidation() {
+		return false;
+	}
+
+	/** Called when this is validated. */
+	default void onValidate() {}
 
 	/** Incognito-mask isn't ported, so {@code ignoreMask} has no effect; kept for upstream-signature parity. */
 	default boolean isOwnedBy(Player player, boolean ignoreMask) {

@@ -48,8 +48,8 @@ public class KeypadBlockEntity extends OwnableBlockEntity implements net.geforce
 		BlockState state = getBlockState();
 
 		if (state.getBlock() instanceof KeypadBlock && !state.getValue(KeypadBlock.POWERED)) {
-			level.setBlock(worldPosition, state.setValue(KeypadBlock.POWERED, true), 3);
-			level.updateNeighborsAt(worldPosition, state.getBlock());
+			level.setBlockAndUpdate(worldPosition, state.setValue(KeypadBlock.POWERED, true));
+			net.geforcemods.securitycraft.util.BlockUtils.updateIndirectNeighbors(level, worldPosition, state.getBlock());
 			level.scheduleTick(worldPosition, state.getBlock(), SIGNAL_LENGTH);
 		}
 	}

@@ -13,6 +13,7 @@ public class Owner {
 
 	private String name;
 	private String uuid;
+	private boolean validated = true;
 
 	public Owner() {
 		this.name = DEFAULT_OWNER_NAME;
@@ -21,6 +22,11 @@ public class Owner {
 
 	public Owner(String name, String uuid) {
 		set(name, uuid);
+	}
+
+	public Owner(String name, String uuid, boolean validated) {
+		set(name, uuid);
+		this.validated = validated;
 	}
 
 	public Owner(Player player) {
@@ -84,20 +90,67 @@ public class Owner {
 	}
 
 	public Owner copy() {
-		return new Owner(name, uuid);
+		return new Owner(name, uuid, validated);
+	}
+
+	public boolean isValidated() {
+		return validated;
+	}
+
+	public void setValidated(boolean validated) {
+		this.validated = validated;
+	}
+
+	/** @return true if this owner has no player data attached (the fallback owner object). */
+	public boolean isDefaultOwner() {
+		return equals(new Owner());
 	}
 
 	public void save(CompoundTag tag) {
+		save(tag, false);
+	}
+
+	public void save(CompoundTag tag, boolean saveValidationStatus) {
 		tag.putString(DEFAULT_OWNER_NAME, name);
 		tag.putString(DEFAULT_OWNER_UUID, uuid);
+
+		if (saveValidationStatus)
+			tag.putBoolean("ownerValidated", validated);
+	}
+
+	/** Reads owner, ownerUUID and ownerValidated independently (each optional). */
+	public void load(CompoundTag tag) {
+		if (tag.contains(DEFAULT_OWNER_NAME))
+			name = tag.getString(DEFAULT_OWNER_NAME);
+
+		if (tag.contains(DEFAULT_OWNER_UUID))
+			uuid = tag.getString(DEFAULT_OWNER_UUID);
+
+		if (tag.contains("ownerValidated"))
+			validated = tag.getBoolean("ownerValidated");
 	}
 
 	public static Owner fromCompound(CompoundTag tag) {
 		Owner owner = new Owner();
 
-		if (tag != null && tag.contains(DEFAULT_OWNER_NAME) && tag.contains(DEFAULT_OWNER_UUID))
-			owner.set(tag.getString(DEFAULT_OWNER_NAME), tag.getString(DEFAULT_OWNER_UUID));
+		if (tag != null)
+			owner.load(tag);
 
 		return owner;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return obj instanceof Owner owner && getName().equals(owner.getName()) && getUUID().equals(owner.getUUID());
+	}
+
+	@Override
+	public int hashCode() {
+		return java.util.Objects.hash(name, uuid);
+	}
+
+	@Override
+	public String toString() {
+		return "Name: " + name + "  UUID: " + uuid;
 	}
 }

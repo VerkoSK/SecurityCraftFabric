@@ -61,7 +61,7 @@ public class BlockReinforcerItem extends Item {
 		if (level instanceof net.minecraft.server.level.ServerLevel)
 			player.openMenu(new net.minecraft.world.SimpleMenuProvider((windowId, inv, p) -> new net.geforcemods.securitycraft.inventory.BlockReinforcerMenu(windowId, inv), held.getHoverName()));
 
-		return net.minecraft.world.InteractionResultHolder.success(held);
+		return net.minecraft.world.InteractionResultHolder.consume(held);
 	}
 
 	@Override
@@ -70,22 +70,15 @@ public class BlockReinforcerItem extends Item {
 		BlockPos pos = ctx.getClickedPos();
 		BlockState state = level.getBlockState(pos);
 		ItemStack stack = ctx.getItemInHand();
+		net.minecraft.world.entity.player.Player player = ctx.getPlayer();
 		Block target = isReinforcing(stack) ? SCContent.reinforcedCounterpart(state.getBlock()) : SCContent.vanillaCounterpart(state.getBlock());
 
-		if (target == null)
+		if (target == null || player == null || player.isCreative() || !level.mayInteract(player, pos))
 			return InteractionResult.PASS;
 
 		if (level instanceof ServerLevel) {
 			level.setBlockAndUpdate(pos, target.withPropertiesOf(state));
-
-			if (stack.getMaxDamage() > 0) {
-				int dmg = stack.getDamageValue() + 1;
-
-				if (dmg >= stack.getMaxDamage())
-					stack.shrink(1);
-				else
-					stack.setDamageValue(dmg);
-			}
+			stack.hurtAndBreak(1, player, net.minecraft.world.entity.LivingEntity.getSlotForHand(ctx.getHand()));
 		}
 
 		return InteractionResult.SUCCESS;
