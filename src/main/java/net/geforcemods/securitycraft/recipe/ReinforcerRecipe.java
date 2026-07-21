@@ -25,7 +25,7 @@ public final class ReinforcerRecipe {
 
 		protected abstract Block target(Block input);
 
-		protected abstract boolean isCorrectTool(BlockReinforcerItem item);
+		protected abstract boolean isCorrectTool(BlockReinforcerItem item, ItemStack stack);
 
 		@Override
 		public boolean matches(CraftingInput inv, Level level) {
@@ -43,7 +43,7 @@ public final class ReinforcerRecipe {
 					hasBlock = true;
 				}
 				else if (item instanceof BlockReinforcerItem reinforcer) {
-					if (hasTool || !isCorrectTool(reinforcer))
+					if (hasTool || !isCorrectTool(reinforcer, stack))
 						return false;
 
 					hasTool = true;
@@ -112,8 +112,8 @@ public final class ReinforcerRecipe {
 		}
 
 		@Override
-		protected boolean isCorrectTool(BlockReinforcerItem item) {
-			return item.isReinforcing();
+		protected boolean isCorrectTool(BlockReinforcerItem item, ItemStack stack) {
+			return item.isReinforcing(stack);
 		}
 
 		@Override
@@ -133,8 +133,8 @@ public final class ReinforcerRecipe {
 		}
 
 		@Override
-		protected boolean isCorrectTool(BlockReinforcerItem item) {
-			return !item.isReinforcing();
+		protected boolean isCorrectTool(BlockReinforcerItem item, ItemStack stack) {
+			return !item.isReinforcing(stack);
 		}
 
 		@Override

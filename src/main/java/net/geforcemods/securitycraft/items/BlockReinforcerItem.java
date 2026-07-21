@@ -58,10 +58,25 @@ public class BlockReinforcerItem extends Item {
 	public net.minecraft.world.InteractionResultHolder<ItemStack> use(Level level, net.minecraft.world.entity.player.Player player, net.minecraft.world.InteractionHand hand) {
 		ItemStack held = player.getItemInHand(hand);
 
-		if (level instanceof net.minecraft.server.level.ServerLevel)
+		if (level instanceof net.minecraft.server.level.ServerLevel) {
+			maybeRemoveMending(level.registryAccess(), held);
 			player.openMenu(new net.minecraft.world.SimpleMenuProvider((windowId, inv, p) -> new net.geforcemods.securitycraft.inventory.BlockReinforcerMenu(windowId, inv), held.getHoverName()));
+		}
 
 		return net.minecraft.world.InteractionResultHolder.consume(held);
+	}
+
+	/** Strips any Mending enchantment so the consumable reinforcer cannot self-repair (1:1 with upstream). */
+	public static void maybeRemoveMending(net.minecraft.core.HolderLookup.Provider lookupProvider, ItemStack stack) {
+		net.minecraft.world.item.enchantment.ItemEnchantments enchantments = stack.get(net.minecraft.core.component.DataComponents.ENCHANTMENTS);
+		net.minecraft.core.Holder<net.minecraft.world.item.enchantment.Enchantment> mending = lookupProvider.lookup(net.minecraft.core.registries.Registries.ENCHANTMENT).get().getOrThrow(net.minecraft.world.item.enchantment.Enchantments.MENDING);
+
+		if (enchantments != null && enchantments.getLevel(mending) > 0) {
+			net.minecraft.world.item.enchantment.ItemEnchantments.Mutable mutable = new net.minecraft.world.item.enchantment.ItemEnchantments.Mutable(enchantments);
+
+			mutable.set(mending, 0);
+			stack.set(net.minecraft.core.component.DataComponents.ENCHANTMENTS, mutable.toImmutable());
+		}
 	}
 
 	@Override
