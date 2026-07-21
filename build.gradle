@@ -22,6 +22,7 @@ java {
 
 repositories {
 	maven { url = 'https://maven.fabricmc.net/' }
+	maven { url = 'https://maven.blamejared.com' } // JEI
 	mavenCentral()
 }
 
@@ -31,6 +32,8 @@ dependencies {
 	mappings loom.officialMojangMappings()
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+	// JEI (soft dependency at runtime): dev-time compile + runtime so the keypad info page shows. Not a hard depends in fabric.mod.json.
+	modImplementation "mezz.jei:jei-${project.minecraft_version}-fabric:${project.jei_version}"
 }
 
 processResources {
