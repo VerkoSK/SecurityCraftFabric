@@ -137,7 +137,7 @@ public class BlockReinforcerScreen extends AbstractContainerScreen<BlockReinforc
 
 	@Override
 	protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
-		guiGraphics.drawString(font, title, titleLabelX, titleLabelY, 0x404040, false);
+		guiGraphics.drawString(font, title, (imageWidth - font.width(title)) / 2, 5, 0x404040, false);
 		guiGraphics.drawString(font, playerInventoryTitle, inventoryLabelX, inventoryLabelY, 0x404040, false);
 
 		if (!menu.getResult().isEmpty())
@@ -215,6 +215,6 @@ public class BlockReinforcerScreen extends AbstractContainerScreen<BlockReinforc
 
 	@Override
 	public List<Rect2i> getExtraAreas() {
-		return tintColorChooser != null && !tintColorChooser.disabled ? tintColorChooser.getGuiExtraAreas() : List.of();
+		return tintColorChooser != null ? tintColorChooser.getGuiExtraAreas() : List.of();
 	}
 }

@@ -45,7 +45,23 @@ public class BlockReinforcerMenu extends AbstractContainerMenu {
 		if (block == Blocks.AIR)
 			return null;
 
-		return isReinforcing() ? SCContent.reinforcedCounterpart(block) : SCContent.vanillaCounterpart(block);
+		Block reinforced = SCContent.reinforcedCounterpart(block);
+		Block vanilla = SCContent.vanillaCounterpart(block);
+		boolean toolReinforces = tool.getItem() instanceof BlockReinforcerItem item && item.isReinforcing();
+
+		if (toolReinforces) {
+			// A reinforcer: reinforce a vanilla block, or (non-Lvl1) unreinforce a reinforced block. Independent of the mode toggle.
+			if (reinforced != null)
+				return reinforced;
+
+			if (!isLvl1 && vanilla != null)
+				return vanilla;
+
+			return null;
+		}
+		else
+			// A remover: only unreinforce.
+			return vanilla;
 	}
 
 	public boolean isReinforcing() {
