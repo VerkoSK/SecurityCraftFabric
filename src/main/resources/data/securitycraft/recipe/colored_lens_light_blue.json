@@ -1,0 +1,18 @@
+{
+	"type": "minecraft:crafting_shapeless",
+	"category": "misc",
+	"ingredients": [
+		"securitycraft:lens",
+		"minecraft:light_blue_dye"
+	],
+	"result": {
+		"id": "securitycraft:lens",
+		"count": 1,
+		"components": {
+			"minecraft:dyed_color": {
+				"rgb": 3847130,
+				"show_in_tooltip": true
+			}
+		}
+	}
+}
