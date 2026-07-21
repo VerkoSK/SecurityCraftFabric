@@ -19,6 +19,8 @@ public final class ConfigHandler {
 	public static int laserBlockRange = 5;
 	/** Damage inflicted to an entity passing through a laser with an installed harming module. (upstream default 10.0) */
 	public static double laserDamage = 10.0;
+	/** Damage a passcode-protected block deals to the player on an incorrect code, if a harming module is installed. (upstream default 4 = two hearts) */
+	public static int incorrectPasscodeDamage = 4;
 
 	private ConfigHandler() {}
 
@@ -32,6 +34,9 @@ public final class ConfigHandler {
 
 				if (json.has("laser_damage"))
 					laserDamage = Math.max(0.0, json.get("laser_damage").getAsDouble());
+
+				if (json.has("incorrectPasscodeDamage"))
+					incorrectPasscodeDamage = Math.max(1, json.get("incorrectPasscodeDamage").getAsInt());
 			}
 			else
 				save();
@@ -46,6 +51,7 @@ public final class ConfigHandler {
 
 		json.addProperty("laserBlockRange", laserBlockRange);
 		json.addProperty("laser_damage", laserDamage);
+		json.addProperty("incorrectPasscodeDamage", incorrectPasscodeDamage);
 
 		try {
 			Files.writeString(FILE, new GsonBuilder().setPrettyPrinting().create().toJson(json));

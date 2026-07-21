@@ -11,7 +11,6 @@ import net.minecraft.server.level.ServerPlayer;
 
 /** Registers SecurityCraft's payload types and the server-side receivers. */
 public final class NetworkHandler {
-	private static final int MAX_PASSCODE_LENGTH = 8;
 	private static final double REACH = 8.0;
 
 	private NetworkHandler() {}
@@ -115,18 +114,20 @@ public final class NetworkHandler {
 		if (!validPasscode(payload.passcode()) || !inReach(player, payload.pos()))
 			return;
 
-		if (player.level().getBlockEntity(payload.pos()) instanceof net.geforcemods.securitycraft.api.PasscodeProtected keypad && keypad.hasPasscode()) {
+		if (player.level().getBlockEntity(payload.pos()) instanceof net.geforcemods.securitycraft.api.PasscodeProtected keypad && keypad.hasPasscode() && !keypad.isOnCooldown()) {
 			if (keypad.checkPasscode(payload.passcode())) {
 				keypad.activate((ServerLevel) player.level());
 				player.displayClientMessage(Component.translatable("messages.securitycraft:passcode.correct"), true);
 			}
-			else
+			else {
+				keypad.onIncorrectPasscodeEntered(player);
 				player.displayClientMessage(Component.translatable("messages.securitycraft:passcode.incorrect"), true);
+			}
 		}
 	}
 
 	private static boolean validPasscode(String passcode) {
-		return passcode != null && !passcode.isBlank() && passcode.length() <= MAX_PASSCODE_LENGTH;
+		return passcode != null && !passcode.isBlank();
 	}
 
 	private static boolean inReach(ServerPlayer player, BlockPos pos) {

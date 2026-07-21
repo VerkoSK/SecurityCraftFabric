@@ -3,6 +3,7 @@
 	"id": "securitycraft",
 	"version": "${version}",
 	"name": "SecurityCraft",
+	"accessWidener": "securitycraft.accesswidener",
 	"description": "Adds a load of things to keep your house safe with and defend yourself from attackers. Fabric port of the original NeoForge/Forge mod by the SecurityCraft team.",
 	"authors": [
 		"Geforce",
