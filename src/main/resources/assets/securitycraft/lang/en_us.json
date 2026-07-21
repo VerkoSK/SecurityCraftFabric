@@ -197,8 +197,6 @@
 	"block.securitycraft.reinforced_spruce_log": "Reinforced Spruce Log",
 	"block.securitycraft.reinforced_spruce_planks": "Reinforced Spruce Planks",
 	"block.securitycraft.reinforced_spruce_wood": "Reinforced Spruce Wood",
-	"block.securitycraft.reinforced_stone_polished_andesite": "Reinforced Stone Polished Andesite",
-	"block.securitycraft.reinforced_stone_polished_granite": "Reinforced Stone Polished Granite",
 	"block.securitycraft.reinforced_stripped_acacia_log": "Reinforced Stripped Acacia Log",
 	"block.securitycraft.reinforced_stripped_acacia_wood": "Reinforced Stripped Acacia Wood",
 	"block.securitycraft.reinforced_stripped_bamboo_block": "Reinforced Stripped Block of Bamboo",
@@ -463,8 +461,6 @@
 	"item.securitycraft.universal_block_reinforcer_lvl2": "Universal Block Reinforcer (LvL2)",
 	"item.securitycraft.universal_block_reinforcer_lvl3": "Universal Block Reinforcer (LvL3)",
 	"item.securitycraft.universal_block_remover": "Universal Block Remover",
-	"gui.securitycraft:reinforcer.reinforcing": "Mode: Reinforcing",
-	"gui.securitycraft:reinforcer.removing": "Mode: Removing",
 	"block.securitycraft.laser_block": "Laser Block",
 	"block.securitycraft.laser": "Laser",
 	"messages.securitycraft:laser.enabled": "Laser enabled",
@@ -514,7 +510,7 @@
 	"gui.securitycraft:laser.smartModule": "Click the checkboxes below to configure on which sides the laser should be active.",
 	"gui.securitycraft:laser.noSmartModule": "You need a Smart Module to control which side is emitting a laser.",
 	"gui.securitycraft:scManual.disabled": "Disabled",
-	"messages.securitycraft:laser.sync_failed": "Synchronization with the Laser Block at %s failed, because \\\"%s\\\" does not match. Remove the module from either block and try again.",
+	"messages.securitycraft:laser.sync_failed": "Synchronization with the Laser Block at %s failed, because \"%s\" does not match. Remove the module from either block and try again.",
 	"messages.securitycraft:formattedCoordinates": "X: %1$s Y: %2$s Z: %3$s",
 	"gui.securitycraft:editModule": "Edit Module",
 	"gui.securitycraft:editModule.add_player": "Add Player",
@@ -524,6 +520,6 @@
 	"block.securitycraft.key_panel": "Key Panel",
 	"messages.securitycraft:passcodeProtected.notSetUp": "There is no passcode set yet. You cannot interact with this.",
 	"death.attack.securitycraft.laser.player": "%1$s was sliced to death by a laser whilst fighting %2$s",
-	"messages.securitycraft:module.onAllowlist": "You are on the allowlist, so this block let you through.",
-	"messages.securitycraft:module.onDenylist": "You are on the denylist, so this block did not activate."
+	"messages.securitycraft:module.onAllowlist": "You are added to the allowlist.",
+	"messages.securitycraft:module.onDenylist": "You are added to the denylist."
 }
