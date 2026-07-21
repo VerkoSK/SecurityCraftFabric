@@ -56,6 +56,8 @@ public class SCContent {
 	public static net.geforcemods.securitycraft.blocks.LaserFieldBlock LASER_FIELD;
 	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.LaserBlockBlockEntity> LASER_BLOCK_BLOCK_ENTITY;
 	public static BlockEntityType<net.geforcemods.securitycraft.api.OwnableBlockEntity> ABSTRACT_BLOCK_ENTITY;
+	public static net.geforcemods.securitycraft.blocks.KeyPanelBlock KEY_PANEL;
+	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.KeyPanelBlockEntity> KEY_PANEL_BLOCK_ENTITY;
 	public static net.geforcemods.securitycraft.items.ModuleItem REDSTONE_MODULE;
 	public static net.geforcemods.securitycraft.items.ModuleItem ALLOWLIST_MODULE;
 	public static net.geforcemods.securitycraft.items.ModuleItem DENYLIST_MODULE;
@@ -536,6 +538,7 @@ public class SCContent {
 		KEYPAD = register("keypad", new KeypadBlock(BlockBehaviour.Properties.of().strength(2.0F, 12000.0F).requiresCorrectToolForDrops()));
 		LASER_BLOCK = (net.geforcemods.securitycraft.blocks.LaserBlock) register("laser_block", new net.geforcemods.securitycraft.blocks.LaserBlock(BlockBehaviour.Properties.of().strength(3.5F).requiresCorrectToolForDrops().sound(SoundType.METAL)));
 		LASER_FIELD = (net.geforcemods.securitycraft.blocks.LaserFieldBlock) registerBlockNoItem("laser", new net.geforcemods.securitycraft.blocks.LaserFieldBlock(BlockBehaviour.Properties.of().mapColor(net.minecraft.world.level.material.MapColor.NONE).strength(-1.0F).noLootTable().noOcclusion()));
+		KEY_PANEL = (net.geforcemods.securitycraft.blocks.KeyPanelBlock) register("key_panel", new net.geforcemods.securitycraft.blocks.KeyPanelBlock(BlockBehaviour.Properties.of().strength(3.5F).sound(SoundType.METAL).noOcclusion()));
 
 		for (String[] entry : REINFORCED)
 			registerReinforced(entry[0], entry[1]);
@@ -564,6 +567,7 @@ public class SCContent {
 		KEYPAD_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("keypad"), FabricBlockEntityTypeBuilder.create(KeypadBlockEntity::new, KEYPAD).build());
 		LASER_BLOCK_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("laser_block"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.LaserBlockBlockEntity::new, LASER_BLOCK).build());
 		ABSTRACT_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("abstract"), FabricBlockEntityTypeBuilder.create((pos, state) -> new net.geforcemods.securitycraft.api.OwnableBlockEntity(ABSTRACT_BLOCK_ENTITY, pos, state), LASER_FIELD).build());
+		KEY_PANEL_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("key_panel"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.KeyPanelBlockEntity::new, KEY_PANEL).build());
 		LASER_BLOCK_MENU = Registry.register(BuiltInRegistries.MENU, id("laser_block"), new net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType<>((syncId, inv, data) -> new net.geforcemods.securitycraft.inventory.LaserBlockMenu(syncId, inv.player.level(), data.pos(), data.sideConfig(), inv), net.geforcemods.securitycraft.inventory.LaserBlockData.STREAM_CODEC));
 		DISGUISE_MODULE_MENU = Registry.register(BuiltInRegistries.MENU, id("disguise_module"), new net.minecraft.world.inventory.MenuType<>(net.geforcemods.securitycraft.inventory.DisguiseModuleMenu::new, net.minecraft.world.flag.FeatureFlags.VANILLA_SET));
 		registerCreativeTab();
@@ -625,6 +629,7 @@ public class SCContent {
 				.title(Component.translatable("itemGroup.securitycraft.technical"))
 				.displayItems((params, output) -> {
 					output.accept(KEYPAD);
+					output.accept(KEY_PANEL);
 					output.accept(LASER_BLOCK);
 					output.accept(REDSTONE_MODULE);
 					output.accept(ALLOWLIST_MODULE);

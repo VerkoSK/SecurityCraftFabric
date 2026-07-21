@@ -105,7 +105,7 @@ public final class NetworkHandler {
 		if (!validPasscode(payload.passcode()) || !inReach(player, payload.pos()))
 			return;
 
-		if (player.level().getBlockEntity(payload.pos()) instanceof KeypadBlockEntity keypad && keypad.getOwner().isOwner(player)) {
+		if (player.level().getBlockEntity(payload.pos()) instanceof net.geforcemods.securitycraft.api.PasscodeProtected keypad && keypad.getOwner().isOwner(player)) {
 			keypad.setPasscode(payload.passcode());
 			player.displayClientMessage(Component.translatable("messages.securitycraft:passcode.set"), true);
 		}
@@ -115,7 +115,7 @@ public final class NetworkHandler {
 		if (!validPasscode(payload.passcode()) || !inReach(player, payload.pos()))
 			return;
 
-		if (player.level().getBlockEntity(payload.pos()) instanceof KeypadBlockEntity keypad && keypad.hasPasscode()) {
+		if (player.level().getBlockEntity(payload.pos()) instanceof net.geforcemods.securitycraft.api.PasscodeProtected keypad && keypad.hasPasscode()) {
 			if (keypad.checkPasscode(payload.passcode())) {
 				keypad.activate((ServerLevel) player.level());
 				player.displayClientMessage(Component.translatable("messages.securitycraft:passcode.correct"), true);

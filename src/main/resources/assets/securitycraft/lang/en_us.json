@@ -519,5 +519,6 @@
 	"gui.securitycraft:editModule.add_player": "Add",
 	"gui.securitycraft:editModule.remove_player": "Remove",
 	"gui.securitycraft:editModule.clear": "Clear",
-	"gui.securitycraft:editModule.affect_everyone": "Everyone"
+	"gui.securitycraft:editModule.affect_everyone": "Everyone",
+	"block.securitycraft.key_panel": "Key Panel"
 }
