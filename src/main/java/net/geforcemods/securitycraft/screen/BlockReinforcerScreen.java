@@ -1,0 +1,221 @@
+package net.geforcemods.securitycraft.screen;
+
+import java.util.List;
+
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.geforcemods.securitycraft.SCClientConfig;
+import net.geforcemods.securitycraft.SCContent;
+import net.geforcemods.securitycraft.inventory.BlockReinforcerMenu;
+import net.geforcemods.securitycraft.misc.TintMode;
+import net.geforcemods.securitycraft.network.SyncBlockReinforcerPayload;
+import net.geforcemods.securitycraft.screen.components.ActiveBasedTextureButton;
+import net.geforcemods.securitycraft.screen.components.ColorChooser;
+import net.geforcemods.securitycraft.screen.components.ColorChooserButton;
+import net.geforcemods.securitycraft.screen.components.ToggleComponentButton;
+import net.geforcemods.securitycraft.util.ClientUtils;
+import net.geforcemods.securitycraft.util.IHasExtraAreas;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.renderer.Rect2i;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Inventory;
+
+/** Screen for the Universal Block Reinforcer: mode toggle + tint mode/colour/save row, matching the original SecurityCraft GUI. */
+public class BlockReinforcerScreen extends AbstractContainerScreen<BlockReinforcerMenu> implements IHasExtraAreas {
+	private static final ResourceLocation TEXTURE = SCContent.id("textures/gui/container/universal_block_reinforcer.png");
+	private static final ResourceLocation SAVE_SPRITE = SCContent.id("widget/save");
+	private static final ResourceLocation SAVE_INACTIVE_SPRITE = SCContent.id("widget/save_inactive");
+	private final Component output = Component.translatable("gui.securitycraft:blockReinforcer.output");
+	private final Component modeText = Component.translatable("gui.securitycraft:blockReinforcer.mode");
+	private final Component tintText = Component.translatable("gui.securitycraft:blockReinforcer.tint");
+	private ToggleComponentButton reinforcingModeButton;
+	private ToggleComponentButton tintModeButton;
+	private ColorChooser tintColorChooser;
+	private ColorChooserButton colorChooserButton;
+	private ActiveBasedTextureButton saveToConfigButton;
+	private int oldTintColor;
+	private TintMode oldTintMode;
+
+	public BlockReinforcerScreen(BlockReinforcerMenu menu, Inventory inv, Component title) {
+		super(menu, inv, title);
+		imageHeight = 186;
+		inventoryLabelY = imageHeight - 94;
+	}
+
+	@Override
+	protected void init() {
+		super.init();
+
+		int tintRowY = topPos + 67;
+
+		oldTintColor = TintMode.color();
+		oldTintMode = TintMode.mode();
+		reinforcingModeButton = addRenderableWidget(new ToggleComponentButton(leftPos + 89, topPos + 42, 80, 20, this::updateReinforcingModeButtonText, menu.isReinforcing() ? 0 : 1, 2, this::reinforcingModeButtonClicked));
+		tintModeButton = addRenderableWidget(new ToggleComponentButton(leftPos + 44, tintRowY, 75, 20, i -> TintMode.values()[i].translate(), oldTintMode.ordinal(), TintMode.values().length, this::tintModeButtonClicked));
+		tintColorChooser = new ColorChooser(Component.empty(), leftPos + 124, tintRowY, oldTintColor, this::colorChanged);
+		colorChooserButton = addRenderableWidget(new ColorChooserButton(leftPos + 124, tintRowY, 20, 20, tintColorChooser, this::onColorChooserToggled));
+		saveToConfigButton = addRenderableWidget(new ActiveBasedTextureButton(leftPos + 149, tintRowY, 20, 20, SAVE_SPRITE, SAVE_INACTIVE_SPRITE, 2, 2, 16, 16, this::saveButtonClicked));
+
+		updateReinforcingTooltip(menu.isReinforcing());
+		updateTintTooltip(TintMode.mode());
+		colorChooserButton.setTooltip(Tooltip.create(Component.translatable("gui.securitycraft:blockReinforcer.chooseTintColorTooltip")));
+		updateSaveButton();
+
+		if (!menu.canToggleMode())
+			reinforcingModeButton.active = false;
+	}
+
+	private void onColorChooserToggled() {
+		if (!tintColorChooser.disabled)
+			tintColorChooser.init(minecraft, width, height);
+	}
+
+	private Component updateReinforcingModeButtonText(int index) {
+		return Component.translatable(index == 1 ? "gui.securitycraft:blockReinforcer.unreinforcing" : "gui.securitycraft:blockReinforcer.reinforcing");
+	}
+
+	private void reinforcingModeButtonClicked(Button button) {
+		if (button instanceof ToggleComponentButton toggleButton) {
+			boolean isReinforcing = toggleButton.getCurrentIndex() == 0;
+
+			updateReinforcingTooltip(isReinforcing);
+			ClientPlayNetworking.send(new SyncBlockReinforcerPayload(isReinforcing));
+		}
+	}
+
+	private void tintModeButtonClicked(Button button) {
+		if (button instanceof ToggleComponentButton toggleButton) {
+			TintMode newMode = TintMode.values()[toggleButton.getCurrentIndex()];
+
+			TintMode.setMode(newMode);
+			updateTintTooltip(newMode);
+			updateSaveButton();
+		}
+	}
+
+	private void colorChanged(int newColor) {
+		TintMode.setColor(newColor);
+		updateSaveButton();
+	}
+
+	private void saveButtonClicked(Button button) {
+		SCClientConfig.save();
+		updateSaveButton();
+	}
+
+	private void updateReinforcingTooltip(boolean isReinforcing) {
+		reinforcingModeButton.setTooltip(Tooltip.create(Component.translatable(isReinforcing ? "gui.securitycraft:blockReinforcer.reinforcing.tooltip" : "gui.securitycraft:blockReinforcer.unreinforcing.tooltip")));
+	}
+
+	private void updateTintTooltip(TintMode tintMode) {
+		tintModeButton.setTooltip(Tooltip.create(tintMode.tooltip()));
+	}
+
+	private void updateSaveButton() {
+		if (TintMode.mode() != SCClientConfig.tintMode || TintMode.color() != SCClientConfig.tintColor) {
+			saveToConfigButton.active = true;
+			saveToConfigButton.setTooltip(Tooltip.create(Component.translatable("gui.securitycraft:blockReinforcer.saveToConfigTooltip")));
+		}
+		else {
+			saveToConfigButton.active = false;
+			saveToConfigButton.setTooltip(null);
+		}
+	}
+
+	@Override
+	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+		super.render(guiGraphics, mouseX, mouseY, partialTicks);
+
+		if (!tintColorChooser.disabled)
+			tintColorChooser.render(guiGraphics, mouseX, mouseY, partialTicks);
+
+		renderTooltip(guiGraphics, mouseX, mouseY);
+	}
+
+	@Override
+	protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+		guiGraphics.drawString(font, title, (imageWidth - font.width(title)) / 2, 5, 0x404040, false);
+		guiGraphics.drawString(font, playerInventoryTitle, inventoryLabelX, inventoryLabelY, 0x404040, false);
+
+		if (!menu.getResult().isEmpty())
+			guiGraphics.drawString(font, output, 128 - font.width(output), 25, 0x404040, false);
+
+		guiGraphics.drawString(font, modeText, 8, 48, 0x404040, false);
+		guiGraphics.drawString(font, tintText, 8, 73, 0x404040, false);
+	}
+
+	@Override
+	protected void renderBg(GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
+		guiGraphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight, 256, 256);
+	}
+
+	@Override
+	public boolean mouseClicked(double mouseX, double mouseY, int button) {
+		if (!tintColorChooser.disabled) {
+			if (colorChooserButton.isMouseOver(mouseX, mouseY))
+				return super.mouseClicked(mouseX, mouseY, button);
+
+			tintColorChooser.mouseClicked(mouseX, mouseY, button);
+			return true;
+		}
+
+		return super.mouseClicked(mouseX, mouseY, button);
+	}
+
+	@Override
+	public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+		if (!tintColorChooser.disabled)
+			return tintColorChooser.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+
+		return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+	}
+
+	@Override
+	public boolean mouseReleased(double mouseX, double mouseY, int button) {
+		if (!tintColorChooser.disabled)
+			return tintColorChooser.mouseReleased(mouseX, mouseY, button);
+
+		return super.mouseReleased(mouseX, mouseY, button);
+	}
+
+	@Override
+	public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+		if (!tintColorChooser.disabled)
+			return tintColorChooser.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
+
+		return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
+	}
+
+	@Override
+	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+		if (!tintColorChooser.disabled)
+			return tintColorChooser.keyPressed(keyCode, scanCode, modifiers);
+
+		return super.keyPressed(keyCode, scanCode, modifiers);
+	}
+
+	@Override
+	public boolean charTyped(char codePoint, int modifiers) {
+		if (!tintColorChooser.disabled)
+			return tintColorChooser.charTyped(codePoint, modifiers);
+
+		return super.charTyped(codePoint, modifiers);
+	}
+
+	@Override
+	public void onClose() {
+		super.onClose();
+
+		if (TintMode.mode() != oldTintMode || TintMode.color() != oldTintColor)
+			ClientUtils.recompileAllChunksInRange();
+	}
+
+	@Override
+	public List<Rect2i> getExtraAreas() {
+		return tintColorChooser != null ? tintColorChooser.getGuiExtraAreas() : List.of();
+	}
+}

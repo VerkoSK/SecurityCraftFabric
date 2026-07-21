@@ -1,0 +1,17 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"category": "misc",
+	"pattern": [
+		"III",
+		"IR ",
+		"III"
+	],
+	"key": {
+		"I": "minecraft:iron_ingot",
+		"R": "minecraft:redstone"
+	},
+	"result": {
+		"id": "securitycraft:keypad_frame",
+		"count": 1
+	}
+}
