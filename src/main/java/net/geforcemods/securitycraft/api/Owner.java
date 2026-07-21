@@ -1,16 +1,20 @@
 package net.geforcemods.securitycraft.api;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.storage.ReadView;
-import net.minecraft.storage.WriteView;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
-/** Holds the owner of an ownable block (name + UUID). */
+/**
+ * Holds the owner of an ownable block (name + UUID). Faithful port of the concept from the
+ * original SecurityCraft {@code api.Owner}, trimmed to what the Fabric core slice needs.
+ */
 public class Owner {
 	public static final String DEFAULT_OWNER_NAME = "owner";
 	public static final String DEFAULT_OWNER_UUID = "ownerUUID";
 
 	private String name;
 	private String uuid;
+	private boolean validated = true;
 
 	public Owner() {
 		this.name = DEFAULT_OWNER_NAME;
@@ -19,6 +23,16 @@ public class Owner {
 
 	public Owner(String name, String uuid) {
 		set(name, uuid);
+	}
+
+	public Owner(String name, String uuid, boolean validated) {
+		set(name, uuid);
+		this.validated = validated;
+	}
+
+	public Owner(Player player) {
+		if (player != null)
+			set(player.getName().getString(), player.getGameProfile().id().toString());
 	}
 
 	public void set(String name, String uuid) {
@@ -38,27 +52,96 @@ public class Owner {
 		return uuid;
 	}
 
+	/** Whether an owner has actually been assigned yet. */
 	public boolean owns() {
 		return !DEFAULT_OWNER_UUID.equals(uuid);
 	}
 
-	public boolean isOwner(PlayerEntity player) {
+	/** True if the given player is this owner. Matched by UUID. */
+	public boolean isOwner(Player player) {
 		if (!owns() || player == null)
 			return false;
 
-		return uuid.equals(player.getUuid().toString());
+		return uuid.equals(player.getUUID().toString());
 	}
 
-	public void save(WriteView view) {
-		view.putString(DEFAULT_OWNER_NAME, name);
-		view.putString(DEFAULT_OWNER_UUID, uuid);
+	/** @return whether this owner owns every given ownable. */
+	public boolean owns(IOwnable... ownables) {
+		for (IOwnable ownable : ownables) {
+			if (ownable != null && !ownable.isOwnedBy(this))
+				return false;
+		}
+
+		return true;
 	}
 
-	// Since 1.21.6 block entities serialize through ReadView/WriteView.
-	public static Owner load(ReadView view) {
+	/**
+	 * Whether the other owner should be treated as the same owner as this one. Matched by UUID, falling
+	 * back to name when either side has no UUID. (The upstream also considers teams; teams aren't ported.)
+	 */
+	public boolean isTreatedTheSameAs(Owner otherOwner) {
+		String selfUUID = getUUID();
+		String otherUUID = otherOwner.getUUID();
+		String otherName = otherOwner.getName();
+
+		if (otherUUID != null && otherUUID.equals(selfUUID))
+			return true;
+
+		return otherName != null && (selfUUID.equals(DEFAULT_OWNER_UUID) || otherUUID.equals(DEFAULT_OWNER_UUID)) && otherName.equals(getName());
+	}
+
+	public Owner copy() {
+		return new Owner(name, uuid, validated);
+	}
+
+	public boolean isValidated() {
+		return validated;
+	}
+
+	public void setValidated(boolean validated) {
+		this.validated = validated;
+	}
+
+	/** @return true if this owner has no player data attached (the fallback owner object). */
+	public boolean isDefaultOwner() {
+		return equals(new Owner());
+	}
+
+	public void save(ValueOutput output) {
+		save(output, false);
+	}
+
+	public void save(ValueOutput output, boolean saveValidationStatus) {
+		output.putString(DEFAULT_OWNER_NAME, name);
+		output.putString(DEFAULT_OWNER_UUID, uuid);
+
+		if (saveValidationStatus)
+			output.putBoolean("ownerValidated", validated);
+	}
+
+	// Since 1.21.6 block entities serialize through ValueInput/ValueOutput.
+	// Reads owner, ownerUUID and ownerValidated independently (each optional; absent keys keep defaults).
+	public static Owner load(ValueInput input) {
 		Owner owner = new Owner();
 
-		owner.set(view.getString(DEFAULT_OWNER_NAME, DEFAULT_OWNER_NAME), view.getString(DEFAULT_OWNER_UUID, DEFAULT_OWNER_UUID));
+		owner.name = input.getStringOr(DEFAULT_OWNER_NAME, DEFAULT_OWNER_NAME);
+		owner.uuid = input.getStringOr(DEFAULT_OWNER_UUID, DEFAULT_OWNER_UUID);
+		owner.validated = input.getBooleanOr("ownerValidated", true);
 		return owner;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return obj instanceof Owner owner && getName().equals(owner.getName()) && getUUID().equals(owner.getUUID());
+	}
+
+	@Override
+	public int hashCode() {
+		return java.util.Objects.hash(name, uuid);
+	}
+
+	@Override
+	public String toString() {
+		return "Name: " + name + "  UUID: " + uuid;
 	}
 }

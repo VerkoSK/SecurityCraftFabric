@@ -1,16 +1,16 @@
 package net.geforcemods.securitycraft.api;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.network.listener.ClientPlayPacketListener;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.storage.ReadView;
-import net.minecraft.storage.WriteView;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 /** Base block entity that remembers its owner and keeps the client copy in sync. */
 public class OwnableBlockEntity extends BlockEntity implements IOwnable {
@@ -28,34 +28,35 @@ public class OwnableBlockEntity extends BlockEntity implements IOwnable {
 	@Override
 	public void setOwner(String name, String uuid) {
 		owner.set(name, uuid);
-		markDirty();
+		setChanged();
 		sync();
 	}
 
+	/** Push the current state to nearby clients. */
 	protected void sync() {
-		if (getWorld() != null && !getWorld().isClient())
-			getWorld().updateListeners(getPos(), getCachedState(), getCachedState(), 3);
+		if (level != null && !level.isClientSide())
+			level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
 	}
 
 	@Override
-	protected void writeData(WriteView view) {
-		super.writeData(view);
-		owner.save(view);
+	protected void saveAdditional(ValueOutput output) {
+		super.saveAdditional(output);
+		owner.save(output);
 	}
 
 	@Override
-	protected void readData(ReadView view) {
-		super.readData(view);
-		owner = Owner.load(view);
+	protected void loadAdditional(ValueInput input) {
+		super.loadAdditional(input);
+		owner = Owner.load(input);
 	}
 
 	@Override
-	public NbtCompound toInitialChunkDataNbt(RegistryWrapper.WrapperLookup registries) {
-		return createComponentlessNbt(registries);
+	public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+		return saveWithoutMetadata(registries);
 	}
 
 	@Override
-	public Packet<ClientPlayPacketListener> toUpdatePacket() {
-		return BlockEntityUpdateS2CPacket.create(this);
+	public Packet<ClientGamePacketListener> getUpdatePacket() {
+		return ClientboundBlockEntityDataPacket.create(this);
 	}
 }

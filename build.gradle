@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '1.17.13'
+	id 'fabric-loom' version '1.17-SNAPSHOT'
 	id 'java'
 }
 
@@ -10,6 +10,10 @@ base {
 	archivesName = project.archives_base_name
 }
 
+loom {
+	accessWidenerPath = file("src/main/resources/securitycraft.accesswidener")
+}
+
 java {
 	toolchain.languageVersion = JavaLanguageVersion.of(21)
 	sourceCompatibility = JavaVersion.VERSION_21
@@ -18,15 +22,21 @@ java {
 
 repositories {
 	maven { url = 'https://maven.fabricmc.net/' }
+	maven { url = 'https://maven.blamejared.com' }
 	mavenCentral()
 }
 
 dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	// Yarn mappings: this branch is written against Yarn names (see the yarn variants of the source).
-	mappings "net.fabricmc:yarn:1.21.11+build.6:v2"
+	// Use official Mojang mappings so the code matches the upstream NeoForge source names 1:1.
+	// Layered form keeps the intermediary namespace in the mapping tree, which newer Fabric API
+	// modules (1.21.11) require when they ship remapped javadoc.
+	mappings loom.layered {
+		officialMojangMappings()
+	}
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+	modImplementation "mezz.jei:jei-${project.minecraft_version}-fabric:${project.jei_version}"
 }
 
 processResources {

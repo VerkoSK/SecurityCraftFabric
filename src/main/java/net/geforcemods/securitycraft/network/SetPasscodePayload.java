@@ -1,22 +1,22 @@
 package net.geforcemods.securitycraft.network;
 
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.codec.PacketCodecs;
-import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.Identifier;
 
 /** Client -> server: the owner sets a new passcode on the keypad at {@code pos}. */
-public record SetPasscodePayload(BlockPos pos, String passcode) implements CustomPayload {
-	public static final CustomPayload.Id<SetPasscodePayload> ID = new CustomPayload.Id<>(Identifier.of("securitycraft", "set_passcode"));
-	public static final PacketCodec<RegistryByteBuf, SetPasscodePayload> CODEC = PacketCodec.tuple(
-			BlockPos.PACKET_CODEC, SetPasscodePayload::pos,
-			PacketCodecs.STRING, SetPasscodePayload::passcode,
+public record SetPasscodePayload(BlockPos pos, String passcode) implements CustomPacketPayload {
+	public static final Type<SetPasscodePayload> TYPE = new Type<>(Identifier.fromNamespaceAndPath("securitycraft", "set_passcode"));
+	public static final StreamCodec<RegistryFriendlyByteBuf, SetPasscodePayload> CODEC = StreamCodec.composite(
+			BlockPos.STREAM_CODEC, SetPasscodePayload::pos,
+			ByteBufCodecs.STRING_UTF8, SetPasscodePayload::passcode,
 			SetPasscodePayload::new);
 
 	@Override
-	public CustomPayload.Id<? extends CustomPayload> getId() {
-		return ID;
+	public Type<? extends CustomPacketPayload> type() {
+		return TYPE;
 	}
 }

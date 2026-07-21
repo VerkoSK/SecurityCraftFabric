@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
@@ -12,39 +11,40 @@ import net.geforcemods.securitycraft.blockentities.KeypadBlockEntity;
 import net.geforcemods.securitycraft.blocks.KeypadBlock;
 import net.geforcemods.securitycraft.blocks.reinforced.BaseReinforcedBlock;
 import net.geforcemods.securitycraft.items.BlockReinforcerItem;
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.BlockSetType;
-import net.minecraft.block.ButtonBlock;
-import net.minecraft.block.FenceBlock;
-import net.minecraft.block.FenceGateBlock;
-import net.minecraft.block.PaneBlock;
-import net.minecraft.block.PillarBlock;
-import net.minecraft.block.PressurePlateBlock;
-import net.minecraft.block.SlabBlock;
-import net.minecraft.block.StairsBlock;
-import net.minecraft.block.TrapdoorBlock;
-import net.minecraft.block.WallBlock;
-import net.minecraft.block.WoodType;
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemConvertible;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemGroups;
-import net.minecraft.item.ItemStack;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.sound.BlockSoundGroup;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.ButtonBlock;
+import net.minecraft.world.level.block.FenceBlock;
+import net.minecraft.world.level.block.FenceGateBlock;
+import net.minecraft.world.level.block.IronBarsBlock;
+import net.minecraft.world.level.block.PressurePlateBlock;
+import net.minecraft.world.level.block.RotatedPillarBlock;
+import net.minecraft.world.level.block.SlabBlock;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.StairBlock;
+import net.minecraft.world.level.block.TrapDoorBlock;
+import net.minecraft.world.level.block.WallBlock;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.properties.BlockSetType;
+import net.minecraft.world.level.block.state.properties.WoodType;
 
-/** Central registration. Keypad + full reinforced block set (all shapes, Yarn). */
+/** Central registration. Keypad + full reinforced block set (all shapes). */
 public class SCContent {
-	private static final List<ItemConvertible> TAB_ITEMS = new ArrayList<>();
+	private static final List<ItemLike> TAB_ITEMS = new ArrayList<>();
 	public static final List<Block> GLASS_BLOCKS = new ArrayList<>();
 	public static final List<Block> REINFORCED_BLOCKS = new ArrayList<>();
 	public static final Map<String, Block> REINFORCED_BY_NAME = new HashMap<>();
@@ -52,13 +52,40 @@ public class SCContent {
 	public static final List<Block> GLASS_PANE_BLOCKS = new ArrayList<>();
 
 	public static Block KEYPAD;
+	public static net.geforcemods.securitycraft.blocks.LaserBlock LASER_BLOCK;
+	public static net.geforcemods.securitycraft.blocks.LaserFieldBlock LASER_FIELD;
+	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.LaserBlockBlockEntity> LASER_BLOCK_BLOCK_ENTITY;
+	public static BlockEntityType<net.geforcemods.securitycraft.api.OwnableBlockEntity> ABSTRACT_BLOCK_ENTITY;
+	public static net.geforcemods.securitycraft.blocks.KeyPanelBlock KEY_PANEL;
+	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.KeyPanelBlockEntity> KEY_PANEL_BLOCK_ENTITY;
+	public static Item KEY_PANEL_ITEM;
+	public static net.geforcemods.securitycraft.blocks.FrameBlock FRAME;
+	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.FrameBlockEntity> FRAME_BLOCK_ENTITY;
+	public static net.geforcemods.securitycraft.items.ModuleItem REDSTONE_MODULE;
+	public static net.geforcemods.securitycraft.items.ModuleItem ALLOWLIST_MODULE;
+	public static net.geforcemods.securitycraft.items.ModuleItem DENYLIST_MODULE;
+	public static net.geforcemods.securitycraft.items.ModuleItem HARMING_MODULE;
+	public static net.geforcemods.securitycraft.items.ModuleItem SMART_MODULE;
+	public static net.geforcemods.securitycraft.items.ModuleItem STORAGE_MODULE;
+	public static net.geforcemods.securitycraft.items.ModuleItem DISGUISE_MODULE;
+	public static net.geforcemods.securitycraft.items.ModuleItem SPEED_MODULE;
+	public static net.minecraft.core.component.DataComponentType<net.geforcemods.securitycraft.components.ListModuleData> LIST_MODULE_DATA;
+	public static Item LENS;
 	public static Item UNIVERSAL_BLOCK_REINFORCER_LVL1;
 	public static Item UNIVERSAL_BLOCK_REINFORCER_LVL2;
 	public static Item UNIVERSAL_BLOCK_REINFORCER_LVL3;
 	public static Item UNIVERSAL_BLOCK_REMOVER;
 	public static BlockEntityType<KeypadBlockEntity> KEYPAD_BLOCK_ENTITY;
 
-	public static final RegistryKey<ItemGroup> TAB_KEY = RegistryKey.of(RegistryKeys.ITEM_GROUP, id("general"));
+	public static final ResourceKey<CreativeModeTab> TAB_KEY = ResourceKey.create(Registries.CREATIVE_MODE_TAB, id("general"));
+
+	public static net.minecraft.core.component.DataComponentType<net.minecraft.util.Unit> UNREINFORCING;
+	public static RecipeSerializer<? extends net.minecraft.world.item.crafting.CustomRecipe> BLOCK_REINFORCING_SERIALIZER;
+	public static RecipeSerializer<? extends net.minecraft.world.item.crafting.CustomRecipe> BLOCK_UNREINFORCING_SERIALIZER;
+	public static net.minecraft.world.inventory.MenuType<net.geforcemods.securitycraft.inventory.BlockReinforcerMenu> BLOCK_REINFORCER_MENU;
+	public static net.minecraft.world.inventory.MenuType<net.geforcemods.securitycraft.inventory.LaserBlockMenu> LASER_BLOCK_MENU;
+	public static net.minecraft.world.inventory.MenuType<net.geforcemods.securitycraft.inventory.DisguiseModuleMenu> DISGUISE_MODULE_MENU;
+
 
 	private static final String[][] REINFORCED = {
 			{"reinforced_acacia_button", "button"},
@@ -508,22 +535,50 @@ public class SCContent {
 	};
 
 	public static Identifier id(String name) {
-		return Identifier.of(SecurityCraft.MODID, name);
+		return Identifier.fromNamespaceAndPath(SecurityCraft.MODID, name);
 	}
 
 	public static void init() {
-		KEYPAD = register("keypad", key -> new KeypadBlock(AbstractBlock.Settings.create().strength(2.0F, 12000.0F).requiresTool().registryKey(key)));
+		KEYPAD = register("keypad", key -> new KeypadBlock(BlockBehaviour.Properties.of().strength(2.0F, 12000.0F).requiresCorrectToolForDrops().setId(key)));
+		LASER_BLOCK = (net.geforcemods.securitycraft.blocks.LaserBlock) register("laser_block", key -> new net.geforcemods.securitycraft.blocks.LaserBlock(BlockBehaviour.Properties.of().strength(3.5F).requiresCorrectToolForDrops().sound(SoundType.METAL).setId(key)));
+		LASER_FIELD = (net.geforcemods.securitycraft.blocks.LaserFieldBlock) registerBlockNoItem("laser", key -> new net.geforcemods.securitycraft.blocks.LaserFieldBlock(BlockBehaviour.Properties.of().mapColor(net.minecraft.world.level.material.MapColor.NONE).strength(-1.0F).noLootTable().noOcclusion().setId(key)));
+		KEY_PANEL = (net.geforcemods.securitycraft.blocks.KeyPanelBlock) registerBlockNoItem("key_panel", key -> new net.geforcemods.securitycraft.blocks.KeyPanelBlock(BlockBehaviour.Properties.of().strength(3.5F).sound(SoundType.METAL).noOcclusion().setId(key)));
+		KEY_PANEL_ITEM = registerItem("keypad_item", new net.geforcemods.securitycraft.items.KeyPanelItem(new Item.Properties().setId(ResourceKey.create(Registries.ITEM, id("keypad_item")))));
+		FRAME = (net.geforcemods.securitycraft.blocks.FrameBlock) register("keypad_frame", key -> new net.geforcemods.securitycraft.blocks.FrameBlock(BlockBehaviour.Properties.of().mapColor(net.minecraft.world.level.material.MapColor.METAL).strength(5.0F).sound(SoundType.METAL).noOcclusion().setId(key)));
+		net.geforcemods.securitycraft.api.SecurityCraftAPI.registerPasscodeConvertible(new net.geforcemods.securitycraft.blocks.KeypadBlock.Convertible());
 
 		for (String[] entry : REINFORCED)
 			registerReinforced(entry[0], entry[1]);
+
+		LIST_MODULE_DATA = Registry.register(BuiltInRegistries.DATA_COMPONENT_TYPE, id("list_module_data"), net.minecraft.core.component.DataComponentType.<net.geforcemods.securitycraft.components.ListModuleData>builder().persistent(net.geforcemods.securitycraft.components.ListModuleData.CODEC).networkSynchronized(net.geforcemods.securitycraft.components.ListModuleData.STREAM_CODEC).cacheEncoding().build());
+		REDSTONE_MODULE = registerModule("redstone_module", net.geforcemods.securitycraft.misc.ModuleType.REDSTONE, false, false, false);
+		ALLOWLIST_MODULE = registerModule("whitelist_module", net.geforcemods.securitycraft.misc.ModuleType.ALLOWLIST, true, true, true);
+		DENYLIST_MODULE = registerModule("blacklist_module", net.geforcemods.securitycraft.misc.ModuleType.DENYLIST, true, true, true);
+		HARMING_MODULE = registerModule("harming_module", net.geforcemods.securitycraft.misc.ModuleType.HARMING, false, false, false);
+		SMART_MODULE = registerModule("smart_module", net.geforcemods.securitycraft.misc.ModuleType.SMART, false, false, false);
+		STORAGE_MODULE = registerModule("storage_module", net.geforcemods.securitycraft.misc.ModuleType.STORAGE, false, false, false);
+		DISGUISE_MODULE = registerModule("disguise_module", net.geforcemods.securitycraft.misc.ModuleType.DISGUISE, false, true, false);
+		SPEED_MODULE = registerModule("speed_module", net.geforcemods.securitycraft.misc.ModuleType.SPEED, false, false, false);
+		LENS = registerItem("lens", new Item(new Item.Properties().setId(ResourceKey.create(Registries.ITEM, id("lens")))));
 
 		UNIVERSAL_BLOCK_REINFORCER_LVL1 = registerConverterItem("universal_block_reinforcer_lvl1", 300, true);
 		UNIVERSAL_BLOCK_REINFORCER_LVL2 = registerConverterItem("universal_block_reinforcer_lvl2", 2700, true);
 		UNIVERSAL_BLOCK_REINFORCER_LVL3 = registerConverterItem("universal_block_reinforcer_lvl3", 0, true);
 		UNIVERSAL_BLOCK_REMOVER = registerConverterItem("universal_block_remover", 476, false);
 
-		KEYPAD_BLOCK_ENTITY = Registry.register(Registries.BLOCK_ENTITY_TYPE, id("keypad"), FabricBlockEntityTypeBuilder.create(KeypadBlockEntity::new, KEYPAD).build());
-		registerItemGroup();
+		UNREINFORCING = Registry.register(BuiltInRegistries.DATA_COMPONENT_TYPE, id("unreinforcing"), net.minecraft.core.component.DataComponentType.<net.minecraft.util.Unit>builder().persistent(com.mojang.serialization.MapCodec.unitCodec(net.minecraft.util.Unit.INSTANCE)).networkSynchronized(net.minecraft.network.codec.StreamCodec.unit(net.minecraft.util.Unit.INSTANCE)).build());
+		BLOCK_REINFORCING_SERIALIZER = Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, id("block_reinforcing"), new net.minecraft.world.item.crafting.CustomRecipe.Serializer<>(net.geforcemods.securitycraft.recipe.ReinforcerRecipe.Reinforcing::new));
+		BLOCK_UNREINFORCING_SERIALIZER = Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, id("block_unreinforcing"), new net.minecraft.world.item.crafting.CustomRecipe.Serializer<>(net.geforcemods.securitycraft.recipe.ReinforcerRecipe.Unreinforcing::new));
+		BLOCK_REINFORCER_MENU = Registry.register(BuiltInRegistries.MENU, id("block_reinforcer"), new net.minecraft.world.inventory.MenuType<>(net.geforcemods.securitycraft.inventory.BlockReinforcerMenu::new, net.minecraft.world.flag.FeatureFlags.VANILLA_SET));
+
+		KEYPAD_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("keypad"), FabricBlockEntityTypeBuilder.create(KeypadBlockEntity::new, KEYPAD).build());
+		LASER_BLOCK_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("laser_block"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.LaserBlockBlockEntity::new, LASER_BLOCK).build());
+		ABSTRACT_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("abstract"), FabricBlockEntityTypeBuilder.create((pos, state) -> new net.geforcemods.securitycraft.api.OwnableBlockEntity(ABSTRACT_BLOCK_ENTITY, pos, state), LASER_FIELD).build());
+		KEY_PANEL_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("key_panel"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.KeyPanelBlockEntity::new, KEY_PANEL).build());
+		FRAME_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("keypad_frame"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.FrameBlockEntity::new, FRAME).build());
+		LASER_BLOCK_MENU = Registry.register(BuiltInRegistries.MENU, id("laser_block"), new net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType<>((syncId, inv, data) -> new net.geforcemods.securitycraft.inventory.LaserBlockMenu(syncId, inv.player.level(), data.pos(), data.sideConfig(), inv), net.geforcemods.securitycraft.inventory.LaserBlockData.STREAM_CODEC));
+		DISGUISE_MODULE_MENU = Registry.register(BuiltInRegistries.MENU, id("disguise_module"), new net.minecraft.world.inventory.MenuType<>(net.geforcemods.securitycraft.inventory.DisguiseModuleMenu::new, net.minecraft.world.flag.FeatureFlags.VANILLA_SET));
+		registerCreativeTab();
 	}
 
 	private static boolean isGlass(String name, String category) {
@@ -536,18 +591,18 @@ public class SCContent {
 
 	private static void registerReinforced(String name, String category) {
 		Block block = register(name, key -> switch (category) {
-			case "pillar" -> new PillarBlock(shapeProps(name).registryKey(key));
-			case "glass" -> new BaseReinforcedBlock(glassProps().registryKey(key));
-			case "pane" -> new PaneBlock((name.contains("glass") ? glassProps() : paneProps()).registryKey(key));
-			case "fence" -> new FenceBlock(shapeProps(name).registryKey(key));
-			case "fence_gate" -> new FenceGateBlock(WoodType.OAK, shapeProps(name).registryKey(key));
-			case "wall" -> new WallBlock(shapeProps(name).registryKey(key));
-			case "slab" -> new SlabBlock(shapeProps(name).registryKey(key));
-			case "stairs" -> new StairsBlock(Blocks.STONE.getDefaultState(), shapeProps(name).registryKey(key));
-			case "button" -> new ButtonBlock(BlockSetType.STONE, 20, shapeProps(name).registryKey(key));
-			case "pressure_plate" -> new PressurePlateBlock(BlockSetType.STONE, shapeProps(name).registryKey(key));
-			case "trapdoor" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedTrapdoorBlock(BlockSetType.IRON, shapeProps(name).registryKey(key));
-			default -> new BaseReinforcedBlock(shapeProps(name).registryKey(key));
+			case "pillar" -> new RotatedPillarBlock(shapeProps(name).setId(key));
+			case "glass" -> new BaseReinforcedBlock(glassProps().setId(key));
+			case "pane" -> new IronBarsBlock((name.contains("glass") ? glassProps() : paneProps()).setId(key));
+			case "fence" -> new FenceBlock(shapeProps(name).setId(key));
+			case "fence_gate" -> new FenceGateBlock(WoodType.OAK, shapeProps(name).setId(key));
+			case "wall" -> new WallBlock(shapeProps(name).setId(key));
+			case "slab" -> new SlabBlock(shapeProps(name).setId(key));
+			case "stairs" -> new StairBlock(Blocks.STONE.defaultBlockState(), shapeProps(name).setId(key));
+			case "button" -> new ButtonBlock(BlockSetType.STONE, 20, shapeProps(name).setId(key));
+			case "pressure_plate" -> new PressurePlateBlock(BlockSetType.STONE, shapeProps(name).setId(key));
+			case "trapdoor" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedTrapdoorBlock(BlockSetType.IRON, shapeProps(name).setId(key));
+			default -> new BaseReinforcedBlock(shapeProps(name).setId(key));
 		});
 		REINFORCED_BLOCKS.add(block);
 		REINFORCED_BY_NAME.put(name, block);
@@ -562,40 +617,65 @@ public class SCContent {
 			GLASS_PANE_BLOCKS.add(block);
 	}
 
-	private static Block register(String name, Function<RegistryKey<Block>, Block> factory) {
-		Identifier identifier = id(name);
-		RegistryKey<Block> blockKey = RegistryKey.of(RegistryKeys.BLOCK, identifier);
-		Block block = Registry.register(Registries.BLOCK, identifier, factory.apply(blockKey));
-		RegistryKey<Item> itemKey = RegistryKey.of(RegistryKeys.ITEM, identifier);
-		BlockItem item = Registry.register(Registries.ITEM, identifier, new BlockItem(block, new Item.Settings().registryKey(itemKey)));
+	private static Block register(String name, java.util.function.Function<ResourceKey<Block>, Block> factory) {
+		ResourceKey<Block> blockKey = ResourceKey.create(Registries.BLOCK, id(name));
+		Block block = Registry.register(BuiltInRegistries.BLOCK, blockKey, factory.apply(blockKey));
+		ResourceKey<Item> itemKey = ResourceKey.create(Registries.ITEM, id(name));
+		BlockItem item = Registry.register(BuiltInRegistries.ITEM, itemKey, new BlockItem(block, new Item.Properties().setId(itemKey)));
 		TAB_ITEMS.add(item);
 		return block;
 	}
 
-	private static void registerItemGroup() {
-		ItemGroup technical = FabricItemGroup.builder().icon(() -> new ItemStack(KEYPAD)).displayName(Text.translatable("itemGroup.securitycraft.technical")).entries((ctx, entries) -> entries.add(KEYPAD)).build();
-		Registry.register(Registries.ITEM_GROUP, id("technical"), technical);
+	private static Block registerBlockNoItem(String name, java.util.function.Function<ResourceKey<Block>, Block> factory) {
+		ResourceKey<Block> blockKey = ResourceKey.create(Registries.BLOCK, id(name));
+		return Registry.register(BuiltInRegistries.BLOCK, blockKey, factory.apply(blockKey));
+	}
 
-		ItemGroup decoration = FabricItemGroup.builder().icon(() -> new ItemStack(REINFORCED_BY_NAME.getOrDefault("reinforced_oak_stairs", KEYPAD))).displayName(Text.translatable("itemGroup.securitycraft.decoration")).entries((ctx, entries) -> {
-			entries.add(UNIVERSAL_BLOCK_REINFORCER_LVL1);
-			entries.add(UNIVERSAL_BLOCK_REINFORCER_LVL2);
-			entries.add(UNIVERSAL_BLOCK_REINFORCER_LVL3);
-			entries.add(UNIVERSAL_BLOCK_REMOVER);
+	private static void registerCreativeTab() {
+		CreativeModeTab technical = FabricItemGroup.builder()
+				.icon(() -> new ItemStack(KEYPAD))
+				.title(Component.translatable("itemGroup.securitycraft.technical"))
+				.displayItems((params, output) -> {
+					output.accept(KEYPAD);
+					output.accept(KEY_PANEL_ITEM);
+					output.accept(FRAME);
+					output.accept(LASER_BLOCK);
+					output.accept(REDSTONE_MODULE);
+					output.accept(ALLOWLIST_MODULE);
+					output.accept(DENYLIST_MODULE);
+					output.accept(HARMING_MODULE);
+					output.accept(SMART_MODULE);
+					output.accept(STORAGE_MODULE);
+					output.accept(DISGUISE_MODULE);
+					output.accept(SPEED_MODULE);
+				})
+				.build();
+		Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, id("technical"), technical);
 
-			for (Block block : sortByVanillaOrder(REINFORCED_BLOCKS))
-				entries.add(block);
-		}).build();
-		Registry.register(Registries.ITEM_GROUP, id("decoration"), decoration);
+		CreativeModeTab decoration = FabricItemGroup.builder()
+				.icon(() -> new ItemStack(REINFORCED_BY_NAME.getOrDefault("reinforced_oak_stairs", KEYPAD)))
+				.title(Component.translatable("itemGroup.securitycraft.decoration"))
+				.displayItems((params, output) -> {
+					output.accept(UNIVERSAL_BLOCK_REINFORCER_LVL1);
+					output.accept(UNIVERSAL_BLOCK_REINFORCER_LVL2);
+					output.accept(UNIVERSAL_BLOCK_REINFORCER_LVL3);
+					output.accept(UNIVERSAL_BLOCK_REMOVER);
+
+					for (Block block : sortByVanillaOrder(REINFORCED_BLOCKS))
+						output.accept(block);
+				})
+				.build();
+		Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, id("decoration"), decoration);
 	}
 
 	private static List<Block> sortByVanillaOrder(List<Block> blocks) {
 		List<Item> vanillaOrder = new ArrayList<>();
 
-		for (RegistryKey<ItemGroup> key : List.of(ItemGroups.BUILDING_BLOCKS, ItemGroups.COLORED_BLOCKS, ItemGroups.NATURAL, ItemGroups.FUNCTIONAL, ItemGroups.REDSTONE)) {
-			ItemGroup group = Registries.ITEM_GROUP.get(key);
+		for (ResourceKey<CreativeModeTab> key : List.of(CreativeModeTabs.BUILDING_BLOCKS, CreativeModeTabs.COLORED_BLOCKS, CreativeModeTabs.NATURAL_BLOCKS, CreativeModeTabs.FUNCTIONAL_BLOCKS, CreativeModeTabs.REDSTONE_BLOCKS)) {
+			CreativeModeTab tab = BuiltInRegistries.CREATIVE_MODE_TAB.getValue(key);
 
-			if (group != null)
-				for (ItemStack stack : group.getDisplayStacks())
+			if (tab != null)
+				for (ItemStack stack : tab.getDisplayItems())
 					vanillaOrder.add(stack.getItem());
 		}
 
@@ -615,18 +695,19 @@ public class SCContent {
 	}
 
 	public static Block vanillaCounterpart(Block reinforced) {
-		Identifier loc = Registries.BLOCK.getId(reinforced);
+		net.minecraft.resources.Identifier loc = BuiltInRegistries.BLOCK.getKey(reinforced);
 
 		if (!loc.getNamespace().equals(SecurityCraft.MODID) || !loc.getPath().startsWith("reinforced_"))
 			return null;
 
-		Block vanilla = Registries.BLOCK.get(Identifier.of("minecraft", loc.getPath().substring("reinforced_".length())));
+		String path = loc.getPath();
+		Block vanilla = BuiltInRegistries.BLOCK.getValue(Identifier.fromNamespaceAndPath("minecraft", path.substring("reinforced_".length())));
 
 		return vanilla == Blocks.AIR ? null : vanilla;
 	}
 
 	public static Block reinforcedCounterpart(Block vanilla) {
-		Identifier loc = Registries.BLOCK.getId(vanilla);
+		net.minecraft.resources.Identifier loc = BuiltInRegistries.BLOCK.getKey(vanilla);
 
 		if (!loc.getNamespace().equals("minecraft"))
 			return null;
@@ -634,39 +715,60 @@ public class SCContent {
 		return REINFORCED_BY_NAME.get("reinforced_" + loc.getPath());
 	}
 
-	private static Item registerConverterItem(String name, int durability, boolean reinforcing) {
-		Identifier itemId = id(name);
-		RegistryKey<Item> key = RegistryKey.of(RegistryKeys.ITEM, itemId);
-		Item.Settings settings = new Item.Settings().registryKey(key);
-
-		if (durability > 0)
-			settings.maxDamage(durability);
-
-		Item item = new BlockReinforcerItem(settings, reinforcing);
-		Registry.register(Registries.ITEM, itemId, item);
+	private static Item registerItem(String name, Item item) {
+		Registry.register(BuiltInRegistries.ITEM, id(name), item);
 		return item;
 	}
+
+	private static net.geforcemods.securitycraft.items.ModuleItem registerModule(String name, net.geforcemods.securitycraft.misc.ModuleType type, boolean containsCustomData, boolean canBeCustomized, boolean hasListData) {
+		Item.Properties props = new Item.Properties().stacksTo(1).setId(ResourceKey.create(Registries.ITEM, id(name)));
+
+		if (hasListData)
+			props.component(LIST_MODULE_DATA, net.geforcemods.securitycraft.components.ListModuleData.EMPTY);
+
+		if (type == net.geforcemods.securitycraft.misc.ModuleType.DISGUISE)
+			props.component(net.minecraft.core.component.DataComponents.CONTAINER, net.minecraft.world.item.component.ItemContainerContents.EMPTY);
+
+		net.geforcemods.securitycraft.items.ModuleItem item = new net.geforcemods.securitycraft.items.ModuleItem(props, type, containsCustomData, canBeCustomized);
+
+		Registry.register(BuiltInRegistries.ITEM, id(name), item);
+		TAB_ITEMS.add(item);
+		return item;
+	}
+
+	private static Item registerConverterItem(String name, int durability, boolean reinforcing) {
+		ResourceKey<Item> key = ResourceKey.create(Registries.ITEM, id(name));
+		Item.Properties props = new Item.Properties().setId(key);
+
+		if (durability > 0)
+			props.durability(durability);
+
+		Item item = new BlockReinforcerItem(props, reinforcing);
+		Registry.register(BuiltInRegistries.ITEM, key, item);
+		return item;
+	}
+
 
 	private static boolean isWood(String name) {
 		return name.matches(".*(oak|spruce|birch|jungle|acacia|mangrove|cherry|bamboo|crimson|warped|planks|mosaic).*");
 	}
 
-	private static AbstractBlock.Settings shapeProps(String name) {
+	private static BlockBehaviour.Properties shapeProps(String name) {
 		boolean wood = isWood(name);
 		boolean wool = name.contains("wool");
-		AbstractBlock.Settings p = AbstractBlock.Settings.create().strength(wood || wool ? 2.0F : 5.0F, 12000.0F).sounds(wood ? BlockSoundGroup.WOOD : wool ? BlockSoundGroup.WOOL : BlockSoundGroup.STONE);
+		BlockBehaviour.Properties p = BlockBehaviour.Properties.of().strength(wood || wool ? 2.0F : 5.0F, 12000.0F).sound(wood ? SoundType.WOOD : wool ? SoundType.WOOL : SoundType.STONE);
 
 		if (!wood && !wool)
-			p.requiresTool();
+			p.requiresCorrectToolForDrops();
 
 		return p;
 	}
 
-	private static AbstractBlock.Settings glassProps() {
-		return AbstractBlock.Settings.create().strength(1.5F, 12000.0F).sounds(BlockSoundGroup.GLASS).nonOpaque().allowsSpawning((state, world, pos, type) -> false).solidBlock((state, world, pos) -> false).suffocates((state, world, pos) -> false).blockVision((state, world, pos) -> false);
+	private static BlockBehaviour.Properties glassProps() {
+		return BlockBehaviour.Properties.of().strength(1.5F, 12000.0F).sound(SoundType.GLASS).noOcclusion().isValidSpawn((state, level, pos, type) -> false).isRedstoneConductor((state, level, pos) -> false).isSuffocating((state, level, pos) -> false).isViewBlocking((state, level, pos) -> false);
 	}
 
-	private static AbstractBlock.Settings paneProps() {
-		return AbstractBlock.Settings.create().strength(5.0F, 12000.0F).requiresTool().sounds(BlockSoundGroup.METAL).nonOpaque();
+	private static BlockBehaviour.Properties paneProps() {
+		return BlockBehaviour.Properties.of().strength(5.0F, 12000.0F).requiresCorrectToolForDrops().sound(SoundType.METAL).noOcclusion();
 	}
 }
