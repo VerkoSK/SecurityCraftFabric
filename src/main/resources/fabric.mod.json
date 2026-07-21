@@ -28,6 +28,9 @@
 		],
 		"client": [
 			"net.geforcemods.securitycraft.SecurityCraftClient"
+		],
+		"jei_mod_plugin": [
+			"net.geforcemods.securitycraft.compat.jei.SCJEIPlugin"
 		]
 	},
 	"depends": {
@@ -36,5 +39,7 @@
 		"minecraft": "~1.21.1",
 		"java": ">=21"
 	},
-	"suggests": {}
+	"suggests": {
+		"jei": "*"
+	}
 }
