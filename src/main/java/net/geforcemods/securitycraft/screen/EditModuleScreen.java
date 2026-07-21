@@ -161,6 +161,23 @@ public class EditModuleScreen extends Screen {
 	}
 
 	@Override
+	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+		if (!inputField.isFocused() && minecraft.options.keyInventory.matches(keyCode, scanCode)) {
+			onClose();
+			return true;
+		}
+
+		return super.keyPressed(keyCode, scanCode, modifiers);
+	}
+
+	@Override
+	public void tick() {
+		// Auto-close if the module item is no longer held (upstream StillValid behaviour).
+		if (minecraft.player == null || net.geforcemods.securitycraft.util.PlayerUtils.getItemStackFromAnyHand(minecraft.player, module.getItem()).isEmpty())
+			onClose();
+	}
+
+	@Override
 	public boolean isPauseScreen() {
 		return false;
 	}
