@@ -1,0 +1,212 @@
+package net.geforcemods.securitycraft.screen;
+
+import org.lwjgl.glfw.GLFW;
+
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.geforcemods.securitycraft.SCContent;
+import net.geforcemods.securitycraft.api.IModuleInventory;
+import net.geforcemods.securitycraft.api.PasscodeProtected;
+import net.geforcemods.securitycraft.misc.ModuleType;
+import net.geforcemods.securitycraft.network.CheckPasscodePayload;
+import net.geforcemods.securitycraft.screen.components.CallbackCheckbox;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.level.block.entity.BlockEntity;
+
+/** The passcode-entry screen: number pad, censored input with a show-passcode toggle, and cooldown UI. 1:1 with upstream CheckPasscodeScreen. */
+public class CheckPasscodeScreen extends Screen {
+	private static final Identifier TEXTURE = SCContent.id("textures/gui/container/check_passcode.png");
+	private static final Component COOLDOWN_TEXT_1 = Component.translatable("gui.securitycraft:passcode.cooldown1");
+	private final char[] allowedChars = {
+			'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '\b', '\u001B'
+	}; //0-9, backspace and escape
+	private final int imageWidth = 176;
+	private final int imageHeight = 186;
+	private final BlockPos pos;
+	private int cooldownText1XPos;
+	private int leftPos;
+	private int topPos;
+	private CensoringEditBox keycodeTextbox;
+	private boolean wasOnCooldownLastRenderTick = false;
+
+	public CheckPasscodeScreen(BlockPos pos, Component title) {
+		super(title);
+		this.pos = pos;
+	}
+
+	@Override
+	protected void init() {
+		super.init();
+		leftPos = (width - imageWidth) / 2;
+		topPos = (height - imageHeight) / 2;
+		cooldownText1XPos = width / 2 - font.width(COOLDOWN_TEXT_1) / 2;
+		addRenderableWidget(new CallbackCheckbox(width / 2 - 37, height / 2 - 55, 12, 12, Component.translatable("gui.securitycraft:passcode.showPasscode"), false, newState -> keycodeTextbox.setCensoring(!newState), 0x404040));
+		addNumberButton("1", width / 2 - 33, height / 2 - 35, b -> addNumberToString(1));
+		addNumberButton("2", width / 2 - 8, height / 2 - 35, b -> addNumberToString(2));
+		addNumberButton("3", width / 2 + 17, height / 2 - 35, b -> addNumberToString(3));
+		addNumberButton("4", width / 2 - 33, height / 2 - 10, b -> addNumberToString(4));
+		addNumberButton("5", width / 2 - 8, height / 2 - 10, b -> addNumberToString(5));
+		addNumberButton("6", width / 2 + 17, height / 2 - 10, b -> addNumberToString(6));
+		addNumberButton("7", width / 2 - 33, height / 2 + 15, b -> addNumberToString(7));
+		addNumberButton("8", width / 2 - 8, height / 2 + 15, b -> addNumberToString(8));
+		addNumberButton("9", width / 2 + 17, height / 2 + 15, b -> addNumberToString(9));
+		addNumberButton("←", width / 2 - 33, height / 2 + 40, b -> removeLastCharacter());
+		addNumberButton("0", width / 2 - 8, height / 2 + 40, b -> addNumberToString(0));
+		addNumberButton("✔", width / 2 + 17, height / 2 + 40, b -> checkCode(keycodeTextbox.getValue()));
+		keycodeTextbox = addRenderableWidget(new CensoringEditBox(font, width / 2 - 37, height / 2 - 72, 77, 12, Component.empty()) {
+			@Override
+			public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+				return active && super.mouseClicked(event, doubleClick);
+			}
+
+			@Override
+			public boolean canConsumeInput() {
+				return active && isVisible();
+			}
+		});
+		keycodeTextbox.setMaxLength(Integer.MAX_VALUE);
+
+		if (isOnCooldown())
+			toggleChildrenActive(false);
+		else
+			setInitialFocus(keycodeTextbox);
+	}
+
+	@Override
+	public void extractRenderState(GuiGraphicsExtractor extractor, int mouseX, int mouseY, float partialTick) {
+		super.extractRenderState(extractor, mouseX, mouseY, partialTick);
+		extractor.text(font, title, width / 2 - font.width(title) / 2, topPos + 6, 4210752, false);
+
+		if (isOnCooldown()) {
+			long secondsLeft = Math.max(getCooldownEnd() - System.currentTimeMillis(), 0) / 1000 + 1; //+1 so that the text doesn't say "0 seconds left" for a whole second
+			Component text = Component.translatable("gui.securitycraft:passcode.cooldown2", secondsLeft);
+
+			extractor.text(font, COOLDOWN_TEXT_1, cooldownText1XPos, height / 2 + 65, 4210752, false);
+			extractor.text(font, text, width / 2 - font.width(text) / 2, height / 2 + 75, 4210752, false);
+			wasOnCooldownLastRenderTick = true;
+		}
+		else if (wasOnCooldownLastRenderTick) {
+			wasOnCooldownLastRenderTick = false;
+			toggleChildrenActive(true);
+		}
+	}
+
+	@Override
+	public void extractBackground(GuiGraphicsExtractor extractor, int mouseX, int mouseY, float partialTick) {
+		super.extractBackground(extractor, mouseX, mouseY, partialTick);
+		extractor.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, leftPos, topPos, 0.0F, 0.0F, imageWidth, imageHeight, 256, 256);
+	}
+
+	@Override
+	public boolean keyPressed(KeyEvent event) {
+		if (event.key() == GLFW.GLFW_KEY_BACKSPACE && !keycodeTextbox.getValue().isEmpty())
+			minecraft.player.playSound(SoundEvents.UI_BUTTON_CLICK.value(), 0.15F, 1.0F);
+
+		if (!super.keyPressed(event) && !keycodeTextbox.keyPressed(event)) {
+			if (minecraft.options.keyInventory.matches(event))
+				onClose();
+
+			if (!isOnCooldown() && (event.key() == GLFW.GLFW_KEY_ENTER || event.key() == GLFW.GLFW_KEY_KP_ENTER)) {
+				minecraft.player.playSound(SoundEvents.UI_BUTTON_CLICK.value(), 0.15F, 1.0F);
+				checkCode(keycodeTextbox.getValue());
+			}
+		}
+
+		return true;
+	}
+
+	@Override
+	public boolean isPauseScreen() {
+		return false;
+	}
+
+	@Override
+	public boolean charTyped(CharacterEvent event) {
+		if (!isOnCooldown() && isValidChar((char) event.codepoint())) {
+			keycodeTextbox.charTyped(event);
+			minecraft.player.playSound(SoundEvents.UI_BUTTON_CLICK.value(), 0.15F, 1.0F);
+		}
+
+		return true;
+	}
+
+	private boolean isValidChar(char c) {
+		for (char allowedChar : allowedChars) {
+			if (c == allowedChar)
+				return true;
+		}
+
+		return false;
+	}
+
+	private void addNumberButton(String label, int x, int y, Button.OnPress onPress) {
+		addRenderableWidget(Button.builder(Component.literal(label), onPress).bounds(x, y, 20, 20).build());
+	}
+
+	private void addNumberToString(int number) {
+		keycodeTextbox.insertText("" + number);
+	}
+
+	private void removeLastCharacter() {
+		if (!keycodeTextbox.getValue().isEmpty())
+			keycodeTextbox.deleteChars(-1);
+	}
+
+	private void toggleChildrenActive(boolean setActive) {
+		children().forEach(listener -> {
+			if (listener instanceof AbstractWidget widget)
+				widget.active = setActive;
+		});
+		keycodeTextbox.setFocused(setActive);
+	}
+
+	public void checkCode(String code) {
+		if (hasSmartModule())
+			toggleChildrenActive(false);
+
+		keycodeTextbox.setValue("");
+		ClientPlayNetworking.send(new CheckPasscodePayload(pos, code));
+	}
+
+	private BlockEntity blockEntity() {
+		return minecraft != null && minecraft.level != null ? minecraft.level.getBlockEntity(pos) : null;
+	}
+
+	private boolean isOnCooldown() {
+		return blockEntity() instanceof PasscodeProtected pp && pp.isOnCooldown();
+	}
+
+	private long getCooldownEnd() {
+		return blockEntity() instanceof PasscodeProtected pp ? pp.getCooldownEnd() : 0;
+	}
+
+	private boolean hasSmartModule() {
+		return blockEntity() instanceof IModuleInventory inv && inv.isModuleEnabled(ModuleType.SMART);
+	}
+
+	/** An {@link EditBox} that renders its contents as asterisks unless censoring is toggled off. */
+	public static class CensoringEditBox extends EditBox {
+		private boolean shouldCensor = true;
+
+		public CensoringEditBox(Font font, int x, int y, int width, int height, Component message) {
+			super(font, x, y, width, height, message);
+			addFormatter((str, offset) -> net.minecraft.util.FormattedCharSequence.forward(shouldCensor ? "*".repeat(str.length()) : str, net.minecraft.network.chat.Style.EMPTY));
+		}
+
+		public void setCensoring(boolean shouldCensor) {
+			this.shouldCensor = shouldCensor;
+		}
+	}
+}

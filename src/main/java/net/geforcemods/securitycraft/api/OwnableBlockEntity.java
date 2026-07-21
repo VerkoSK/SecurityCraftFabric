@@ -41,14 +41,13 @@ public class OwnableBlockEntity extends BlockEntity implements IOwnable {
 	@Override
 	protected void saveAdditional(ValueOutput output) {
 		super.saveAdditional(output);
-		output.putString(Owner.DEFAULT_OWNER_NAME, owner.getName());
-		output.putString(Owner.DEFAULT_OWNER_UUID, owner.getUUID());
+		owner.save(output);
 	}
 
 	@Override
 	protected void loadAdditional(ValueInput input) {
 		super.loadAdditional(input);
-		owner.set(input.getStringOr(Owner.DEFAULT_OWNER_NAME, Owner.DEFAULT_OWNER_NAME), input.getStringOr(Owner.DEFAULT_OWNER_UUID, Owner.DEFAULT_OWNER_UUID));
+		owner = Owner.load(input);
 	}
 
 	@Override

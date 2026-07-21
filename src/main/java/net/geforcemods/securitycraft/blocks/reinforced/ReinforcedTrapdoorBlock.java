@@ -11,7 +11,6 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.redstone.Orientation;
 
 /** Reinforced iron trapdoor: opens only when a powered SecurityCraft keypad is adjacent — NOT by regular redstone. */
 public class ReinforcedTrapdoorBlock extends TrapDoorBlock {
@@ -42,7 +41,7 @@ public class ReinforcedTrapdoorBlock extends TrapDoorBlock {
 	}
 
 	@Override
-	public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, Orientation orientation, boolean movedByPiston) {
+	public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, net.minecraft.world.level.redstone.Orientation orientation, boolean movedByPiston) {
 		boolean active = hasActiveKeypadNextTo(level, pos);
 
 		if (active != state.getValue(BlockStateProperties.OPEN))

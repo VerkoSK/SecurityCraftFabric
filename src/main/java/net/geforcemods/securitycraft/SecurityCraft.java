@@ -16,6 +16,7 @@ public class SecurityCraft implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
+		ConfigHandler.load();
 		SCContent.init();
 		NetworkHandler.registerPayloads();
 		NetworkHandler.registerServerReceivers();
