@@ -1,7 +1,0 @@
-{
-    "parent": "securitycraft:block/reinforced_cube_all",
-	"render_type": "minecraft:cutout",
-    "textures": {
-        "all": "block/weathered_copper_grate"
-    }
-}
