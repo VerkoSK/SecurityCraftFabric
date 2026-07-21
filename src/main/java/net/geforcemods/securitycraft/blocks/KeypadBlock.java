@@ -50,6 +50,26 @@ public class KeypadBlock extends Block implements EntityBlock {
 		if (!(level.getBlockEntity(pos) instanceof KeypadBlockEntity be) || !(player instanceof ServerPlayer serverPlayer))
 			return InteractionResult.PASS;
 
+		if (be.isDisabled()) {
+			player.displayClientMessage(net.geforcemods.securitycraft.util.Utils.localize("gui.securitycraft:scManual.disabled"), true);
+			return InteractionResult.SUCCESS;
+		}
+
+		if (be.isDenied(player)) {
+			if (be.sendsDenylistMessage())
+				net.geforcemods.securitycraft.util.PlayerUtils.sendMessageToPlayer(player, net.geforcemods.securitycraft.util.Utils.localize(getDescriptionId()), net.geforcemods.securitycraft.util.Utils.localize("messages.securitycraft:module.onDenylist"), net.minecraft.ChatFormatting.RED);
+
+			return InteractionResult.SUCCESS;
+		}
+
+		if (be.isAllowed(player)) {
+			if (be.sendsAllowlistMessage())
+				net.geforcemods.securitycraft.util.PlayerUtils.sendMessageToPlayer(player, net.geforcemods.securitycraft.util.Utils.localize(getDescriptionId()), net.geforcemods.securitycraft.util.Utils.localize("messages.securitycraft:module.onAllowlist"), net.minecraft.ChatFormatting.GREEN);
+
+			be.activate((ServerLevel) level);
+			return InteractionResult.SUCCESS;
+		}
+
 		Owner owner = be.getOwner();
 
 		if (owner.isOwner(player) && player.isShiftKeyDown())
@@ -86,8 +106,13 @@ public class KeypadBlock extends Block implements EntityBlock {
 
 	@Override
 	protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
-		if (!state.is(newState.getBlock()) && state.getValue(POWERED))
-			net.geforcemods.securitycraft.util.BlockUtils.updateIndirectNeighbors(level, pos, this);
+		if (!state.is(newState.getBlock())) {
+			if (level.getBlockEntity(pos) instanceof net.geforcemods.securitycraft.api.IModuleInventory inv)
+				inv.dropAllModules();
+
+			if (state.getValue(POWERED))
+				net.geforcemods.securitycraft.util.BlockUtils.updateIndirectNeighbors(level, pos, this);
+		}
 
 		super.onRemove(state, level, pos, newState, isMoving);
 	}

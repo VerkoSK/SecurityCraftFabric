@@ -3,8 +3,16 @@ package net.geforcemods.securitycraft.blockentities;
 import java.util.UUID;
 
 import net.geforcemods.securitycraft.SCContent;
-import net.geforcemods.securitycraft.api.OwnableBlockEntity;
+import net.geforcemods.securitycraft.api.CustomizableBlockEntity;
+import net.geforcemods.securitycraft.api.Option;
+import net.geforcemods.securitycraft.api.Option.DisabledOption;
+import net.geforcemods.securitycraft.api.Option.SendAllowlistMessageOption;
+import net.geforcemods.securitycraft.api.Option.SendDenylistMessageOption;
+import net.geforcemods.securitycraft.api.Option.SignalLengthOption;
+import net.geforcemods.securitycraft.api.PasscodeProtected;
 import net.geforcemods.securitycraft.blocks.KeypadBlock;
+import net.geforcemods.securitycraft.misc.ModuleType;
+import net.geforcemods.securitycraft.util.BlockUtils;
 import net.geforcemods.securitycraft.util.PasscodeUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -13,13 +21,14 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * Stores the keypad's owner, its salted passcode hash and drives the redstone pulse when the
- * correct code is entered. The signal length (how long it stays powered) is fixed here; the
- * upstream mod exposes it as a configurable module option, which is on the roadmap.
+ * The keypad block entity: owner + salted passcode + the customizable module/option system (allowlist,
+ * denylist, disguise, smart, harming). Drives the redstone pulse on a correct code.
  */
-public class KeypadBlockEntity extends OwnableBlockEntity implements net.geforcemods.securitycraft.api.PasscodeProtected {
-	public static final int SIGNAL_LENGTH = 60; // ticks the keypad stays powered after a correct code
-
+public class KeypadBlockEntity extends CustomizableBlockEntity implements PasscodeProtected {
+	private DisabledOption disabled = new DisabledOption(false);
+	private SignalLengthOption signalLength = new SignalLengthOption(60);
+	private SendAllowlistMessageOption sendAllowlistMessage = new SendAllowlistMessageOption(false);
+	private SendDenylistMessageOption sendDenylistMessage = new SendDenylistMessageOption(true);
 	private String salt = UUID.randomUUID().toString();
 	private String passcodeHash = null;
 
@@ -27,11 +36,12 @@ public class KeypadBlockEntity extends OwnableBlockEntity implements net.geforce
 		super(SCContent.KEYPAD_BLOCK_ENTITY, pos, state);
 	}
 
+	@Override
 	public boolean hasPasscode() {
 		return passcodeHash != null;
 	}
 
-	/** Sets (or replaces) the passcode. Salt is rotated on every set. */
+	@Override
 	public void setPasscode(String passcode) {
 		salt = UUID.randomUUID().toString();
 		passcodeHash = PasscodeUtils.hash(passcode, salt);
@@ -39,23 +49,54 @@ public class KeypadBlockEntity extends OwnableBlockEntity implements net.geforce
 		sync();
 	}
 
+	@Override
 	public boolean checkPasscode(String attempt) {
 		return hasPasscode() && PasscodeUtils.matches(passcodeHash, PasscodeUtils.hash(attempt, salt));
 	}
 
-	/** Powers the block for {@link #SIGNAL_LENGTH} ticks and schedules the reset. */
+	@Override
 	public void activate(ServerLevel level) {
 		BlockState state = getBlockState();
 
 		if (state.getBlock() instanceof KeypadBlock && !state.getValue(KeypadBlock.POWERED)) {
 			level.setBlockAndUpdate(worldPosition, state.setValue(KeypadBlock.POWERED, true));
-			net.geforcemods.securitycraft.util.BlockUtils.updateIndirectNeighbors(level, worldPosition, state.getBlock());
-			level.scheduleTick(worldPosition, state.getBlock(), SIGNAL_LENGTH);
+			BlockUtils.updateIndirectNeighbors(level, worldPosition, state.getBlock());
+			level.scheduleTick(worldPosition, state.getBlock(), getSignalLength());
 		}
 	}
 
+	public boolean isDisabled() {
+		return disabled.get();
+	}
+
+	public int getSignalLength() {
+		return signalLength.get();
+	}
+
+	public boolean sendsAllowlistMessage() {
+		return sendAllowlistMessage.get();
+	}
+
+	public boolean sendsDenylistMessage() {
+		return sendDenylistMessage.get();
+	}
+
 	@Override
-	protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+	public ModuleType[] acceptedModules() {
+		return new ModuleType[] {
+				ModuleType.ALLOWLIST, ModuleType.DENYLIST, ModuleType.DISGUISE, ModuleType.SMART, ModuleType.HARMING
+		};
+	}
+
+	@Override
+	public Option<?>[] customOptions() {
+		return new Option[] {
+				disabled, signalLength, sendAllowlistMessage, sendDenylistMessage
+		};
+	}
+
+	@Override
+	public void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
 		super.saveAdditional(tag, registries);
 		tag.putString("salt", salt);
 
@@ -64,7 +105,7 @@ public class KeypadBlockEntity extends OwnableBlockEntity implements net.geforce
 	}
 
 	@Override
-	protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+	public void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
 		super.loadAdditional(tag, registries);
 
 		if (tag.contains("salt"))
@@ -73,14 +114,10 @@ public class KeypadBlockEntity extends OwnableBlockEntity implements net.geforce
 		passcodeHash = tag.contains("passcodeHash") ? tag.getString("passcodeHash") : null;
 	}
 
-	/**
-	 * The passcode hash is intentionally NOT written to the update tag sent to clients, so the
-	 * secret never leaves the server. {@link #hasPasscode()} state that the client needs is
-	 * carried in the open-screen packet instead.
-	 */
 	@Override
 	public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
 		CompoundTag tag = super.getUpdateTag(registries);
+
 		tag.remove("passcodeHash");
 		tag.remove("salt");
 		return tag;

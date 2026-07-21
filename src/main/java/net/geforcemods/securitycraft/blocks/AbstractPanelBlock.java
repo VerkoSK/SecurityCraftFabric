@@ -96,9 +96,14 @@ public abstract class AbstractPanelBlock extends OwnableBlock implements SimpleW
 
 	@Override
 	protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
-		if (!state.is(newState.getBlock()) && state.getValue(POWERED)) {
-			level.updateNeighborsAt(pos, this);
-			level.updateNeighborsAt(pos.relative(getConnectedDirection(state).getOpposite()), this);
+		if (!state.is(newState.getBlock())) {
+			if (level.getBlockEntity(pos) instanceof net.geforcemods.securitycraft.api.IModuleInventory inv)
+				inv.dropAllModules();
+
+			if (state.getValue(POWERED)) {
+				level.updateNeighborsAt(pos, this);
+				level.updateNeighborsAt(pos.relative(getConnectedDirection(state).getOpposite()), this);
+			}
 		}
 
 		super.onRemove(state, level, pos, newState, isMoving);

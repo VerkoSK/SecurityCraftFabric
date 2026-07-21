@@ -54,6 +54,26 @@ public class KeyPanelBlock extends AbstractPanelBlock {
 		if (!(level.getBlockEntity(pos) instanceof KeyPanelBlockEntity be) || !(player instanceof ServerPlayer serverPlayer))
 			return InteractionResult.PASS;
 
+		if (be.isDisabled()) {
+			player.displayClientMessage(net.geforcemods.securitycraft.util.Utils.localize("gui.securitycraft:scManual.disabled"), true);
+			return InteractionResult.SUCCESS;
+		}
+
+		if (be.isDenied(player)) {
+			if (be.sendsDenylistMessage())
+				net.geforcemods.securitycraft.util.PlayerUtils.sendMessageToPlayer(player, net.geforcemods.securitycraft.util.Utils.localize(getDescriptionId()), net.geforcemods.securitycraft.util.Utils.localize("messages.securitycraft:module.onDenylist"), net.minecraft.ChatFormatting.RED);
+
+			return InteractionResult.SUCCESS;
+		}
+
+		if (be.isAllowed(player)) {
+			if (be.sendsAllowlistMessage())
+				net.geforcemods.securitycraft.util.PlayerUtils.sendMessageToPlayer(player, net.geforcemods.securitycraft.util.Utils.localize(getDescriptionId()), net.geforcemods.securitycraft.util.Utils.localize("messages.securitycraft:module.onAllowlist"), net.minecraft.ChatFormatting.GREEN);
+
+			be.activate((net.minecraft.server.level.ServerLevel) level);
+			return InteractionResult.SUCCESS;
+		}
+
 		Owner owner = be.getOwner();
 
 		if (owner.isOwner(player) && player.isShiftKeyDown())
