@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '1.11-SNAPSHOT'
+	id 'fabric-loom' version '1.14-SNAPSHOT'
 	id 'java'
 }
 
@@ -10,6 +10,10 @@ base {
 	archivesName = project.archives_base_name
 }
 
+loom {
+	accessWidenerPath = file("src/main/resources/securitycraft.accesswidener")
+}
+
 java {
 	toolchain.languageVersion = JavaLanguageVersion.of(21)
 	sourceCompatibility = JavaVersion.VERSION_21
@@ -18,6 +22,7 @@ java {
 
 repositories {
 	maven { url = 'https://maven.fabricmc.net/' }
+	maven { url = 'https://maven.blamejared.com' }
 	mavenCentral()
 }
 
@@ -31,6 +36,7 @@ dependencies {
 	}
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+	modImplementation "mezz.jei:jei-${project.minecraft_version}-fabric:${project.jei_version}"
 }
 
 processResources {
