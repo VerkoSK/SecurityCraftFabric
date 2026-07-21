@@ -57,8 +57,20 @@ public class EditModuleScreen extends Screen {
 
 		int cx = leftPos + 128;
 
-		inputField = addRenderableWidget(new EditBox(font, cx, topPos + 20, 62, 16, Component.empty()));
+		inputField = addRenderableWidget(new EditBox(font, cx, topPos + 20, 62, 16, Component.empty()) {
+			@Override
+			public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+				if (isFocused() && (keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_ENTER || keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_KP_ENTER)) {
+					addPlayer();
+					return true;
+				}
+
+				return super.keyPressed(keyCode, scanCode, modifiers);
+			}
+		});
 		inputField.setMaxLength(16);
+		inputField.setFilter(s -> !s.contains(" "));
+		setInitialFocus(inputField);
 		addRenderableWidget(Button.builder(local("add_player"), b -> addPlayer()).bounds(cx, topPos + 40, 62, 18).build());
 		addRenderableWidget(Button.builder(local("remove_player"), b -> removePlayer()).bounds(cx, topPos + 62, 62, 18).build());
 		addRenderableWidget(Button.builder(local("clear"), b -> clear()).bounds(cx, topPos + 84, 62, 18).build());
