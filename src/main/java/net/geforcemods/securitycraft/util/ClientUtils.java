@@ -15,6 +15,9 @@ public class ClientUtils {
 	public static void renderModuleInfo(GuiGraphics guiGraphics, Font font, ModuleType module, Component tooltip, boolean hasModule, int x, int y, int mouseX, int mouseY) {
 		float alpha = hasModule ? 1.0F : 0.5F;
 
+		// Blend must be enabled for the alpha in setColor to actually fade the icon (matches upstream renderModuleInfo).
+		com.mojang.blaze3d.systems.RenderSystem.enableBlend();
+		com.mojang.blaze3d.systems.RenderSystem.defaultBlendFunc();
 		guiGraphics.setColor(1.0F, 1.0F, 1.0F, alpha);
 		guiGraphics.blit(moduleTexture(module), x, y, 0.0F, 0.0F, 16, 16, 16, 16);
 
@@ -24,6 +27,7 @@ public class ClientUtils {
 			guiGraphics.blit(net.minecraft.resources.ResourceLocation.withDefaultNamespace("textures/item/sugar.png"), x, y, 0.0F, 0.0F, 16, 16, 16, 16);
 
 		guiGraphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
+		com.mojang.blaze3d.systems.RenderSystem.disableBlend();
 
 		if (tooltip != null && mouseX >= x && mouseX < x + 16 && mouseY >= y && mouseY <= y + 16)
 			guiGraphics.renderComponentTooltip(font, java.util.List.of(tooltip), mouseX, mouseY);

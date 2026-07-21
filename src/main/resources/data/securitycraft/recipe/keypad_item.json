@@ -1,0 +1,10 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"category": "misc",
+	"pattern": ["BBB", "BPB", "BBB"],
+	"key": {
+		"B": { "item": "securitycraft:reinforced_stone_button" },
+		"P": { "item": "minecraft:heavy_weighted_pressure_plate" }
+	},
+	"result": { "id": "securitycraft:keypad_item", "count": 1 }
+}

@@ -205,4 +205,41 @@ public class KeypadBlock extends Block implements EntityBlock, SimpleWaterlogged
 	public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
 		return new KeypadBlockEntity(pos, state);
 	}
+
+	/** Frame &#8596; Keypad conversion (right-clicking a Frame with a Key Panel item). Ported from upstream, minus the camera-feed guard. */
+	public static class Convertible implements net.geforcemods.securitycraft.api.IPasscodeConvertible {
+		@Override
+		public boolean isUnprotectedBlock(BlockState state) {
+			return state.is(SCContent.FRAME);
+		}
+
+		@Override
+		public boolean isProtectedBlock(BlockState state) {
+			return state.is(SCContent.KEYPAD);
+		}
+
+		@Override
+		public boolean protect(Player player, Level level, BlockPos pos) {
+			Owner owner = ((net.geforcemods.securitycraft.api.IOwnable) level.getBlockEntity(pos)).getOwner();
+			Direction facing = level.getBlockState(pos).getValue(net.geforcemods.securitycraft.blocks.FrameBlock.FACING);
+
+			level.setBlockAndUpdate(pos, SCContent.KEYPAD.defaultBlockState().setValue(KeypadBlock.FACING, facing).setValue(KeypadBlock.ROTATION, facing).setValue(KeypadBlock.POWERED, false));
+			((net.geforcemods.securitycraft.api.IOwnable) level.getBlockEntity(pos)).setOwner(owner.getName(), owner.getUUID());
+			return true;
+		}
+
+		@Override
+		public boolean unprotect(Player player, Level level, BlockPos pos) {
+			BlockState state = level.getBlockState(pos);
+			Owner owner = ((net.geforcemods.securitycraft.api.IOwnable) level.getBlockEntity(pos)).getOwner();
+			Direction facing = state.getValue(KeypadBlock.FACING).getAxis().isHorizontal() ? state.getValue(KeypadBlock.FACING) : state.getValue(KeypadBlock.ROTATION);
+
+			if (level.getBlockEntity(pos) instanceof IModuleInventory inv)
+				inv.dropAllModules();
+
+			level.setBlockAndUpdate(pos, SCContent.FRAME.defaultBlockState().setValue(net.geforcemods.securitycraft.blocks.FrameBlock.FACING, facing));
+			((net.geforcemods.securitycraft.api.IOwnable) level.getBlockEntity(pos)).setOwner(owner.getName(), owner.getUUID());
+			return true;
+		}
+	}
 }
