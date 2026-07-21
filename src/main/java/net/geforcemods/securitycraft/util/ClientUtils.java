@@ -6,21 +6,39 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
-import net.minecraft.world.item.ItemStack;
 
 /** Client-only helpers ported from the original SecurityCraft {@code util.ClientUtils}. */
 public class ClientUtils {
 	private ClientUtils() {}
 
-	/** Draws a module's icon (dimmed if the module is absent) and shows the given tooltip when hovered. */
+	/** Draws a module's texture (semi-transparent if not installed) and shows the given tooltip when hovered, matching the original. */
 	public static void renderModuleInfo(GuiGraphics guiGraphics, Font font, ModuleType module, Component tooltip, boolean hasModule, int x, int y, int mouseX, int mouseY) {
-		guiGraphics.renderFakeItem(new ItemStack(module.getItem()), x, y);
+		float alpha = hasModule ? 1.0F : 0.5F;
 
-		if (!hasModule)
-			guiGraphics.fill(x, y, x + 16, y + 16, 0xBB222222);
+		guiGraphics.setColor(1.0F, 1.0F, 1.0F, alpha);
+		guiGraphics.blit(moduleTexture(module), x, y, 0.0F, 0.0F, 16, 16, 16, 16);
 
-		if (mouseX >= x && mouseX <= x + 16 && mouseY >= y && mouseY <= y + 16)
-			guiGraphics.renderTooltip(font, tooltip, mouseX, mouseY);
+		if (module == ModuleType.REDSTONE)
+			guiGraphics.blit(net.minecraft.resources.ResourceLocation.withDefaultNamespace("textures/item/redstone.png"), x, y, 0.0F, 0.0F, 16, 16, 16, 16);
+		else if (module == ModuleType.SPEED)
+			guiGraphics.blit(net.minecraft.resources.ResourceLocation.withDefaultNamespace("textures/item/sugar.png"), x, y, 0.0F, 0.0F, 16, 16, 16, 16);
+
+		guiGraphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
+
+		if (tooltip != null && mouseX >= x && mouseX < x + 16 && mouseY >= y && mouseY <= y + 16)
+			guiGraphics.renderComponentTooltip(font, java.util.List.of(tooltip), mouseX, mouseY);
+	}
+
+	private static net.minecraft.resources.ResourceLocation moduleTexture(ModuleType module) {
+		return net.geforcemods.securitycraft.SCContent.id(switch (module) {
+			case ALLOWLIST -> "textures/item/whitelist_module.png";
+			case DENYLIST -> "textures/item/blacklist_module.png";
+			case HARMING -> "textures/item/harming_module.png";
+			case SMART -> "textures/item/smart_module.png";
+			case STORAGE -> "textures/item/storage_module.png";
+			case DISGUISE -> "textures/item/disguise_module.png";
+			default -> "textures/item/module_background.png"; // REDSTONE, SPEED
+		});
 	}
 
 	/** Forces every rendered chunk to rebuild, so a live tint change is reflected immediately. */

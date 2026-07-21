@@ -1,0 +1,10 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"category": "redstone",
+	"pattern": ["III", "IRI", "III"],
+	"key": {
+		"I": { "item": "minecraft:iron_ingot" },
+		"R": { "item": "minecraft:redstone" }
+	},
+	"result": { "id": "securitycraft:keypad", "count": 1 }
+}

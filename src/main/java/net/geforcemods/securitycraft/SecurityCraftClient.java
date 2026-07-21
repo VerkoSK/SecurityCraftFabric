@@ -44,7 +44,7 @@ public class SecurityCraftClient implements ClientModInitializer {
 							if (lens.has(net.minecraft.core.component.DataComponents.DYED_COLOR))
 								return 0xFF000000 | lens.get(net.minecraft.core.component.DataComponents.DYED_COLOR).rgb();
 
-							return 0xFFFF0000;
+							return 0xFFFFFFFF;
 						}
 
 						net.minecraft.world.level.block.state.BlockState offsetState = view.getBlockState(offsetPos);
@@ -56,7 +56,7 @@ public class SecurityCraftClient implements ClientModInitializer {
 			}
 		}
 
-		return 0xFFFF0000;
+		return 0xFFFFFFFF;
 	}
 
 	@Override
