@@ -4,8 +4,8 @@
 	"pattern": ["SGS", "GRG", "SGS"],
 	"key": {
 		"S": { "tag": "minecraft:stone_crafting_materials" },
-		"R": { "tag": "c:storage_blocks/redstone" },
-		"G": { "tag": "c:glass_panes/colorless" }
+		"R": { "item": "minecraft:redstone_block" },
+		"G": { "item": "minecraft:glass_pane" }
 	},
 	"result": { "item": "securitycraft:laser_block", "count": 1 }
 }
