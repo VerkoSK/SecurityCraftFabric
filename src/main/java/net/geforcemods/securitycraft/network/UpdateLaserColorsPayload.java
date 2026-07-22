@@ -1,23 +1,25 @@
 package net.geforcemods.securitycraft.network;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 
 /** Server -> client: re-render the laser field blocks at the given positions so an updated lens colour shows. */
-public record UpdateLaserColorsPayload(List<BlockPos> positions) implements CustomPacketPayload {
-	public static final Type<UpdateLaserColorsPayload> TYPE = new Type<>(new ResourceLocation("securitycraft", "update_laser_colors"));
-	public static final StreamCodec<RegistryFriendlyByteBuf, UpdateLaserColorsPayload> CODEC = StreamCodec.composite(
-			BlockPos.STREAM_CODEC.apply(ByteBufCodecs.list()), UpdateLaserColorsPayload::positions,
-			UpdateLaserColorsPayload::new);
+public record UpdateLaserColorsPayload(List<BlockPos> positions) {
+	public static final ResourceLocation CHANNEL = new ResourceLocation("securitycraft", "update_laser_colors");
 
-	@Override
-	public Type<? extends CustomPacketPayload> type() {
-		return TYPE;
+	public FriendlyByteBuf write() {
+		FriendlyByteBuf buf = PacketByteBufs.create();
+
+		buf.writeCollection(positions, FriendlyByteBuf::writeBlockPos);
+		return buf;
+	}
+
+	public static UpdateLaserColorsPayload read(FriendlyByteBuf buf) {
+		return new UpdateLaserColorsPayload(buf.readCollection(ArrayList::new, FriendlyByteBuf::readBlockPos));
 	}
 }

@@ -8,5 +8,5 @@
 		"P": { "item": "minecraft:paper" },
 		"S": { "item": "minecraft:chest" }
 	},
-	"result": { "id": "securitycraft:storage_module", "count": 1 }
+	"result": { "item": "securitycraft:storage_module", "count": 1 }
 }

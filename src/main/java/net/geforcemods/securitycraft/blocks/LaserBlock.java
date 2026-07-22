@@ -2,8 +2,6 @@ package net.geforcemods.securitycraft.blocks;
 
 import org.joml.Vector3f;
 
-import com.mojang.serialization.MapCodec;
-
 import net.geforcemods.securitycraft.ConfigHandler;
 import net.geforcemods.securitycraft.SCContent;
 import net.geforcemods.securitycraft.api.IOwnable;
@@ -23,6 +21,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -46,18 +45,12 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
 
 public class LaserBlock extends OwnableBlock implements SimpleWaterloggedBlock {
-	public static final MapCodec<LaserBlock> CODEC = simpleCodec(LaserBlock::new);
 	public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
 	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
 	public LaserBlock(BlockBehaviour.Properties properties) {
 		super(properties);
 		registerDefaultState(stateDefinition.any().setValue(POWERED, false).setValue(WATERLOGGED, false));
-	}
-
-	@Override
-	protected MapCodec<? extends BaseEntityBlock> codec() {
-		return CODEC;
 	}
 
 	@Override
@@ -69,7 +62,7 @@ public class LaserBlock extends OwnableBlock implements SimpleWaterloggedBlock {
 	}
 
 	@Override
-	protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
+	public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
 		LaserBlockBlockEntity be = (LaserBlockBlockEntity) level.getBlockEntity(pos);
 
 		if (be.isOwnedBy(player)) {
@@ -181,27 +174,27 @@ public class LaserBlock extends OwnableBlock implements SimpleWaterloggedBlock {
 	}
 
 	@Override
-	protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, BlockPos fromPos, boolean flag) {
+	public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, BlockPos fromPos, boolean flag) {
 		setLaser(level, pos, null);
 	}
 
 	@Override
-	protected boolean isSignalSource(BlockState state) {
+	public boolean isSignalSource(BlockState state) {
 		return true;
 	}
 
 	@Override
-	protected int getSignal(BlockState state, BlockGetter level, BlockPos pos, Direction side) {
+	public int getSignal(BlockState state, BlockGetter level, BlockPos pos, Direction side) {
 		return state.getValue(POWERED) && level.getBlockEntity(pos) instanceof LaserBlockBlockEntity be && be.isModuleEnabled(ModuleType.REDSTONE) ? 15 : 0;
 	}
 
 	@Override
-	protected int getDirectSignal(BlockState state, BlockGetter level, BlockPos pos, Direction side) {
+	public int getDirectSignal(BlockState state, BlockGetter level, BlockPos pos, Direction side) {
 		return getSignal(state, level, pos, side);
 	}
 
 	@Override
-	protected void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+	public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
 		if (!level.isClientSide && state.getValue(POWERED)) {
 			level.setBlockAndUpdate(pos, state.setValue(POWERED, false));
 			BlockUtils.updateIndirectNeighbors(level, pos, SCContent.LASER_BLOCK);
@@ -230,7 +223,7 @@ public class LaserBlock extends OwnableBlock implements SimpleWaterloggedBlock {
 	}
 
 	@Override
-	protected BlockState updateShape(BlockState state, Direction facing, BlockState facingState, LevelAccessor level, BlockPos currentPos, BlockPos facingPos) {
+	public BlockState updateShape(BlockState state, Direction facing, BlockState facingState, LevelAccessor level, BlockPos currentPos, BlockPos facingPos) {
 		if (state.getValue(WATERLOGGED))
 			level.scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
 
@@ -238,7 +231,7 @@ public class LaserBlock extends OwnableBlock implements SimpleWaterloggedBlock {
 	}
 
 	@Override
-	protected FluidState getFluidState(BlockState state) {
+	public FluidState getFluidState(BlockState state) {
 		return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(state);
 	}
 

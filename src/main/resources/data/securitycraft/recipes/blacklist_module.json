@@ -8,5 +8,5 @@
 		"P": { "item": "minecraft:paper" },
 		"S": { "item": "minecraft:ink_sac" }
 	},
-	"result": { "id": "securitycraft:blacklist_module", "count": 1 }
+	"result": { "item": "securitycraft:blacklist_module", "count": 1 }
 }

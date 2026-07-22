@@ -8,5 +8,5 @@
 		"P": { "item": "minecraft:paper" },
 		"S": { "item": "minecraft:painting" }
 	},
-	"result": { "id": "securitycraft:disguise_module", "count": 1 }
+	"result": { "item": "securitycraft:disguise_module", "count": 1 }
 }

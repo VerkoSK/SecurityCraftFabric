@@ -7,5 +7,5 @@
 		"R": { "tag": "c:storage_blocks/redstone" },
 		"G": { "tag": "c:glass_panes/colorless" }
 	},
-	"result": { "id": "securitycraft:laser_block", "count": 1 }
+	"result": { "item": "securitycraft:laser_block", "count": 1 }
 }

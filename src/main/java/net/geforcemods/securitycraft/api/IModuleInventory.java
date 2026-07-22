@@ -7,13 +7,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
-import net.geforcemods.securitycraft.SCContent;
 import net.geforcemods.securitycraft.components.ListModuleData;
 import net.geforcemods.securitycraft.items.ModuleItem;
 import net.geforcemods.securitycraft.misc.ModuleType;
 import net.geforcemods.securitycraft.util.Utils;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -299,7 +297,7 @@ public interface IModuleInventory {
 		return false;
 	}
 
-	public default NonNullList<ItemStack> readModuleInventory(CompoundTag tag, HolderLookup.Provider lookupProvider) {
+	public default NonNullList<ItemStack> readModuleInventory(CompoundTag tag) {
 		ListTag list = tag.getList("Modules", Tag.TAG_COMPOUND);
 		NonNullList<ItemStack> modules = NonNullList.withSize(getMaxNumberOfModules(), ItemStack.EMPTY);
 
@@ -308,7 +306,7 @@ public interface IModuleInventory {
 			byte slot = stackTag.getByte("ModuleSlot");
 
 			if (slot >= 0 && slot < modules.size())
-				modules.set(slot, Utils.parseOptional(lookupProvider, stackTag));
+				modules.set(slot, Utils.parseOptional(stackTag));
 		}
 
 		return modules;
@@ -334,7 +332,7 @@ public interface IModuleInventory {
 		return moduleStates;
 	}
 
-	public default CompoundTag writeModuleInventory(CompoundTag tag, HolderLookup.Provider lookupProvider) {
+	public default CompoundTag writeModuleInventory(CompoundTag tag) {
 		ListTag list = new ListTag();
 		NonNullList<ItemStack> modules = getInventory();
 
@@ -343,7 +341,7 @@ public interface IModuleInventory {
 				CompoundTag stackTag = new CompoundTag();
 
 				stackTag.putByte("ModuleSlot", (byte) i);
-				list.add(modules.get(i).save(lookupProvider, stackTag));
+				list.add(modules.get(i).save(stackTag));
 			}
 		}
 
@@ -374,7 +372,7 @@ public interface IModuleInventory {
 		if (!isModuleEnabled(ModuleType.ALLOWLIST))
 			return false;
 
-		ListModuleData listModuleData = getModule(ModuleType.ALLOWLIST).get(SCContent.LIST_MODULE_DATA);
+		ListModuleData listModuleData = ListModuleData.fromStack(getModule(ModuleType.ALLOWLIST));
 
 		return listModuleData != null && (listModuleData.affectEveryone() || listModuleData.isTeamOfPlayerOnList(myLevel(), name) || listModuleData.isPlayerOnList(name));
 	}
@@ -383,7 +381,7 @@ public interface IModuleInventory {
 		if (!isModuleEnabled(ModuleType.DENYLIST))
 			return false;
 
-		ListModuleData listModuleData = getModule(ModuleType.DENYLIST).get(SCContent.LIST_MODULE_DATA);
+		ListModuleData listModuleData = ListModuleData.fromStack(getModule(ModuleType.DENYLIST));
 		String name;
 
 		if (listModuleData != null) {

@@ -15,7 +15,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 /** Reinforced iron trapdoor: opens only when a powered SecurityCraft keypad is adjacent — NOT by regular redstone. */
 public class ReinforcedTrapdoorBlock extends TrapDoorBlock {
 	public ReinforcedTrapdoorBlock(BlockSetType type, BlockBehaviour.Properties properties) {
-		super(type, properties);
+		super(properties, type);
 	}
 
 	private static boolean hasActiveKeypadNextTo(Level level, BlockPos pos) {

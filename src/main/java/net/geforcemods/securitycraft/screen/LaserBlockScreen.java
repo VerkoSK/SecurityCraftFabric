@@ -20,7 +20,7 @@ import net.minecraft.world.entity.player.Inventory;
 
 public class LaserBlockScreen extends AbstractContainerScreen<LaserBlockMenu> {
 	private static final ResourceLocation TEXTURE = SCContent.id("textures/gui/container/laser_block.png");
-	private static final ResourceLocation LENS_SLOT = SCContent.id("slot/lens");
+	private static final ResourceLocation LENS_SLOT = SCContent.id("textures/gui/sprites/slot/lens.png");
 	private final boolean hasSmartModule;
 	private Component smartModuleTooltip;
 	private final LaserBlockBlockEntity be;
@@ -64,7 +64,7 @@ public class LaserBlockScreen extends AbstractContainerScreen<LaserBlockMenu> {
 
 		for (int i = 0; i < 6; i++) {
 			if (be.getLensContainer().getItem(i).isEmpty())
-				guiGraphics.blitSprite(LENS_SLOT, leftPos + 15, topPos + i * 22 + 27, 16, 16);
+				guiGraphics.blit(LENS_SLOT, leftPos + 15, topPos + i * 22 + 27, 0.0F, 0.0F, 16, 16, 16, 16);
 		}
 	}
 
@@ -85,7 +85,7 @@ public class LaserBlockScreen extends AbstractContainerScreen<LaserBlockMenu> {
 
 	public void onChangeValue(Direction dir, boolean newValue) {
 		sideConfig.put(dir, newValue);
-		ClientPlayNetworking.send(new SyncLaserSideConfigPayload(be.getBlockPos(), LaserBlockBlockEntity.saveSideConfig(sideConfig)));
+		ClientPlayNetworking.send(SyncLaserSideConfigPayload.CHANNEL, new SyncLaserSideConfigPayload(be.getBlockPos(), LaserBlockBlockEntity.saveSideConfig(sideConfig)).write());
 	}
 
 	@Override

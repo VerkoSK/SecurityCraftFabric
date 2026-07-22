@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.geforcemods.securitycraft.SCContent;
 import net.geforcemods.securitycraft.components.ListModuleData;
 import net.geforcemods.securitycraft.network.SetListModuleDataPayload;
 import net.geforcemods.securitycraft.screen.components.CallbackCheckbox;
@@ -43,7 +42,7 @@ public class EditModuleScreen extends Screen {
 		super(Utils.localize("gui.securitycraft:editModule"));
 		this.module = module;
 
-		ListModuleData data = module.getOrDefault(SCContent.LIST_MODULE_DATA, ListModuleData.EMPTY);
+		ListModuleData data = ListModuleData.fromStack(module);
 
 		players.addAll(data.players());
 		teams = new ArrayList<>(data.teams());
@@ -111,13 +110,13 @@ public class EditModuleScreen extends Screen {
 	private void save() {
 		ListModuleData data = new ListModuleData(new ArrayList<>(players), teams, affectEveryone);
 
-		module.set(SCContent.LIST_MODULE_DATA, data);
-		ClientPlayNetworking.send(new SetListModuleDataPayload(data));
+		data.writeToStack(module);
+		ClientPlayNetworking.send(SetListModuleDataPayload.CHANNEL, new SetListModuleDataPayload(data).write());
 	}
 
 	@Override
-	public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-		super.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
+	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+		renderBackground(guiGraphics);
 		guiGraphics.fill(leftPos, topPos, leftPos + X_SIZE, topPos + Y_SIZE, 0xF01A1A1A);
 		guiGraphics.drawCenteredString(font, title, leftPos + X_SIZE / 2, topPos + 6, 0xFFFFFF);
 
@@ -135,6 +134,8 @@ public class EditModuleScreen extends Screen {
 
 			guiGraphics.drawString(font, players.get(idx), lx + 2, ry + 2, 0xFFFFFF, false);
 		}
+
+		super.render(guiGraphics, mouseX, mouseY, partialTick);
 	}
 
 	@Override
@@ -153,10 +154,10 @@ public class EditModuleScreen extends Screen {
 	}
 
 	@Override
-	public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+	public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
 		int max = Math.max(0, players.size() - VISIBLE);
 
-		scrollOffset = Math.max(0, Math.min(max, scrollOffset - (int) Math.signum(scrollY)));
+		scrollOffset = Math.max(0, Math.min(max, scrollOffset - (int) Math.signum(delta)));
 		return true;
 	}
 

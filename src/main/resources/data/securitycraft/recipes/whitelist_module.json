@@ -8,5 +8,5 @@
 		"P": { "item": "minecraft:paper" },
 		"S": { "item": "minecraft:paper" }
 	},
-	"result": { "id": "securitycraft:whitelist_module", "count": 1 }
+	"result": { "item": "securitycraft:whitelist_module", "count": 1 }
 }

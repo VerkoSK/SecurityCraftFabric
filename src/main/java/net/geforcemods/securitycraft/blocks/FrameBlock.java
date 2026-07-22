@@ -1,14 +1,11 @@
 package net.geforcemods.securitycraft.blocks;
 
-import com.mojang.serialization.MapCodec;
-
 import net.geforcemods.securitycraft.blockentities.FrameBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
@@ -34,7 +31,6 @@ import net.minecraft.world.phys.shapes.VoxelShape;
  * subsystem is not ported, so the frame is otherwise decorative.
  */
 public class FrameBlock extends OwnableBlock implements SimpleWaterloggedBlock {
-	public static final MapCodec<FrameBlock> CODEC = simpleCodec(FrameBlock::new);
 	public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
 	public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
 	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
@@ -49,12 +45,7 @@ public class FrameBlock extends OwnableBlock implements SimpleWaterloggedBlock {
 	}
 
 	@Override
-	protected MapCodec<? extends BaseEntityBlock> codec() {
-		return CODEC;
-	}
-
-	@Override
-	protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext ctx) {
+	public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext ctx) {
 		return switch (state.getValue(FACING)) {
 			case NORTH -> SHAPE_NORTH;
 			case EAST -> SHAPE_EAST;
@@ -65,7 +56,7 @@ public class FrameBlock extends OwnableBlock implements SimpleWaterloggedBlock {
 	}
 
 	@Override
-	protected BlockState updateShape(BlockState state, Direction facing, BlockState facingState, LevelAccessor level, BlockPos currentPos, BlockPos facingPos) {
+	public BlockState updateShape(BlockState state, Direction facing, BlockState facingState, LevelAccessor level, BlockPos currentPos, BlockPos facingPos) {
 		if (state.getValue(WATERLOGGED))
 			level.scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
 
@@ -73,7 +64,7 @@ public class FrameBlock extends OwnableBlock implements SimpleWaterloggedBlock {
 	}
 
 	@Override
-	protected FluidState getFluidState(BlockState state) {
+	public FluidState getFluidState(BlockState state) {
 		return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(state);
 	}
 
@@ -88,17 +79,17 @@ public class FrameBlock extends OwnableBlock implements SimpleWaterloggedBlock {
 	}
 
 	@Override
-	protected boolean isPathfindable(BlockState state, PathComputationType pathType) {
+	public boolean isPathfindable(BlockState state, BlockGetter level, BlockPos pos, PathComputationType pathType) {
 		return false;
 	}
 
 	@Override
-	protected BlockState rotate(BlockState state, Rotation rot) {
+	public BlockState rotate(BlockState state, Rotation rot) {
 		return state.setValue(FACING, rot.rotate(state.getValue(FACING)));
 	}
 
 	@Override
-	protected BlockState mirror(BlockState state, Mirror mirror) {
+	public BlockState mirror(BlockState state, Mirror mirror) {
 		return state.rotate(mirror.getRotation(state.getValue(FACING)));
 	}
 

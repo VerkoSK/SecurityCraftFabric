@@ -69,7 +69,6 @@ public class SCContent {
 	public static net.geforcemods.securitycraft.items.ModuleItem STORAGE_MODULE;
 	public static net.geforcemods.securitycraft.items.ModuleItem DISGUISE_MODULE;
 	public static net.geforcemods.securitycraft.items.ModuleItem SPEED_MODULE;
-	public static net.minecraft.core.component.DataComponentType<net.geforcemods.securitycraft.components.ListModuleData> LIST_MODULE_DATA;
 	public static Item LENS;
 	public static Item UNIVERSAL_BLOCK_REINFORCER_LVL1;
 	public static Item UNIVERSAL_BLOCK_REINFORCER_LVL2;
@@ -79,9 +78,9 @@ public class SCContent {
 
 	public static final ResourceKey<CreativeModeTab> TAB_KEY = ResourceKey.create(Registries.CREATIVE_MODE_TAB, id("general"));
 
-	public static net.minecraft.core.component.DataComponentType<net.minecraft.util.Unit> UNREINFORCING;
 	public static RecipeSerializer<?> BLOCK_REINFORCING_SERIALIZER;
 	public static RecipeSerializer<?> BLOCK_UNREINFORCING_SERIALIZER;
+	public static RecipeSerializer<?> LENS_COLORING_SERIALIZER;
 	public static net.minecraft.world.inventory.MenuType<net.geforcemods.securitycraft.inventory.BlockReinforcerMenu> BLOCK_REINFORCER_MENU;
 	public static net.minecraft.world.inventory.MenuType<net.geforcemods.securitycraft.inventory.LaserBlockMenu> LASER_BLOCK_MENU;
 	public static net.minecraft.world.inventory.MenuType<net.geforcemods.securitycraft.inventory.DisguiseModuleMenu> DISGUISE_MODULE_MENU;
@@ -157,7 +156,6 @@ public class SCContent {
 			{"reinforced_cherry_slab", "slab"},
 			{"reinforced_cherry_stairs", "stairs"},
 			{"reinforced_cherry_wood", "pillar"},
-			{"reinforced_chiseled_copper", "cube"},
 			{"reinforced_chiseled_deepslate", "cube"},
 			{"reinforced_chiseled_nether_bricks", "cube"},
 			{"reinforced_chiseled_polished_blackstone", "cube"},
@@ -165,8 +163,6 @@ public class SCContent {
 			{"reinforced_chiseled_red_sandstone", "cube"},
 			{"reinforced_chiseled_sandstone", "cube"},
 			{"reinforced_chiseled_stone_bricks", "cube"},
-			{"reinforced_chiseled_tuff", "cube"},
-			{"reinforced_chiseled_tuff_bricks", "cube"},
 			{"reinforced_clay", "cube"},
 			{"reinforced_coal_block", "cube"},
 			{"reinforced_coarse_dirt", "cube"},
@@ -243,7 +239,6 @@ public class SCContent {
 			{"reinforced_end_stone_brick_stairs", "stairs"},
 			{"reinforced_end_stone_brick_wall", "wall"},
 			{"reinforced_end_stone_bricks", "cube"},
-			{"reinforced_exposed_chiseled_copper", "cube"},
 			{"reinforced_exposed_copper", "cube"},
 			{"reinforced_exposed_cut_copper", "cube"},
 			{"reinforced_exposed_cut_copper_slab", "slab"},
@@ -353,7 +348,6 @@ public class SCContent {
 			{"reinforced_orange_stained_glass_pane", "pane"},
 			{"reinforced_orange_terracotta", "cube"},
 			{"reinforced_orange_wool", "cube"},
-			{"reinforced_oxidized_chiseled_copper", "cube"},
 			{"reinforced_oxidized_copper", "cube"},
 			{"reinforced_oxidized_cut_copper", "cube"},
 			{"reinforced_oxidized_cut_copper_slab", "slab"},
@@ -390,10 +384,6 @@ public class SCContent {
 			{"reinforced_polished_granite", "cube"},
 			{"reinforced_polished_granite_slab", "slab"},
 			{"reinforced_polished_granite_stairs", "stairs"},
-			{"reinforced_polished_tuff", "cube"},
-			{"reinforced_polished_tuff_slab", "slab"},
-			{"reinforced_polished_tuff_stairs", "stairs"},
-			{"reinforced_polished_tuff_wall", "wall"},
 			{"reinforced_prismarine", "cube"},
 			{"reinforced_prismarine_brick_slab", "slab"},
 			{"reinforced_prismarine_brick_stairs", "stairs"},
@@ -497,10 +487,6 @@ public class SCContent {
 			{"reinforced_stripped_warped_stem", "pillar"},
 			{"reinforced_tinted_glass", "glass"},
 			{"reinforced_tuff", "cube"},
-			{"reinforced_tuff_brick_slab", "slab"},
-			{"reinforced_tuff_brick_stairs", "stairs"},
-			{"reinforced_tuff_brick_wall", "wall"},
-			{"reinforced_tuff_bricks", "cube"},
 			{"reinforced_tuff_slab", "slab"},
 			{"reinforced_tuff_stairs", "stairs"},
 			{"reinforced_tuff_wall", "wall"},
@@ -516,7 +502,6 @@ public class SCContent {
 			{"reinforced_warped_stairs", "stairs"},
 			{"reinforced_warped_stem", "pillar"},
 			{"reinforced_warped_wart_block", "cube"},
-			{"reinforced_weathered_chiseled_copper", "cube"},
 			{"reinforced_weathered_copper", "cube"},
 			{"reinforced_weathered_cut_copper", "cube"},
 			{"reinforced_weathered_cut_copper_slab", "slab"},
@@ -549,7 +534,6 @@ public class SCContent {
 		for (String[] entry : REINFORCED)
 			registerReinforced(entry[0], entry[1]);
 
-		LIST_MODULE_DATA = Registry.register(BuiltInRegistries.DATA_COMPONENT_TYPE, id("list_module_data"), net.minecraft.core.component.DataComponentType.<net.geforcemods.securitycraft.components.ListModuleData>builder().persistent(net.geforcemods.securitycraft.components.ListModuleData.CODEC).networkSynchronized(net.geforcemods.securitycraft.components.ListModuleData.STREAM_CODEC).cacheEncoding().build());
 		REDSTONE_MODULE = registerModule("redstone_module", net.geforcemods.securitycraft.misc.ModuleType.REDSTONE, false, false, false);
 		ALLOWLIST_MODULE = registerModule("whitelist_module", net.geforcemods.securitycraft.misc.ModuleType.ALLOWLIST, true, true, true);
 		DENYLIST_MODULE = registerModule("blacklist_module", net.geforcemods.securitycraft.misc.ModuleType.DENYLIST, true, true, true);
@@ -565,9 +549,9 @@ public class SCContent {
 		UNIVERSAL_BLOCK_REINFORCER_LVL3 = registerConverterItem("universal_block_reinforcer_lvl3", 0, true);
 		UNIVERSAL_BLOCK_REMOVER = registerConverterItem("universal_block_remover", 476, false);
 
-		UNREINFORCING = Registry.register(BuiltInRegistries.DATA_COMPONENT_TYPE, id("unreinforcing"), net.minecraft.core.component.DataComponentType.<net.minecraft.util.Unit>builder().persistent(com.mojang.serialization.Codec.unit(net.minecraft.util.Unit.INSTANCE)).networkSynchronized(net.minecraft.network.codec.StreamCodec.unit(net.minecraft.util.Unit.INSTANCE)).build());
 		BLOCK_REINFORCING_SERIALIZER = Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, id("block_reinforcing"), new net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer<>(net.geforcemods.securitycraft.recipe.ReinforcerRecipe.Reinforcing::new));
 		BLOCK_UNREINFORCING_SERIALIZER = Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, id("block_unreinforcing"), new net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer<>(net.geforcemods.securitycraft.recipe.ReinforcerRecipe.Unreinforcing::new));
+		LENS_COLORING_SERIALIZER = Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, id("lens_coloring"), new net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer<>(net.geforcemods.securitycraft.recipe.LensColoringRecipe::new));
 		BLOCK_REINFORCER_MENU = Registry.register(BuiltInRegistries.MENU, id("block_reinforcer"), new net.minecraft.world.inventory.MenuType<>(net.geforcemods.securitycraft.inventory.BlockReinforcerMenu::new, net.minecraft.world.flag.FeatureFlags.VANILLA_SET));
 
 		KEYPAD_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("keypad"), FabricBlockEntityTypeBuilder.create(KeypadBlockEntity::new, KEYPAD).build());
@@ -575,7 +559,7 @@ public class SCContent {
 		ABSTRACT_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("abstract"), FabricBlockEntityTypeBuilder.create((pos, state) -> new net.geforcemods.securitycraft.api.OwnableBlockEntity(ABSTRACT_BLOCK_ENTITY, pos, state), LASER_FIELD).build());
 		KEY_PANEL_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("key_panel"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.KeyPanelBlockEntity::new, KEY_PANEL).build());
 		FRAME_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("keypad_frame"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.FrameBlockEntity::new, FRAME).build());
-		LASER_BLOCK_MENU = Registry.register(BuiltInRegistries.MENU, id("laser_block"), new net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType<>((syncId, inv, data) -> new net.geforcemods.securitycraft.inventory.LaserBlockMenu(syncId, inv.player.level(), data.pos(), data.sideConfig(), inv), net.geforcemods.securitycraft.inventory.LaserBlockData.STREAM_CODEC));
+		LASER_BLOCK_MENU = Registry.register(BuiltInRegistries.MENU, id("laser_block"), new net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType<>((syncId, inv, buf) -> new net.geforcemods.securitycraft.inventory.LaserBlockMenu(syncId, inv, buf)));
 		DISGUISE_MODULE_MENU = Registry.register(BuiltInRegistries.MENU, id("disguise_module"), new net.minecraft.world.inventory.MenuType<>(net.geforcemods.securitycraft.inventory.DisguiseModuleMenu::new, net.minecraft.world.flag.FeatureFlags.VANILLA_SET));
 		registerCreativeTab();
 	}
@@ -599,12 +583,12 @@ public class SCContent {
 			case "glass" -> new BaseReinforcedBlock(glassProps());
 			case "pane" -> new IronBarsBlock((name.contains("glass") ? glassProps() : paneProps()));
 			case "fence" -> new FenceBlock(shapeProps(name));
-			case "fence_gate" -> new FenceGateBlock(WoodType.OAK, shapeProps(name));
+			case "fence_gate" -> new FenceGateBlock(shapeProps(name), WoodType.OAK);
 			case "wall" -> new WallBlock(shapeProps(name));
 			case "slab" -> new SlabBlock(shapeProps(name));
 			case "stairs" -> new StairBlock(Blocks.STONE.defaultBlockState(), shapeProps(name));
-			case "button" -> new ButtonBlock(BlockSetType.STONE, 20, shapeProps(name));
-			case "pressure_plate" -> new PressurePlateBlock(BlockSetType.STONE, shapeProps(name));
+			case "button" -> new ButtonBlock(shapeProps(name), BlockSetType.STONE, 20, false);
+			case "pressure_plate" -> new PressurePlateBlock(PressurePlateBlock.Sensitivity.EVERYTHING, shapeProps(name), BlockSetType.STONE);
 			case "trapdoor" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedTrapdoorBlock(BlockSetType.IRON, shapeProps(name));
 			default -> new BaseReinforcedBlock(shapeProps(name));
 		};
@@ -721,13 +705,6 @@ public class SCContent {
 
 	private static net.geforcemods.securitycraft.items.ModuleItem registerModule(String name, net.geforcemods.securitycraft.misc.ModuleType type, boolean containsCustomData, boolean canBeCustomized, boolean hasListData) {
 		Item.Properties props = new Item.Properties().stacksTo(1);
-
-		if (hasListData)
-			props.component(LIST_MODULE_DATA, net.geforcemods.securitycraft.components.ListModuleData.EMPTY);
-
-		if (type == net.geforcemods.securitycraft.misc.ModuleType.DISGUISE)
-			props.component(net.minecraft.core.component.DataComponents.CONTAINER, net.minecraft.world.item.component.ItemContainerContents.EMPTY);
-
 		net.geforcemods.securitycraft.items.ModuleItem item = new net.geforcemods.securitycraft.items.ModuleItem(props, type, containsCustomData, canBeCustomized);
 
 		Registry.register(BuiltInRegistries.ITEM, id(name), item);

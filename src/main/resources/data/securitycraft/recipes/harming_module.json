@@ -8,5 +8,5 @@
 		"P": { "item": "minecraft:paper" },
 		"S": { "item": "minecraft:arrow" }
 	},
-	"result": { "id": "securitycraft:harming_module", "count": 1 }
+	"result": { "item": "securitycraft:harming_module", "count": 1 }
 }

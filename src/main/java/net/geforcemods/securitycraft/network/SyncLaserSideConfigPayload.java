@@ -1,23 +1,24 @@
 package net.geforcemods.securitycraft.network;
 
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 
 /** Client -> server: the owner changes which sides of a laser block emit beams (requires the smart module). */
-public record SyncLaserSideConfigPayload(BlockPos pos, CompoundTag sideConfig) implements CustomPacketPayload {
-	public static final Type<SyncLaserSideConfigPayload> TYPE = new Type<>(new ResourceLocation("securitycraft", "sync_laser_side_config"));
-	public static final StreamCodec<RegistryFriendlyByteBuf, SyncLaserSideConfigPayload> CODEC = StreamCodec.composite(
-			BlockPos.STREAM_CODEC, SyncLaserSideConfigPayload::pos,
-			ByteBufCodecs.COMPOUND_TAG, SyncLaserSideConfigPayload::sideConfig,
-			SyncLaserSideConfigPayload::new);
+public record SyncLaserSideConfigPayload(BlockPos pos, CompoundTag sideConfig) {
+	public static final ResourceLocation CHANNEL = new ResourceLocation("securitycraft", "sync_laser_side_config");
 
-	@Override
-	public Type<? extends CustomPacketPayload> type() {
-		return TYPE;
+	public FriendlyByteBuf write() {
+		FriendlyByteBuf buf = PacketByteBufs.create();
+
+		buf.writeBlockPos(pos);
+		buf.writeNbt(sideConfig);
+		return buf;
+	}
+
+	public static SyncLaserSideConfigPayload read(FriendlyByteBuf buf) {
+		return new SyncLaserSideConfigPayload(buf.readBlockPos(), buf.readNbt());
 	}
 }

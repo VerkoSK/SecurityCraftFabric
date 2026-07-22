@@ -10,7 +10,6 @@ import net.geforcemods.securitycraft.api.LinkableBlockEntity;
 import net.geforcemods.securitycraft.components.ListModuleData;
 import net.geforcemods.securitycraft.misc.ModuleType;
 import net.geforcemods.securitycraft.util.Utils;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.InteractionResult;
@@ -19,6 +18,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 
 public class ModuleItem extends Item {
@@ -85,7 +85,7 @@ public class ModuleItem extends Item {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, TooltipContext ctx, List<Component> list, TooltipFlag flag) {
+	public void appendHoverText(ItemStack stack, Level level, List<Component> list, TooltipFlag flag) {
 		if (containsCustomData || canBeCustomized())
 			list.add(MODIFIABLE);
 		else
@@ -98,12 +98,8 @@ public class ModuleItem extends Item {
 				list.add(Utils.localize("tooltip.securitycraft:module.itemAddons.added", Utils.localize(addon.getDescriptionId())).setStyle(Utils.GRAY_STYLE));
 		}
 
-		if (containsCustomData) {
-			ListModuleData listModuleData = stack.get(SCContent.LIST_MODULE_DATA);
-
-			if (listModuleData != null)
-				listModuleData.addToTooltip(ctx, list::add, flag);
-		}
+		if (containsCustomData)
+			ListModuleData.fromStack(stack).addToTooltip(list::add);
 	}
 
 	public ModuleType getModuleType() {
@@ -111,12 +107,12 @@ public class ModuleItem extends Item {
 	}
 
 	public static Block getBlockAddon(ItemStack moduleStack) {
-		if (!moduleStack.has(DataComponents.CONTAINER))
+		if (!moduleStack.hasTag() || !moduleStack.getTag().contains(net.geforcemods.securitycraft.inventory.ModuleItemContainer.SAVED_BLOCK_KEY))
 			return null;
 
-		List<ItemStack> stacks = moduleStack.get(DataComponents.CONTAINER).nonEmptyStream().toList();
+		ItemStack saved = ItemStack.of(moduleStack.getTag().getCompound(net.geforcemods.securitycraft.inventory.ModuleItemContainer.SAVED_BLOCK_KEY));
 
-		if (!stacks.isEmpty() && stacks.getFirst().getItem() instanceof BlockItem blockItem)
+		if (!saved.isEmpty() && saved.getItem() instanceof BlockItem blockItem)
 			return blockItem.getBlock();
 
 		return null;

@@ -177,7 +177,7 @@ public class BlockReinforcerMenu extends AbstractContainerMenu {
 		public void onTake(Player player, ItemStack taken) {
 			super.onTake(player, taken);
 			inputSlot.getItem().shrink(taken.getCount());
-			tool.hurtAndBreak(taken.getCount(), player, player.getMainHandItem() == tool ? net.minecraft.world.entity.EquipmentSlot.MAINHAND : net.minecraft.world.entity.EquipmentSlot.OFFHAND);
+			tool.hurtAndBreak(taken.getCount(), player, p -> p.broadcastBreakEvent(player.getMainHandItem() == tool ? net.minecraft.world.entity.EquipmentSlot.MAINHAND : net.minecraft.world.entity.EquipmentSlot.OFFHAND));
 
 			if (tool.isEmpty()) {
 				if (player instanceof net.minecraft.server.level.ServerPlayer serverPlayer)

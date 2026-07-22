@@ -4,38 +4,61 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
-
-import io.netty.buffer.ByteBuf;
-import net.geforcemods.securitycraft.SCContent;
 import net.geforcemods.securitycraft.util.Utils;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.StringTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.world.item.Item.TooltipContext;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.component.TooltipProvider;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.scores.PlayerTeam;
 
-public record ListModuleData(List<String> players, List<String> teams, boolean affectEveryone) implements TooltipProvider {
+/**
+ * The allow/deny-list data stored on an allowlist/denylist module. On MC 1.20.1 there is no data-component
+ * system, so this is serialised to plain NBT (under the {@code listModuleData} key) on the module stack.
+ */
+public record ListModuleData(List<String> players, List<String> teams, boolean affectEveryone) {
 	public static final int MAX_PLAYERS = 50;
 	public static final ListModuleData EMPTY = new ListModuleData(List.of(), List.of(), false);
-	//@formatter:off
-	public static final Codec<ListModuleData> CODEC = RecordCodecBuilder.create(
-			instance -> instance.group(
-					Codec.STRING.sizeLimitedListOf(MAX_PLAYERS).fieldOf("players").forGetter(ListModuleData::players),
-					Codec.STRING.listOf().fieldOf("teams").forGetter(ListModuleData::teams),
-					Codec.BOOL.fieldOf("affect_everyone").forGetter(ListModuleData::affectEveryone))
-			.apply(instance, ListModuleData::new));
-	public static final StreamCodec<ByteBuf, ListModuleData> STREAM_CODEC = StreamCodec.composite(
-			ByteBufCodecs.STRING_UTF8.apply(ByteBufCodecs.list(MAX_PLAYERS)), ListModuleData::players,
-			ByteBufCodecs.STRING_UTF8.apply(ByteBufCodecs.list()), ListModuleData::teams,
-			ByteBufCodecs.BOOL, ListModuleData::affectEveryone,
-			ListModuleData::new);
-	//@formatter:on
+	private static final String KEY = "listModuleData";
+
+	public void writeToStack(ItemStack stack) {
+		CompoundTag tag = new CompoundTag();
+		ListTag playersTag = new ListTag();
+		ListTag teamsTag = new ListTag();
+
+		for (String player : players)
+			playersTag.add(StringTag.valueOf(player));
+
+		for (String team : teams)
+			teamsTag.add(StringTag.valueOf(team));
+
+		tag.put("players", playersTag);
+		tag.put("teams", teamsTag);
+		tag.putBoolean("affect_everyone", affectEveryone);
+		stack.getOrCreateTag().put(KEY, tag);
+	}
+
+	public static ListModuleData fromStack(ItemStack stack) {
+		if (stack.hasTag() && stack.getTag().contains(KEY)) {
+			CompoundTag tag = stack.getTag().getCompound(KEY);
+			ListTag playersTag = tag.getList("players", Tag.TAG_STRING);
+			ListTag teamsTag = tag.getList("teams", Tag.TAG_STRING);
+			List<String> players = new ArrayList<>();
+			List<String> teams = new ArrayList<>();
+
+			for (int i = 0; i < playersTag.size(); i++)
+				players.add(playersTag.getString(i));
+
+			for (int i = 0; i < teamsTag.size(); i++)
+				teams.add(teamsTag.getString(i));
+
+			return new ListModuleData(players, teams, tag.getBoolean("affect_everyone"));
+		}
+
+		return EMPTY;
+	}
 
 	public ListModuleData addPlayer(ItemStack stack, String playerName) {
 		if (players.size() == MAX_PLAYERS || isPlayerOnList(playerName))
@@ -46,7 +69,7 @@ public record ListModuleData(List<String> players, List<String> teams, boolean a
 
 		newPlayers.add(playerName);
 		newListModuleData = new ListModuleData(newPlayers, teams, affectEveryone);
-		stack.set(SCContent.LIST_MODULE_DATA, newListModuleData);
+		newListModuleData.writeToStack(stack);
 		return newListModuleData;
 	}
 
@@ -59,7 +82,7 @@ public record ListModuleData(List<String> players, List<String> teams, boolean a
 
 		newPlayers.remove(playerName);
 		newListModuleData = new ListModuleData(newPlayers, teams, affectEveryone);
-		stack.set(SCContent.LIST_MODULE_DATA, newListModuleData);
+		newListModuleData.writeToStack(stack);
 		return newListModuleData;
 	}
 
@@ -73,7 +96,7 @@ public record ListModuleData(List<String> players, List<String> teams, boolean a
 			newTeams.add(teamName);
 
 		newListModuleData = new ListModuleData(players, newTeams, affectEveryone);
-		stack.set(SCContent.LIST_MODULE_DATA, newListModuleData);
+		newListModuleData.writeToStack(stack);
 		return newListModuleData;
 	}
 
@@ -93,11 +116,10 @@ public record ListModuleData(List<String> players, List<String> teams, boolean a
 
 	public void updateAffectEveryone(ItemStack stack, boolean newAffectEveryone) {
 		if (newAffectEveryone != affectEveryone)
-			stack.set(SCContent.LIST_MODULE_DATA, new ListModuleData(players, teams, newAffectEveryone));
+			new ListModuleData(players, teams, newAffectEveryone).writeToStack(stack);
 	}
 
-	@Override
-	public void addToTooltip(TooltipContext ctx, Consumer<Component> lineAdder, TooltipFlag flag) {
+	public void addToTooltip(Consumer<Component> lineAdder) {
 		if (affectEveryone)
 			lineAdder.accept(Utils.localize("tooltip.securitycraft.component.list_module_data.affects_everyone").setStyle(Utils.GRAY_STYLE));
 		else {

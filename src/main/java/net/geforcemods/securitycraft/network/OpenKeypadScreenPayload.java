@@ -1,23 +1,24 @@
 package net.geforcemods.securitycraft.network;
 
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 
 /** Server -> client: open the keypad screen at {@code pos} in setup or entry mode. */
-public record OpenKeypadScreenPayload(BlockPos pos, boolean setup, String ownerName) implements CustomPacketPayload {
-	public static final Type<OpenKeypadScreenPayload> TYPE = new Type<>(new ResourceLocation("securitycraft", "open_keypad_screen"));
-	public static final StreamCodec<RegistryFriendlyByteBuf, OpenKeypadScreenPayload> CODEC = StreamCodec.composite(
-			BlockPos.STREAM_CODEC, OpenKeypadScreenPayload::pos,
-			ByteBufCodecs.BOOL, OpenKeypadScreenPayload::setup,
-			ByteBufCodecs.STRING_UTF8, OpenKeypadScreenPayload::ownerName,
-			OpenKeypadScreenPayload::new);
+public record OpenKeypadScreenPayload(BlockPos pos, boolean setup, String ownerName) {
+	public static final ResourceLocation CHANNEL = new ResourceLocation("securitycraft", "open_keypad_screen");
 
-	@Override
-	public Type<? extends CustomPacketPayload> type() {
-		return TYPE;
+	public FriendlyByteBuf write() {
+		FriendlyByteBuf buf = PacketByteBufs.create();
+
+		buf.writeBlockPos(pos);
+		buf.writeBoolean(setup);
+		buf.writeUtf(ownerName);
+		return buf;
+	}
+
+	public static OpenKeypadScreenPayload read(FriendlyByteBuf buf) {
+		return new OpenKeypadScreenPayload(buf.readBlockPos(), buf.readBoolean(), buf.readUtf());
 	}
 }

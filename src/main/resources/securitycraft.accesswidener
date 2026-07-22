@@ -1,6 +1,4 @@
 accessWidener	v2	named
 
-# CheckPasscodeScreen's CensoringEditBox swaps EditBox's backing string around super calls to render asterisks,
-# and overrides scrollTo so horizontal scrolling is computed on the censored text.
+# CheckPasscodeScreen's CensoringEditBox swaps EditBox's backing string around super calls to render asterisks.
 accessible	field	net/minecraft/client/gui/components/EditBox	value	Ljava/lang/String;
-extendable	method	net/minecraft/client/gui/components/EditBox	scrollTo	(I)V

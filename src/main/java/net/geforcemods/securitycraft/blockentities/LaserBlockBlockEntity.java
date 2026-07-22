@@ -27,7 +27,6 @@ import net.geforcemods.securitycraft.api.Option.SignalLengthOption;
 import net.geforcemods.securitycraft.api.Owner;
 import net.geforcemods.securitycraft.blocks.LaserBlock;
 import net.geforcemods.securitycraft.blocks.LaserFieldBlock;
-import net.geforcemods.securitycraft.inventory.LaserBlockData;
 import net.geforcemods.securitycraft.inventory.LaserBlockMenu;
 import net.geforcemods.securitycraft.inventory.LensContainer;
 import net.geforcemods.securitycraft.items.ModuleItem;
@@ -38,8 +37,8 @@ import net.geforcemods.securitycraft.util.Utils;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -53,7 +52,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 
-public class LaserBlockBlockEntity extends LinkableBlockEntity implements ExtendedScreenHandlerFactory<LaserBlockData>, ContainerListener, net.fabricmc.fabric.api.blockview.v2.RenderDataBlockEntity {
+public class LaserBlockBlockEntity extends LinkableBlockEntity implements ExtendedScreenHandlerFactory, ContainerListener, net.fabricmc.fabric.api.blockview.v2.RenderDataBlockEntity {
 	protected List<LinkedBlock> linkedBlocks = new ArrayList<>();
 	private DisabledOption disabled = new DisabledOption(false) {
 		@Override
@@ -83,15 +82,15 @@ public class LaserBlockBlockEntity extends LinkableBlockEntity implements Extend
 	}
 
 	@Override
-	public void saveAdditional(CompoundTag tag, HolderLookup.Provider lookupProvider) {
-		super.saveAdditional(tag, lookupProvider);
+	public void saveAdditional(CompoundTag tag) {
+		super.saveAdditional(tag);
 		tag.put("sideConfig", saveSideConfig(sideConfig));
 
 		for (int i = 0; i < lenses.getContainerSize(); i++) {
 			ItemStack lens = lenses.getItem(i);
 
 			if (!lens.isEmpty())
-				tag.put("lens" + i, lens.saveOptional(lookupProvider));
+				tag.put("lens" + i, lens.save(new CompoundTag()));
 		}
 	}
 
@@ -103,12 +102,12 @@ public class LaserBlockBlockEntity extends LinkableBlockEntity implements Extend
 	}
 
 	@Override
-	public void loadAdditional(CompoundTag tag, HolderLookup.Provider lookupProvider) {
-		super.loadAdditional(tag, lookupProvider);
+	public void load(CompoundTag tag) {
+		super.load(tag);
 		sideConfig = loadSideConfig(tag.getCompound("sideConfig"));
 
 		for (int i = 0; i < lenses.getContainerSize(); i++) {
-			lenses.setItemExclusively(i, Utils.parseOptional(lookupProvider, tag.getCompound("lens" + i)));
+			lenses.setItemExclusively(i, Utils.parseOptional(tag.getCompound("lens" + i)));
 		}
 
 		lenses.setChanged();
@@ -128,8 +127,17 @@ public class LaserBlockBlockEntity extends LinkableBlockEntity implements Extend
 	}
 
 	@Override
-	public LaserBlockData getScreenOpeningData(ServerPlayer player) {
-		return new LaserBlockData(worldPosition, sideConfig);
+	public void writeScreenOpeningData(ServerPlayer player, FriendlyByteBuf buf) {
+		buf.writeBlockPos(worldPosition);
+
+		int mask = 0;
+
+		for (Direction dir : Direction.values()) {
+			if (sideConfig.getOrDefault(dir, true))
+				mask |= 1 << dir.ordinal();
+		}
+
+		buf.writeByte(mask);
 	}
 
 	@Override
@@ -149,37 +157,43 @@ public class LaserBlockBlockEntity extends LinkableBlockEntity implements Extend
 
 	@Override
 	protected void onLinkedBlockAction(ILinkedAction action, List<LinkableBlockEntity> excludedBEs) {
-		switch (action) {
-			case ILinkedAction.OptionChanged(BooleanOption option) when option.getName().equals(disabled.getName()) -> {
-				disabled.copy(option);
+		if (action instanceof ILinkedAction.OptionChanged<?> optionChanged) {
+			Option<?> option = optionChanged.option();
+
+			if (option instanceof BooleanOption booleanOption && option.getName().equals(disabled.getName())) {
+				disabled.copy(booleanOption);
 				setLasersAccordingToDisabledOption();
 			}
-			case ILinkedAction.OptionChanged(BooleanOption option) when option.getName().equals(ignoreOwner.getName()) -> ignoreOwner.copy(option);
-			case ILinkedAction.OptionChanged(BooleanOption option) when option.getName().equals(respectInvisibility.getName()) -> respectInvisibility.copy(option);
-			case ILinkedAction.OptionChanged(IntOption option) when option.getName().equals(signalLength.getName()) -> {
-				signalLength.copy(option);
+			else if (option instanceof BooleanOption booleanOption && option.getName().equals(ignoreOwner.getName()))
+				ignoreOwner.copy(booleanOption);
+			else if (option instanceof BooleanOption booleanOption && option.getName().equals(respectInvisibility.getName()))
+				respectInvisibility.copy(booleanOption);
+			else if (option instanceof IntOption intOption && option.getName().equals(signalLength.getName())) {
+				signalLength.copy(intOption);
 				turnOffRedstoneOutput();
 			}
-			case ILinkedAction.OptionChanged(Option<?> option) -> throw new UnsupportedOperationException("Unhandled option synchronization in laser block! " + option.getName());
-			case ILinkedAction.ModuleInserted(ItemStack stack, ModuleItem module, boolean wasModuleToggled) -> insertModule(stack, wasModuleToggled);
-			case ILinkedAction.ModuleRemoved(ModuleType moduleType, boolean wasModuleToggled) -> removeModule(moduleType, wasModuleToggled);
-			case ILinkedAction.OwnerChanged(Owner newOwner) -> setOwner(newOwner.getName(), newOwner.getUUID());
-			case ILinkedAction.StateChanged(BooleanProperty property, Boolean oldValue, Boolean newValue) when property == LaserBlock.POWERED -> {
-				if (timeSinceLastToggle() < 500)
-					setLastToggleTime(System.currentTimeMillis());
-				else {
-					BlockState state = getBlockState();
-					int signalLength = getSignalLength();
+			else
+				throw new UnsupportedOperationException("Unhandled option synchronization in laser block! " + option.getName());
+		}
+		else if (action instanceof ILinkedAction.ModuleInserted moduleInserted)
+			insertModule(moduleInserted.stack(), moduleInserted.wasModuleToggled());
+		else if (action instanceof ILinkedAction.ModuleRemoved moduleRemoved)
+			removeModule(moduleRemoved.moduleType(), moduleRemoved.wasModuleToggled());
+		else if (action instanceof ILinkedAction.OwnerChanged ownerChanged)
+			setOwner(ownerChanged.newOwner().getName(), ownerChanged.newOwner().getUUID());
+		else if (action instanceof ILinkedAction.StateChanged<?> stateChanged && stateChanged.property() == LaserBlock.POWERED) {
+			if (timeSinceLastToggle() < 500)
+				setLastToggleTime(System.currentTimeMillis());
+			else {
+				BlockState state = getBlockState();
+				int signalLength = getSignalLength();
 
-					setLastToggleTime(System.currentTimeMillis());
-					level.setBlockAndUpdate(worldPosition, state.cycle(LaserBlock.POWERED));
-					BlockUtils.updateIndirectNeighbors(level, worldPosition, SCContent.LASER_BLOCK);
+				setLastToggleTime(System.currentTimeMillis());
+				level.setBlockAndUpdate(worldPosition, state.cycle(LaserBlock.POWERED));
+				BlockUtils.updateIndirectNeighbors(level, worldPosition, SCContent.LASER_BLOCK);
 
-					if (signalLength > 0)
-						level.scheduleTick(worldPosition, SCContent.LASER_BLOCK, signalLength);
-				}
-			}
-			default -> {
+				if (signalLength > 0)
+					level.scheduleTick(worldPosition, SCContent.LASER_BLOCK, signalLength);
 			}
 		}
 
@@ -245,7 +259,7 @@ public class LaserBlockBlockEntity extends LinkableBlockEntity implements Extend
 					UpdateLaserColorsPayload payload = new UpdateLaserColorsPayload(positionsToUpdate);
 
 					for (ServerPlayer player : PlayerLookup.world((ServerLevel) level))
-						ServerPlayNetworking.send(player, payload);
+						ServerPlayNetworking.send(player, UpdateLaserColorsPayload.CHANNEL, payload.write());
 				}
 
 				level.sendBlockUpdated(modifiedPos, stateAtModifiedPos, stateAtModifiedPos, 2);
@@ -401,7 +415,7 @@ public class LaserBlockBlockEntity extends LinkableBlockEntity implements Extend
 			List<ModuleType> thatInsertedModules = that.getInsertedModules();
 
 			for (ModuleType type : thisInsertedModules) {
-				if (thatInsertedModules.contains(type) && !ItemStack.isSameItemSameComponents(getModule(type), that.getModule(type)))
+				if (thatInsertedModules.contains(type) && !ItemStack.isSameItemSameTags(getModule(type), that.getModule(type)))
 					return type;
 			}
 

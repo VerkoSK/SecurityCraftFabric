@@ -1,7 +1,5 @@
 package net.geforcemods.securitycraft.blocks;
 
-import com.mojang.serialization.MapCodec;
-
 import net.geforcemods.securitycraft.ConfigHandler;
 import net.geforcemods.securitycraft.SCContent;
 import net.geforcemods.securitycraft.api.ILinkedAction;
@@ -20,8 +18,6 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.SimpleWaterloggedBlock;
@@ -38,7 +34,6 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class LaserFieldBlock extends OwnableBlock implements SimpleWaterloggedBlock {
-	public static final MapCodec<LaserFieldBlock> CODEC = simpleCodec(LaserFieldBlock::new);
 	public static final IntegerProperty BOUNDTYPE = IntegerProperty.create("boundtype", 1, 3);
 	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 	private static final VoxelShape SHAPE_X = Block.box(0, 6.75, 6.75, 16, 9.25, 9.25);
@@ -51,17 +46,12 @@ public class LaserFieldBlock extends OwnableBlock implements SimpleWaterloggedBl
 	}
 
 	@Override
-	protected MapCodec<? extends BaseEntityBlock> codec() {
-		return CODEC;
-	}
-
-	@Override
-	protected VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext ctx) {
+	public VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext ctx) {
 		return Shapes.empty();
 	}
 
 	@Override
-	protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext ctx) {
+	public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext ctx) {
 		return switch (state.getValue(BOUNDTYPE)) {
 			case 1 -> SHAPE_Y;
 			case 2 -> SHAPE_Z;
@@ -71,7 +61,7 @@ public class LaserFieldBlock extends OwnableBlock implements SimpleWaterloggedBl
 	}
 
 	@Override
-	protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
+	public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
 		if (!level.isClientSide && entity instanceof LivingEntity livingEntity) {
 			if (!getShape(state, level, pos, CollisionContext.of(entity)).bounds().move(pos).intersects(entity.getBoundingBox()))
 				return;
@@ -147,7 +137,7 @@ public class LaserFieldBlock extends OwnableBlock implements SimpleWaterloggedBl
 	}
 
 	@Override
-	protected BlockState updateShape(BlockState state, Direction facing, BlockState facingState, LevelAccessor level, BlockPos currentPos, BlockPos facingPos) {
+	public BlockState updateShape(BlockState state, Direction facing, BlockState facingState, LevelAccessor level, BlockPos currentPos, BlockPos facingPos) {
 		if (state.getValue(WATERLOGGED))
 			level.scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
 
@@ -155,7 +145,7 @@ public class LaserFieldBlock extends OwnableBlock implements SimpleWaterloggedBl
 	}
 
 	@Override
-	protected FluidState getFluidState(BlockState state) {
+	public FluidState getFluidState(BlockState state) {
 		return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(state);
 	}
 
@@ -174,12 +164,12 @@ public class LaserFieldBlock extends OwnableBlock implements SimpleWaterloggedBl
 	}
 
 	@Override
-	public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
+	public ItemStack getCloneItemStack(BlockGetter level, BlockPos pos, BlockState state) {
 		return ItemStack.EMPTY;
 	}
 
 	@Override
-	protected BlockState rotate(BlockState state, Rotation rot) {
+	public BlockState rotate(BlockState state, Rotation rot) {
 		return rot == Rotation.CLOCKWISE_180 ? state : state.setValue(BOUNDTYPE, switch (state.getValue(BOUNDTYPE)) {
 			case 2 -> 3;
 			case 3 -> 2;

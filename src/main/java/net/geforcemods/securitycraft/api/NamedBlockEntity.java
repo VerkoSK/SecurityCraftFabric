@@ -3,13 +3,9 @@ package net.geforcemods.securitycraft.api;
 import net.geforcemods.securitycraft.SCContent;
 import net.geforcemods.securitycraft.util.Utils;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.core.component.DataComponentMap;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.Nameable;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -25,19 +21,19 @@ public class NamedBlockEntity extends OwnableBlockEntity implements Nameable {
 	}
 
 	@Override
-	public void saveAdditional(CompoundTag tag, HolderLookup.Provider lookupProvider) {
-		super.saveAdditional(tag, lookupProvider);
+	public void saveAdditional(CompoundTag tag) {
+		super.saveAdditional(tag);
 
 		if (customName != null)
-			tag.putString("CustomName", Component.Serializer.toJson(customName, lookupProvider));
+			tag.putString("CustomName", Component.Serializer.toJson(customName));
 	}
 
 	@Override
-	public void loadAdditional(CompoundTag tag, HolderLookup.Provider lookupProvider) {
-		super.loadAdditional(tag, lookupProvider);
+	public void load(CompoundTag tag) {
+		super.load(tag);
 
 		if (tag.contains("CustomName"))
-			customName = parseCustomNameSafe(tag.getString("CustomName"), lookupProvider);
+			customName = Component.Serializer.fromJson(tag.getString("CustomName"));
 		else if (tag.contains("customName")) //Conversion of old string literal names
 			customName = Component.literal(tag.getString("customName"));
 	}
@@ -67,23 +63,5 @@ public class NamedBlockEntity extends OwnableBlockEntity implements Nameable {
 
 	public Component getDefaultName() {
 		return Utils.localize(getBlockState().getBlock().getDescriptionId());
-	}
-
-	@Override
-	protected void applyImplicitComponents(BlockEntity.DataComponentInput input) {
-		super.applyImplicitComponents(input);
-		customName = input.get(DataComponents.CUSTOM_NAME);
-	}
-
-	@Override
-	protected void collectImplicitComponents(DataComponentMap.Builder builder) {
-		super.collectImplicitComponents(builder);
-		builder.set(DataComponents.CUSTOM_NAME, customName);
-	}
-
-	@Override
-	public void removeComponentsFromTag(CompoundTag tag) {
-		tag.remove("CustomName");
-		tag.remove("customName");
 	}
 }

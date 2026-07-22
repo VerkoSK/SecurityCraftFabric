@@ -30,7 +30,7 @@ public class PictureButton extends Button {
 		super.renderWidget(guiGraphics, mouseX, mouseY, partialTicks);
 
 		if (getSpriteLocation() != null)
-			guiGraphics.blitSprite(getSpriteLocation(), getX() + drawOffsetX, getY() + drawOffsetY, drawWidth, drawHeight);
+			guiGraphics.blit(getSpriteLocation(), getX() + drawOffsetX, getY() + drawOffsetY, 0.0F, 0.0F, drawWidth, drawHeight, drawWidth, drawHeight);
 	}
 
 	public ResourceLocation getSpriteLocation() {

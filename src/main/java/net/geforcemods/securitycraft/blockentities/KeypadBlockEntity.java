@@ -17,7 +17,6 @@ import net.geforcemods.securitycraft.util.BlockUtils;
 import net.geforcemods.securitycraft.util.PasscodeUtils;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.state.BlockState;
@@ -146,8 +145,8 @@ public class KeypadBlockEntity extends CustomizableBlockEntity implements Passco
 	}
 
 	@Override
-	public void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-		super.saveAdditional(tag, registries);
+	public void saveAdditional(CompoundTag tag) {
+		super.saveAdditional(tag);
 
 		long cooldownLeft = getCooldownEnd() - System.currentTimeMillis();
 
@@ -159,8 +158,8 @@ public class KeypadBlockEntity extends CustomizableBlockEntity implements Passco
 	}
 
 	@Override
-	public void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-		super.loadAdditional(tag, registries);
+	public void load(CompoundTag tag) {
+		super.load(tag);
 
 		if (tag.contains("salt"))
 			salt = tag.getString("salt");
@@ -170,8 +169,8 @@ public class KeypadBlockEntity extends CustomizableBlockEntity implements Passco
 	}
 
 	@Override
-	public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
-		CompoundTag tag = super.getUpdateTag(registries);
+	public CompoundTag getUpdateTag() {
+		CompoundTag tag = super.getUpdateTag();
 
 		tag.remove("passcodeHash");
 		tag.remove("salt");

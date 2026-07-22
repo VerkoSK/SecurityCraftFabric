@@ -10,5 +10,5 @@
 		"L": { "item": "securitycraft:laser_block" },
 		"S": { "item": "minecraft:stick" }
 	},
-	"result": { "id": "securitycraft:universal_block_reinforcer_lvl1", "count": 1 }
+	"result": { "item": "securitycraft:universal_block_reinforcer_lvl1", "count": 1 }
 }

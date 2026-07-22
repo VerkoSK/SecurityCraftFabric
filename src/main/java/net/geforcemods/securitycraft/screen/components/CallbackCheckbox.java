@@ -8,14 +8,9 @@ import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 
-/** A checkbox with a callback + custom text colour (copied from vanilla's Checkbox). */
+/** A checkbox with a callback + custom text colour. Drawn without GUI sprites (which don't exist on MC 1.20.1). */
 public class CallbackCheckbox extends AbstractButton {
-	private static final ResourceLocation CHECKBOX_SELECTED_HIGHLIGHTED_SPRITE = new ResourceLocation("widget/checkbox_selected_highlighted");
-	private static final ResourceLocation CHECKBOX_SELECTED_SPRITE = new ResourceLocation("widget/checkbox_selected");
-	private static final ResourceLocation CHECKBOX_HIGHLIGHTED_SPRITE = new ResourceLocation("widget/checkbox_highlighted");
-	private static final ResourceLocation CHECKBOX_SPRITE = new ResourceLocation("widget/checkbox");
 	private boolean selected;
 	private final Consumer<Boolean> onChange;
 	private final int textColor;
@@ -35,15 +30,15 @@ public class CallbackCheckbox extends AbstractButton {
 	@Override
 	public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
 		Minecraft minecraft = Minecraft.getInstance();
-		ResourceLocation sprite;
+		int boxSize = Math.min(width, height);
+
+		guiGraphics.fill(getX(), getY(), getX() + boxSize, getY() + boxSize, 0xFF000000);
+		guiGraphics.fill(getX() + 1, getY() + 1, getX() + boxSize - 1, getY() + boxSize - 1, isFocused() ? 0xFF666666 : 0xFF3C3C3C);
 
 		if (selected)
-			sprite = isFocused() ? CHECKBOX_SELECTED_HIGHLIGHTED_SPRITE : CHECKBOX_SELECTED_SPRITE;
-		else
-			sprite = isFocused() ? CHECKBOX_HIGHLIGHTED_SPRITE : CHECKBOX_SPRITE;
+			guiGraphics.fill(getX() + 3, getY() + 3, getX() + boxSize - 3, getY() + boxSize - 3, 0xFFE0E0E0);
 
-		guiGraphics.blitSprite(sprite, getX(), getY(), width, height);
-		guiGraphics.drawString(minecraft.font, getMessage(), getX() + (int) (width * 1.2F), getY() + (height - 8) / 2, 0xFF000000 | textColor, false);
+		guiGraphics.drawString(minecraft.font, getMessage(), getX() + (int) (boxSize * 1.2F), getY() + (boxSize - 8) / 2, 0xFF000000 | textColor, false);
 	}
 
 	@Override

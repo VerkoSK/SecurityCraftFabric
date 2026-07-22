@@ -42,8 +42,8 @@ public class SecurityCraftClient implements ClientModInitializer {
 						if (view.getBlockEntity(offsetPos) instanceof net.geforcemods.securitycraft.blockentities.LaserBlockBlockEntity laser) {
 							net.minecraft.world.item.ItemStack lens = laser.getLensContainer().getItem(dir.getOpposite().ordinal());
 
-							if (lens.has(net.minecraft.core.component.DataComponents.DYED_COLOR))
-								return 0xFF000000 | lens.get(net.minecraft.core.component.DataComponents.DYED_COLOR).rgb();
+							if (net.geforcemods.securitycraft.util.Utils.hasLensColor(lens))
+								return 0xFF000000 | net.geforcemods.securitycraft.util.Utils.getLensColor(lens);
 
 							return 0xFFFFFFFF;
 						}
@@ -63,18 +63,26 @@ public class SecurityCraftClient implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
 		SCClientConfig.load();
-		ClientPlayNetworking.registerGlobalReceiver(OpenKeypadScreenPayload.TYPE, (payload, context) -> context.client().execute(() -> {
-			net.minecraft.network.chat.Component title = context.client().level != null ? context.client().level.getBlockState(payload.pos()).getBlock().getName() : net.minecraft.network.chat.Component.empty();
+		ClientPlayNetworking.registerGlobalReceiver(OpenKeypadScreenPayload.CHANNEL, (client, handler, buf, responseSender) -> {
+			OpenKeypadScreenPayload payload = OpenKeypadScreenPayload.read(buf);
 
-			context.client().setScreen(payload.setup() ? new SetPasscodeScreen(payload.pos(), title) : new CheckPasscodeScreen(payload.pos(), title));
-		}));
+			client.execute(() -> {
+				net.minecraft.network.chat.Component title = client.level != null ? client.level.getBlockState(payload.pos()).getBlock().getName() : net.minecraft.network.chat.Component.empty();
+
+				client.setScreen(payload.setup() ? new SetPasscodeScreen(payload.pos(), title) : new CheckPasscodeScreen(payload.pos(), title));
+			});
+		});
 		net.minecraft.client.gui.screens.MenuScreens.register(SCContent.BLOCK_REINFORCER_MENU, net.geforcemods.securitycraft.screen.BlockReinforcerScreen::new);
 		net.minecraft.client.gui.screens.MenuScreens.register(SCContent.LASER_BLOCK_MENU, net.geforcemods.securitycraft.screen.LaserBlockScreen::new);
 		net.minecraft.client.gui.screens.MenuScreens.register(SCContent.DISGUISE_MODULE_MENU, net.geforcemods.securitycraft.screen.DisguiseModuleScreen::new);
-		ClientPlayNetworking.registerGlobalReceiver(net.geforcemods.securitycraft.network.UpdateLaserColorsPayload.TYPE, (payload, context) -> context.client().execute(() -> {
-			for (net.minecraft.core.BlockPos pos : payload.positions())
-				context.client().levelRenderer.setBlocksDirty(pos.getX(), pos.getY(), pos.getZ(), pos.getX(), pos.getY(), pos.getZ());
-		}));
+		ClientPlayNetworking.registerGlobalReceiver(net.geforcemods.securitycraft.network.UpdateLaserColorsPayload.CHANNEL, (client, handler, buf, responseSender) -> {
+			net.geforcemods.securitycraft.network.UpdateLaserColorsPayload payload = net.geforcemods.securitycraft.network.UpdateLaserColorsPayload.read(buf);
+
+			client.execute(() -> {
+				for (net.minecraft.core.BlockPos pos : payload.positions())
+					client.levelRenderer.setBlocksDirty(pos.getX(), pos.getY(), pos.getZ(), pos.getX(), pos.getY(), pos.getZ());
+			});
+		});
 
 		Block[] reinforced = SCContent.REINFORCED_BLOCKS.toArray(new Block[0]);
 		ColorProviderRegistry.BLOCK.register((state, view, pos, tintIndex) -> tintIndex == 0 ? reinforcedTint() : -1, reinforced);
@@ -105,6 +113,6 @@ public class SecurityCraftClient implements ClientModInitializer {
 		ColorProviderRegistry.BLOCK.register(SecurityCraftClient::laserFieldColor, SCContent.LASER_FIELD);
 
 		// Lens item: tinted by its dyed colour (uncolored lens stays untinted).
-		ColorProviderRegistry.ITEM.register((stack, tintIndex) -> tintIndex == 0 && stack.has(net.minecraft.core.component.DataComponents.DYED_COLOR) ? stack.get(net.minecraft.core.component.DataComponents.DYED_COLOR).rgb() : -1, SCContent.LENS);
+		ColorProviderRegistry.ITEM.register((stack, tintIndex) -> tintIndex == 0 && net.geforcemods.securitycraft.util.Utils.hasLensColor(stack) ? net.geforcemods.securitycraft.util.Utils.getLensColor(stack) : -1, SCContent.LENS);
 	}
 }

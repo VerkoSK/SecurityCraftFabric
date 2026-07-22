@@ -51,9 +51,9 @@ public class KeypadScreen extends Screen {
 			return;
 
 		if (setup)
-			ClientPlayNetworking.send(new SetPasscodePayload(pos, code));
+			ClientPlayNetworking.send(SetPasscodePayload.CHANNEL, new SetPasscodePayload(pos, code).write());
 		else
-			ClientPlayNetworking.send(new CheckPasscodePayload(pos, code));
+			ClientPlayNetworking.send(CheckPasscodePayload.CHANNEL, new CheckPasscodePayload(pos, code).write());
 
 		onClose();
 	}

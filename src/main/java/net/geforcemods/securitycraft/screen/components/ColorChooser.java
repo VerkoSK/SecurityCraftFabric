@@ -21,10 +21,10 @@ import net.minecraft.util.Mth;
 /** HSB colour picker shown as a pushed GUI layer next to the reinforcer screen. */
 public class ColorChooser extends Screen {
 	private static final ResourceLocation TEXTURE = SCContent.id("textures/gui/container/color_chooser.png");
-	private static final ResourceLocation HUE_SLIDER_SPRITE = SCContent.id("widget/color_chooser/hue_slider");
-	private static final ResourceLocation HUE_SLIDER_HIGHLIGHTED_SPRITE = SCContent.id("widget/color_chooser/hue_slider_highlighted");
-	private static final ResourceLocation FIELD_SELECTOR_SPRITE = SCContent.id("widget/color_chooser/field_selector");
-	private static final ResourceLocation FIELD_SELECTOR_HIGHLIGHTED_SPRITE = SCContent.id("widget/color_chooser/field_selector_highlighted");
+	private static final ResourceLocation HUE_SLIDER_SPRITE = SCContent.id("textures/gui/sprites/widget/color_chooser/hue_slider.png");
+	private static final ResourceLocation HUE_SLIDER_HIGHLIGHTED_SPRITE = SCContent.id("textures/gui/sprites/widget/color_chooser/hue_slider_highlighted.png");
+	private static final ResourceLocation FIELD_SELECTOR_SPRITE = SCContent.id("textures/gui/sprites/widget/color_chooser/field_selector.png");
+	private static final ResourceLocation FIELD_SELECTOR_HIGHLIGHTED_SPRITE = SCContent.id("textures/gui/sprites/widget/color_chooser/field_selector_highlighted.png");
 	private static final int COLOR_FIELD_SIZE = 75;
 	public boolean disabled = true;
 	private final int xStart, yStart;
@@ -127,19 +127,15 @@ public class ColorChooser extends Screen {
 
 	@Override
 	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+		guiGraphics.blit(TEXTURE, xStart, yStart, 0, 0, 145, 109);
+		ClientUtils.fillHorizontalGradient(guiGraphics, 0, colorFieldLeft, colorFieldTop, colorFieldRight + 1, colorFieldBottom + 1, 0xFFFFFFFF, ClientUtils.HSBtoRGB(h, 1.0F, 1.0F) | 0xFF000000);
+		guiGraphics.fillGradient(colorFieldLeft, colorFieldTop, colorFieldRight + 1, colorFieldBottom + 1, 0x00000000, 0xFF000000);
 		super.render(guiGraphics, mouseX, mouseY, partialTick);
-		guiGraphics.blitSprite(colorFieldHoverChecker.checkHover(mouseX, mouseY) ? FIELD_SELECTOR_HIGHLIGHTED_SPRITE : FIELD_SELECTOR_SPRITE, (int) selectionX - 1, (int) selectionY - 1, 3, 3);
+		guiGraphics.blit(colorFieldHoverChecker.checkHover(mouseX, mouseY) ? FIELD_SELECTOR_HIGHLIGHTED_SPRITE : FIELD_SELECTOR_SPRITE, (int) selectionX - 1, (int) selectionY - 1, 0.0F, 0.0F, 3, 3, 3, 3);
 		guiGraphics.drawString(font, rText, colorFieldRight + 5, colorFieldTop + 1, 0x404040, false);
 		guiGraphics.drawString(font, gText, colorFieldRight + 5, colorFieldTop + 16, 0x404040, false);
 		guiGraphics.drawString(font, bText, colorFieldRight + 5, colorFieldTop + 31, 0x404040, false);
 		guiGraphics.drawString(font, rgbHexText, colorFieldRight + 5, colorFieldTop + 46, 0x404040, false);
-	}
-
-	@Override
-	public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-		guiGraphics.blit(TEXTURE, xStart, yStart, 0, 0, 145, 109);
-		ClientUtils.fillHorizontalGradient(guiGraphics, 0, colorFieldLeft, colorFieldTop, colorFieldRight + 1, colorFieldBottom + 1, 0xFFFFFFFF, ClientUtils.HSBtoRGB(h, 1.0F, 1.0F) | 0xFF000000);
-		guiGraphics.fillGradient(colorFieldLeft, colorFieldTop, colorFieldRight + 1, colorFieldBottom + 1, 0x00000000, 0xFF000000);
 	}
 
 	@Override
@@ -280,7 +276,7 @@ public class ColorChooser extends Screen {
 
 		@Override
 		public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-			guiGraphics.blitSprite(isHoveredOrFocused() ? HUE_SLIDER_HIGHLIGHTED_SPRITE : HUE_SLIDER_SPRITE, getX() + (int) (value * (width - 8)), getY(), 6, height);
+			guiGraphics.blit(isHoveredOrFocused() ? HUE_SLIDER_HIGHLIGHTED_SPRITE : HUE_SLIDER_SPRITE, getX() + (int) (value * (width - 8)), getY(), 0.0F, 0.0F, 6, height, 6, height);
 		}
 	}
 }

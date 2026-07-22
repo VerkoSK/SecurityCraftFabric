@@ -1,11 +1,13 @@
 package net.geforcemods.securitycraft.inventory;
 
+import java.util.EnumMap;
 import java.util.Map;
 
 import net.geforcemods.securitycraft.SCContent;
 import net.geforcemods.securitycraft.blockentities.LaserBlockBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -19,6 +21,22 @@ public class LaserBlockMenu extends AbstractContainerMenu {
 	public final LaserBlockBlockEntity be;
 	public final Map<Direction, Boolean> sideConfig;
 	private final ContainerLevelAccess containerLevelAccess;
+
+	/** Client-side constructor: reads the position + per-side config sent by the block entity's screen-opening data. */
+	public LaserBlockMenu(int windowId, Inventory inventory, FriendlyByteBuf buf) {
+		this(windowId, inventory.player.level(), buf.readBlockPos(), readSideConfig(buf), inventory);
+	}
+
+	private static Map<Direction, Boolean> readSideConfig(FriendlyByteBuf buf) {
+		int mask = buf.readByte();
+		EnumMap<Direction, Boolean> sideConfig = new EnumMap<>(Direction.class);
+
+		for (Direction dir : Direction.values()) {
+			sideConfig.put(dir, (mask & 1 << dir.ordinal()) != 0);
+		}
+
+		return sideConfig;
+	}
 
 	public LaserBlockMenu(int windowId, Level level, BlockPos pos, Map<Direction, Boolean> sideConfig, Inventory inventory) {
 		super(SCContent.LASER_BLOCK_MENU, windowId);

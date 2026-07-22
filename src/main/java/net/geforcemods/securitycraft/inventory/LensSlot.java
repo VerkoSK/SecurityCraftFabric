@@ -1,7 +1,7 @@
 package net.geforcemods.securitycraft.inventory;
 
 import net.geforcemods.securitycraft.SCContent;
-import net.minecraft.core.component.DataComponents;
+import net.geforcemods.securitycraft.util.Utils;
 import net.minecraft.world.Container;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
@@ -13,7 +13,7 @@ public class LensSlot extends Slot {
 
 	@Override
 	public boolean mayPlace(ItemStack stack) {
-		return stack.is(SCContent.LENS) && stack.has(DataComponents.DYED_COLOR);
+		return stack.is(SCContent.LENS) && Utils.hasLensColor(stack);
 	}
 
 	@Override

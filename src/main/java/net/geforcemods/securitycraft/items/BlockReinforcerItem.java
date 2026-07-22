@@ -1,23 +1,28 @@
 package net.geforcemods.securitycraft.items;
 
+import java.util.Map;
+
 import net.geforcemods.securitycraft.SCContent;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.Unit;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
  * Converts blocks between vanilla and reinforced. Lvl1 always reinforces, the remover always
- * unreinforces, and Lvl2/Lvl3 default to reinforcing but can be toggled to unreinforcing (stored in
- * the {@link SCContent#UNREINFORCING} data component). Damages the tool per use when it has durability.
+ * unreinforces, and Lvl2/Lvl3 default to reinforcing but can be toggled to unreinforcing (stored as a
+ * boolean NBT flag, since MC 1.20.1 has no data components). Damages the tool per use when it has durability.
  */
 public class BlockReinforcerItem extends Item {
+	private static final String UNREINFORCING_KEY = "unreinforcing";
 	/** The item's base capability: true = a reinforcer (Lvl1/2/3), false = the remover. */
 	private final boolean reinforcing;
 
@@ -39,7 +44,7 @@ public class BlockReinforcerItem extends Item {
 		if (stack.is(SCContent.UNIVERSAL_BLOCK_REINFORCER_LVL1))
 			return true;
 
-		return !stack.has(SCContent.UNREINFORCING);
+		return !(stack.hasTag() && stack.getTag().getBoolean(UNREINFORCING_KEY));
 	}
 
 	/** Whether the mode of this stack may be toggled (Lvl2/Lvl3 only). */
@@ -48,10 +53,12 @@ public class BlockReinforcerItem extends Item {
 	}
 
 	public static void setReinforcing(ItemStack stack, boolean reinforcing) {
-		if (reinforcing)
-			stack.remove(SCContent.UNREINFORCING);
+		if (reinforcing) {
+			if (stack.hasTag())
+				stack.getTag().remove(UNREINFORCING_KEY);
+		}
 		else
-			stack.set(SCContent.UNREINFORCING, Unit.INSTANCE);
+			stack.getOrCreateTag().putBoolean(UNREINFORCING_KEY, true);
 	}
 
 	@Override
@@ -59,7 +66,7 @@ public class BlockReinforcerItem extends Item {
 		ItemStack held = player.getItemInHand(hand);
 
 		if (level instanceof net.minecraft.server.level.ServerLevel) {
-			maybeRemoveMending(level.registryAccess(), held);
+			maybeRemoveMending(held);
 			player.openMenu(new net.minecraft.world.SimpleMenuProvider((windowId, inv, p) -> new net.geforcemods.securitycraft.inventory.BlockReinforcerMenu(windowId, inv), held.getHoverName()));
 		}
 
@@ -67,15 +74,12 @@ public class BlockReinforcerItem extends Item {
 	}
 
 	/** Strips any Mending enchantment so the consumable reinforcer cannot self-repair (1:1 with upstream). */
-	public static void maybeRemoveMending(net.minecraft.core.HolderLookup.Provider lookupProvider, ItemStack stack) {
-		net.minecraft.world.item.enchantment.ItemEnchantments enchantments = stack.get(net.minecraft.core.component.DataComponents.ENCHANTMENTS);
-		net.minecraft.world.item.enchantment.Enchantment mending = net.minecraft.world.item.enchantment.Enchantments.MENDING;
+	public static void maybeRemoveMending(ItemStack stack) {
+		Map<Enchantment, Integer> enchantments = EnchantmentHelper.getEnchantments(stack);
 
-		if (enchantments != null && enchantments.getLevel(mending) > 0) {
-			net.minecraft.world.item.enchantment.ItemEnchantments.Mutable mutable = new net.minecraft.world.item.enchantment.ItemEnchantments.Mutable(enchantments);
-
-			mutable.set(mending, 0);
-			stack.set(net.minecraft.core.component.DataComponents.ENCHANTMENTS, mutable.toImmutable());
+		if (enchantments.containsKey(Enchantments.MENDING)) {
+			enchantments.remove(Enchantments.MENDING);
+			EnchantmentHelper.setEnchantments(enchantments, stack);
 		}
 	}
 
@@ -93,7 +97,7 @@ public class BlockReinforcerItem extends Item {
 
 		if (level instanceof ServerLevel) {
 			level.setBlockAndUpdate(pos, target.withPropertiesOf(state));
-			stack.hurtAndBreak(1, player, net.minecraft.world.entity.LivingEntity.getSlotForHand(ctx.getHand()));
+			stack.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(ctx.getHand()));
 		}
 
 		return InteractionResult.SUCCESS;

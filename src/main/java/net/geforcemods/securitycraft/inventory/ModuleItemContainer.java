@@ -2,14 +2,15 @@ package net.geforcemods.securitycraft.inventory;
 
 import net.geforcemods.securitycraft.items.ModuleItem;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.component.DataComponents;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.component.ItemContainerContents;
 
-/** A 1-slot container backed by a module stack's {@link DataComponents#CONTAINER} component (the disguise block addon). */
+/** A 1-slot container backed by an item stack under the module's {@code SavedBlock} NBT key (the disguise block addon). */
 public class ModuleItemContainer implements Container {
+	public static final String SAVED_BLOCK_KEY = "SavedBlock";
+
 	private final ItemStack module;
 	private NonNullList<ItemStack> moduleInventory;
 	private DisguiseModuleMenu menu;
@@ -36,11 +37,23 @@ public class ModuleItemContainer implements Container {
 	}
 
 	public void load() {
-		module.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY).copyInto(moduleInventory);
+		ItemStack saved = ItemStack.EMPTY;
+
+		if (module.hasTag() && module.getTag().contains(SAVED_BLOCK_KEY))
+			saved = ItemStack.of(module.getTag().getCompound(SAVED_BLOCK_KEY));
+
+		moduleInventory.set(0, saved);
 	}
 
 	public void save() {
-		module.set(DataComponents.CONTAINER, ItemContainerContents.fromItems(moduleInventory));
+		ItemStack stack = moduleInventory.get(0);
+
+		if (stack.isEmpty()) {
+			if (module.hasTag())
+				module.getTag().remove(SAVED_BLOCK_KEY);
+		}
+		else
+			module.getOrCreateTag().put(SAVED_BLOCK_KEY, stack.save(new CompoundTag()));
 	}
 
 	@Override

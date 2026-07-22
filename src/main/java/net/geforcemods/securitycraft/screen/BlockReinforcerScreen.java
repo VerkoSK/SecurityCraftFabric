@@ -26,8 +26,8 @@ import net.minecraft.world.entity.player.Inventory;
 /** Screen for the Universal Block Reinforcer: mode toggle + tint mode/colour/save row, matching the original SecurityCraft GUI. */
 public class BlockReinforcerScreen extends AbstractContainerScreen<BlockReinforcerMenu> implements IHasExtraAreas {
 	private static final ResourceLocation TEXTURE = SCContent.id("textures/gui/container/universal_block_reinforcer.png");
-	private static final ResourceLocation SAVE_SPRITE = SCContent.id("widget/save");
-	private static final ResourceLocation SAVE_INACTIVE_SPRITE = SCContent.id("widget/save_inactive");
+	private static final ResourceLocation SAVE_SPRITE = SCContent.id("textures/gui/sprites/widget/save.png");
+	private static final ResourceLocation SAVE_INACTIVE_SPRITE = SCContent.id("textures/gui/sprites/widget/save_inactive.png");
 	private final Component output = Component.translatable("gui.securitycraft:blockReinforcer.output");
 	private final Component modeText = Component.translatable("gui.securitycraft:blockReinforcer.mode");
 	private final Component tintText = Component.translatable("gui.securitycraft:blockReinforcer.tint");
@@ -82,7 +82,7 @@ public class BlockReinforcerScreen extends AbstractContainerScreen<BlockReinforc
 			boolean isReinforcing = toggleButton.getCurrentIndex() == 0;
 
 			updateReinforcingTooltip(isReinforcing);
-			ClientPlayNetworking.send(new SyncBlockReinforcerPayload(isReinforcing));
+			ClientPlayNetworking.send(SyncBlockReinforcerPayload.CHANNEL, new SyncBlockReinforcerPayload(isReinforcing).write());
 		}
 	}
 
@@ -182,11 +182,11 @@ public class BlockReinforcerScreen extends AbstractContainerScreen<BlockReinforc
 	}
 
 	@Override
-	public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+	public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
 		if (!tintColorChooser.disabled)
-			return tintColorChooser.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
+			return tintColorChooser.mouseScrolled(mouseX, mouseY, delta);
 
-		return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
+		return super.mouseScrolled(mouseX, mouseY, delta);
 	}
 
 	@Override

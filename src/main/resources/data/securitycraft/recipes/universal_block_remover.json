@@ -6,5 +6,5 @@
 		"S": { "item": "minecraft:shears" },
 		"I": { "item": "minecraft:iron_ingot" }
 	},
-	"result": { "id": "securitycraft:universal_block_remover", "count": 1 }
+	"result": { "item": "securitycraft:universal_block_remover", "count": 1 }
 }

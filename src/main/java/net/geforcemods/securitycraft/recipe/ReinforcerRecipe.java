@@ -2,8 +2,9 @@ package net.geforcemods.securitycraft.recipe;
 
 import net.geforcemods.securitycraft.SCContent;
 import net.geforcemods.securitycraft.items.BlockReinforcerItem;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -19,8 +20,8 @@ public final class ReinforcerRecipe {
 	private ReinforcerRecipe() {}
 
 	public abstract static class Base extends CustomRecipe {
-		protected Base(CraftingBookCategory category) {
-			super(category);
+		protected Base(ResourceLocation id, CraftingBookCategory category) {
+			super(id, category);
 		}
 
 		protected abstract Block target(Block input);
@@ -56,7 +57,7 @@ public final class ReinforcerRecipe {
 		}
 
 		@Override
-		public ItemStack assemble(CraftingContainer inv, HolderLookup.Provider provider) {
+		public ItemStack assemble(CraftingContainer inv, RegistryAccess registryAccess) {
 			for (int i = 0; i < inv.getContainerSize(); i++) {
 				if (inv.getItem(i).getItem() instanceof BlockItem blockItem) {
 					Block result = target(blockItem.getBlock());
@@ -102,8 +103,8 @@ public final class ReinforcerRecipe {
 	}
 
 	public static class Reinforcing extends Base {
-		public Reinforcing(CraftingBookCategory category) {
-			super(category);
+		public Reinforcing(ResourceLocation id, CraftingBookCategory category) {
+			super(id, category);
 		}
 
 		@Override
@@ -123,8 +124,8 @@ public final class ReinforcerRecipe {
 	}
 
 	public static class Unreinforcing extends Base {
-		public Unreinforcing(CraftingBookCategory category) {
-			super(category);
+		public Unreinforcing(ResourceLocation id, CraftingBookCategory category) {
+			super(id, category);
 		}
 
 		@Override
