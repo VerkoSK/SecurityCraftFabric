@@ -18,6 +18,7 @@ java {
 
 repositories {
 	maven { url = 'https://maven.fabricmc.net/' }
+	maven { url = 'https://maven.blamejared.com' }
 	mavenCentral()
 }
 
@@ -27,6 +28,8 @@ dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
 	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
 	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+	// JEI compat plugin. The new loom auto-remaps mod jars declared via plain implementation.
+	implementation "mezz.jei:jei-${project.minecraft_version}-fabric:${project.jei_version}"
 }
 
 processResources {
