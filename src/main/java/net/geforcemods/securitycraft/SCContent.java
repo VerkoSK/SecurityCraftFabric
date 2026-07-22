@@ -52,6 +52,25 @@ public class SCContent {
 	public static final List<Block> GLASS_PANE_BLOCKS = new ArrayList<>();
 
 	public static Block KEYPAD;
+	public static net.geforcemods.securitycraft.blocks.LaserBlock LASER_BLOCK;
+	public static net.geforcemods.securitycraft.blocks.LaserFieldBlock LASER_FIELD;
+	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.LaserBlockBlockEntity> LASER_BLOCK_BLOCK_ENTITY;
+	public static BlockEntityType<net.geforcemods.securitycraft.api.OwnableBlockEntity> ABSTRACT_BLOCK_ENTITY;
+	public static net.geforcemods.securitycraft.blocks.KeyPanelBlock KEY_PANEL;
+	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.KeyPanelBlockEntity> KEY_PANEL_BLOCK_ENTITY;
+	public static Item KEY_PANEL_ITEM;
+	public static net.geforcemods.securitycraft.blocks.FrameBlock FRAME;
+	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.FrameBlockEntity> FRAME_BLOCK_ENTITY;
+	public static net.geforcemods.securitycraft.items.ModuleItem REDSTONE_MODULE;
+	public static net.geforcemods.securitycraft.items.ModuleItem ALLOWLIST_MODULE;
+	public static net.geforcemods.securitycraft.items.ModuleItem DENYLIST_MODULE;
+	public static net.geforcemods.securitycraft.items.ModuleItem HARMING_MODULE;
+	public static net.geforcemods.securitycraft.items.ModuleItem SMART_MODULE;
+	public static net.geforcemods.securitycraft.items.ModuleItem STORAGE_MODULE;
+	public static net.geforcemods.securitycraft.items.ModuleItem DISGUISE_MODULE;
+	public static net.geforcemods.securitycraft.items.ModuleItem SPEED_MODULE;
+	public static net.minecraft.core.component.DataComponentType<net.geforcemods.securitycraft.components.ListModuleData> LIST_MODULE_DATA;
+	public static Item LENS;
 	public static Item UNIVERSAL_BLOCK_REINFORCER_LVL1;
 	public static Item UNIVERSAL_BLOCK_REINFORCER_LVL2;
 	public static Item UNIVERSAL_BLOCK_REINFORCER_LVL3;
@@ -60,9 +79,12 @@ public class SCContent {
 
 	public static final ResourceKey<CreativeModeTab> TAB_KEY = ResourceKey.create(Registries.CREATIVE_MODE_TAB, id("general"));
 
+	public static net.minecraft.core.component.DataComponentType<net.minecraft.util.Unit> UNREINFORCING;
 	public static RecipeSerializer<?> BLOCK_REINFORCING_SERIALIZER;
 	public static RecipeSerializer<?> BLOCK_UNREINFORCING_SERIALIZER;
-
+	public static net.minecraft.world.inventory.MenuType<net.geforcemods.securitycraft.inventory.BlockReinforcerMenu> BLOCK_REINFORCER_MENU;
+	public static net.minecraft.world.inventory.MenuType<net.geforcemods.securitycraft.inventory.LaserBlockMenu> LASER_BLOCK_MENU;
+	public static net.minecraft.world.inventory.MenuType<net.geforcemods.securitycraft.inventory.DisguiseModuleMenu> DISGUISE_MODULE_MENU;
 
 	private static final String[][] REINFORCED = {
 			{"reinforced_acacia_button", "button"},
@@ -517,19 +539,50 @@ public class SCContent {
 
 	public static void init() {
 		KEYPAD = register("keypad", new KeypadBlock(BlockBehaviour.Properties.of().strength(2.0F, 12000.0F).requiresCorrectToolForDrops()));
+		LASER_BLOCK = (net.geforcemods.securitycraft.blocks.LaserBlock) register("laser_block", new net.geforcemods.securitycraft.blocks.LaserBlock(BlockBehaviour.Properties.of().strength(3.5F).requiresCorrectToolForDrops().sound(SoundType.METAL)));
+		LASER_FIELD = (net.geforcemods.securitycraft.blocks.LaserFieldBlock) registerBlockNoItem("laser", new net.geforcemods.securitycraft.blocks.LaserFieldBlock(BlockBehaviour.Properties.of().mapColor(net.minecraft.world.level.material.MapColor.NONE).strength(-1.0F).noLootTable().noOcclusion()));
+		KEY_PANEL = (net.geforcemods.securitycraft.blocks.KeyPanelBlock) registerBlockNoItem("key_panel", new net.geforcemods.securitycraft.blocks.KeyPanelBlock(BlockBehaviour.Properties.of().strength(3.5F).sound(SoundType.METAL).noOcclusion()));
+		KEY_PANEL_ITEM = registerItem("keypad_item", new net.geforcemods.securitycraft.items.KeyPanelItem(new Item.Properties()));
+		FRAME = (net.geforcemods.securitycraft.blocks.FrameBlock) register("keypad_frame", new net.geforcemods.securitycraft.blocks.FrameBlock(BlockBehaviour.Properties.of().mapColor(net.minecraft.world.level.material.MapColor.METAL).strength(5.0F).sound(SoundType.METAL).noOcclusion()));
+		net.geforcemods.securitycraft.api.SecurityCraftAPI.registerPasscodeConvertible(new net.geforcemods.securitycraft.blocks.KeypadBlock.Convertible());
 
 		for (String[] entry : REINFORCED)
 			registerReinforced(entry[0], entry[1]);
+
+		LIST_MODULE_DATA = Registry.register(BuiltInRegistries.DATA_COMPONENT_TYPE, id("list_module_data"), net.minecraft.core.component.DataComponentType.<net.geforcemods.securitycraft.components.ListModuleData>builder().persistent(net.geforcemods.securitycraft.components.ListModuleData.CODEC).networkSynchronized(net.geforcemods.securitycraft.components.ListModuleData.STREAM_CODEC).cacheEncoding().build());
+		REDSTONE_MODULE = registerModule("redstone_module", net.geforcemods.securitycraft.misc.ModuleType.REDSTONE, false, false, false);
+		ALLOWLIST_MODULE = registerModule("whitelist_module", net.geforcemods.securitycraft.misc.ModuleType.ALLOWLIST, true, true, true);
+		DENYLIST_MODULE = registerModule("blacklist_module", net.geforcemods.securitycraft.misc.ModuleType.DENYLIST, true, true, true);
+		HARMING_MODULE = registerModule("harming_module", net.geforcemods.securitycraft.misc.ModuleType.HARMING, false, false, false);
+		SMART_MODULE = registerModule("smart_module", net.geforcemods.securitycraft.misc.ModuleType.SMART, false, false, false);
+		STORAGE_MODULE = registerModule("storage_module", net.geforcemods.securitycraft.misc.ModuleType.STORAGE, false, false, false);
+		DISGUISE_MODULE = registerModule("disguise_module", net.geforcemods.securitycraft.misc.ModuleType.DISGUISE, false, true, false);
+		SPEED_MODULE = registerModule("speed_module", net.geforcemods.securitycraft.misc.ModuleType.SPEED, false, false, false);
+		LENS = registerItem("lens", new Item(new Item.Properties()));
 
 		UNIVERSAL_BLOCK_REINFORCER_LVL1 = registerConverterItem("universal_block_reinforcer_lvl1", 300, true);
 		UNIVERSAL_BLOCK_REINFORCER_LVL2 = registerConverterItem("universal_block_reinforcer_lvl2", 2700, true);
 		UNIVERSAL_BLOCK_REINFORCER_LVL3 = registerConverterItem("universal_block_reinforcer_lvl3", 0, true);
 		UNIVERSAL_BLOCK_REMOVER = registerConverterItem("universal_block_remover", 476, false);
 
-
+		UNREINFORCING = Registry.register(BuiltInRegistries.DATA_COMPONENT_TYPE, id("unreinforcing"), net.minecraft.core.component.DataComponentType.<net.minecraft.util.Unit>builder().persistent(com.mojang.serialization.Codec.unit(net.minecraft.util.Unit.INSTANCE)).networkSynchronized(net.minecraft.network.codec.StreamCodec.unit(net.minecraft.util.Unit.INSTANCE)).build());
+		BLOCK_REINFORCING_SERIALIZER = Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, id("block_reinforcing"), new net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer<>(net.geforcemods.securitycraft.recipe.ReinforcerRecipe.Reinforcing::new));
+		BLOCK_UNREINFORCING_SERIALIZER = Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, id("block_unreinforcing"), new net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer<>(net.geforcemods.securitycraft.recipe.ReinforcerRecipe.Unreinforcing::new));
+		BLOCK_REINFORCER_MENU = Registry.register(BuiltInRegistries.MENU, id("block_reinforcer"), new net.minecraft.world.inventory.MenuType<>(net.geforcemods.securitycraft.inventory.BlockReinforcerMenu::new, net.minecraft.world.flag.FeatureFlags.VANILLA_SET));
 
 		KEYPAD_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("keypad"), FabricBlockEntityTypeBuilder.create(KeypadBlockEntity::new, KEYPAD).build());
+		LASER_BLOCK_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("laser_block"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.LaserBlockBlockEntity::new, LASER_BLOCK).build());
+		ABSTRACT_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("abstract"), FabricBlockEntityTypeBuilder.create((pos, state) -> new net.geforcemods.securitycraft.api.OwnableBlockEntity(ABSTRACT_BLOCK_ENTITY, pos, state), LASER_FIELD).build());
+		KEY_PANEL_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("key_panel"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.KeyPanelBlockEntity::new, KEY_PANEL).build());
+		FRAME_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("keypad_frame"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.FrameBlockEntity::new, FRAME).build());
+		LASER_BLOCK_MENU = Registry.register(BuiltInRegistries.MENU, id("laser_block"), new net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType<>((syncId, inv, data) -> new net.geforcemods.securitycraft.inventory.LaserBlockMenu(syncId, inv.player.level(), data.pos(), data.sideConfig(), inv), net.geforcemods.securitycraft.inventory.LaserBlockData.STREAM_CODEC));
+		DISGUISE_MODULE_MENU = Registry.register(BuiltInRegistries.MENU, id("disguise_module"), new net.minecraft.world.inventory.MenuType<>(net.geforcemods.securitycraft.inventory.DisguiseModuleMenu::new, net.minecraft.world.flag.FeatureFlags.VANILLA_SET));
 		registerCreativeTab();
+	}
+
+	private static Block registerBlockNoItem(String name, Block block) {
+		Registry.register(BuiltInRegistries.BLOCK, id(name), block);
+		return block;
 	}
 
 	private static boolean isGlass(String name, String category) {
@@ -581,7 +634,20 @@ public class SCContent {
 		CreativeModeTab technical = FabricItemGroup.builder()
 				.icon(() -> new ItemStack(KEYPAD))
 				.title(Component.translatable("itemGroup.securitycraft.technical"))
-				.displayItems((params, output) -> output.accept(KEYPAD))
+				.displayItems((params, output) -> {
+					output.accept(KEYPAD);
+					output.accept(KEY_PANEL_ITEM);
+					output.accept(FRAME);
+					output.accept(LASER_BLOCK);
+					output.accept(REDSTONE_MODULE);
+					output.accept(ALLOWLIST_MODULE);
+					output.accept(DENYLIST_MODULE);
+					output.accept(HARMING_MODULE);
+					output.accept(SMART_MODULE);
+					output.accept(STORAGE_MODULE);
+					output.accept(DISGUISE_MODULE);
+					output.accept(SPEED_MODULE);
+				})
 				.build();
 		Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, id("technical"), technical);
 
@@ -646,6 +712,27 @@ public class SCContent {
 			return null;
 
 		return REINFORCED_BY_NAME.get("reinforced_" + loc.getPath());
+	}
+
+	private static Item registerItem(String name, Item item) {
+		Registry.register(BuiltInRegistries.ITEM, id(name), item);
+		return item;
+	}
+
+	private static net.geforcemods.securitycraft.items.ModuleItem registerModule(String name, net.geforcemods.securitycraft.misc.ModuleType type, boolean containsCustomData, boolean canBeCustomized, boolean hasListData) {
+		Item.Properties props = new Item.Properties().stacksTo(1);
+
+		if (hasListData)
+			props.component(LIST_MODULE_DATA, net.geforcemods.securitycraft.components.ListModuleData.EMPTY);
+
+		if (type == net.geforcemods.securitycraft.misc.ModuleType.DISGUISE)
+			props.component(net.minecraft.core.component.DataComponents.CONTAINER, net.minecraft.world.item.component.ItemContainerContents.EMPTY);
+
+		net.geforcemods.securitycraft.items.ModuleItem item = new net.geforcemods.securitycraft.items.ModuleItem(props, type, containsCustomData, canBeCustomized);
+
+		Registry.register(BuiltInRegistries.ITEM, id(name), item);
+		TAB_ITEMS.add(item);
+		return item;
 	}
 
 	private static Item registerConverterItem(String name, int durability, boolean reinforcing) {
