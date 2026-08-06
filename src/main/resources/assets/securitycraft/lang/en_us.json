@@ -525,5 +525,6 @@
 	"messages.securitycraft:passcodeProtected.notSetUp": "There is no passcode set yet. You cannot interact with this.",
 	"death.attack.securitycraft.laser.player": "%1$s was sliced to death by a laser whilst fighting %2$s",
 	"messages.securitycraft:module.onAllowlist": "You are added to the allowlist.",
-	"messages.securitycraft:module.onDenylist": "You are added to the denylist."
+	"messages.securitycraft:module.onDenylist": "You are added to the denylist.",
+	"securitycraft.subtitle.lock": "Container locking"
 }
