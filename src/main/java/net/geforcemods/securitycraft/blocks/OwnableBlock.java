@@ -3,6 +3,7 @@ package net.geforcemods.securitycraft.blocks;
 import net.geforcemods.securitycraft.SCContent;
 import net.geforcemods.securitycraft.api.IOwnable;
 import net.geforcemods.securitycraft.api.OwnableBlockEntity;
+import net.geforcemods.securitycraft.util.IBlockMine;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -30,7 +31,9 @@ public class OwnableBlock extends BaseEntityBlock {
 
 	@Override
 	public float getDestroyProgress(BlockState state, Player player, BlockGetter level, BlockPos pos) {
-		if (level.getBlockEntity(pos) instanceof IOwnable ownable && ownable.getOwner().owns() && !ownable.isOwnedBy(player))
+		//block mines are meant to be broken (and to then detonate) by trespassers, so they bypass the ownership gate,
+		//just like upstream's BlockUtils#getDestroyProgress does via its isBlockMine check
+		if (!(this instanceof IBlockMine) && level.getBlockEntity(pos) instanceof IOwnable ownable && ownable.getOwner().owns() && !ownable.isOwnedBy(player))
 			return 0.0F;
 
 		return super.getDestroyProgress(state, player, level, pos);

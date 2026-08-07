@@ -19,6 +19,11 @@ public class SecurityCraftClient implements ClientModInitializer {
 		Minecraft.getInstance().setScreen(new net.geforcemods.securitycraft.screen.EditModuleScreen(stack));
 	}
 
+	/** Opens the mine remote access tool screen for the given stack (called client-side only). */
+	public static void openMRATScreen(net.minecraft.world.item.ItemStack stack) {
+		Minecraft.getInstance().setScreen(new net.geforcemods.securitycraft.screen.MineRemoteAccessToolScreen(stack));
+	}
+
 	/** Live tint colour for reinforced blocks: white base multiplied by the configured tint (grey by default). */
 	private static int reinforcedTint() {
 		return TintMode.tint(Minecraft.getInstance().player, 0xFFFFFFFF, null);

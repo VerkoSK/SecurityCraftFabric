@@ -2,6 +2,7 @@ package net.geforcemods.securitycraft.api;
 
 import java.util.function.Supplier;
 
+import net.geforcemods.securitycraft.misc.TargetingMode;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -339,6 +340,22 @@ public abstract class Option<T> {
 		@Override
 		public Component getDefaultInfo() {
 			return Component.translatable("securitycraft.option.default", getValueText()).withStyle(ChatFormatting.GRAY);
+		}
+	}
+
+	public static class TargetingModeOption extends EnumOption<TargetingMode> {
+		public TargetingModeOption(TargetingMode defaultValue) {
+			super("targetingMode", defaultValue, TargetingMode.class);
+		}
+
+		@Override
+		public String getKey(String denotation) {
+			return "option.generic.targetingMode";
+		}
+
+		@Override
+		public Component getValueText() {
+			return value.translate();
 		}
 	}
 
