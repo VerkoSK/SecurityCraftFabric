@@ -29,6 +29,8 @@ public final class ConfigHandler {
 	public static boolean mineExplodesWhenInCreative = true;
 	/** Set this to false if you want mines to not break blocks when they explode. (upstream default true) */
 	public static boolean mineExplosionsBreakBlocks = true;
+	/** Set this to true to enable every player on a scoreboard team to own the blocks of every other player on the same team. (upstream default false) */
+	public static boolean enableTeamOwnership = false;
 
 	private ConfigHandler() {}
 
@@ -57,6 +59,9 @@ public final class ConfigHandler {
 
 				if (json.has("mineExplosionsBreakBlocks"))
 					mineExplosionsBreakBlocks = json.get("mineExplosionsBreakBlocks").getAsBoolean();
+
+				if (json.has("enable_team_ownership"))
+					enableTeamOwnership = json.get("enable_team_ownership").getAsBoolean();
 			}
 			else
 				save();
@@ -76,6 +81,7 @@ public final class ConfigHandler {
 		json.addProperty("smallerMineExplosion", smallerMineExplosion);
 		json.addProperty("mineExplodesWhenInCreative", mineExplodesWhenInCreative);
 		json.addProperty("mineExplosionsBreakBlocks", mineExplosionsBreakBlocks);
+		json.addProperty("enable_team_ownership", enableTeamOwnership);
 
 		try {
 			Files.writeString(FILE, new GsonBuilder().setPrettyPrinting().create().toJson(json));

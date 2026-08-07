@@ -32,6 +32,7 @@
 		"securitycraft:smoker_mine",
 		"securitycraft:blast_furnace_mine",
 		"securitycraft:netherrack_mine",
-		"securitycraft:end_stone_mine"
+		"securitycraft:end_stone_mine",
+		"securitycraft:portable_radar"
 	]
 }
