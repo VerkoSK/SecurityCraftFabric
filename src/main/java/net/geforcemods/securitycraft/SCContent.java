@@ -763,7 +763,11 @@ public class SCContent {
 					output.accept(SPEED_MODULE);
 				})
 				.build();
-		Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, id("technical"), technical);
+		//Fabric's ItemGroupsMixin sorts every non-vanilla creative tab by its ResourceLocation and assigns the tab
+		//positions from that order, so registration order has no effect. Upstream gets the order it wants from
+		//NeoForge's withTabsBefore(); here the numeric prefixes are what put the tabs in upstream's order
+		//(technical, explosives, decoration) instead of the alphabetical decoration/mine/technical.
+		Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, id("1_technical"), technical);
 
 		//upstream's MINE_TAB uses withTabsBefore(TECHNICAL_TAB); on Fabric the display order follows the registration order, so this has to sit between the technical and decoration tabs.
 		//the 42 entries are upstream's resolved order: the four non-block mines in declaration order, then the block mines sorted by the vanilla creative index of the block they are disguised as.
@@ -815,7 +819,7 @@ public class SCContent {
 					output.accept(BLAST_FURNACE_MINE);
 				})
 				.build();
-		Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, id("mine"), mine);
+		Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, id("2_mine"), mine);
 
 		CreativeModeTab decoration = FabricItemGroup.builder()
 				.icon(() -> new ItemStack(REINFORCED_BY_NAME.getOrDefault("reinforced_oak_stairs", KEYPAD)))
@@ -830,7 +834,7 @@ public class SCContent {
 						output.accept(block);
 				})
 				.build();
-		Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, id("decoration"), decoration);
+		Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, id("3_decoration"), decoration);
 	}
 
 	private static List<Block> sortByVanillaOrder(List<Block> blocks) {

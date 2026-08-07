@@ -59,19 +59,6 @@ public class MineRemoteAccessToolItem extends Item {
 		if (level.getBlockState(pos).getBlock() instanceof IExplosive) {
 			Player player = ctx.getPlayer();
 
-			//Unlike Forge's onItemUseFirst, UseBlockCallback also runs on the client, and returning anything but PASS
-			//there makes the client swallow the interaction instead of sending it to the server, so the binding would
-			//only ever be written into the client's copy of the stack and then be undone by the next inventory sync.
-			//The one case that genuinely belongs on the client is opening the screen for a mine owned by someone else.
-			if (level.isClientSide) {
-				if (!isMineAdded(stack, pos) && getNextAvailableSlot(stack) != 0 && level.getBlockEntity(pos) instanceof IOwnable ownable && !ownable.isOwnedBy(player)) {
-					SecurityCraftClient.openMRATScreen(stack);
-					return InteractionResult.SUCCESS;
-				}
-
-				return InteractionResult.PASS;
-			}
-
 			if (!isMineAdded(stack, pos)) {
 				int nextSlot = getNextAvailableSlot(stack);
 
@@ -80,8 +67,12 @@ public class MineRemoteAccessToolItem extends Item {
 					return InteractionResult.FAIL;
 				}
 
-				if (level.getBlockEntity(pos) instanceof IOwnable ownable && !ownable.isOwnedBy(player))
+				if (level.getBlockEntity(pos) instanceof IOwnable ownable && !ownable.isOwnedBy(player)) {
+					if (level.isClientSide)
+						SecurityCraftClient.openMRATScreen(stack);
+
 					return InteractionResult.SUCCESS;
+				}
 
 				if (stack.getTag() == null)
 					stack.setTag(new CompoundTag());
