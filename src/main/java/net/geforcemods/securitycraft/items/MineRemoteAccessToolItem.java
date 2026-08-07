@@ -59,6 +59,17 @@ public class MineRemoteAccessToolItem extends Item {
 		if (level.getBlockState(pos).getBlock() instanceof IExplosive) {
 			Player player = ctx.getPlayer();
 
+			//UseBlockCallback runs on both sides. Letting the client edit its own copy of the stack as well makes the
+			//two sides drift apart - each toggles independently, so a bind on one can line up with an unbind on the
+			//other - so only the server touches the tag and the client just consumes the interaction. Returning
+			//SUCCESS still sends the packet: Fabric's client mixin only swallows it for CONSUME and FAIL.
+			if (level.isClientSide) {
+				if (!isMineAdded(stack, pos) && getNextAvailableSlot(stack) != 0 && level.getBlockEntity(pos) instanceof IOwnable ownable && !ownable.isOwnedBy(player))
+					SecurityCraftClient.openMRATScreen(stack);
+
+				return InteractionResult.SUCCESS;
+			}
+
 			if (!isMineAdded(stack, pos)) {
 				int nextSlot = getNextAvailableSlot(stack);
 

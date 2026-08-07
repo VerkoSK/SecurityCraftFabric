@@ -54,7 +54,16 @@ public class PlayerUtils {
 	}
 
 	public static void sendMessageToPlayer(Player player, MutableComponent title, MutableComponent message, ChatFormatting color) {
-		player.displayClientMessage(Component.literal("[").append(title).append("] ").append(message).withStyle(color), false);
+		sendMessageToPlayer(player, title, message, color, false);
+	}
+
+	/**
+	 * Sends a chat message from one side only, matching upstream. Callers like the mine remote access tool run on both
+	 * the client and the server, so without this check the same message would be printed to chat twice.
+	 */
+	public static void sendMessageToPlayer(Player player, MutableComponent title, MutableComponent message, ChatFormatting color, boolean shouldSendFromClient) {
+		if (player != null && player.level().isClientSide == shouldSendFromClient)
+			player.displayClientMessage(Component.literal("[").append(title).append("] ").append(message).withStyle(color), false);
 	}
 
 	public static ItemStack getItemStackFromAnyHand(Player player, Item item) {

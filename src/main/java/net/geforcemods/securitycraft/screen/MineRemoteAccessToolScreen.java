@@ -93,7 +93,10 @@ public class MineRemoteAccessToolScreen extends Screen implements StillValid {
 
 			if (minePos != null) {
 				guiButtons[i][UNBIND].active = true;
-				lines[i] = Utils.localize("gui.securitycraft:mrat.mineLocations", minePos);
+				//Upstream passes the BlockPos straight in, which only reads well because Forge keeps the mapped class
+				//name; in a remapped Fabric jar BlockPos#toString prints "class_2338{x=..}", so format it like the
+				//tool's chat messages do instead.
+				lines[i] = Utils.localize("gui.securitycraft:mrat.mineLocations", Utils.getFormattedCoordinates(minePos));
 
 				if (level.isLoaded(minePos)) {
 					Block block = level.getBlockState(minePos).getBlock();

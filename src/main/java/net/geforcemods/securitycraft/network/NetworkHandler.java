@@ -47,6 +47,35 @@ public final class NetworkHandler {
 
 			server.execute(() -> handleSetListModuleData(player, payload));
 		});
+		ServerPlayNetworking.registerGlobalReceiver(RemoteControlMinePayload.CHANNEL, (server, player, handler, buf, sender) -> {
+			RemoteControlMinePayload payload = RemoteControlMinePayload.read(buf);
+
+			server.execute(() -> handleRemoteControlMine(player, payload));
+		});
+		ServerPlayNetworking.registerGlobalReceiver(RemoveMineFromMRATPayload.CHANNEL, (server, player, handler, buf, sender) -> {
+			RemoveMineFromMRATPayload payload = RemoveMineFromMRATPayload.read(buf);
+
+			server.execute(() -> handleRemoveMineFromMRAT(player, payload));
+		});
+	}
+
+	private static void handleRemoteControlMine(ServerPlayer player, RemoteControlMinePayload payload) {
+		ServerLevel level = player.serverLevel();
+		BlockState state = level.getBlockState(payload.pos());
+
+		if (!player.isSpectator() && state.getBlock() instanceof net.geforcemods.securitycraft.api.IExplosive explosive && level.getBlockEntity(payload.pos()) instanceof net.geforcemods.securitycraft.api.IOwnable ownable && ownable.isOwnedBy(player))
+			payload.action().act(explosive, level, payload.pos());
+	}
+
+	private static void handleRemoveMineFromMRAT(ServerPlayer player, RemoveMineFromMRATPayload payload) {
+		ItemStack stack = PlayerUtils.getItemStackFromAnyHand(player, SCContent.MINE_REMOTE_ACCESS_TOOL);
+
+		if (!player.isSpectator() && !stack.isEmpty()) {
+			net.minecraft.nbt.CompoundTag tag = stack.getOrCreateTag();
+
+			if (tag.contains("mine" + payload.mineIndex()))
+				tag.remove("mine" + payload.mineIndex());
+		}
 	}
 
 	private static void handleSetListModuleData(ServerPlayer player, SetListModuleDataPayload payload) {
