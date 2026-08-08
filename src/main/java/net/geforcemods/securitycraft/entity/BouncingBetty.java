@@ -1,0 +1,95 @@
+package net.geforcemods.securitycraft.entity;
+
+import net.geforcemods.securitycraft.ConfigHandler;
+import net.geforcemods.securitycraft.SCContent;
+import net.geforcemods.securitycraft.util.BlockUtils;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MoverType;
+import net.minecraft.world.level.Level;
+
+/** 1:1 with the original SecurityCraft {@code entity.BouncingBetty}: the primed mine that hops up before exploding. */
+public class BouncingBetty extends Entity {
+	/** How many ticks until the explosion */
+	private int fuse;
+
+	public BouncingBetty(EntityType<BouncingBetty> type, Level level) {
+		super(type, level);
+		setFuse(15);
+	}
+
+	public BouncingBetty(Level level, double x, double y, double z) {
+		this(SCContent.BOUNCING_BETTY_ENTITY, level);
+		moveTo(x, y, z);
+
+		double f = Math.random() * Math.PI * 2.0D;
+
+		setDeltaMovement(Math.sin(f) * 0.02D, 0.20000000298023224D, Math.cos(f) * 0.02D);
+	}
+
+	@Override
+	protected void defineSynchedData(SynchedEntityData.Builder builder) {}
+
+	@Override
+	protected MovementEmission getMovementEmission() {
+		return MovementEmission.NONE;
+	}
+
+	@Override
+	public boolean isPickable() {
+		return !isRemoved();
+	}
+
+	@Override
+	public void tick() {
+		xo = getX();
+		yo = getY();
+		zo = getZ();
+		setDeltaMovement(getDeltaMovement().add(0, -0.03999999910593033D, 0));
+		move(MoverType.SELF, getDeltaMovement());
+		setDeltaMovement(getDeltaMovement().multiply(0.9800000190734863D, 0.9800000190734863D, 0.9800000190734863D));
+
+		if (onGround())
+			setDeltaMovement(getDeltaMovement().multiply(0.699999988079071D, 0.699999988079071D, -0.5D));
+
+		if (fuse-- <= 0 && !level().isClientSide) {
+			discard();
+			explode();
+		}
+		else if (level().isClientSide)
+			level().addParticle(ParticleTypes.SMOKE, false, getX(), getY() + 0.5D, getZ(), 0.0D, 0.0D, 0.0D);
+	}
+
+	private void explode() {
+		level().explode(this, getX(), getY(), getZ(), ConfigHandler.smallerMineExplosion ? 3.0F : 6.0F, ConfigHandler.shouldSpawnFire, BlockUtils.getExplosionInteraction());
+	}
+
+	@Override
+	protected void addAdditionalSaveData(CompoundTag tag) {
+		tag.putByte("Fuse", (byte) getFuse());
+	}
+
+	@Override
+	protected void readAdditionalSaveData(CompoundTag tag) {
+		setFuse(tag.getByte("Fuse"));
+	}
+
+	@Override
+	public Packet<ClientGamePacketListener> getAddEntityPacket() {
+		return new ClientboundAddEntityPacket(this);
+	}
+
+	public void setFuse(int fuse) {
+		this.fuse = fuse;
+	}
+
+	public int getFuse() {
+		return fuse;
+	}
+}
