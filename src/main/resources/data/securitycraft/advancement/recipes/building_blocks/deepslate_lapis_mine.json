@@ -1,0 +1,35 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_mine": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "securitycraft:mine"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "securitycraft:deepslate_lapis_mine"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_mine",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "securitycraft:deepslate_lapis_mine"
+    ]
+  },
+  "sends_telemetry_event": false
+}

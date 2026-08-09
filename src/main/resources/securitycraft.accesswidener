@@ -4,3 +4,14 @@ accessWidener	v2	named
 # and overrides scrollTo so horizontal scrolling is computed on the censored text.
 accessible	field	net/minecraft/client/gui/components/EditBox	value	Ljava/lang/String;
 extendable	method	net/minecraft/client/gui/components/EditBox	scrollTo	(I)V
+
+# BrushableMineBlockEntity re-implements BrushableBlockEntity#brush/#checkReset on top of vanilla's private brushing
+# state. Upstream gets the same access from Forge's access transformers.
+# Do NOT widen BrushableBlockEntity#brushingCompleted: `accessible` makes a private method final, which would clash
+# with BrushableMineBlockEntity's own same-named method.
+accessible	field	net/minecraft/world/level/block/entity/BrushableBlockEntity	brushCount	I
+accessible	field	net/minecraft/world/level/block/entity/BrushableBlockEntity	brushCountResetsAtTick	J
+accessible	field	net/minecraft/world/level/block/entity/BrushableBlockEntity	coolDownEndsAtTick	J
+accessible	field	net/minecraft/world/level/block/entity/BrushableBlockEntity	hitDirection	Lnet/minecraft/core/Direction;
+accessible	method	net/minecraft/world/level/block/entity/BrushableBlockEntity	dropContent	(Lnet/minecraft/world/entity/player/Player;)V
+accessible	method	net/minecraft/world/level/block/entity/BrushableBlockEntity	getCompletionState	()I
