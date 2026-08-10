@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "G": "minecraft:gunpowder",
+    "I": "minecraft:iron_ingot",
+    "S": "minecraft:stick"
+  },
+  "pattern": [
+    "I I",
+    "ISI",
+    "IGI"
+  ],
+  "result": {
+    "id": "securitycraft:track_mine",
+    "count": 6
+  }
+}

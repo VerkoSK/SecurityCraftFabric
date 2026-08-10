@@ -77,6 +77,66 @@ public class SCContent {
 	public static Item UNIVERSAL_BLOCK_REMOVER;
 	public static BlockEntityType<KeypadBlockEntity> KEYPAD_BLOCK_ENTITY;
 
+	public static net.geforcemods.securitycraft.blocks.PortableRadarBlock PORTABLE_RADAR;
+	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.PortableRadarBlockEntity> PORTABLE_RADAR_BLOCK_ENTITY;
+
+	//explosives
+	public static Block MINE;
+	public static Block BOUNCING_BETTY;
+	public static Block CLAYMORE;
+	public static Block IMS;
+	public static Block TRACK_MINE;
+	public static Block STONE_MINE;
+	public static Block DEEPSLATE_MINE;
+	public static Block COBBLED_DEEPSLATE_MINE;
+	public static Block DIRT_MINE;
+	public static Block COBBLESTONE_MINE;
+	public static Block SAND_MINE;
+	public static Block GRAVEL_MINE;
+	public static Block NETHERRACK_MINE;
+	public static Block END_STONE_MINE;
+	public static Block COAL_MINE;
+	public static Block DEEPSLATE_COAL_MINE;
+	public static Block IRON_MINE;
+	public static Block DEEPSLATE_IRON_MINE;
+	public static Block GOLD_MINE;
+	public static Block DEEPSLATE_GOLD_MINE;
+	public static Block COPPER_MINE;
+	public static Block DEEPSLATE_COPPER_MINE;
+	public static Block REDSTONE_MINE;
+	public static Block DEEPSLATE_REDSTONE_MINE;
+	public static Block EMERALD_MINE;
+	public static Block DEEPSLATE_EMERALD_MINE;
+	public static Block LAPIS_MINE;
+	public static Block DEEPSLATE_LAPIS_MINE;
+	public static Block DIAMOND_MINE;
+	public static Block DEEPSLATE_DIAMOND_MINE;
+	public static Block NETHER_GOLD_MINE;
+	public static Block QUARTZ_MINE;
+	public static Block ANCIENT_DEBRIS_MINE;
+	public static Block GILDED_BLACKSTONE_MINE;
+	public static Block FURNACE_MINE;
+	public static Block SMOKER_MINE;
+	public static Block BLAST_FURNACE_MINE;
+	public static Block SUSPICIOUS_SAND_MINE;
+	public static Block SUSPICIOUS_GRAVEL_MINE;
+	public static Block CREAKING_HEART_MINE;
+	public static Item ANCIENT_DEBRIS_MINE_ITEM;
+	public static Item MINE_REMOTE_ACCESS_TOOL;
+	public static Item WIRE_CUTTERS;
+	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.MineBlockEntity> MINE_BLOCK_ENTITY;
+	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.BouncingBettyBlockEntity> BOUNCING_BETTY_BLOCK_ENTITY;
+	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.ClaymoreBlockEntity> CLAYMORE_BLOCK_ENTITY;
+	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.IMSBlockEntity> IMS_BLOCK_ENTITY;
+	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.TrackMineBlockEntity> TRACK_MINE_BLOCK_ENTITY;
+	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.BrushableMineBlockEntity> BRUSHABLE_MINE_BLOCK_ENTITY;
+	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.CreakingHeartMineBlockEntity> CREAKING_HEART_MINE_BLOCK_ENTITY;
+	public static net.minecraft.world.entity.EntityType<net.geforcemods.securitycraft.entity.BouncingBetty> BOUNCING_BETTY_ENTITY;
+	public static net.minecraft.world.entity.EntityType<net.geforcemods.securitycraft.entity.IMSBomb> IMS_BOMB_ENTITY;
+	public static net.minecraft.core.component.DataComponentType<net.geforcemods.securitycraft.components.GlobalPositions> BOUND_MINES;
+	public static RecipeSerializer<? extends net.minecraft.world.item.crafting.CustomRecipe> COPY_MINE_REMOTE_ACCESS_TOOL_RECIPE_SERIALIZER;
+	public static net.minecraft.world.inventory.MenuType<net.geforcemods.securitycraft.inventory.SingleLensMenu> SINGLE_LENS_MENU;
+
 	public static final ResourceKey<CreativeModeTab> TAB_KEY = ResourceKey.create(Registries.CREATIVE_MODE_TAB, id("general"));
 
 	public static net.minecraft.core.component.DataComponentType<net.minecraft.util.Unit> UNREINFORCING;
@@ -561,6 +621,59 @@ public class SCContent {
 		SPEED_MODULE = registerModule("speed_module", net.geforcemods.securitycraft.misc.ModuleType.SPEED, false, false, false);
 		LENS = registerItem("lens", new Item(new Item.Properties().setId(ResourceKey.create(Registries.ITEM, id("lens")))));
 
+		PORTABLE_RADAR = (net.geforcemods.securitycraft.blocks.PortableRadarBlock) register("portable_radar", key -> new net.geforcemods.securitycraft.blocks.PortableRadarBlock(mineProp(net.minecraft.world.level.material.MapColor.COLOR_BLACK, 5.0F).setId(key)));
+
+		MINE = register("mine", key -> new net.geforcemods.securitycraft.blocks.mines.MineBlock(mineProp(net.minecraft.world.level.material.MapColor.METAL, 3.5F).sound(SoundType.METAL).forceSolidOn().pushReaction(net.minecraft.world.level.material.PushReaction.NORMAL).setId(key)));
+		BOUNCING_BETTY = register("bouncing_betty", key -> new net.geforcemods.securitycraft.blocks.mines.BouncingBettyBlock(mineProp(net.minecraft.world.level.material.MapColor.METAL, 3.5F).sound(SoundType.METAL).forceSolidOn().pushReaction(net.minecraft.world.level.material.PushReaction.NORMAL).setId(key)));
+		CLAYMORE = register("claymore", key -> new net.geforcemods.securitycraft.blocks.mines.ClaymoreBlock(mineProp(net.minecraft.world.level.material.MapColor.TERRACOTTA_GREEN, 3.5F).sound(SoundType.METAL).forceSolidOn().pushReaction(net.minecraft.world.level.material.PushReaction.NORMAL).setId(key)));
+		IMS = register("ims", key -> new net.geforcemods.securitycraft.blocks.mines.IMSBlock(mineProp(net.minecraft.world.level.material.MapColor.TERRACOTTA_GREEN, 3.5F).sound(SoundType.METAL).setId(key)));
+		TRACK_MINE = register("track_mine", key -> new net.geforcemods.securitycraft.blocks.mines.TrackMineBlock(mineProp(net.minecraft.world.level.material.MapColor.METAL, 0.7F).noCollission().sound(SoundType.METAL).setId(key)));
+		STONE_MINE = registerBlockMine("stone_mine", Blocks.STONE, net.geforcemods.securitycraft.blocks.mines.BaseFullMineBlock::new);
+		DEEPSLATE_MINE = registerBlockMine("deepslate_mine", Blocks.DEEPSLATE, net.geforcemods.securitycraft.blocks.mines.DeepslateMineBlock::new);
+		COBBLED_DEEPSLATE_MINE = registerBlockMine("cobbled_deepslate_mine", Blocks.COBBLED_DEEPSLATE, net.geforcemods.securitycraft.blocks.mines.BaseFullMineBlock::new);
+		DIRT_MINE = registerBlockMine("dirt_mine", Blocks.DIRT, net.geforcemods.securitycraft.blocks.mines.BaseFullMineBlock::new);
+		COBBLESTONE_MINE = registerBlockMine("cobblestone_mine", Blocks.COBBLESTONE, net.geforcemods.securitycraft.blocks.mines.BaseFullMineBlock::new);
+		SAND_MINE = registerBlockMine("sand_mine", Blocks.SAND, net.geforcemods.securitycraft.blocks.mines.FallingBlockMineBlock::new);
+		GRAVEL_MINE = registerBlockMine("gravel_mine", Blocks.GRAVEL, net.geforcemods.securitycraft.blocks.mines.FallingBlockMineBlock::new);
+		NETHERRACK_MINE = registerBlockMine("netherrack_mine", Blocks.NETHERRACK, net.geforcemods.securitycraft.blocks.mines.BaseFullMineBlock::new);
+		END_STONE_MINE = registerBlockMine("end_stone_mine", Blocks.END_STONE, net.geforcemods.securitycraft.blocks.mines.BaseFullMineBlock::new);
+		COAL_MINE = registerBlockMine("coal_mine", Blocks.COAL_ORE, net.geforcemods.securitycraft.blocks.mines.BaseFullMineBlock::new);
+		DEEPSLATE_COAL_MINE = registerBlockMine("deepslate_coal_mine", Blocks.DEEPSLATE_COAL_ORE, net.geforcemods.securitycraft.blocks.mines.BaseFullMineBlock::new);
+		IRON_MINE = registerBlockMine("iron_mine", Blocks.IRON_ORE, net.geforcemods.securitycraft.blocks.mines.BaseFullMineBlock::new);
+		DEEPSLATE_IRON_MINE = registerBlockMine("deepslate_iron_mine", Blocks.DEEPSLATE_IRON_ORE, net.geforcemods.securitycraft.blocks.mines.BaseFullMineBlock::new);
+		GOLD_MINE = registerBlockMine("gold_mine", Blocks.GOLD_ORE, net.geforcemods.securitycraft.blocks.mines.BaseFullMineBlock::new);
+		DEEPSLATE_GOLD_MINE = registerBlockMine("deepslate_gold_mine", Blocks.DEEPSLATE_GOLD_ORE, net.geforcemods.securitycraft.blocks.mines.BaseFullMineBlock::new);
+		COPPER_MINE = registerBlockMine("copper_mine", Blocks.COPPER_ORE, net.geforcemods.securitycraft.blocks.mines.BaseFullMineBlock::new);
+		DEEPSLATE_COPPER_MINE = registerBlockMine("deepslate_copper_mine", Blocks.DEEPSLATE_COPPER_ORE, net.geforcemods.securitycraft.blocks.mines.BaseFullMineBlock::new);
+		REDSTONE_MINE = registerBlockMine("redstone_mine", Blocks.REDSTONE_ORE, net.geforcemods.securitycraft.blocks.mines.RedstoneOreMineBlock::new);
+		DEEPSLATE_REDSTONE_MINE = registerBlockMine("deepslate_redstone_mine", Blocks.DEEPSLATE_REDSTONE_ORE, net.geforcemods.securitycraft.blocks.mines.RedstoneOreMineBlock::new);
+		EMERALD_MINE = registerBlockMine("emerald_mine", Blocks.EMERALD_ORE, net.geforcemods.securitycraft.blocks.mines.BaseFullMineBlock::new);
+		DEEPSLATE_EMERALD_MINE = registerBlockMine("deepslate_emerald_mine", Blocks.DEEPSLATE_EMERALD_ORE, net.geforcemods.securitycraft.blocks.mines.BaseFullMineBlock::new);
+		LAPIS_MINE = registerBlockMine("lapis_mine", Blocks.LAPIS_ORE, net.geforcemods.securitycraft.blocks.mines.BaseFullMineBlock::new);
+		DEEPSLATE_LAPIS_MINE = registerBlockMine("deepslate_lapis_mine", Blocks.DEEPSLATE_LAPIS_ORE, net.geforcemods.securitycraft.blocks.mines.BaseFullMineBlock::new);
+		DIAMOND_MINE = registerBlockMine("diamond_mine", Blocks.DIAMOND_ORE, net.geforcemods.securitycraft.blocks.mines.BaseFullMineBlock::new);
+		DEEPSLATE_DIAMOND_MINE = registerBlockMine("deepslate_diamond_mine", Blocks.DEEPSLATE_DIAMOND_ORE, net.geforcemods.securitycraft.blocks.mines.BaseFullMineBlock::new);
+		NETHER_GOLD_MINE = registerBlockMine("nether_gold_mine", Blocks.NETHER_GOLD_ORE, net.geforcemods.securitycraft.blocks.mines.BaseFullMineBlock::new);
+		QUARTZ_MINE = registerBlockMine("quartz_mine", Blocks.NETHER_QUARTZ_ORE, net.geforcemods.securitycraft.blocks.mines.BaseFullMineBlock::new);
+		//the only block mine whose item is fire resistant, so it is registered separately from its block
+		ANCIENT_DEBRIS_MINE = registerBlockNoItem("ancient_debris_mine", key -> new net.geforcemods.securitycraft.blocks.mines.BaseFullMineBlock(reinforcedCopy(Blocks.ANCIENT_DEBRIS).setId(key), Blocks.ANCIENT_DEBRIS));
+		ANCIENT_DEBRIS_MINE_ITEM = registerItem("ancient_debris_mine", new BlockItem(ANCIENT_DEBRIS_MINE, new Item.Properties().fireResistant().setId(ResourceKey.create(Registries.ITEM, id("ancient_debris_mine")))));
+		GILDED_BLACKSTONE_MINE = registerBlockMine("gilded_blackstone_mine", Blocks.GILDED_BLACKSTONE, net.geforcemods.securitycraft.blocks.mines.BaseFullMineBlock::new);
+		//the light level override is mandatory: Properties.ofFullCopy carries vanilla's litBlockEmission lambda, which reads a LIT property FurnaceMineBlock does not have
+		FURNACE_MINE = registerBlockNoItem("furnace_mine", key -> new net.geforcemods.securitycraft.blocks.mines.FurnaceMineBlock(reinforcedCopy(Blocks.FURNACE).lightLevel(state -> 0).setId(key), Blocks.FURNACE));
+		registerBlockItem("furnace_mine", FURNACE_MINE);
+		SMOKER_MINE = registerBlockNoItem("smoker_mine", key -> new net.geforcemods.securitycraft.blocks.mines.FurnaceMineBlock(reinforcedCopy(Blocks.SMOKER).lightLevel(state -> 0).setId(key), Blocks.SMOKER));
+		registerBlockItem("smoker_mine", SMOKER_MINE);
+		BLAST_FURNACE_MINE = registerBlockNoItem("blast_furnace_mine", key -> new net.geforcemods.securitycraft.blocks.mines.FurnaceMineBlock(reinforcedCopy(Blocks.BLAST_FURNACE).lightLevel(state -> 0).setId(key), Blocks.BLAST_FURNACE));
+		registerBlockItem("blast_furnace_mine", BLAST_FURNACE_MINE);
+		SUSPICIOUS_SAND_MINE = registerBlockMine("suspicious_sand_mine", Blocks.SUSPICIOUS_SAND, net.geforcemods.securitycraft.blocks.mines.BrushableMineBlock::new);
+		SUSPICIOUS_GRAVEL_MINE = registerBlockMine("suspicious_gravel_mine", Blocks.SUSPICIOUS_GRAVEL, net.geforcemods.securitycraft.blocks.mines.BrushableMineBlock::new);
+		CREAKING_HEART_MINE = registerBlockMine("creaking_heart_mine", Blocks.CREAKING_HEART, net.geforcemods.securitycraft.blocks.mines.CreakingHeartMineBlock::new);
+
+		BOUND_MINES = Registry.register(BuiltInRegistries.DATA_COMPONENT_TYPE, id("bound_mines"), net.minecraft.core.component.DataComponentType.<net.geforcemods.securitycraft.components.GlobalPositions>builder().persistent(net.geforcemods.securitycraft.components.GlobalPositions.codec(net.geforcemods.securitycraft.items.MineRemoteAccessToolItem.MAX_MINES)).networkSynchronized(net.geforcemods.securitycraft.components.GlobalPositions.streamCodec(net.geforcemods.securitycraft.items.MineRemoteAccessToolItem.MAX_MINES)).cacheEncoding().build());
+		MINE_REMOTE_ACCESS_TOOL = registerItem("remote_access_mine", new net.geforcemods.securitycraft.items.MineRemoteAccessToolItem(new Item.Properties().stacksTo(1).component(BOUND_MINES, net.geforcemods.securitycraft.items.MineRemoteAccessToolItem.DEFAULT_POSITIONS).setId(ResourceKey.create(Registries.ITEM, id("remote_access_mine")))));
+		WIRE_CUTTERS = registerItem("wire_cutters", new net.geforcemods.securitycraft.items.WireCuttersItem(new Item.Properties().durability(476).setId(ResourceKey.create(Registries.ITEM, id("wire_cutters")))));
+
 		UNIVERSAL_BLOCK_REINFORCER_LVL1 = registerConverterItem("universal_block_reinforcer_lvl1", 300, true);
 		UNIVERSAL_BLOCK_REINFORCER_LVL2 = registerConverterItem("universal_block_reinforcer_lvl2", 2700, true);
 		UNIVERSAL_BLOCK_REINFORCER_LVL3 = registerConverterItem("universal_block_reinforcer_lvl3", 0, true);
@@ -573,11 +686,24 @@ public class SCContent {
 
 		KEYPAD_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("keypad"), FabricBlockEntityTypeBuilder.create(KeypadBlockEntity::new, KEYPAD).build());
 		LASER_BLOCK_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("laser_block"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.LaserBlockBlockEntity::new, LASER_BLOCK).build());
-		ABSTRACT_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("abstract"), FabricBlockEntityTypeBuilder.create((pos, state) -> new net.geforcemods.securitycraft.api.OwnableBlockEntity(ABSTRACT_BLOCK_ENTITY, pos, state), LASER_FIELD).build());
+		ABSTRACT_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("abstract"), FabricBlockEntityTypeBuilder.create((pos, state) -> new net.geforcemods.securitycraft.api.OwnableBlockEntity(ABSTRACT_BLOCK_ENTITY, pos, state), LASER_FIELD, STONE_MINE, DEEPSLATE_MINE, COBBLED_DEEPSLATE_MINE, DIRT_MINE, COBBLESTONE_MINE, SAND_MINE, GRAVEL_MINE, NETHERRACK_MINE, END_STONE_MINE, COAL_MINE, DEEPSLATE_COAL_MINE, IRON_MINE, DEEPSLATE_IRON_MINE, GOLD_MINE, DEEPSLATE_GOLD_MINE, COPPER_MINE, DEEPSLATE_COPPER_MINE, REDSTONE_MINE, DEEPSLATE_REDSTONE_MINE, EMERALD_MINE, DEEPSLATE_EMERALD_MINE, LAPIS_MINE, DEEPSLATE_LAPIS_MINE, DIAMOND_MINE, DEEPSLATE_DIAMOND_MINE, NETHER_GOLD_MINE, QUARTZ_MINE, ANCIENT_DEBRIS_MINE, GILDED_BLACKSTONE_MINE, FURNACE_MINE, SMOKER_MINE, BLAST_FURNACE_MINE).build());
+		MINE_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("mine"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.MineBlockEntity::new, MINE).build());
+		BOUNCING_BETTY_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("bouncing_betty"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.BouncingBettyBlockEntity::new, BOUNCING_BETTY).build());
+		CLAYMORE_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("claymore"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.ClaymoreBlockEntity::new, CLAYMORE).build());
+		IMS_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("ims"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.IMSBlockEntity::new, IMS).build());
+		TRACK_MINE_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("track_mine"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.TrackMineBlockEntity::new, TRACK_MINE).build());
+		BRUSHABLE_MINE_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("brushable_mine"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.BrushableMineBlockEntity::new, SUSPICIOUS_SAND_MINE, SUSPICIOUS_GRAVEL_MINE).build());
+		CREAKING_HEART_MINE_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("creaking_heart_mine"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.CreakingHeartMineBlockEntity::new, CREAKING_HEART_MINE).build());
+		PORTABLE_RADAR_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("portable_radar"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.PortableRadarBlockEntity::new, PORTABLE_RADAR).build());
+		BOUNCING_BETTY_ENTITY = Registry.register(BuiltInRegistries.ENTITY_TYPE, id("bouncingbetty"), net.minecraft.world.entity.EntityType.Builder.<net.geforcemods.securitycraft.entity.BouncingBetty>of(net.geforcemods.securitycraft.entity.BouncingBetty::new, net.minecraft.world.entity.MobCategory.MISC).sized(0.5F, 0.2F).clientTrackingRange(8).updateInterval(1).build(ResourceKey.create(Registries.ENTITY_TYPE, id("bouncingbetty"))));
+		IMS_BOMB_ENTITY = Registry.register(BuiltInRegistries.ENTITY_TYPE, id("imsbomb"), net.minecraft.world.entity.EntityType.Builder.<net.geforcemods.securitycraft.entity.IMSBomb>of(net.geforcemods.securitycraft.entity.IMSBomb::new, net.minecraft.world.entity.MobCategory.MISC).sized(0.25F, 0.3F).clientTrackingRange(16).updateInterval(1).build(ResourceKey.create(Registries.ENTITY_TYPE, id("imsbomb"))));
+		SINGLE_LENS_MENU = Registry.register(BuiltInRegistries.MENU, id("single_lens"), new net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType<>((syncId, inv, pos) -> new net.geforcemods.securitycraft.inventory.SingleLensMenu(syncId, inv.player.level(), pos, inv), net.minecraft.core.BlockPos.STREAM_CODEC));
+		COPY_MINE_REMOTE_ACCESS_TOOL_RECIPE_SERIALIZER = Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, id("copy_mine_remote_access_tool_recipe"), new net.minecraft.world.item.crafting.CustomRecipe.Serializer<>(net.geforcemods.securitycraft.recipe.CopyPositionComponentItemRecipe::mineRemoteAccessTool));
 		KEY_PANEL_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("key_panel"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.KeyPanelBlockEntity::new, KEY_PANEL).build());
 		FRAME_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("keypad_frame"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.FrameBlockEntity::new, FRAME).build());
 		LASER_BLOCK_MENU = Registry.register(BuiltInRegistries.MENU, id("laser_block"), new net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType<>((syncId, inv, data) -> new net.geforcemods.securitycraft.inventory.LaserBlockMenu(syncId, inv.player.level(), data.pos(), data.sideConfig(), inv), net.geforcemods.securitycraft.inventory.LaserBlockData.STREAM_CODEC));
 		DISGUISE_MODULE_MENU = Registry.register(BuiltInRegistries.MENU, id("disguise_module"), new net.minecraft.world.inventory.MenuType<>(net.geforcemods.securitycraft.inventory.DisguiseModuleMenu::new, net.minecraft.world.flag.FeatureFlags.VANILLA_SET));
+		net.geforcemods.securitycraft.misc.SCSounds.register();
 		registerCreativeTab();
 	}
 
@@ -631,6 +757,27 @@ public class SCContent {
 		return Registry.register(BuiltInRegistries.BLOCK, blockKey, factory.apply(blockKey));
 	}
 
+	private static void registerBlockItem(String name, Block block) {
+		ResourceKey<Item> itemKey = ResourceKey.create(Registries.ITEM, id(name));
+
+		TAB_ITEMS.add(Registry.register(BuiltInRegistries.ITEM, itemKey, new BlockItem(block, new Item.Properties().setId(itemKey))));
+	}
+
+	/** Registers a block mine disguised as the given vanilla block, copying that block's properties. */
+	private static Block registerBlockMine(String name, Block disguisedAs, java.util.function.BiFunction<BlockBehaviour.Properties, Block, Block> factory) {
+		return register(name, key -> factory.apply(reinforcedCopy(disguisedAs).setId(key), disguisedAs));
+	}
+
+	/** 1:1 with the upstream {@code SCContent#reinforcedCopy}. */
+	private static BlockBehaviour.Properties reinforcedCopy(Block block) {
+		return BlockBehaviour.Properties.ofFullCopy(block).explosionResistance(Float.MAX_VALUE);
+	}
+
+	/** 1:1 with the upstream {@code SCContent#prop(MapColor, float)}. */
+	private static BlockBehaviour.Properties mineProp(net.minecraft.world.level.material.MapColor color, float hardness) {
+		return BlockBehaviour.Properties.of().mapColor(color).strength(hardness, Float.MAX_VALUE).requiresCorrectToolForDrops();
+	}
+
 	private static void registerCreativeTab() {
 		CreativeModeTab technical = FabricItemGroup.builder()
 				.icon(() -> new ItemStack(KEYPAD))
@@ -640,6 +787,7 @@ public class SCContent {
 					output.accept(KEY_PANEL_ITEM);
 					output.accept(FRAME);
 					output.accept(LASER_BLOCK);
+					output.accept(PORTABLE_RADAR);
 					output.accept(REDSTONE_MODULE);
 					output.accept(ALLOWLIST_MODULE);
 					output.accept(DENYLIST_MODULE);
@@ -650,7 +798,34 @@ public class SCContent {
 					output.accept(SPEED_MODULE);
 				})
 				.build();
-		Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, id("technical"), technical);
+		//Fabric's ItemGroupsMixin sorts every non-vanilla creative tab by its ResourceLocation and assigns the tab
+		//positions from that order, so registration order has no effect. Upstream gets the order it wants from
+		//NeoForge's withTabsBefore(); here the numeric prefixes are what put the tabs in upstream's order
+		//(technical, explosives, decoration) instead of the alphabetical decoration/mine/technical.
+		Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, id("1_technical"), technical);
+
+		//upstream's MINE_TAB uses withTabsBefore(TECHNICAL_TAB). The 43 entries are upstream's resolved order: the four
+		//non-block mines in declaration order, then the block mines sorted by the vanilla creative index of the block
+		//they are disguised as, then the four entries upstream appends explicitly.
+		CreativeModeTab mine = FabricItemGroup.builder()
+				.icon(() -> new ItemStack(MINE))
+				.title(Component.translatable("itemGroup.securitycraft.explosives"))
+				.displayItems((params, output) -> {
+					output.accept(MINE_REMOTE_ACCESS_TOOL);
+					output.accept(WIRE_CUTTERS);
+					output.accept(net.minecraft.world.item.Items.FLINT_AND_STEEL);
+					output.accept(MINE);
+
+					for (Block block : sortMineGroup(List.of(BOUNCING_BETTY, CLAYMORE, IMS, TRACK_MINE, STONE_MINE, DEEPSLATE_MINE, COBBLED_DEEPSLATE_MINE, DIRT_MINE, COBBLESTONE_MINE, SAND_MINE, GRAVEL_MINE, NETHERRACK_MINE, END_STONE_MINE, COAL_MINE, DEEPSLATE_COAL_MINE, IRON_MINE, DEEPSLATE_IRON_MINE, GOLD_MINE, DEEPSLATE_GOLD_MINE, COPPER_MINE, DEEPSLATE_COPPER_MINE, REDSTONE_MINE, DEEPSLATE_REDSTONE_MINE, EMERALD_MINE, DEEPSLATE_EMERALD_MINE, LAPIS_MINE, DEEPSLATE_LAPIS_MINE, DIAMOND_MINE, DEEPSLATE_DIAMOND_MINE, NETHER_GOLD_MINE, QUARTZ_MINE, GILDED_BLACKSTONE_MINE, SUSPICIOUS_SAND_MINE, SUSPICIOUS_GRAVEL_MINE, CREAKING_HEART_MINE)))
+						output.accept(block);
+
+					output.accept(ANCIENT_DEBRIS_MINE_ITEM);
+					output.accept(FURNACE_MINE);
+					output.accept(SMOKER_MINE);
+					output.accept(BLAST_FURNACE_MINE);
+				})
+				.build();
+		Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, id("2_mine"), mine);
 
 		CreativeModeTab decoration = FabricItemGroup.builder()
 				.icon(() -> new ItemStack(REINFORCED_BY_NAME.getOrDefault("reinforced_oak_stairs", KEYPAD)))
@@ -665,7 +840,45 @@ public class SCContent {
 						output.accept(block);
 				})
 				.build();
-		Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, id("decoration"), decoration);
+		Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, id("3_decoration"), decoration);
+	}
+
+	/**
+	 * Upstream's explosives-tab comparator: everything that is not a block mine keeps its declaration order and comes
+	 * first, then the block mines follow, ordered by the vanilla creative index of the block they are disguised as.
+	 */
+	private static List<Block> sortMineGroup(List<Block> blocks) {
+		Map<Item, Integer> index = vanillaOrderIndex();
+		List<Block> sorted = new ArrayList<>(blocks);
+
+		sorted.sort(java.util.Comparator.comparingInt(block -> {
+			if (!(block instanceof net.geforcemods.securitycraft.api.IBlockMine blockMine))
+				return -1;
+
+			Integer i = index.get(blockMine.getBlockDisguisedAs().asItem());
+
+			return i == null ? Integer.MAX_VALUE : i.intValue();
+		}));
+		return sorted;
+	}
+
+	private static Map<Item, Integer> vanillaOrderIndex() {
+		List<Item> vanillaOrder = new ArrayList<>();
+
+		for (ResourceKey<CreativeModeTab> key : List.of(CreativeModeTabs.BUILDING_BLOCKS, CreativeModeTabs.COLORED_BLOCKS, CreativeModeTabs.NATURAL_BLOCKS, CreativeModeTabs.FUNCTIONAL_BLOCKS, CreativeModeTabs.REDSTONE_BLOCKS)) {
+			CreativeModeTab tab = BuiltInRegistries.CREATIVE_MODE_TAB.getValue(key);
+
+			if (tab != null)
+				for (ItemStack stack : tab.getDisplayItems())
+					vanillaOrder.add(stack.getItem());
+		}
+
+		Map<Item, Integer> index = new HashMap<>();
+
+		for (int i = 0; i < vanillaOrder.size(); i++)
+			index.putIfAbsent(vanillaOrder.get(i), i);
+
+		return index;
 	}
 
 	private static List<Block> sortByVanillaOrder(List<Block> blocks) {

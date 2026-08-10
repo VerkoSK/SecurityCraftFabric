@@ -11,13 +11,6 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "conditions": [
-            {
-              "condition": "securitycraft:tile_entity_nbt",
-              "key": "canDrop",
-              "value": true
-            }
-          ],
           "name": "securitycraft:reinforced_iron_bars"
         }
       ],

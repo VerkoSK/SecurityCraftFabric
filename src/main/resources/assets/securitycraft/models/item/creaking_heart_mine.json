@@ -1,0 +1,11 @@
+{
+  "parent": "securitycraft:item/template_block_mine",
+  "textures": {
+    "down": "minecraft:block/creaking_heart_top",
+    "east": "minecraft:block/creaking_heart",
+    "north": "minecraft:block/creaking_heart",
+    "south": "minecraft:block/creaking_heart",
+    "up": "minecraft:block/creaking_heart_top",
+    "west": "minecraft:block/creaking_heart"
+  }
+}

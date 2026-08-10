@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "I": "minecraft:iron_ingot",
+    "S": "minecraft:shears"
+  },
+  "pattern": [
+    "SI ",
+    "I I",
+    " I "
+  ],
+  "result": {
+    "id": "securitycraft:wire_cutters",
+    "count": 1
+  }
+}
