@@ -8,7 +8,6 @@ import net.geforcemods.securitycraft.util.PlayerUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -51,7 +50,7 @@ public class KeyPanelItem extends BlockItem {
 						if (!player.isCreative())
 							stack.shrink(requiredKeyPanels);
 
-						level.playSound(null, pos, SoundEvents.IRON_DOOR_CLOSE, SoundSource.BLOCKS, 1.0F, 1.0F);
+						level.playSound(null, pos, net.geforcemods.securitycraft.misc.SCSounds.LOCK.event, SoundSource.BLOCKS, 1.0F, 1.0F);
 						return InteractionResult.SUCCESS;
 					}
 
