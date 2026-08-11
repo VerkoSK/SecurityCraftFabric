@@ -129,10 +129,10 @@ public class ColorChooser extends Screen {
 	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
 		super.render(guiGraphics, mouseX, mouseY, partialTick);
 		guiGraphics.blitSprite(colorFieldHoverChecker.checkHover(mouseX, mouseY) ? FIELD_SELECTOR_HIGHLIGHTED_SPRITE : FIELD_SELECTOR_SPRITE, (int) selectionX - 1, (int) selectionY - 1, 3, 3);
-		guiGraphics.drawString(font, rText, colorFieldRight + 5, colorFieldTop + 1, 0x404040, false);
-		guiGraphics.drawString(font, gText, colorFieldRight + 5, colorFieldTop + 16, 0x404040, false);
-		guiGraphics.drawString(font, bText, colorFieldRight + 5, colorFieldTop + 31, 0x404040, false);
-		guiGraphics.drawString(font, rgbHexText, colorFieldRight + 5, colorFieldTop + 46, 0x404040, false);
+		guiGraphics.drawString(font, rText, colorFieldRight + 5, colorFieldTop + 1, 0xFF404040, false);
+		guiGraphics.drawString(font, gText, colorFieldRight + 5, colorFieldTop + 16, 0xFF404040, false);
+		guiGraphics.drawString(font, bText, colorFieldRight + 5, colorFieldTop + 31, 0xFF404040, false);
+		guiGraphics.drawString(font, rgbHexText, colorFieldRight + 5, colorFieldTop + 46, 0xFF404040, false);
 	}
 
 	@Override
