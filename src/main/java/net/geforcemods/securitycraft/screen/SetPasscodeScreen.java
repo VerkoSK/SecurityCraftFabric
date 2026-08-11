@@ -54,13 +54,13 @@ public class SetPasscodeScreen extends Screen {
 		renderBackground(guiGraphics);
 		guiGraphics.blit(TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight);
 		super.render(guiGraphics, mouseX, mouseY, partialTicks);
-		guiGraphics.drawString(font, "CODE:", width / 2 - 67, height / 2 - 47 + 2, 4210752, false);
+		guiGraphics.drawString(font, "CODE:", width / 2 - 67, height / 2 - 47 + 2, 0xFF404040, false);
 
 		if (font.width(combined) < imageWidth - 10)
-			guiGraphics.drawString(font, combined, width / 2 - font.width(combined) / 2, topPos + 6, 4210752, false);
+			guiGraphics.drawString(font, combined, width / 2 - font.width(combined) / 2, topPos + 6, 0xFF404040, false);
 		else {
-			guiGraphics.drawString(font, title, width / 2 - font.width(title) / 2, topPos + 6, 4210752, false);
-			guiGraphics.drawString(font, setup, width / 2 - font.width(setup) / 2, topPos + 16, 4210752, false);
+			guiGraphics.drawString(font, title, width / 2 - font.width(title) / 2, topPos + 6, 0xFF404040, false);
+			guiGraphics.drawString(font, setup, width / 2 - font.width(setup) / 2, topPos + 16, 0xFF404040, false);
 		}
 	}
 

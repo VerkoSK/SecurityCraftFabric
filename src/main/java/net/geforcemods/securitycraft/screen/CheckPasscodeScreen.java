@@ -48,7 +48,7 @@ public class CheckPasscodeScreen extends Screen {
 		leftPos = (width - imageWidth) / 2;
 		topPos = (height - imageHeight) / 2;
 		cooldownText1XPos = width / 2 - font.width(COOLDOWN_TEXT_1) / 2;
-		addRenderableWidget(new CallbackCheckbox(width / 2 - 37, height / 2 - 55, 12, 12, Component.translatable("gui.securitycraft:passcode.showPasscode"), false, newState -> keycodeTextbox.setCensoring(!newState), 0x404040));
+		addRenderableWidget(new CallbackCheckbox(width / 2 - 37, height / 2 - 55, 12, 12, Component.translatable("gui.securitycraft:passcode.showPasscode"), false, newState -> keycodeTextbox.setCensoring(!newState), 0xFF404040));
 		addNumberButton("1", width / 2 - 33, height / 2 - 35, b -> addNumberToString(1));
 		addNumberButton("2", width / 2 - 8, height / 2 - 35, b -> addNumberToString(2));
 		addNumberButton("3", width / 2 + 17, height / 2 - 35, b -> addNumberToString(3));
@@ -86,14 +86,14 @@ public class CheckPasscodeScreen extends Screen {
 		renderBackground(guiGraphics);
 		guiGraphics.blit(TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight);
 		super.render(guiGraphics, mouseX, mouseY, partialTick);
-		guiGraphics.drawString(font, title, width / 2 - font.width(title) / 2, topPos + 6, 4210752, false);
+		guiGraphics.drawString(font, title, width / 2 - font.width(title) / 2, topPos + 6, 0xFF404040, false);
 
 		if (isOnCooldown()) {
 			long secondsLeft = Math.max(getCooldownEnd() - System.currentTimeMillis(), 0) / 1000 + 1; //+1 so that the text doesn't say "0 seconds left" for a whole second
 			Component text = Component.translatable("gui.securitycraft:passcode.cooldown2", secondsLeft);
 
-			guiGraphics.drawString(font, COOLDOWN_TEXT_1, cooldownText1XPos, height / 2 + 65, 4210752, false);
-			guiGraphics.drawString(font, text, width / 2 - font.width(text) / 2, height / 2 + 75, 4210752, false);
+			guiGraphics.drawString(font, COOLDOWN_TEXT_1, cooldownText1XPos, height / 2 + 65, 0xFF404040, false);
+			guiGraphics.drawString(font, text, width / 2 - font.width(text) / 2, height / 2 + 75, 0xFF404040, false);
 			wasOnCooldownLastRenderTick = true;
 		}
 		else if (wasOnCooldownLastRenderTick) {

@@ -137,14 +137,14 @@ public class BlockReinforcerScreen extends AbstractContainerScreen<BlockReinforc
 
 	@Override
 	protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
-		guiGraphics.drawString(font, title, (imageWidth - font.width(title)) / 2, 5, 0x404040, false);
-		guiGraphics.drawString(font, playerInventoryTitle, inventoryLabelX, inventoryLabelY, 0x404040, false);
+		guiGraphics.drawString(font, title, (imageWidth - font.width(title)) / 2, 5, 0xFF404040, false);
+		guiGraphics.drawString(font, playerInventoryTitle, inventoryLabelX, inventoryLabelY, 0xFF404040, false);
 
 		if (!menu.getResult().isEmpty())
-			guiGraphics.drawString(font, output, 128 - font.width(output), 25, 0x404040, false);
+			guiGraphics.drawString(font, output, 128 - font.width(output), 25, 0xFF404040, false);
 
-		guiGraphics.drawString(font, modeText, 8, 48, 0x404040, false);
-		guiGraphics.drawString(font, tintText, 8, 73, 0x404040, false);
+		guiGraphics.drawString(font, modeText, 8, 48, 0xFF404040, false);
+		guiGraphics.drawString(font, tintText, 8, 73, 0xFF404040, false);
 	}
 
 	@Override

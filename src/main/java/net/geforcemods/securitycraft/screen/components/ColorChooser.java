@@ -132,10 +132,10 @@ public class ColorChooser extends Screen {
 		guiGraphics.fillGradient(colorFieldLeft, colorFieldTop, colorFieldRight + 1, colorFieldBottom + 1, 0x00000000, 0xFF000000);
 		super.render(guiGraphics, mouseX, mouseY, partialTick);
 		guiGraphics.blit(colorFieldHoverChecker.checkHover(mouseX, mouseY) ? FIELD_SELECTOR_HIGHLIGHTED_SPRITE : FIELD_SELECTOR_SPRITE, (int) selectionX - 1, (int) selectionY - 1, 0.0F, 0.0F, 3, 3, 3, 3);
-		guiGraphics.drawString(font, rText, colorFieldRight + 5, colorFieldTop + 1, 0x404040, false);
-		guiGraphics.drawString(font, gText, colorFieldRight + 5, colorFieldTop + 16, 0x404040, false);
-		guiGraphics.drawString(font, bText, colorFieldRight + 5, colorFieldTop + 31, 0x404040, false);
-		guiGraphics.drawString(font, rgbHexText, colorFieldRight + 5, colorFieldTop + 46, 0x404040, false);
+		guiGraphics.drawString(font, rText, colorFieldRight + 5, colorFieldTop + 1, 0xFF404040, false);
+		guiGraphics.drawString(font, gText, colorFieldRight + 5, colorFieldTop + 16, 0xFF404040, false);
+		guiGraphics.drawString(font, bText, colorFieldRight + 5, colorFieldTop + 31, 0xFF404040, false);
+		guiGraphics.drawString(font, rgbHexText, colorFieldRight + 5, colorFieldTop + 46, 0xFF404040, false);
 	}
 
 	@Override
