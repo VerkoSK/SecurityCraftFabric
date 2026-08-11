@@ -71,7 +71,7 @@ public class IMSBomb extends Fireball {
 
 	@Override
 	protected void onHit(HitResult result) {
-		if (!level().isClientSide && result.getType() == Type.BLOCK && level().getBlockState(((BlockHitResult) result).getBlockPos()).getBlock() != SCContent.IMS) {
+		if (!level().isClientSide() && result.getType() == Type.BLOCK && level().getBlockState(((BlockHitResult) result).getBlockPos()).getBlock() != SCContent.IMS) {
 			BlockPos impactPos = ((BlockHitResult) result).getBlockPos();
 
 			level().explode(this, impactPos.getX(), impactPos.getY() + 1D, impactPos.getZ(), ConfigHandler.smallerMineExplosion ? 3.5F : 7F, ConfigHandler.shouldSpawnFire, BlockUtils.getExplosionInteraction());

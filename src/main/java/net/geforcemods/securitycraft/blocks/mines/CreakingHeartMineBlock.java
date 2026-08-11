@@ -53,7 +53,7 @@ public class CreakingHeartMineBlock extends CreakingHeartBlock implements IBlock
 	@Override
 	public void setPlacedBy(Level level, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
 		if (placer instanceof Player player && level.getBlockEntity(pos) instanceof IOwnable ownable)
-			ownable.setOwner(player.getGameProfile().getName(), player.getUUID().toString());
+			ownable.setOwner(player.getGameProfile().name(), player.getUUID().toString());
 	}
 
 	@Override
@@ -81,7 +81,7 @@ public class CreakingHeartMineBlock extends CreakingHeartBlock implements IBlock
 	}
 
 	@Override
-	protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity, InsideBlockEffectApplier effectApplier) {
+	protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity, InsideBlockEffectApplier effectApplier, boolean stillInside) {
 		if (level.getBlockEntity(pos) instanceof IOwnable ownable && !ownable.isOwnedBy(entity))
 			explode(level, pos);
 	}
@@ -96,7 +96,7 @@ public class CreakingHeartMineBlock extends CreakingHeartBlock implements IBlock
 
 	@Override
 	public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
-		if (!level.isClientSide) {
+		if (!level.isClientSide()) {
 			if (!(player != null && player.isCreative() && !ConfigHandler.mineExplodesWhenInCreative) && !(level.getBlockEntity(pos) instanceof IOwnable ownable && ownable.isOwnedBy(player)))
 				explode(level, pos);
 		}
@@ -116,7 +116,7 @@ public class CreakingHeartMineBlock extends CreakingHeartBlock implements IBlock
 
 	@Override
 	public void explode(Level level, BlockPos pos) {
-		if (!level.isClientSide) {
+		if (!level.isClientSide()) {
 			level.destroyBlock(pos, false);
 			level.explode(null, pos.getX(), pos.getY() + 0.5D, pos.getZ(), ConfigHandler.smallerMineExplosion ? 2.5F : 5.0F, ConfigHandler.shouldSpawnFire, BlockUtils.getExplosionInteraction());
 		}
@@ -144,7 +144,7 @@ public class CreakingHeartMineBlock extends CreakingHeartBlock implements IBlock
 
 	@Override
 	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-		return !level.isClientSide && state.getValue(STATE) != CreakingHeartState.UPROOTED ? createTickerHelper(type, SCContent.CREAKING_HEART_MINE_BLOCK_ENTITY, CreakingHeartBlockEntity::serverTick) : null;
+		return !level.isClientSide() && state.getValue(STATE) != CreakingHeartState.UPROOTED ? createTickerHelper(type, SCContent.CREAKING_HEART_MINE_BLOCK_ENTITY, CreakingHeartBlockEntity::serverTick) : null;
 	}
 
 	@Override

@@ -67,14 +67,14 @@ public final class NetworkHandler {
 		});
 		ServerPlayNetworking.registerGlobalReceiver(RemoteControlMinePayload.TYPE, (payload, context) -> {
 			ServerPlayer player = context.player();
-			MinecraftServer server = player.getServer();
+			MinecraftServer server = player.level().getServer();
 
 			if (server != null)
 				server.execute(() -> handleRemoteControlMine(player, payload));
 		});
 		ServerPlayNetworking.registerGlobalReceiver(RemoveMineFromMRATPayload.TYPE, (payload, context) -> {
 			ServerPlayer player = context.player();
-			MinecraftServer server = player.getServer();
+			MinecraftServer server = player.level().getServer();
 
 			if (server != null)
 				server.execute(() -> handleRemoveMineFromMRAT(player, payload));

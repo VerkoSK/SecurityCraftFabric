@@ -59,11 +59,11 @@ public class TrackMineBlock extends RailBlock implements IExplosive, EntityBlock
 	@Override
 	public void setPlacedBy(Level level, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
 		if (placer instanceof Player player && level.getBlockEntity(pos) instanceof IOwnable ownable)
-			ownable.setOwner(player.getGameProfile().getName(), player.getUUID().toString());
+			ownable.setOwner(player.getGameProfile().name(), player.getUUID().toString());
 	}
 
 	@Override
-	protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity, InsideBlockEffectApplier effectApplier) {
+	protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity, InsideBlockEffectApplier effectApplier, boolean stillInside) {
 		if (entity instanceof AbstractMinecart cart)
 			onMinecartPass(state, level, pos, cart);
 	}

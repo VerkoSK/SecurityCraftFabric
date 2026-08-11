@@ -56,7 +56,7 @@ public class BaseFullMineBlock extends ExplosiveBlock implements IBlockMine {
 	}
 
 	@Override
-	protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity, InsideBlockEffectApplier effectApplier) {
+	protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity, InsideBlockEffectApplier effectApplier, boolean stillInside) {
 		if (level.getBlockEntity(pos) instanceof IOwnable ownable && !ownable.isOwnedBy(entity))
 			explode(level, pos);
 	}
@@ -71,7 +71,7 @@ public class BaseFullMineBlock extends ExplosiveBlock implements IBlockMine {
 
 	@Override
 	public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
-		if (!level.isClientSide) {
+		if (!level.isClientSide()) {
 			if (!(player != null && player.isCreative() && !ConfigHandler.mineExplodesWhenInCreative) && !(level.getBlockEntity(pos) instanceof IOwnable ownable && ownable.isOwnedBy(player)))
 				explode(level, pos);
 		}
@@ -91,7 +91,7 @@ public class BaseFullMineBlock extends ExplosiveBlock implements IBlockMine {
 
 	@Override
 	public void explode(Level level, BlockPos pos) {
-		if (!level.isClientSide) {
+		if (!level.isClientSide()) {
 			level.destroyBlock(pos, false);
 			level.explode(null, pos.getX(), pos.getY() + 0.5D, pos.getZ(), ConfigHandler.smallerMineExplosion ? 2.5F : 5.0F, ConfigHandler.shouldSpawnFire, BlockUtils.getExplosionInteraction());
 		}

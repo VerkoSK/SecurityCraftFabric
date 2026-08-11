@@ -50,7 +50,7 @@ public class RedstoneOreMineBlock extends BaseFullMineBlock {
 
 	@Override
 	protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-		if (level.isClientSide)
+		if (level.isClientSide())
 			spawnParticles(level, pos);
 		else
 			activate(state, level, pos);
@@ -60,7 +60,7 @@ public class RedstoneOreMineBlock extends BaseFullMineBlock {
 
 	@Override
 	protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
-		if (level.isClientSide)
+		if (level.isClientSide())
 			spawnParticles(level, pos);
 		else
 			activate(state, level, pos);

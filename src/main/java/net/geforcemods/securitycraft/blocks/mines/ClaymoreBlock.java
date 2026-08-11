@@ -61,7 +61,7 @@ public class ClaymoreBlock extends ExplosiveBlock implements SimpleWaterloggedBl
 	@Override
 	protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
 		if (level.getBlockEntity(pos) instanceof ClaymoreBlockEntity be && be.isOwnedBy(player)) {
-			if (!level.isClientSide)
+			if (!level.isClientSide())
 				player.openMenu(be);
 
 			return InteractionResult.SUCCESS;
@@ -96,7 +96,7 @@ public class ClaymoreBlock extends ExplosiveBlock implements SimpleWaterloggedBl
 
 	@Override
 	public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
-		if (!player.isCreative() && !level.isClientSide && !level.getBlockState(pos).getValue(ClaymoreBlock.DEACTIVATED)) {
+		if (!player.isCreative() && !level.isClientSide() && !level.getBlockState(pos).getValue(ClaymoreBlock.DEACTIVATED)) {
 			if (level.getBlockEntity(pos) instanceof ClaymoreBlockEntity claymore && claymore.getTargetingMode().allowsPlayers() && (!claymore.isOwnedBy(player) || !claymore.ignoresOwner()))
 				explode(level, pos);
 		}
@@ -151,7 +151,7 @@ public class ClaymoreBlock extends ExplosiveBlock implements SimpleWaterloggedBl
 
 	@Override
 	public void explode(Level level, BlockPos pos) {
-		if (!level.isClientSide) {
+		if (!level.isClientSide()) {
 			level.destroyBlock(pos, false);
 			level.explode(null, pos.getX(), pos.getY(), pos.getZ(), ConfigHandler.smallerMineExplosion ? 1.5F : 3.5F, ConfigHandler.shouldSpawnFire, BlockUtils.getExplosionInteraction());
 		}
@@ -190,7 +190,7 @@ public class ClaymoreBlock extends ExplosiveBlock implements SimpleWaterloggedBl
 
 	@Override
 	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-		return level.isClientSide ? null : createTickerHelper(type, SCContent.CLAYMORE_BLOCK_ENTITY, LevelUtils::blockEntityTicker);
+		return level.isClientSide() ? null : createTickerHelper(type, SCContent.CLAYMORE_BLOCK_ENTITY, LevelUtils::blockEntityTicker);
 	}
 
 	@Override

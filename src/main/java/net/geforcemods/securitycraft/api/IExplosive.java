@@ -77,7 +77,7 @@ public interface IExplosive {
 		if (heldItem.getItem() == SCContent.WIRE_CUTTERS && isActive(level, pos) && isDefusable()) {
 			if (defuseMine(level, pos)) {
 				if (!player.isCreative())
-					player.getItemInHand(hand).hurtAndBreak(1, player, LivingEntity.getSlotForHand(hand));
+					player.getItemInHand(hand).hurtAndBreak(1, player, hand);
 
 				level.playSound(null, pos, SoundEvents.SHEEP_SHEAR, SoundSource.BLOCKS, 1.0F, 1.0F);
 			}
@@ -87,7 +87,7 @@ public interface IExplosive {
 
 		if (heldItem.is(Items.FLINT_AND_STEEL) && !isActive(level, pos) && activateMine(level, pos)) {
 			if (!player.isCreative())
-				player.getItemInHand(hand).hurtAndBreak(1, player, LivingEntity.getSlotForHand(hand));
+				player.getItemInHand(hand).hurtAndBreak(1, player, hand);
 
 			level.playSound(null, pos, SoundEvents.TRIPWIRE_CLICK_ON, SoundSource.BLOCKS, 1.0F, 1.0F);
 			return InteractionResult.SUCCESS;

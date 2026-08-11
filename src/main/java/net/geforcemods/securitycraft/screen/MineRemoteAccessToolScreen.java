@@ -220,13 +220,13 @@ public class MineRemoteAccessToolScreen extends Screen implements StillValid {
 	}
 
 	@Override
-	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-		if (minecraft.options.keyInventory.matches(keyCode, scanCode)) {
+	public boolean keyPressed(net.minecraft.client.input.KeyEvent event) {
+		if (minecraft.options.keyInventory.matches(event)) {
 			onClose();
 			return true;
 		}
 
-		return super.keyPressed(keyCode, scanCode, modifiers);
+		return super.keyPressed(event);
 	}
 
 	@Override

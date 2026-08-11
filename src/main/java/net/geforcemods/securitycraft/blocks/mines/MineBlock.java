@@ -77,7 +77,7 @@ public class MineBlock extends ExplosiveBlock implements SimpleWaterloggedBlock 
 
 	@Override
 	public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
-		if (!level.isClientSide) {
+		if (!level.isClientSide()) {
 			MineBlockEntity mine = (MineBlockEntity) level.getBlockEntity(pos);
 			TargetingMode mode = mine.getTargetingMode();
 
@@ -94,8 +94,8 @@ public class MineBlock extends ExplosiveBlock implements SimpleWaterloggedBlock 
 	}
 
 	@Override
-	protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity, InsideBlockEffectApplier effectApplier) {
-		if (!level.isClientSide && entity instanceof LivingEntity livingEntity && getShape(state, level, pos, CollisionContext.of(entity)).bounds().move(pos).inflate(0.01D).intersects(entity.getBoundingBox())) {
+	protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity, InsideBlockEffectApplier effectApplier, boolean stillInside) {
+		if (!level.isClientSide() && entity instanceof LivingEntity livingEntity && getShape(state, level, pos, CollisionContext.of(entity)).bounds().move(pos).inflate(0.01D).intersects(entity.getBoundingBox())) {
 			MineBlockEntity mine = (MineBlockEntity) level.getBlockEntity(pos);
 			TargetingMode mode = mine.getTargetingMode();
 
@@ -132,7 +132,7 @@ public class MineBlock extends ExplosiveBlock implements SimpleWaterloggedBlock 
 
 	@Override
 	public void explode(Level level, BlockPos pos) {
-		if (!level.isClientSide && !level.getBlockState(pos).getValue(DEACTIVATED)) {
+		if (!level.isClientSide() && !level.getBlockState(pos).getValue(DEACTIVATED)) {
 			level.destroyBlock(pos, false);
 			level.explode(null, pos.getX(), pos.getY(), pos.getZ(), ConfigHandler.smallerMineExplosion ? 1.0F : 3.0F, ConfigHandler.shouldSpawnFire, BlockUtils.getExplosionInteraction());
 		}
