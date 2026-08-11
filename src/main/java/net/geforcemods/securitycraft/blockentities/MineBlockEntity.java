@@ -1,0 +1,51 @@
+package net.geforcemods.securitycraft.blockentities;
+
+import net.geforcemods.securitycraft.SCContent;
+import net.geforcemods.securitycraft.api.CustomizableBlockEntity;
+import net.geforcemods.securitycraft.api.Option;
+import net.geforcemods.securitycraft.api.Option.IgnoreOwnerOption;
+import net.geforcemods.securitycraft.api.Option.TargetingModeOption;
+import net.geforcemods.securitycraft.misc.ModuleType;
+import net.geforcemods.securitycraft.misc.TargetingMode;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
+
+/**
+ * The mine's block entity, holding the targeting mode and ignore-owner options. 1:1 with the upstream
+ * {@code blockentities.MineBlockEntity}, except that the block entity type is this port's dedicated
+ * {@code SCContent.MINE_BLOCK_ENTITY} instead of upstream's shared, annotation-scanned ownable type.
+ */
+public class MineBlockEntity extends CustomizableBlockEntity {
+	private TargetingModeOption targetingMode = new TargetingModeOption(TargetingMode.PLAYERS_AND_MOBS);
+	private IgnoreOwnerOption ignoreOwner = new IgnoreOwnerOption(true);
+
+	public MineBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
+		super(type, pos, state);
+	}
+
+	public MineBlockEntity(BlockPos pos, BlockState state) {
+		super(SCContent.MINE_BLOCK_ENTITY, pos, state);
+	}
+
+	@Override
+	public Option<?>[] customOptions() {
+		return new Option[] {
+				targetingMode, ignoreOwner
+		};
+	}
+
+	@Override
+	public ModuleType[] acceptedModules() {
+		return new ModuleType[0];
+	}
+
+	@Override
+	public boolean ignoresOwner() {
+		return ignoreOwner.get();
+	}
+
+	public TargetingMode getTargetingMode() {
+		return targetingMode.get();
+	}
+}
