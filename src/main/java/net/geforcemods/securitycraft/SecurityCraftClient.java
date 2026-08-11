@@ -21,6 +21,11 @@ public class SecurityCraftClient implements ClientModInitializer {
 		Minecraft.getInstance().setScreenAndShow(new net.geforcemods.securitycraft.screen.EditModuleScreen(stack));
 	}
 
+	/** Opens the mine remote access tool screen for the given stack (called client-side only). */
+	public static void openMRATScreen(net.minecraft.world.item.ItemStack stack) {
+		Minecraft.getInstance().setScreenAndShow(new net.geforcemods.securitycraft.screen.MineRemoteAccessToolScreen(stack));
+	}
+
 	/** Live tint colour for reinforced blocks: white base multiplied by the configured tint (grey by default). */
 	private static int reinforcedTint() {
 		return TintMode.tint(Minecraft.getInstance().player, 0xFFFFFFFF, null);
@@ -70,6 +75,12 @@ public class SecurityCraftClient implements ClientModInitializer {
 		net.minecraft.client.gui.screens.MenuScreens.register(SCContent.BLOCK_REINFORCER_MENU, net.geforcemods.securitycraft.screen.BlockReinforcerScreen::new);
 		net.minecraft.client.gui.screens.MenuScreens.register(SCContent.LASER_BLOCK_MENU, net.geforcemods.securitycraft.screen.LaserBlockScreen::new);
 		net.minecraft.client.gui.screens.MenuScreens.register(SCContent.DISGUISE_MODULE_MENU, net.geforcemods.securitycraft.screen.DisguiseModuleScreen::new);
+		net.minecraft.client.gui.screens.MenuScreens.register(SCContent.SINGLE_LENS_MENU, net.geforcemods.securitycraft.screen.SingleLensScreen::new);
+		net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(SCContent.BOUNCING_BETTY_ENTITY, net.geforcemods.securitycraft.renderers.BouncingBettyRenderer::new);
+		//IMSBombRenderer bakes this layer in its constructor, so it has to be registered or the bake throws.
+		net.fabricmc.fabric.api.client.rendering.v1.ModelLayerRegistry.registerModelLayer(net.geforcemods.securitycraft.renderers.IMSBombRenderer.IMS_BOMB_LOCATION, net.geforcemods.securitycraft.models.IMSBombModel::createLayer);
+		net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(SCContent.IMS_BOMB_ENTITY, net.geforcemods.securitycraft.renderers.IMSBombRenderer::new);
+		net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry.register(SCContent.CLAYMORE_BLOCK_ENTITY, net.geforcemods.securitycraft.renderers.ClaymoreRenderer::new);
 		ClientPlayNetworking.registerGlobalReceiver(net.geforcemods.securitycraft.network.UpdateLaserColorsPayload.TYPE, (payload, context) -> context.client().execute(() -> {
 			for (net.minecraft.core.BlockPos pos : payload.positions())
 				context.client().levelExtractor.setBlocksDirty(pos.getX(), pos.getY(), pos.getZ(), pos.getX(), pos.getY(), pos.getZ());

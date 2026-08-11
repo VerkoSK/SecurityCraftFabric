@@ -334,6 +334,22 @@ public abstract class Option<T> {
 		}
 	}
 
+	public static class TargetingModeOption extends EnumOption<net.geforcemods.securitycraft.misc.TargetingMode> {
+		public TargetingModeOption(net.geforcemods.securitycraft.misc.TargetingMode defaultValue) {
+			super("targetingMode", defaultValue, net.geforcemods.securitycraft.misc.TargetingMode.class);
+		}
+
+		@Override
+		public String getKey(String denotation) {
+			return "option.generic.targetingMode";
+		}
+
+		@Override
+		public Component getValueText() {
+			return value.translate();
+		}
+	}
+
 	public static class EntityDataWrappedOption<T> extends Option<T> {
 		private final Option<T> wrapped;
 		private final EntityDataAccessor<T> entityDataKey;
