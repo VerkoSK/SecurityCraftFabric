@@ -18,15 +18,9 @@ public final class ReinforcerRecipe {
 	private ReinforcerRecipe() {}
 
 	public abstract static class Base extends CustomRecipe {
-		private final CraftingBookCategory category;
-
-		protected Base(CraftingBookCategory category) {
-			this.category = category;
-		}
-
 		@Override
 		public CraftingBookCategory category() {
-			return category;
+			return CraftingBookCategory.EQUIPMENT;
 		}
 
 		protected abstract Block target(Block input);
@@ -103,10 +97,6 @@ public final class ReinforcerRecipe {
 	}
 
 	public static class Reinforcing extends Base {
-		public Reinforcing(CraftingBookCategory category) {
-			super(category);
-		}
-
 		@Override
 		protected Block target(Block input) {
 			return SCContent.reinforcedCounterpart(input);
@@ -124,10 +114,6 @@ public final class ReinforcerRecipe {
 	}
 
 	public static class Unreinforcing extends Base {
-		public Unreinforcing(CraftingBookCategory category) {
-			super(category);
-		}
-
 		@Override
 		protected Block target(Block input) {
 			return SCContent.vanillaCounterpart(input);

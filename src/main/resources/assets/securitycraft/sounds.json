@@ -1,0 +1,9 @@
+{
+	"lock": {
+		"category": "block",
+		"sounds": [
+			"securitycraft:lock"
+		],
+		"subtitle": "securitycraft.subtitle.lock"
+	}
+}
