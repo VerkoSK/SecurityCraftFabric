@@ -25,8 +25,8 @@ public class BlockReinforcerScreen extends AbstractContainerScreen<BlockReinforc
 
 	@Override
 	protected void extractLabels(GuiGraphicsExtractor extractor, int mouseX, int mouseY) {
-		extractor.text(font, title, titleLabelX, titleLabelY, 0x404040, false);
-		extractor.text(font, playerInventoryTitle, inventoryLabelX, inventoryLabelY, 0x404040, false);
-		extractor.text(font, Component.translatable(menu.isReinforcing() ? "gui.securitycraft:reinforcer.reinforcing" : "gui.securitycraft:reinforcer.removing"), 8, 42, 0x404040, false);
+		extractor.text(font, title, titleLabelX, titleLabelY, 0xFF404040, false);
+		extractor.text(font, playerInventoryTitle, inventoryLabelX, inventoryLabelY, 0xFF404040, false);
+		extractor.text(font, Component.translatable(menu.isReinforcing() ? "gui.securitycraft:reinforcer.reinforcing" : "gui.securitycraft:reinforcer.removing"), 8, 42, 0xFF404040, false);
 	}
 }
