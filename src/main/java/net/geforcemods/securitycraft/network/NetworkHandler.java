@@ -24,6 +24,8 @@ public final class NetworkHandler {
 		PayloadTypeRegistry.serverboundPlay().register(SyncLaserSideConfigPayload.TYPE, SyncLaserSideConfigPayload.CODEC);
 		PayloadTypeRegistry.clientboundPlay().register(UpdateLaserColorsPayload.TYPE, UpdateLaserColorsPayload.CODEC);
 		PayloadTypeRegistry.serverboundPlay().register(SetListModuleDataPayload.TYPE, SetListModuleDataPayload.CODEC);
+		PayloadTypeRegistry.serverboundPlay().register(RemoteControlMinePayload.TYPE, RemoteControlMinePayload.CODEC);
+		PayloadTypeRegistry.serverboundPlay().register(RemoveMineFromMRATPayload.TYPE, RemoveMineFromMRATPayload.CODEC);
 	}
 
 	/** Registers the server-side handlers for the client -> server passcode packets. */
@@ -63,6 +65,39 @@ public final class NetworkHandler {
 			if (server != null)
 				server.execute(() -> handleSetListModuleData(player, payload));
 		});
+		ServerPlayNetworking.registerGlobalReceiver(RemoteControlMinePayload.TYPE, (payload, context) -> {
+			ServerPlayer player = context.player();
+			MinecraftServer server = player.level().getServer();
+
+			if (server != null)
+				server.execute(() -> handleRemoteControlMine(player, payload));
+		});
+		ServerPlayNetworking.registerGlobalReceiver(RemoveMineFromMRATPayload.TYPE, (payload, context) -> {
+			ServerPlayer player = context.player();
+			MinecraftServer server = player.level().getServer();
+
+			if (server != null)
+				server.execute(() -> handleRemoveMineFromMRAT(player, payload));
+		});
+	}
+
+	private static void handleRemoteControlMine(ServerPlayer player, RemoteControlMinePayload payload) {
+		ServerLevel level = player.level();
+		net.minecraft.world.level.block.state.BlockState state = level.getBlockState(payload.pos());
+
+		if (!player.isSpectator() && state.getBlock() instanceof net.geforcemods.securitycraft.api.IExplosive explosive && level.getBlockEntity(payload.pos()) instanceof net.geforcemods.securitycraft.api.IOwnable ownable && ownable.isOwnedBy(player))
+			payload.action().act(explosive, level, payload.pos());
+	}
+
+	private static void handleRemoveMineFromMRAT(ServerPlayer player, RemoveMineFromMRATPayload payload) {
+		net.minecraft.world.item.ItemStack stack = net.geforcemods.securitycraft.util.PlayerUtils.getItemStackFromAnyHand(player, net.geforcemods.securitycraft.SCContent.MINE_REMOTE_ACCESS_TOOL);
+
+		if (!player.isSpectator() && !stack.isEmpty()) {
+			net.geforcemods.securitycraft.components.BoundMines mines = stack.get(net.geforcemods.securitycraft.SCContent.BOUND_MINES);
+
+			if (mines != null)
+				stack.set(net.geforcemods.securitycraft.SCContent.BOUND_MINES, mines.withoutSlot(payload.mineIndex()));
+		}
 	}
 
 	private static void handleSetListModuleData(ServerPlayer player, SetListModuleDataPayload payload) {
