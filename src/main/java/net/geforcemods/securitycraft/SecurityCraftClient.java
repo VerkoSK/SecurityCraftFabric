@@ -19,6 +19,11 @@ public class SecurityCraftClient implements ClientModInitializer {
 		Minecraft.getInstance().setScreen(new net.geforcemods.securitycraft.screen.EditModuleScreen(stack));
 	}
 
+	/** Opens the mine remote access tool screen for the given stack (called client-side only). */
+	public static void openMRATScreen(net.minecraft.world.item.ItemStack stack) {
+		Minecraft.getInstance().setScreen(new net.geforcemods.securitycraft.screen.MineRemoteAccessToolScreen(stack));
+	}
+
 	/** Live tint colour for reinforced blocks: white base multiplied by the configured tint (grey by default). */
 	private static int reinforcedTint() {
 		return TintMode.tint(Minecraft.getInstance().player, 0xFFFFFFFF, null);
@@ -71,6 +76,11 @@ public class SecurityCraftClient implements ClientModInitializer {
 		net.minecraft.client.gui.screens.MenuScreens.register(SCContent.BLOCK_REINFORCER_MENU, net.geforcemods.securitycraft.screen.BlockReinforcerScreen::new);
 		net.minecraft.client.gui.screens.MenuScreens.register(SCContent.LASER_BLOCK_MENU, net.geforcemods.securitycraft.screen.LaserBlockScreen::new);
 		net.minecraft.client.gui.screens.MenuScreens.register(SCContent.DISGUISE_MODULE_MENU, net.geforcemods.securitycraft.screen.DisguiseModuleScreen::new);
+		net.minecraft.client.gui.screens.MenuScreens.register(SCContent.SINGLE_LENS_MENU, net.geforcemods.securitycraft.screen.SingleLensScreen::new);
+		net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(SCContent.BOUNCING_BETTY_ENTITY, net.geforcemods.securitycraft.renderers.BouncingBettyRenderer::new);
+		net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(SCContent.IMS_BOMB_ENTITY, net.geforcemods.securitycraft.renderers.IMSBombRenderer::new);
+		net.minecraft.client.renderer.blockentity.BlockEntityRenderers.register(SCContent.CLAYMORE_BLOCK_ENTITY, net.geforcemods.securitycraft.renderers.ClaymoreRenderer::new);
+		net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry.registerModelLayer(net.geforcemods.securitycraft.models.IMSBombModel.LAYER_LOCATION, net.geforcemods.securitycraft.models.IMSBombModel::createBodyLayer);
 		ClientPlayNetworking.registerGlobalReceiver(net.geforcemods.securitycraft.network.UpdateLaserColorsPayload.TYPE, (payload, context) -> context.client().execute(() -> {
 			for (net.minecraft.core.BlockPos pos : payload.positions())
 				context.client().levelRenderer.setBlocksDirty(pos.getX(), pos.getY(), pos.getZ(), pos.getX(), pos.getY(), pos.getZ());

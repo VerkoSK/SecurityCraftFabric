@@ -21,6 +21,16 @@ public final class ConfigHandler {
 	public static double laserDamage = 10.0;
 	/** Damage a passcode-protected block deals to the player on an incorrect code, if a harming module is installed. (upstream default 4 = two hearts) */
 	public static int incorrectPasscodeDamage = 4;
+	/** Should mines spawn fire after exploding? (upstream default true) */
+	public static boolean shouldSpawnFire = true;
+	/** Should mines' explosions be smaller than usual? (upstream default false) */
+	public static boolean smallerMineExplosion = false;
+	/** Should mines explode if broken while in Creative mode? (upstream default true) */
+	public static boolean mineExplodesWhenInCreative = true;
+	/** Set this to false if you want mines to not break blocks when they explode. (upstream default true) */
+	public static boolean mineExplosionsBreakBlocks = true;
+	/** Set this to true to enable every player on a scoreboard team to own the blocks of every other player on the same team. (upstream default false) */
+	public static boolean enableTeamOwnership = false;
 
 	private ConfigHandler() {}
 
@@ -37,6 +47,21 @@ public final class ConfigHandler {
 
 				if (json.has("incorrectPasscodeDamage"))
 					incorrectPasscodeDamage = Math.max(1, json.get("incorrectPasscodeDamage").getAsInt());
+
+				if (json.has("shouldSpawnFire"))
+					shouldSpawnFire = json.get("shouldSpawnFire").getAsBoolean();
+
+				if (json.has("smallerMineExplosion"))
+					smallerMineExplosion = json.get("smallerMineExplosion").getAsBoolean();
+
+				if (json.has("mineExplodesWhenInCreative"))
+					mineExplodesWhenInCreative = json.get("mineExplodesWhenInCreative").getAsBoolean();
+
+				if (json.has("mineExplosionsBreakBlocks"))
+					mineExplosionsBreakBlocks = json.get("mineExplosionsBreakBlocks").getAsBoolean();
+
+				if (json.has("enable_team_ownership"))
+					enableTeamOwnership = json.get("enable_team_ownership").getAsBoolean();
 			}
 			else
 				save();
@@ -52,6 +77,11 @@ public final class ConfigHandler {
 		json.addProperty("laserBlockRange", laserBlockRange);
 		json.addProperty("laser_damage", laserDamage);
 		json.addProperty("incorrectPasscodeDamage", incorrectPasscodeDamage);
+		json.addProperty("shouldSpawnFire", shouldSpawnFire);
+		json.addProperty("smallerMineExplosion", smallerMineExplosion);
+		json.addProperty("mineExplodesWhenInCreative", mineExplodesWhenInCreative);
+		json.addProperty("mineExplosionsBreakBlocks", mineExplosionsBreakBlocks);
+		json.addProperty("enable_team_ownership", enableTeamOwnership);
 
 		try {
 			Files.writeString(FILE, new GsonBuilder().setPrettyPrinting().create().toJson(json));
