@@ -6,4 +6,10 @@ pluginManagement {
 	}
 }
 
+//This branch targets Java 25, which is newer than what most machines have installed. Without a toolchain
+//repository Gradle can only use a JDK that is already present, so it fails outright instead of fetching one.
+plugins {
+	id 'org.gradle.toolchains.foojay-resolver-convention' version '1.0.0'
+}
+
 rootProject.name = 'SecurityCraftFabric'
