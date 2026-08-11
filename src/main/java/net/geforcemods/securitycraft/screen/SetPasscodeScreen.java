@@ -62,13 +62,13 @@ public class SetPasscodeScreen extends Screen {
 	@Override
 	public void extractRenderState(GuiGraphicsExtractor extractor, int mouseX, int mouseY, float partialTicks) {
 		super.extractRenderState(extractor, mouseX, mouseY, partialTicks);
-		extractor.text(font, "CODE:", width / 2 - 67, height / 2 - 47 + 2, 4210752, false);
+		extractor.text(font, "CODE:", width / 2 - 67, height / 2 - 47 + 2, 0xFF404040, false);
 
 		if (font.width(combined) < imageWidth - 10)
-			extractor.text(font, combined, width / 2 - font.width(combined) / 2, topPos + 6, 4210752, false);
+			extractor.text(font, combined, width / 2 - font.width(combined) / 2, topPos + 6, 0xFF404040, false);
 		else {
-			extractor.text(font, title, width / 2 - font.width(title) / 2, topPos + 6, 4210752, false);
-			extractor.text(font, setup, width / 2 - font.width(setup) / 2, topPos + 16, 4210752, false);
+			extractor.text(font, title, width / 2 - font.width(title) / 2, topPos + 6, 0xFF404040, false);
+			extractor.text(font, setup, width / 2 - font.width(setup) / 2, topPos + 16, 0xFF404040, false);
 		}
 	}
 

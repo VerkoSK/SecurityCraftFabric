@@ -141,14 +141,14 @@ public class BlockReinforcerScreen extends AbstractContainerScreen<BlockReinforc
 
 	@Override
 	protected void extractLabels(GuiGraphicsExtractor extractor, int mouseX, int mouseY) {
-		extractor.text(font, title, (imageWidth - font.width(title)) / 2, 5, 0x404040, false);
-		extractor.text(font, playerInventoryTitle, inventoryLabelX, inventoryLabelY, 0x404040, false);
+		extractor.text(font, title, (imageWidth - font.width(title)) / 2, 5, 0xFF404040, false);
+		extractor.text(font, playerInventoryTitle, inventoryLabelX, inventoryLabelY, 0xFF404040, false);
 
 		if (!menu.getResult().isEmpty())
-			extractor.text(font, output, 128 - font.width(output), 25, 0x404040, false);
+			extractor.text(font, output, 128 - font.width(output), 25, 0xFF404040, false);
 
-		extractor.text(font, modeText, 8, 48, 0x404040, false);
-		extractor.text(font, tintText, 8, 73, 0x404040, false);
+		extractor.text(font, modeText, 8, 48, 0xFF404040, false);
+		extractor.text(font, tintText, 8, 73, 0xFF404040, false);
 	}
 
 	@Override
