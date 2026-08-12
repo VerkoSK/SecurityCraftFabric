@@ -139,10 +139,10 @@ public class MineRemoteAccessToolScreen extends Screen implements StillValid {
 		int startX = (width - xSize) / 2;
 		int startY = (height - ySize) / 2;
 
-		extractor.text(font, title, startX + xSize / 2 - font.width(title) / 2, startY + 6, 4210752, false);
+		extractor.text(font, title, startX + xSize / 2 - font.width(title) / 2, startY + 6, 0xFF404040, false);
 
 		for (int i = 0; i < 6; i++) {
-			extractor.text(font, lines[i], startX + xSize / 2 - lengths[i] + 25, startY + i * 25 + 33, 4210752, false);
+			extractor.text(font, lines[i], startX + xSize / 2 - lengths[i] + 25, startY + i * 25 + 33, 0xFF404040, false);
 		}
 	}
 

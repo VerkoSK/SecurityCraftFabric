@@ -130,10 +130,10 @@ public class ColorChooser extends Screen {
 	public void extractRenderState(GuiGraphicsExtractor extractor, int mouseX, int mouseY, float partialTick) {
 		super.extractRenderState(extractor, mouseX, mouseY, partialTick);
 		extractor.blitSprite(RenderPipelines.GUI_TEXTURED, colorFieldHoverChecker.checkHover(mouseX, mouseY) ? FIELD_SELECTOR_HIGHLIGHTED_SPRITE : FIELD_SELECTOR_SPRITE, (int) selectionX - 1, (int) selectionY - 1, 3, 3);
-		extractor.text(font, rText, colorFieldRight + 5, colorFieldTop + 1, 0x404040, false);
-		extractor.text(font, gText, colorFieldRight + 5, colorFieldTop + 16, 0x404040, false);
-		extractor.text(font, bText, colorFieldRight + 5, colorFieldTop + 31, 0x404040, false);
-		extractor.text(font, rgbHexText, colorFieldRight + 5, colorFieldTop + 46, 0x404040, false);
+		extractor.text(font, rText, colorFieldRight + 5, colorFieldTop + 1, 0xFF404040, false);
+		extractor.text(font, gText, colorFieldRight + 5, colorFieldTop + 16, 0xFF404040, false);
+		extractor.text(font, bText, colorFieldRight + 5, colorFieldTop + 31, 0xFF404040, false);
+		extractor.text(font, rgbHexText, colorFieldRight + 5, colorFieldTop + 46, 0xFF404040, false);
 	}
 
 	@Override
