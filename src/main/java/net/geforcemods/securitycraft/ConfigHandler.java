@@ -33,10 +33,10 @@ public final class ConfigHandler {
 	public static boolean enableTeamOwnership = false;
 	/** Should players be able to break blocks owned by somebody else? (upstream default false) */
 	public static boolean allowBreakingNonOwnedBlocks = false;
-	/** How much slower the owner breaks their own reinforced blocks compared to the vanilla block. (upstream default 5.0) */
-	public static double ownedBreakingSlowdown = 5.0;
-	/** How much slower a non-owner breaks reinforced blocks, when breaking them is allowed at all. (upstream default 50.0) */
-	public static double nonOwnedBreakingSlowdown = 50.0;
+	/** How much slower the owner breaks their own reinforced blocks compared to the vanilla block. (upstream default 1.0) */
+	public static double ownedBreakingSlowdown = 1.0;
+	/** How much slower a non-owner breaks reinforced blocks, when breaking them is allowed at all. (upstream default 1.0) */
+	public static double nonOwnedBreakingSlowdown = 1.0;
 	/** Should players be able to claim blocks that have no owner yet, using the Universal Owner Changer? (upstream default true) */
 	public static boolean allowBlockClaim = true;
 
@@ -75,10 +75,10 @@ public final class ConfigHandler {
 					allowBreakingNonOwnedBlocks = json.get("allow_breaking_non_owned_blocks").getAsBoolean();
 
 				if (json.has("owned_breaking_slowdown"))
-					ownedBreakingSlowdown = Math.max(1.0, json.get("owned_breaking_slowdown").getAsDouble());
+					ownedBreakingSlowdown = Math.max(0.0, json.get("owned_breaking_slowdown").getAsDouble());
 
 				if (json.has("non_owned_breaking_slowdown"))
-					nonOwnedBreakingSlowdown = Math.max(1.0, json.get("non_owned_breaking_slowdown").getAsDouble());
+					nonOwnedBreakingSlowdown = Math.max(0.0, json.get("non_owned_breaking_slowdown").getAsDouble());
 
 				if (json.has("allow_block_claim"))
 					allowBlockClaim = json.get("allow_block_claim").getAsBoolean();
