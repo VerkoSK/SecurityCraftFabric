@@ -623,5 +623,14 @@
 	"option.generic.ignoreOwner": "Ignore Owner: %s",
 	"option.generic.ignoreOwner.description": "Should this block ignore its owner, meaning any functionality it has will not work for the owner?",
 	"option.generic.respectInvisibility": "Respect Invisibility: %s",
-	"option.generic.respectInvisibility.description": "Should this block ignore players and entities that are invisible?"
+	"option.generic.respectInvisibility.description": "Should this block ignore players and entities that are invisible?",
+	"block.securitycraft.iron_door_reinforced": "Reinforced Door",
+	"item.securitycraft.universal_owner_changer": "Universal Owner Changer",
+	"messages.securitycraft:universalOwnerChanger.briefcase.notOwned": "This is not your briefcase, you cannot change its owner.",
+	"messages.securitycraft:universalOwnerChanger.cantChange": "This block cannot hold an owner. Please rightclick an appropriate SecurityCraft block.",
+	"messages.securitycraft:universalOwnerChanger.changed": "%s is now the new owner.",
+	"messages.securitycraft:universalOwnerChanger.noBlockClaiming": "You cannot claim blocks without an owner.",
+	"messages.securitycraft:universalOwnerChanger.noName": "You need to give this item the name of the new block owner. Use an anvil to rename it.",
+	"messages.securitycraft:universalOwnerChanger.notOwned": "This is not your block, you cannot change its owner.",
+	"messages.securitycraft:universalOwnerChanger.ownerInvalidated": "The block's owner has been changed and thus needs to be validated by the new owner to work again. To validate a block, the new owner of the block has to rightclick it."
 }
