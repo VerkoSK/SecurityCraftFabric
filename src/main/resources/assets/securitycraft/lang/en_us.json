@@ -1146,5 +1146,5 @@
 	"waila.securitycraft:modules": "Equipped modules:",
 	"block.securitycraft.reinforced_iron_door": "Reinforced Door",
 	"item.securitycraft.universal_block_modifier": "Universal Block Modifier",
-	"messages.securitycraft:universalBlockModifier.owner": "This block belongs to %s."
+	"messages.securitycraft:universalBlockModifier.notOwned": "You do not own this block, so you cannot change its options."
 }
