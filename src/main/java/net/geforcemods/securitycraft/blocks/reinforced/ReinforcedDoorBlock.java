@@ -68,8 +68,12 @@ public class ReinforcedDoorBlock extends DoorBlock implements IReinforcedBlock, 
 	public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, BlockPos fromPos, boolean movedByPiston) {
 		boolean active = hasActiveKeypadNextTo(level, pos, state);
 
-		if (active != state.getValue(BlockStateProperties.OPEN))
+		if (active != state.getValue(BlockStateProperties.OPEN)) {
 			level.setBlock(pos, state.setValue(BlockStateProperties.OPEN, active).setValue(BlockStateProperties.POWERED, active), 2);
+			//setBlock alone is silent; vanilla doors play this from setOpen, which the keypad path bypasses
+			level.playSound(null, pos, active ? type().doorOpen() : type().doorClose(), net.minecraft.sounds.SoundSource.BLOCKS, 1.0F, 1.0F);
+			level.gameEvent(null, active ? net.minecraft.world.level.gameevent.GameEvent.BLOCK_OPEN : net.minecraft.world.level.gameevent.GameEvent.BLOCK_CLOSE, pos);
+		}
 	}
 
 	@Override
