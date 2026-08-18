@@ -625,7 +625,6 @@
 	"option.generic.ignoreOwner.description": "Should this block ignore its owner, meaning any functionality it has will not work for the owner?",
 	"option.generic.respectInvisibility": "Respect Invisibility: %s",
 	"option.generic.respectInvisibility.description": "Should this block ignore players and entities that are invisible?",
-	"block.securitycraft.iron_door_reinforced": "Reinforced Door",
 	"item.securitycraft.universal_owner_changer": "Universal Owner Changer",
 	"messages.securitycraft:universalOwnerChanger.briefcase.notOwned": "This is not your briefcase, you cannot change its owner.",
 	"messages.securitycraft:universalOwnerChanger.cantChange": "This block cannot hold an owner. Please rightclick an appropriate SecurityCraft block.",
@@ -642,5 +641,8 @@
 	"waila.securitycraft:customName": "Custom name: %s",
 	"waila.securitycraft:equipped": "Equipped with:",
 	"waila.securitycraft:owner": "Owner: %s",
-	"waila.securitycraft:modules": "Equipped modules:"
+	"waila.securitycraft:modules": "Equipped modules:",
+	"block.securitycraft.reinforced_iron_door": "Reinforced Door",
+	"item.securitycraft.universal_block_modifier": "Universal Block Modifier",
+	"messages.securitycraft:universalBlockModifier.owner": "This block belongs to %s."
 }
