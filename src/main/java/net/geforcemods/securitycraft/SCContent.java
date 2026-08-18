@@ -148,6 +148,7 @@ public class SCContent {
 	public static EntityType<BouncingBetty> BOUNCING_BETTY_ENTITY;
 	public static EntityType<IMSBomb> IMS_BOMB_ENTITY;
 	public static net.minecraft.world.inventory.MenuType<net.geforcemods.securitycraft.inventory.SingleLensMenu> SINGLE_LENS_MENU;
+	public static net.minecraft.world.inventory.MenuType<net.geforcemods.securitycraft.inventory.CustomizeBlockMenu> CUSTOMIZE_BLOCK_MENU;
 
 	public static final ResourceKey<CreativeModeTab> TAB_KEY = ResourceKey.create(Registries.CREATIVE_MODE_TAB, id("general"));
 
@@ -700,6 +701,7 @@ public class SCContent {
 		PORTABLE_RADAR_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("portable_radar"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.PortableRadarBlockEntity::new, PORTABLE_RADAR).build());
 		BOUNCING_BETTY_ENTITY = Registry.register(BuiltInRegistries.ENTITY_TYPE, id("bouncingbetty"), FabricEntityTypeBuilder.<BouncingBetty>create(MobCategory.MISC, BouncingBetty::new).dimensions(EntityDimensions.fixed(0.5F, 0.2F)).trackRangeBlocks(128).trackedUpdateRate(1).forceTrackedVelocityUpdates(true).build());
 		IMS_BOMB_ENTITY = Registry.register(BuiltInRegistries.ENTITY_TYPE, id("imsbomb"), FabricEntityTypeBuilder.<IMSBomb>create(MobCategory.MISC, IMSBomb::new).dimensions(EntityDimensions.fixed(0.25F, 0.3F)).trackRangeBlocks(256).trackedUpdateRate(1).forceTrackedVelocityUpdates(true).build());
+		CUSTOMIZE_BLOCK_MENU = Registry.register(BuiltInRegistries.MENU, id("customize_block"), new net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType<>((syncId, inv, buf) -> new net.geforcemods.securitycraft.inventory.CustomizeBlockMenu(syncId, inv, buf)));
 		SINGLE_LENS_MENU = Registry.register(BuiltInRegistries.MENU, id("single_lens"), new net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType<>((syncId, inv, buf) -> new net.geforcemods.securitycraft.inventory.SingleLensMenu(syncId, inv, buf)));
 		KEY_PANEL_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("key_panel"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.KeyPanelBlockEntity::new, KEY_PANEL).build());
 		FRAME_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("keypad_frame"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.FrameBlockEntity::new, FRAME).build());
