@@ -70,8 +70,8 @@ public class SCContent {
 	public static net.geforcemods.securitycraft.blocks.LaserBlock LASER_BLOCK;
 	public static net.geforcemods.securitycraft.blocks.LaserFieldBlock LASER_FIELD;
 	public static net.geforcemods.securitycraft.blocks.PortableRadarBlock PORTABLE_RADAR;
-	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.PortableRadarBlockEntity> PORTABLE_RADAR_BLOCK_ENTITY;
 	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.LaserBlockBlockEntity> LASER_BLOCK_BLOCK_ENTITY;
+	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.PortableRadarBlockEntity> PORTABLE_RADAR_BLOCK_ENTITY;
 	public static BlockEntityType<net.geforcemods.securitycraft.api.OwnableBlockEntity> ABSTRACT_BLOCK_ENTITY;
 	public static net.geforcemods.securitycraft.blocks.KeyPanelBlock KEY_PANEL;
 	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.KeyPanelBlockEntity> KEY_PANEL_BLOCK_ENTITY;
@@ -150,6 +150,7 @@ public class SCContent {
 
 	public static final ResourceKey<CreativeModeTab> TAB_KEY = ResourceKey.create(Registries.CREATIVE_MODE_TAB, id("general"));
 
+	//adaptation: lens colouring recipe (LensColoringRecipe) is not yet ported to 1.21.1; the vanilla-recipe colored_lens_*.json files stand in for it, as on this branch before V0.5
 	public static net.minecraft.core.component.DataComponentType<net.minecraft.util.Unit> UNREINFORCING;
 	public static RecipeSerializer<?> BLOCK_REINFORCING_SERIALIZER;
 	public static RecipeSerializer<?> BLOCK_UNREINFORCING_SERIALIZER;
@@ -229,7 +230,6 @@ public class SCContent {
 			{"reinforced_cherry_slab", "slab"},
 			{"reinforced_cherry_stairs", "stairs"},
 			{"reinforced_cherry_wood", "pillar"},
-			{"reinforced_chiseled_copper", "cube"},
 			{"reinforced_chiseled_deepslate", "cube"},
 			{"reinforced_chiseled_nether_bricks", "cube"},
 			{"reinforced_chiseled_polished_blackstone", "cube"},
@@ -237,8 +237,6 @@ public class SCContent {
 			{"reinforced_chiseled_red_sandstone", "cube"},
 			{"reinforced_chiseled_sandstone", "cube"},
 			{"reinforced_chiseled_stone_bricks", "cube"},
-			{"reinforced_chiseled_tuff", "cube"},
-			{"reinforced_chiseled_tuff_bricks", "cube"},
 			{"reinforced_clay", "cube"},
 			{"reinforced_coal_block", "cube"},
 			{"reinforced_coarse_dirt", "cube"},
@@ -315,7 +313,6 @@ public class SCContent {
 			{"reinforced_end_stone_brick_stairs", "stairs"},
 			{"reinforced_end_stone_brick_wall", "wall"},
 			{"reinforced_end_stone_bricks", "cube"},
-			{"reinforced_exposed_chiseled_copper", "cube"},
 			{"reinforced_exposed_copper", "cube"},
 			{"reinforced_exposed_cut_copper", "cube"},
 			{"reinforced_exposed_cut_copper_slab", "slab"},
@@ -425,7 +422,6 @@ public class SCContent {
 			{"reinforced_orange_stained_glass_pane", "pane"},
 			{"reinforced_orange_terracotta", "cube"},
 			{"reinforced_orange_wool", "cube"},
-			{"reinforced_oxidized_chiseled_copper", "cube"},
 			{"reinforced_oxidized_copper", "cube"},
 			{"reinforced_oxidized_cut_copper", "cube"},
 			{"reinforced_oxidized_cut_copper_slab", "slab"},
@@ -462,10 +458,6 @@ public class SCContent {
 			{"reinforced_polished_granite", "cube"},
 			{"reinforced_polished_granite_slab", "slab"},
 			{"reinforced_polished_granite_stairs", "stairs"},
-			{"reinforced_polished_tuff", "cube"},
-			{"reinforced_polished_tuff_slab", "slab"},
-			{"reinforced_polished_tuff_stairs", "stairs"},
-			{"reinforced_polished_tuff_wall", "wall"},
 			{"reinforced_prismarine", "cube"},
 			{"reinforced_prismarine_brick_slab", "slab"},
 			{"reinforced_prismarine_brick_stairs", "stairs"},
@@ -569,10 +561,6 @@ public class SCContent {
 			{"reinforced_stripped_warped_stem", "pillar"},
 			{"reinforced_tinted_glass", "glass"},
 			{"reinforced_tuff", "cube"},
-			{"reinforced_tuff_brick_slab", "slab"},
-			{"reinforced_tuff_brick_stairs", "stairs"},
-			{"reinforced_tuff_brick_wall", "wall"},
-			{"reinforced_tuff_bricks", "cube"},
 			{"reinforced_tuff_slab", "slab"},
 			{"reinforced_tuff_stairs", "stairs"},
 			{"reinforced_tuff_wall", "wall"},
@@ -588,7 +576,6 @@ public class SCContent {
 			{"reinforced_warped_stairs", "stairs"},
 			{"reinforced_warped_stem", "pillar"},
 			{"reinforced_warped_wart_block", "cube"},
-			{"reinforced_weathered_chiseled_copper", "cube"},
 			{"reinforced_weathered_copper", "cube"},
 			{"reinforced_weathered_cut_copper", "cube"},
 			{"reinforced_weathered_cut_copper_slab", "slab"},
@@ -612,8 +599,8 @@ public class SCContent {
 	public static void init() {
 		KEYPAD = register("keypad", new KeypadBlock(BlockBehaviour.Properties.of().strength(2.0F, 12000.0F).requiresCorrectToolForDrops()));
 		LASER_BLOCK = (net.geforcemods.securitycraft.blocks.LaserBlock) register("laser_block", new net.geforcemods.securitycraft.blocks.LaserBlock(BlockBehaviour.Properties.of().strength(3.5F).requiresCorrectToolForDrops().sound(SoundType.METAL)));
-		PORTABLE_RADAR = (net.geforcemods.securitycraft.blocks.PortableRadarBlock) register("portable_radar", new net.geforcemods.securitycraft.blocks.PortableRadarBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_BLACK).strength(5.0F, Float.MAX_VALUE).requiresCorrectToolForDrops()));
 		LASER_FIELD = (net.geforcemods.securitycraft.blocks.LaserFieldBlock) registerBlockNoItem("laser", new net.geforcemods.securitycraft.blocks.LaserFieldBlock(BlockBehaviour.Properties.of().mapColor(net.minecraft.world.level.material.MapColor.NONE).strength(-1.0F).noLootTable().noOcclusion()));
+		PORTABLE_RADAR = (net.geforcemods.securitycraft.blocks.PortableRadarBlock) register("portable_radar", new net.geforcemods.securitycraft.blocks.PortableRadarBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_BLACK).strength(5.0F, Float.MAX_VALUE).requiresCorrectToolForDrops()));
 		KEY_PANEL = (net.geforcemods.securitycraft.blocks.KeyPanelBlock) registerBlockNoItem("key_panel", new net.geforcemods.securitycraft.blocks.KeyPanelBlock(BlockBehaviour.Properties.of().strength(3.5F).sound(SoundType.METAL).noOcclusion()));
 		KEY_PANEL_ITEM = registerItem("keypad_item", new net.geforcemods.securitycraft.items.KeyPanelItem(new Item.Properties()));
 		FRAME = (net.geforcemods.securitycraft.blocks.FrameBlock) register("keypad_frame", new net.geforcemods.securitycraft.blocks.FrameBlock(BlockBehaviour.Properties.of().mapColor(net.minecraft.world.level.material.MapColor.METAL).strength(5.0F).sound(SoundType.METAL).noOcclusion()));
@@ -691,15 +678,20 @@ public class SCContent {
 		BLOCK_REINFORCER_MENU = Registry.register(BuiltInRegistries.MENU, id("block_reinforcer"), new net.minecraft.world.inventory.MenuType<>(net.geforcemods.securitycraft.inventory.BlockReinforcerMenu::new, net.minecraft.world.flag.FeatureFlags.VANILLA_SET));
 
 		KEYPAD_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("keypad"), FabricBlockEntityTypeBuilder.create(KeypadBlockEntity::new, KEYPAD).build());
-		PORTABLE_RADAR_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("portable_radar"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.PortableRadarBlockEntity::new, PORTABLE_RADAR).build());
 		LASER_BLOCK_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("laser_block"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.LaserBlockBlockEntity::new, LASER_BLOCK).build());
-		ABSTRACT_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("abstract"), FabricBlockEntityTypeBuilder.create((pos, state) -> new net.geforcemods.securitycraft.api.OwnableBlockEntity(ABSTRACT_BLOCK_ENTITY, pos, state), LASER_FIELD, STONE_MINE, DEEPSLATE_MINE, COBBLED_DEEPSLATE_MINE, DIRT_MINE, COBBLESTONE_MINE, SAND_MINE, GRAVEL_MINE, NETHERRACK_MINE, END_STONE_MINE, COAL_MINE, DEEPSLATE_COAL_MINE, IRON_MINE, DEEPSLATE_IRON_MINE, GOLD_MINE, DEEPSLATE_GOLD_MINE, COPPER_MINE, DEEPSLATE_COPPER_MINE, REDSTONE_MINE, DEEPSLATE_REDSTONE_MINE, EMERALD_MINE, DEEPSLATE_EMERALD_MINE, LAPIS_MINE, DEEPSLATE_LAPIS_MINE, DIAMOND_MINE, DEEPSLATE_DIAMOND_MINE, NETHER_GOLD_MINE, QUARTZ_MINE, ANCIENT_DEBRIS_MINE, GILDED_BLACKSTONE_MINE, FURNACE_MINE, SMOKER_MINE, BLAST_FURNACE_MINE).build());
+		//every reinforced block carries this block entity purely to remember its owner, so they all have to be
+		//listed as valid for the type; REINFORCED_BLOCKS is already fully populated by this point in init()
+		java.util.List<Block> abstractBeBlocks = new ArrayList<>(java.util.List.of(LASER_FIELD, STONE_MINE, DEEPSLATE_MINE, COBBLED_DEEPSLATE_MINE, DIRT_MINE, COBBLESTONE_MINE, SAND_MINE, GRAVEL_MINE, NETHERRACK_MINE, END_STONE_MINE, COAL_MINE, DEEPSLATE_COAL_MINE, IRON_MINE, DEEPSLATE_IRON_MINE, GOLD_MINE, DEEPSLATE_GOLD_MINE, COPPER_MINE, DEEPSLATE_COPPER_MINE, REDSTONE_MINE, DEEPSLATE_REDSTONE_MINE, EMERALD_MINE, DEEPSLATE_EMERALD_MINE, LAPIS_MINE, DEEPSLATE_LAPIS_MINE, DIAMOND_MINE, DEEPSLATE_DIAMOND_MINE, NETHER_GOLD_MINE, QUARTZ_MINE, ANCIENT_DEBRIS_MINE, GILDED_BLACKSTONE_MINE, FURNACE_MINE, SMOKER_MINE, BLAST_FURNACE_MINE));
+
+		abstractBeBlocks.addAll(REINFORCED_BLOCKS);
+		ABSTRACT_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("abstract"), FabricBlockEntityTypeBuilder.create((pos, state) -> new net.geforcemods.securitycraft.api.OwnableBlockEntity(ABSTRACT_BLOCK_ENTITY, pos, state), abstractBeBlocks.toArray(new Block[0])).build());
 		MINE_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("mine"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.MineBlockEntity::new, MINE).build());
 		BOUNCING_BETTY_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("bouncing_betty"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.BouncingBettyBlockEntity::new, BOUNCING_BETTY).build());
 		CLAYMORE_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("claymore"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.ClaymoreBlockEntity::new, CLAYMORE).build());
 		IMS_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("ims"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.IMSBlockEntity::new, IMS).build());
 		TRACK_MINE_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("track_mine"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.TrackMineBlockEntity::new, TRACK_MINE).build());
 		BRUSHABLE_MINE_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("brushable_mine"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.BrushableMineBlockEntity::new, SUSPICIOUS_SAND_MINE, SUSPICIOUS_GRAVEL_MINE).build());
+		PORTABLE_RADAR_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("portable_radar"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.PortableRadarBlockEntity::new, PORTABLE_RADAR).build());
 		BOUNCING_BETTY_ENTITY = Registry.register(BuiltInRegistries.ENTITY_TYPE, id("bouncingbetty"), FabricEntityTypeBuilder.<BouncingBetty>create(MobCategory.MISC, BouncingBetty::new).dimensions(EntityDimensions.fixed(0.5F, 0.2F)).trackRangeBlocks(128).trackedUpdateRate(1).forceTrackedVelocityUpdates(true).build());
 		IMS_BOMB_ENTITY = Registry.register(BuiltInRegistries.ENTITY_TYPE, id("imsbomb"), FabricEntityTypeBuilder.<IMSBomb>create(MobCategory.MISC, IMSBomb::new).dimensions(EntityDimensions.fixed(0.25F, 0.3F)).trackRangeBlocks(256).trackedUpdateRate(1).forceTrackedVelocityUpdates(true).build());
 		SINGLE_LENS_MENU = Registry.register(BuiltInRegistries.MENU, id("single_lens"), new net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType<>((syncId, inv, pos) -> new net.geforcemods.securitycraft.inventory.SingleLensMenu(syncId, inv.player.level(), pos, inv), net.minecraft.core.BlockPos.STREAM_CODEC));
@@ -725,17 +717,19 @@ public class SCContent {
 	}
 
 	private static void registerReinforced(String name, String category) {
+		//every shape uses its own reinforced subclass so the block carries an owner; see OwnershipUtils for why
+		//this port keeps the vanilla class as the superclass instead of reimplementing it the way upstream does
 		Block block = switch (category) {
-			case "pillar" -> new RotatedPillarBlock(shapeProps(name));
+			case "pillar" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedPillarBlock(shapeProps(name));
 			case "glass" -> new BaseReinforcedBlock(glassProps());
-			case "pane" -> new IronBarsBlock((name.contains("glass") ? glassProps() : paneProps()));
-			case "fence" -> new FenceBlock(shapeProps(name));
-			case "fence_gate" -> new FenceGateBlock(WoodType.OAK, shapeProps(name));
-			case "wall" -> new WallBlock(shapeProps(name));
-			case "slab" -> new SlabBlock(shapeProps(name));
-			case "stairs" -> new StairBlock(Blocks.STONE.defaultBlockState(), shapeProps(name));
-			case "button" -> new ButtonBlock(BlockSetType.STONE, 20, shapeProps(name));
-			case "pressure_plate" -> new PressurePlateBlock(BlockSetType.STONE, shapeProps(name));
+			case "pane" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedPaneBlock(name.contains("glass") ? glassProps() : paneProps());
+			case "fence" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedFenceBlock(shapeProps(name));
+			case "fence_gate" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedFenceGateBlock(WoodType.OAK, shapeProps(name));
+			case "wall" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedWallBlock(shapeProps(name));
+			case "slab" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedSlabBlock(shapeProps(name));
+			case "stairs" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedStairBlock(Blocks.STONE.defaultBlockState(), shapeProps(name));
+			case "button" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedButtonBlock(shapeProps(name), BlockSetType.STONE, 20);
+			case "pressure_plate" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedPressurePlateBlock(shapeProps(name), BlockSetType.STONE);
 			case "trapdoor" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedTrapdoorBlock(BlockSetType.IRON, shapeProps(name));
 			default -> new BaseReinforcedBlock(shapeProps(name));
 		};
@@ -958,7 +952,7 @@ public class SCContent {
 	/**
 	 * 1:1 with upstream's {@code SCContent#reinforcedCopy(Block)}. Upstream additionally copies the seven access-transformed
 	 * {@code Properties} fields; none of the vanilla blocks disguised by a block mine sets any of them, so plain
-	 * {@link BlockBehaviour.Properties#copy(BlockBehaviour)} is behaviourally identical here.
+	 * {@link BlockBehaviour.Properties#ofFullCopy(BlockBehaviour)} is behaviourally identical here.
 	 */
 	private static BlockBehaviour.Properties reinforcedCopy(Block block) {
 		return BlockBehaviour.Properties.ofFullCopy(block).explosionResistance(Float.MAX_VALUE);
