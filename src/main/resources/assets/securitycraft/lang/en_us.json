@@ -642,5 +642,8 @@
 	"waila.securitycraft:customName": "Custom name: %s",
 	"waila.securitycraft:equipped": "Equipped with:",
 	"waila.securitycraft:owner": "Owner: %s",
-	"waila.securitycraft:modules": "Equipped modules:"
+	"waila.securitycraft:modules": "Equipped modules:",
+	"block.securitycraft.reinforced_iron_door": "Reinforced Door",
+	"item.securitycraft.universal_block_modifier": "Universal Block Modifier",
+	"messages.securitycraft:universalBlockModifier.owner": "This block belongs to %s."
 }
