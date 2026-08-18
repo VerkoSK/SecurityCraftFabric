@@ -59,6 +59,7 @@ public class SCContent {
 	public static BlockEntityType<net.geforcemods.securitycraft.api.OwnableBlockEntity> ABSTRACT_BLOCK_ENTITY;
 	public static Block REINFORCED_DOOR;
 	public static Item UNIVERSAL_OWNER_CHANGER;
+	public static Item UNIVERSAL_BLOCK_MODIFIER;
 	public static net.geforcemods.securitycraft.blocks.KeyPanelBlock KEY_PANEL;
 	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.KeyPanelBlockEntity> KEY_PANEL_BLOCK_ENTITY;
 	public static Item KEY_PANEL_ITEM;
@@ -607,7 +608,12 @@ public class SCContent {
 		KEY_PANEL = (net.geforcemods.securitycraft.blocks.KeyPanelBlock) registerBlockNoItem("key_panel", key -> new net.geforcemods.securitycraft.blocks.KeyPanelBlock(BlockBehaviour.Properties.of().strength(3.5F).sound(SoundType.METAL).noOcclusion().setId(key)));
 		KEY_PANEL_ITEM = registerItem("keypad_item", new net.geforcemods.securitycraft.items.KeyPanelItem(new Item.Properties().setId(ResourceKey.create(Registries.ITEM, id("keypad_item")))));
 		FRAME = (net.geforcemods.securitycraft.blocks.FrameBlock) register("keypad_frame", key -> new net.geforcemods.securitycraft.blocks.FrameBlock(BlockBehaviour.Properties.of().mapColor(net.minecraft.world.level.material.MapColor.METAL).strength(5.0F).sound(SoundType.METAL).noOcclusion().setId(key)));
-		REINFORCED_DOOR = register("iron_door_reinforced", key -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedDoorBlock(BlockSetType.IRON, BlockBehaviour.Properties.of().mapColor(net.minecraft.world.level.material.MapColor.METAL).strength(5.0F, 12000.0F).requiresCorrectToolForDrops().sound(SoundType.METAL).noOcclusion().setId(key)));
+		REINFORCED_DOOR = register("reinforced_iron_door", key -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedDoorBlock(BlockSetType.IRON, BlockBehaviour.Properties.of().mapColor(net.minecraft.world.level.material.MapColor.METAL).strength(5.0F, 12000.0F).requiresCorrectToolForDrops().sound(SoundType.METAL).noOcclusion().setId(key)));
+		//listing the door here is what lets the Universal Block Reinforcer turn a vanilla iron door into it, and
+		//the Remover turn it back; both look the counterpart up by the reinforced_<vanilla> name
+		REINFORCED_BLOCKS.add(REINFORCED_DOOR);
+		REINFORCED_BY_NAME.put("reinforced_iron_door", REINFORCED_DOOR);
+		CUTOUT_BLOCKS.add(REINFORCED_DOOR);
 		PORTABLE_RADAR = register("portable_radar", key -> new net.geforcemods.securitycraft.blocks.PortableRadarBlock(BlockBehaviour.Properties.of().mapColor(net.minecraft.world.level.material.MapColor.COLOR_BLACK).strength(5.0F, Float.MAX_VALUE).requiresCorrectToolForDrops().setId(key)));
 		net.geforcemods.securitycraft.api.SecurityCraftAPI.registerPasscodeConvertible(new net.geforcemods.securitycraft.blocks.KeypadBlock.Convertible());
 
@@ -669,6 +675,7 @@ public class SCContent {
 		STORAGE_MODULE = registerModule("storage_module", net.geforcemods.securitycraft.misc.ModuleType.STORAGE, false, false, false);
 		DISGUISE_MODULE = registerModule("disguise_module", net.geforcemods.securitycraft.misc.ModuleType.DISGUISE, false, true, false);
 		SPEED_MODULE = registerModule("speed_module", net.geforcemods.securitycraft.misc.ModuleType.SPEED, false, false, false);
+		UNIVERSAL_BLOCK_MODIFIER = registerItem("universal_block_modifier", new net.geforcemods.securitycraft.items.UniversalBlockModifierItem(new Item.Properties().stacksTo(1)));
 		UNIVERSAL_OWNER_CHANGER = registerItem("universal_owner_changer", new net.geforcemods.securitycraft.items.UniversalOwnerChangerItem(new Item.Properties().stacksTo(1)));
 		LENS = registerItem("lens", new Item(new Item.Properties().setId(ResourceKey.create(Registries.ITEM, id("lens")))));
 
@@ -774,6 +781,7 @@ public class SCContent {
 					output.accept(KEY_PANEL_ITEM);
 					output.accept(FRAME);
 					output.accept(REINFORCED_DOOR);
+					output.accept(UNIVERSAL_BLOCK_MODIFIER);
 					output.accept(UNIVERSAL_OWNER_CHANGER);
 					output.accept(LASER_BLOCK);
 					output.accept(PORTABLE_RADAR);
