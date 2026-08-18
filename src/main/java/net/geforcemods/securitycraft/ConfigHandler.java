@@ -37,6 +37,8 @@ public final class ConfigHandler {
 	public static double ownedBreakingSlowdown = 5.0;
 	/** How much slower a non-owner breaks reinforced blocks, when breaking them is allowed at all. (upstream default 50.0) */
 	public static double nonOwnedBreakingSlowdown = 50.0;
+	/** Should players be able to claim blocks that have no owner yet, using the Universal Owner Changer? (upstream default true) */
+	public static boolean allowBlockClaim = true;
 
 	private ConfigHandler() {}
 
@@ -78,6 +80,9 @@ public final class ConfigHandler {
 				if (json.has("non_owned_breaking_slowdown"))
 					nonOwnedBreakingSlowdown = Math.max(1.0, json.get("non_owned_breaking_slowdown").getAsDouble());
 
+				if (json.has("allow_block_claim"))
+					allowBlockClaim = json.get("allow_block_claim").getAsBoolean();
+
 			}
 			else
 				save();
@@ -101,6 +106,7 @@ public final class ConfigHandler {
 		json.addProperty("allow_breaking_non_owned_blocks", allowBreakingNonOwnedBlocks);
 		json.addProperty("owned_breaking_slowdown", ownedBreakingSlowdown);
 		json.addProperty("non_owned_breaking_slowdown", nonOwnedBreakingSlowdown);
+		json.addProperty("allow_block_claim", allowBlockClaim);
 
 		try {
 			Files.writeString(FILE, new GsonBuilder().setPrettyPrinting().create().toJson(json));

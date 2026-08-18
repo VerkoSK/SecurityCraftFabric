@@ -26,6 +26,7 @@ public class SecurityCraft implements ModInitializer {
 		NetworkHandler.registerServerReceivers();
 		net.geforcemods.securitycraft.items.MineRemoteAccessToolItem.registerBindingCallback();
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> SCCommand.register(dispatcher));
+		net.geforcemods.securitycraft.items.UniversalOwnerChangerItem.registerUseCallback();
 		ServerLifecycleEvents.SERVER_STARTED.register(server -> SERVER = server);
 		ServerLifecycleEvents.SERVER_STOPPED.register(server -> SERVER = null);
 		LOGGER.info("SecurityCraft (Fabric port) v{} initialized", VERSION);
