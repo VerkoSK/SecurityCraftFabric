@@ -19,11 +19,13 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
 /**
- * The Universal Block Modifier's screen: the block's module slots along the top, and one control per option
- * below — a button for booleans and enums, a slider for numbers.
+ * The Universal Block Modifier's screen. The module slots sit inside the panel; the options are laid out in a
+ * column to its right, the way the original does it, so a block with many options does not overflow the panel.
  */
 public class CustomizeBlockScreen extends AbstractContainerScreen<CustomizeBlockMenu> {
 	private static final Identifier TEXTURE = SCContent.id("textures/gui/container/blank.png");
+	/** Every option this port carries is one of the shared ones, so they all live under the generic namespace. */
+	private static final String DENOTATION = "generic";
 	private final Option<?>[] options;
 	private final BlockPos pos;
 
@@ -38,32 +40,48 @@ public class CustomizeBlockScreen extends AbstractContainerScreen<CustomizeBlock
 	protected void init() {
 		super.init();
 
-		for (int i = 0; i < options.length && i < 4; i++) {
+		for (int i = 0; i < options.length; i++) {
 			Option<?> option = options[i];
 			int index = i;
-			int x = leftPos + 8;
-			int y = topPos + 42 + i * 22;
+			int x = leftPos + imageWidth + 4;
+			int y = topPos + 6 + i * 22;
 
 			if (option instanceof Option.IntOption || option instanceof Option.DoubleOption)
-				addRenderableWidget(new OptionSlider(x, y, option, index));
+				addRenderableWidget(new OptionSlider(x, y, option, index)).setTooltip(tooltip(option));
 			else {
 				Button button = addRenderableWidget(Button.builder(label(option), b -> {
 					ClientPlayNetworking.send(new SetOptionPayload(pos, index, true, 0.0));
+					option.toggle();
 					b.setMessage(label(option));
-				}).bounds(x, y, 160, 20).build());
+					b.setTooltip(tooltip(option));
+				}).bounds(x, y, 130, 20).build());
 
-				button.setTooltip(Tooltip.create(Utils.localize(option.getKey(SCContent.id("").getNamespace()) + ".description")));
+				button.setTooltip(tooltip(option));
 			}
 		}
 	}
 
+	/** The translation already contains the placeholder for the value, so it is passed in as an argument. */
 	private Component label(Option<?> option) {
-		return Component.translatable(option.getKey("securitycraft")).append(": ").append(String.valueOf(option.get()));
+		return Utils.localize(option.getKey(DENOTATION), option.getValueText());
+	}
+
+	private Tooltip tooltip(Option<?> option) {
+		return Tooltip.create(Component.translatable(option.getDescriptionKey(DENOTATION)));
 	}
 
 	@Override
 	public void extractRenderState(GuiGraphicsExtractor extractor, int mouseX, int mouseY, float partialTick) {
 		extractor.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, leftPos, topPos, 0.0F, 0.0F, imageWidth, imageHeight, 256, 256);
+
+		//the blank background has no slot artwork, so the module slots are outlined here
+		for (int i = 0; i < menu.slots.size(); i++) {
+			var slot = menu.slots.get(i);
+
+			if (i < menu.moduleSlotCount())
+				extractor.fill(leftPos + slot.x - 1, topPos + slot.y - 1, leftPos + slot.x + 17, topPos + slot.y + 17, 0xFF8B8B8B);
+		}
+
 		super.extractRenderState(extractor, mouseX, mouseY, partialTick);
 	}
 
@@ -81,7 +99,7 @@ public class CustomizeBlockScreen extends AbstractContainerScreen<CustomizeBlock
 		private final double max;
 
 		OptionSlider(int x, int y, Option<?> option, int index) {
-			super(x, y, 160, 20, Component.empty(), 0.0);
+			super(x, y, 130, 20, Component.empty(), 0.0);
 			this.option = option;
 			this.index = index;
 			min = ((Number) option.getMin()).doubleValue();
@@ -97,9 +115,9 @@ public class CustomizeBlockScreen extends AbstractContainerScreen<CustomizeBlock
 		@Override
 		protected void updateMessage() {
 			double actual = actual();
-			String shown = option instanceof Option.IntOption ? String.valueOf((int) Math.round(actual)) : String.format("%.1f", actual);
+			Object shown = option instanceof Option.IntOption ? (int) Math.round(actual) : String.format("%.1f", actual);
 
-			setMessage(Component.translatable(option.getKey("securitycraft")).append(": ").append(shown));
+			setMessage(Utils.localize(option.getKey(DENOTATION), shown));
 		}
 
 		@Override
