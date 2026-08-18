@@ -14,3 +14,7 @@ accessible	field	net/minecraft/world/level/block/entity/BrushableBlockEntity	hit
 accessible	method	net/minecraft/world/level/block/entity/BrushableBlockEntity	dropContent	(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/item/ItemStack;)V
 accessible	method	net/minecraft/world/level/block/entity/BrushableBlockEntity	getCompletionState	()I
 accessible	method	net/minecraft/world/level/block/entity/BrushableBlockEntity	unpackLootTable	(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/item/ItemStack;)V
+
+# OwnableBlock registers reinforced blocks as unbreakable and hands the real destroy time back only to the
+# owner, which means reading the destroy time the block asked for. Upstream gets this from a Forge AT.
+accessible	field	net/minecraft/world/level/block/state/BlockBehaviour$Properties	destroyTime	F
