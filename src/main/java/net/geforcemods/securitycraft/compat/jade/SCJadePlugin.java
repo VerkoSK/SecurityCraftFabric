@@ -49,7 +49,7 @@ public final class SCJadePlugin implements IWailaPlugin, IBlockComponentProvider
 		}
 
 		if (be instanceof IModuleInventory inv && config.get(SHOW_MODULES) && !inv.getInsertedModules().isEmpty()) {
-			tooltip.add(Utils.localize("waila.securitycraft:modules").withStyle(ChatFormatting.GRAY));
+			tooltip.add(Utils.localize("waila.securitycraft:equipped").withStyle(ChatFormatting.GRAY));
 
 			for (ModuleType module : inv.getInsertedModules()) {
 				tooltip.add(Component.literal("- ").append(Utils.localize(module.getTranslationKey())).withStyle(ChatFormatting.GRAY));
