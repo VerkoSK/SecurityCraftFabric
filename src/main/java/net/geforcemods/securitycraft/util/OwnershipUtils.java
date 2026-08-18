@@ -35,7 +35,11 @@ public final class OwnershipUtils {
 		if (destroyTimeForOwner == -1.0F)
 			return 0.0F;
 
-		boolean owned = !(level.getBlockEntity(pos) instanceof IOwnable ownable) || !ownable.getOwner().owns() || ownable.isOwnedBy(player);
+		//A block with no owner data at all - anything placed before this became ownable - stays breakable, so old
+		//worlds do not end up full of bedrock. Once the data is there, only the owner may break it. Note that the
+		//owner's UUID is the placeholder one whenever the Universal Owner Changer names a player who is offline,
+		//so this must not test Owner#owns: isOwnedBy falls back to matching the name in exactly that case.
+		boolean owned = !(level.getBlockEntity(pos) instanceof IOwnable ownable) || ownable.isOwnedBy(player);
 
 		if (!owned && !ConfigHandler.allowBreakingNonOwnedBlocks)
 			return 0.0F;

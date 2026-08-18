@@ -22,7 +22,8 @@ java {
 
 repositories {
 	maven { url = 'https://maven.fabricmc.net/' }
-	maven { url = 'https://maven.blamejared.com' }
+	maven { url = 'https://maven.blamejared.com' } // JEI
+	maven { url = 'https://api.modrinth.com/maven' } // Jade
 	mavenCentral()
 }
 
@@ -34,6 +35,9 @@ dependencies {
 	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 	// JEI compat plugin. The new loom auto-remaps mod jars declared via plain implementation.
 	implementation "mezz.jei:jei-${project.minecraft_version}-fabric:${project.jei_version}"
+	// Jade is optional at runtime; compiling against it is what lets the plugin exist at all.
+	compileOnly "maven.modrinth:jade:${project.jade_version}"
+	localRuntime "maven.modrinth:jade:${project.jade_version}"
 }
 
 processResources {

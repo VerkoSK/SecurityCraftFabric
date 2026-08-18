@@ -1135,5 +1135,14 @@
 	"messages.securitycraft:universalOwnerChanger.noBlockClaiming": "You cannot claim blocks without an owner.",
 	"messages.securitycraft:universalOwnerChanger.noName": "You need to give this item the name of the new block owner. Use an anvil to rename it.",
 	"messages.securitycraft:universalOwnerChanger.notOwned": "This is not your block, you cannot change its owner.",
-	"messages.securitycraft:universalOwnerChanger.ownerInvalidated": "The block's owner has been changed and thus needs to be validated by the new owner to work again. To validate a block, the new owner of the block has to rightclick it."
+	"messages.securitycraft:universalOwnerChanger.ownerInvalidated": "The block's owner has been changed and thus needs to be validated by the new owner to work again. To validate a block, the new owner of the block has to rightclick it.",
+	"config.jade.plugin_securitycraft": "SecurityCraft",
+	"config.jade.plugin_securitycraft.info": "Show SecurityCraft Information?",
+	"config.jade.plugin_securitycraft.showcustomname": "Show named blocks?",
+	"config.jade.plugin_securitycraft.showmodules": "Show Modules?",
+	"config.jade.plugin_securitycraft.showowner": "Display Owner?",
+	"waila.securitycraft:customName": "Custom name: %s",
+	"waila.securitycraft:equipped": "Equipped with:",
+	"waila.securitycraft:owner": "Owner: %s",
+	"waila.securitycraft:modules": "Equipped modules:"
 }
