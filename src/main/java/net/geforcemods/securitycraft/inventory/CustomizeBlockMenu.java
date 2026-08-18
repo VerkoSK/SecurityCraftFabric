@@ -50,6 +50,11 @@ public class CustomizeBlockMenu extends AbstractContainerMenu {
 		}
 	}
 
+	/** How many of the leading slots are module slots, so the screen knows which ones to outline. */
+	public int moduleSlotCount() {
+		return moduleSlots;
+	}
+
 	@Override
 	public ItemStack quickMoveStack(Player player, int index) {
 		Slot slot = slots.get(index);
