@@ -62,6 +62,19 @@ public class PlayerUtils {
 		player.displayClientMessage(line, false);
 	}
 
+	/**
+	 * @param owner The owner to display
+	 * @return The owner's team name in the team's colour if they own blocks as a team, their plain name otherwise
+	 */
+	public static Component getOwnerComponent(Owner owner) {
+		TeamUtils.TeamRepresentation teamRepresentation = TeamUtils.getTeamRepresentation(owner);
+
+		if (teamRepresentation != null)
+			return Utils.localize("messages.securitycraft:teamOwner", Component.literal(teamRepresentation.name()).withStyle(Style.EMPTY.withColor(teamRepresentation.color()))).withStyle(ChatFormatting.GRAY);
+
+		return Component.literal(owner.getName());
+	}
+
 	public static ItemStack getItemStackFromAnyHand(Player player, Item item) {
 		if (player.getMainHandItem().is(item))
 			return player.getMainHandItem();
