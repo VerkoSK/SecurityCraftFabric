@@ -581,7 +581,7 @@
 	"gui.securitycraft:mrat.unbind": "Unbind mine",
 	"gui.securitycraft:scManual.block_mines": "Block Mines",
 	"gui.securitycraft:scManual.explosiveBlock": "Explosive: This block is able to be remotely detonated, and may be able to be activated/deactivated, using the Mine Remote Access Tool.",
-	"help.securitycraft.mine.info": "The mine explodes when stepped on by any entity other than creepers, cats, and ocelots. Rightclicking the mine while holding wire cutters will defuse the mine and allow you to break it. Rightclicking with flint and steel equipped will re-enable it.",
+	"help.securitycraft.mine.info": "The mine explodes when stepped on by any entity. Rightclicking the mine while holding wire cutters will defuse the mine and allow you to break it. Rightclicking with flint and steel equipped will re-enable it.",
 	"help.securitycraft.block_mines.info": "Block mines are mines disguised as a different block. Walking into, or mining one of them, will cause it to explode. This is not the case for the owner of the block mine.",
 	"help.securitycraft.furnace_mines.info": "Furnace mines function just like the standard mines, except they only explode when rightclicked or broken by someone other than the owner.",
 	"help.securitycraft.bouncing_betty.info": "The bouncing betty will launch up into the air and explode when touched.",
@@ -602,7 +602,7 @@
 	"option.securitycraft.ims.range.description": "How many blocks away can the I.M.S. detect potential targets from?",
 	"tooltip.securitycraft:mine": "Mine %s: %s",
 	"block.securitycraft.portable_radar": "Portable Radar",
-	"help.securitycraft.portable_radar.info": "The portable radar will send the owner a chat message whenever a player is inside of the radar's detection radius (modifiable in the config file).",
+	"help.securitycraft.portable_radar.info": "The portable radar will send the owner a chat message whenever a player is inside of the radar's detection radius (25 blocks by default, can be changed with the universal block modifier).",
 	"messages.securitycraft:portableRadar.withName": "%1$s is near your portable radar named %2$s at %3$s.",
 	"messages.securitycraft:portableRadar.withoutName": "%1$s is near your portable radar at %2$s.",
 	"module.securitycraft.portable_radar.blacklist_module.description": "Adding a denylist module to a portable radar will make the radar only look out for players on the list.",
@@ -624,7 +624,6 @@
 	"option.generic.ignoreOwner.description": "Should this block ignore its owner, meaning any functionality it has will not work for the owner?",
 	"option.generic.respectInvisibility": "Respect Invisibility: %s",
 	"option.generic.respectInvisibility.description": "Should this block ignore players and entities that are invisible?",
-	"block.securitycraft.iron_door_reinforced": "Reinforced Door",
 	"item.securitycraft.universal_owner_changer": "Universal Owner Changer",
 	"messages.securitycraft:universalOwnerChanger.briefcase.notOwned": "This is not your briefcase, you cannot change its owner.",
 	"messages.securitycraft:universalOwnerChanger.cantChange": "This block cannot hold an owner. Please rightclick an appropriate SecurityCraft block.",
@@ -641,5 +640,8 @@
 	"waila.securitycraft:customName": "Custom name: %s",
 	"waila.securitycraft:equipped": "Equipped with:",
 	"waila.securitycraft:owner": "Owner: %s",
-	"waila.securitycraft:modules": "Equipped modules:"
+	"waila.securitycraft:modules": "Equipped modules:",
+	"block.securitycraft.reinforced_iron_door": "Reinforced Door",
+	"item.securitycraft.universal_block_modifier": "Universal Block Modifier",
+	"messages.securitycraft:universalBlockModifier.owner": "This block belongs to %s."
 }
