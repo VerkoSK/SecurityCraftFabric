@@ -1,0 +1,16 @@
+{
+	"electrified": {
+		"category": "block",
+		"sounds": [
+			"securitycraft:electrified"
+		],
+		"subtitle": "securitycraft.subtitle.electrified"
+	},
+	"lock": {
+		"category": "block",
+		"sounds": [
+			"securitycraft:lock"
+		],
+		"subtitle": "securitycraft.subtitle.lock"
+	}
+}
