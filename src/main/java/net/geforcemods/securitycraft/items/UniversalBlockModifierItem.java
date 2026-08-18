@@ -40,7 +40,7 @@ public class UniversalBlockModifierItem extends Item {
 		Player player = ctx.getPlayer();
 
 		if (level.getBlockEntity(pos) instanceof IOwnable ownable && !ownable.isOwnedBy(player)) {
-			PlayerUtils.sendMessageToPlayer(player, Utils.localize(SCContent.UNIVERSAL_BLOCK_MODIFIER.getDescriptionId()), Utils.localize("messages.securitycraft:universalBlockModifier.notOwned"), ChatFormatting.RED);
+			PlayerUtils.sendMessageToPlayer(player, Utils.localize(SCContent.UNIVERSAL_BLOCK_MODIFIER.getDescriptionId()), Utils.localize("messages.securitycraft:notOwned", ownable.getOwner().getName()), ChatFormatting.RED);
 			return InteractionResult.FAIL;
 		}
 
