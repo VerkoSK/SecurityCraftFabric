@@ -14,17 +14,17 @@
           "conditions": [
             {
               "condition": "minecraft:block_state_property",
-              "block": "securitycraft:iron_door_reinforced",
+              "block": "securitycraft:reinforced_iron_door",
               "properties": {
                 "half": "lower"
               }
             }
           ],
-          "name": "securitycraft:iron_door_reinforced"
+          "name": "securitycraft:reinforced_iron_door"
         }
       ],
       "rolls": 1.0
     }
   ],
-  "random_sequence": "securitycraft:blocks/iron_door_reinforced"
+  "random_sequence": "securitycraft:blocks/reinforced_iron_door"
 }
