@@ -8,6 +8,7 @@ import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.geforcemods.securitycraft.commands.SCCommand;
 import net.geforcemods.securitycraft.items.MineRemoteAccessToolItem;
+import net.geforcemods.securitycraft.items.UniversalBlockModifierItem;
 import net.geforcemods.securitycraft.items.UniversalOwnerChangerItem;
 import net.geforcemods.securitycraft.network.NetworkHandler;
 import net.minecraft.server.MinecraftServer;
@@ -29,6 +30,7 @@ public class SecurityCraft implements ModInitializer {
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> SCCommand.register(dispatcher));
 		MineRemoteAccessToolItem.registerBindingCallback();
 		UniversalOwnerChangerItem.registerUseCallback();
+		UniversalBlockModifierItem.registerUseCallback();
 		ServerLifecycleEvents.SERVER_STARTED.register(server -> SERVER = server);
 		ServerLifecycleEvents.SERVER_STOPPED.register(server -> SERVER = null);
 		LOGGER.info("SecurityCraft (Fabric port) v{} initialized", VERSION);
