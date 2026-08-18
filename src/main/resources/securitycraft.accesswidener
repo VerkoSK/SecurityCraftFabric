@@ -5,6 +5,12 @@ accessWidener	v2	named
 accessible	field	net/minecraft/client/gui/components/EditBox	value	Ljava/lang/String;
 extendable	method	net/minecraft/client/gui/components/EditBox	scrollTo	(I)V
 
+# BaseFullMineBlock#wasExploded compares its position against the explosion's center. Forge patches in
+# Explosion#getPosition(), vanilla keeps x/y/z private.
+accessible	field	net/minecraft/world/level/Explosion	x	D
+accessible	field	net/minecraft/world/level/Explosion	y	D
+accessible	field	net/minecraft/world/level/Explosion	z	D
+
 # BrushableMineBlockEntity re-implements BrushableBlockEntity#brush/#checkReset on top of vanilla's private brushing
 # state. Upstream gets the same access from NeoForge's access transformers.
 # Do NOT widen BrushableBlockEntity#brushingCompleted: `accessible` makes a private method final, which would clash
@@ -16,3 +22,7 @@ accessible	field	net/minecraft/world/level/block/entity/BrushableBlockEntity	hit
 accessible	method	net/minecraft/world/level/block/entity/BrushableBlockEntity	dropContent	(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/item/ItemStack;)V
 accessible	method	net/minecraft/world/level/block/entity/BrushableBlockEntity	unpackLootTable	(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/item/ItemStack;)V
 accessible	method	net/minecraft/world/level/block/entity/BrushableBlockEntity	getCompletionState	()I
+
+# OwnableBlock registers reinforced blocks as unbreakable and hands the real destroy time back only to the
+# owner, which means reading the destroy time the block asked for. Upstream gets this from a Forge AT.
+accessible	field	net/minecraft/world/level/block/state/BlockBehaviour$Properties	destroyTime	F
