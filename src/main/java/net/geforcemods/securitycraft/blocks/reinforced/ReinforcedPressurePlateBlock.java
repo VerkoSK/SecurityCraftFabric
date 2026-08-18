@@ -19,8 +19,9 @@ import net.minecraft.world.level.block.state.properties.BlockSetType;
 public class ReinforcedPressurePlateBlock extends PressurePlateBlock implements IReinforcedBlock, EntityBlock {
 	private final float destroyTimeForOwner;
 
-	public ReinforcedPressurePlateBlock(PressurePlateBlock.Sensitivity sensitivity, BlockBehaviour.Properties properties, BlockSetType setType) {
-		super(sensitivity, OwnableBlock.withReinforcedDestroyTime(properties), setType);
+	//adaptation: 1.21.1's PressurePlateBlock constructor drops the Sensitivity parameter and takes (setType, properties)
+	public ReinforcedPressurePlateBlock(BlockBehaviour.Properties properties, BlockSetType setType) {
+		super(setType, OwnableBlock.withReinforcedDestroyTime(properties));
 		destroyTimeForOwner = OwnableBlock.getStoredDestroyTime();
 	}
 

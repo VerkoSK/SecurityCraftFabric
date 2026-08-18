@@ -19,8 +19,9 @@ import net.minecraft.world.level.block.state.properties.WoodType;
 public class ReinforcedFenceGateBlock extends FenceGateBlock implements IReinforcedBlock, EntityBlock {
 	private final float destroyTimeForOwner;
 
-	public ReinforcedFenceGateBlock(BlockBehaviour.Properties properties, WoodType woodType) {
-		super(OwnableBlock.withReinforcedDestroyTime(properties), woodType);
+	//adaptation: 1.21.1's FenceGateBlock constructor takes (woodType, properties) instead of (properties, woodType)
+	public ReinforcedFenceGateBlock(WoodType woodType, BlockBehaviour.Properties properties) {
+		super(woodType, OwnableBlock.withReinforcedDestroyTime(properties));
 		destroyTimeForOwner = OwnableBlock.getStoredDestroyTime();
 	}
 

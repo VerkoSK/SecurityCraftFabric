@@ -19,8 +19,9 @@ import net.minecraft.world.level.block.state.properties.BlockSetType;
 public class ReinforcedButtonBlock extends ButtonBlock implements IReinforcedBlock, EntityBlock {
 	private final float destroyTimeForOwner;
 
-	public ReinforcedButtonBlock(BlockBehaviour.Properties properties, BlockSetType setType, int ticksToStayPressed, boolean arrowsCanPress) {
-		super(OwnableBlock.withReinforcedDestroyTime(properties), setType, ticksToStayPressed, arrowsCanPress);
+	//adaptation: 1.21.1's ButtonBlock constructor drops the arrowsCanPress parameter and takes (setType, ticksToStayPressed, properties)
+	public ReinforcedButtonBlock(BlockBehaviour.Properties properties, BlockSetType setType, int ticksToStayPressed) {
+		super(setType, ticksToStayPressed, OwnableBlock.withReinforcedDestroyTime(properties));
 		destroyTimeForOwner = OwnableBlock.getStoredDestroyTime();
 	}
 

@@ -86,7 +86,12 @@ public class Owner {
 		if (otherUUID != null && otherUUID.equals(selfUUID))
 			return true;
 
-		return otherName != null && (selfUUID.equals(DEFAULT_OWNER_UUID) || otherUUID.equals(DEFAULT_OWNER_UUID)) && otherName.equals(getName());
+		if (otherName != null && (selfUUID.equals(DEFAULT_OWNER_UUID) || otherUUID.equals(DEFAULT_OWNER_UUID)) && otherName.equals(getName()))
+			return true;
+
+		//two different players still count as the same owner while they share a scoreboard team, if the server
+		//turned that on; TeamUtils returns false outright when the option is off, so this costs nothing otherwise
+		return net.geforcemods.securitycraft.util.TeamUtils.areOnSameTeam(this, otherOwner);
 	}
 
 	public Owner copy() {
