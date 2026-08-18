@@ -31,6 +31,9 @@
 		],
 		"jei_mod_plugin": [
 			"net.geforcemods.securitycraft.compat.jei.SCJEIPlugin"
+		],
+		"jade": [
+			"net.geforcemods.securitycraft.compat.jade.SCJadePlugin"
 		]
 	},
 	"depends": {
@@ -40,6 +43,7 @@
 		"java": ">=21"
 	},
 	"suggests": {
-		"jei": "*"
+		"jei": "*",
+		"jade": "*"
 	}
 }
