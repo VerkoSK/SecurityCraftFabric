@@ -3,12 +3,14 @@ package net.geforcemods.securitycraft.compat.jade;
 import net.geforcemods.securitycraft.SecurityCraft;
 import net.geforcemods.securitycraft.api.IModuleInventory;
 import net.geforcemods.securitycraft.api.IOwnable;
-import net.geforcemods.securitycraft.api.Owner;
 import net.geforcemods.securitycraft.misc.ModuleType;
+import net.geforcemods.securitycraft.util.PlayerUtils;
 import net.geforcemods.securitycraft.util.Utils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.Nameable;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import snownee.jade.api.BlockAccessor;
@@ -26,9 +28,9 @@ import snownee.jade.api.config.IPluginConfig;
 @WailaPlugin(SecurityCraft.MODID)
 public final class SCJadePlugin implements IWailaPlugin, IBlockComponentProvider {
 	private static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(SecurityCraft.MODID, "info");
-	private static final ResourceLocation SHOW_OWNER = ResourceLocation.fromNamespaceAndPath(SecurityCraft.MODID, "show_owner");
-	private static final ResourceLocation SHOW_MODULES = ResourceLocation.fromNamespaceAndPath(SecurityCraft.MODID, "show_modules");
-	private static final ResourceLocation SHOW_CUSTOM_NAME = ResourceLocation.fromNamespaceAndPath(SecurityCraft.MODID, "show_custom_name");
+	private static final ResourceLocation SHOW_OWNER = ResourceLocation.fromNamespaceAndPath(SecurityCraft.MODID, "showowner");
+	private static final ResourceLocation SHOW_MODULES = ResourceLocation.fromNamespaceAndPath(SecurityCraft.MODID, "showmodules");
+	private static final ResourceLocation SHOW_CUSTOM_NAME = ResourceLocation.fromNamespaceAndPath(SecurityCraft.MODID, "showcustomname");
 
 	@Override
 	public void registerClient(IWailaClientRegistration registration) {
@@ -42,18 +44,32 @@ public final class SCJadePlugin implements IWailaPlugin, IBlockComponentProvider
 	public void appendTooltip(ITooltip tooltip, BlockAccessor accessor, IPluginConfig config) {
 		BlockEntity be = accessor.getBlockEntity();
 
-		if (be instanceof IOwnable ownable && config.get(SHOW_OWNER)) {
-			Owner owner = ownable.getOwner();
+		if (be == null)
+			return;
 
-			tooltip.add(Utils.localize("waila.securitycraft:owner", owner.owns() || !owner.getName().isEmpty() ? owner.getName() : "????").withStyle(ChatFormatting.GRAY));
-		}
+		if (be instanceof IOwnable ownable && config.get(SHOW_OWNER))
+			tooltip.add(Utils.localize("waila.securitycraft:owner", PlayerUtils.getOwnerComponent(ownable.getOwner())).withStyle(ChatFormatting.GRAY));
 
-		if (be instanceof IModuleInventory inv && config.get(SHOW_MODULES) && !inv.getInsertedModules().isEmpty()) {
+		//an ownable block only lists its modules to its owner, everything else always lists them
+		if (be instanceof IModuleInventory inv && config.get(SHOW_MODULES) && !inv.getInsertedModules().isEmpty() && (!(be instanceof IOwnable ownable) || ownable.isOwnedBy(accessor.getPlayer()))) {
 			tooltip.add(Utils.localize("waila.securitycraft:equipped").withStyle(ChatFormatting.GRAY));
 
 			for (ModuleType module : inv.getInsertedModules()) {
-				tooltip.add(Component.literal("- ").append(Utils.localize(module.getTranslationKey())).withStyle(ChatFormatting.GRAY));
+				MutableComponent prefix;
+
+				if (inv.isModuleEnabled(module))
+					prefix = Component.literal("✔ ").withStyle(ChatFormatting.GREEN);
+				else
+					prefix = Component.literal("✕ ").withStyle(ChatFormatting.RED);
+
+				tooltip.add(prefix.append(Component.translatable(module.getTranslationKey()).withStyle(ChatFormatting.GRAY)));
 			}
+		}
+
+		if (config.get(SHOW_CUSTOM_NAME) && be instanceof Nameable nameable && nameable.hasCustomName()) {
+			Component name = nameable.getCustomName();
+
+			tooltip.add(Utils.localize("waila.securitycraft:customName", name == null ? Component.empty() : name).withStyle(ChatFormatting.GRAY));
 		}
 	}
 

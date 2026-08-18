@@ -38,10 +38,15 @@ public class UniversalBlockModifierItem extends Item {
 		UseBlockCallback.EVENT.register((player, level, hand, hitResult) -> {
 			ItemStack stack = player.getItemInHand(hand);
 
-			if (stack.getItem() instanceof UniversalBlockModifierItem modifier)
-				return modifier.onItemUseFirst(new UseOnContext(player, hand, hitResult));
+			if (!(stack.getItem() instanceof UniversalBlockModifierItem modifier))
+				return InteractionResult.PASS;
 
-			return InteractionResult.PASS;
+			//FAIL on the client makes Fabric swallow the interaction packet, so the server would never run this and
+			//the "not owned" message would never be sent; SUCCESS still lets the packet through
+			if (level.isClientSide)
+				return level.getBlockEntity(hitResult.getBlockPos()) instanceof IModuleInventory ? InteractionResult.SUCCESS : InteractionResult.PASS;
+
+			return modifier.onItemUseFirst(new UseOnContext(player, hand, hitResult));
 		});
 	}
 
@@ -55,9 +60,7 @@ public class UniversalBlockModifierItem extends Item {
 			return InteractionResult.PASS;
 
 		if (be instanceof IOwnable ownable && !ownable.isOwnedBy(player)) {
-			if (!level.isClientSide)
-				PlayerUtils.sendMessageToPlayer(player, Utils.localize(getDescriptionId()), Utils.localize("messages.securitycraft:notOwned", ownable.getOwner().getName()), ChatFormatting.RED);
-
+			PlayerUtils.sendMessageToPlayer(player, Utils.localize(getDescriptionId()), Utils.localize("messages.securitycraft:notOwned", PlayerUtils.getOwnerComponent(ownable.getOwner())), ChatFormatting.RED);
 			return InteractionResult.FAIL;
 		}
 
