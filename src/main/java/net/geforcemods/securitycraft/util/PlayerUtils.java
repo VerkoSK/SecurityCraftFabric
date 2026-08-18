@@ -9,6 +9,7 @@ import net.geforcemods.securitycraft.api.Owner;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -54,7 +55,21 @@ public class PlayerUtils {
 	}
 
 	public static void sendMessageToPlayer(Player player, MutableComponent title, MutableComponent message, ChatFormatting color) {
-		player.sendSystemMessage(Component.literal("[").append(title).append("] ").append(message).withStyle(color));
+		sendMessageToPlayer(player, title, message, color, false);
+	}
+
+	/**
+	 * Sends a chat message from one side only, matching upstream. Callers like the mine remote access tool run on both
+	 * the client and the server, so without this check the same message would be printed to chat twice.
+	 */
+	public static void sendMessageToPlayer(Player player, MutableComponent title, MutableComponent message, ChatFormatting color, boolean shouldSendFromClient) {
+		if (player != null && player.level().isClientSide == shouldSendFromClient) {
+			//only the name in the brackets carries the colour; the message itself stays white, like upstream.
+			//withStyle on the whole component would tint the message too, which is what this used to do.
+			MutableComponent line = Component.literal("[").append(title.setStyle(Style.EMPTY.withColor(color))).append(Component.literal("] ")).setStyle(Style.EMPTY.withColor(ChatFormatting.WHITE)).append(message);
+
+			player.displayClientMessage(line, false);
+		}
 	}
 
 	public static ItemStack getItemStackFromAnyHand(Player player, Item item) {
