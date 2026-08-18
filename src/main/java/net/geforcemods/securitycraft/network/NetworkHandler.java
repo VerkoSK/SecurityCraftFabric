@@ -8,6 +8,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.block.entity.BlockEntity;
 
 /** Registers SecurityCraft's payload types and the server-side receivers. */
 public final class NetworkHandler {
@@ -26,6 +27,7 @@ public final class NetworkHandler {
 		PayloadTypeRegistry.playC2S().register(SetListModuleDataPayload.TYPE, SetListModuleDataPayload.CODEC);
 		PayloadTypeRegistry.playC2S().register(RemoteControlMinePayload.TYPE, RemoteControlMinePayload.CODEC);
 		PayloadTypeRegistry.playC2S().register(RemoveMineFromMRATPayload.TYPE, RemoveMineFromMRATPayload.CODEC);
+		PayloadTypeRegistry.playC2S().register(SetOptionPayload.TYPE, SetOptionPayload.CODEC);
 	}
 
 	/** Registers the server-side handlers for the client -> server passcode packets. */
@@ -79,6 +81,13 @@ public final class NetworkHandler {
 			if (server != null)
 				server.execute(() -> handleRemoveMineFromMRAT(player, payload));
 		});
+		ServerPlayNetworking.registerGlobalReceiver(SetOptionPayload.TYPE, (payload, context) -> {
+			ServerPlayer player = context.player();
+			MinecraftServer server = player.getServer();
+
+			if (server != null)
+				server.execute(() -> handleSetOption(player, payload));
+		});
 	}
 
 	private static void handleRemoteControlMine(ServerPlayer player, RemoteControlMinePayload payload) {
@@ -87,6 +96,37 @@ public final class NetworkHandler {
 
 		if (!player.isSpectator() && state.getBlock() instanceof net.geforcemods.securitycraft.api.IExplosive explosive && level.getBlockEntity(payload.pos()) instanceof net.geforcemods.securitycraft.api.IOwnable ownable && ownable.isOwnedBy(player))
 			payload.action().act(explosive, level, payload.pos());
+	}
+
+	private static void handleSetOption(ServerPlayer player, SetOptionPayload payload) {
+		ServerLevel level = player.serverLevel();
+
+		if (player.isSpectator() || !inReach(player, payload.pos()) || !(level.getBlockEntity(payload.pos()) instanceof net.geforcemods.securitycraft.api.ICustomizable customizable))
+			return;
+
+		if (customizable instanceof net.geforcemods.securitycraft.api.IOwnable ownable && !ownable.isOwnedBy(player))
+			return;
+
+		net.geforcemods.securitycraft.api.Option<?>[] options = customizable.customOptions();
+
+		if (payload.optionIndex() < 0 || payload.optionIndex() >= options.length)
+			return;
+
+		net.geforcemods.securitycraft.api.Option<?> option = options[payload.optionIndex()];
+
+		if (payload.toggle())
+			option.toggle();
+		else if (option instanceof net.geforcemods.securitycraft.api.Option.IntOption intOption)
+			intOption.setValue((int) Math.round(payload.value()));
+		else if (option instanceof net.geforcemods.securitycraft.api.Option.DoubleOption doubleOption)
+			doubleOption.setValue(payload.value());
+
+		customizable.onOptionChanged(option);
+
+		if (customizable instanceof BlockEntity be) {
+			be.setChanged();
+			level.sendBlockUpdated(payload.pos(), be.getBlockState(), be.getBlockState(), 3);
+		}
 	}
 
 	private static void handleRemoveMineFromMRAT(ServerPlayer player, RemoveMineFromMRATPayload payload) {
