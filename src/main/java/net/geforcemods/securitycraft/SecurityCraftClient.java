@@ -111,6 +111,10 @@ public class SecurityCraftClient implements ClientModInitializer {
 		for (Block cutout : SCContent.CUTOUT_BLOCKS)
 			BlockRenderLayerMap.INSTANCE.putBlock(cutout, RenderType.cutout());
 
+		//the door model carries NeoForge's "render_type": "cutout" field, which Fabric ignores, so its window
+		//pane would render solid black instead of see-through
+		BlockRenderLayerMap.INSTANCE.putBlock(SCContent.REINFORCED_DOOR, RenderType.cutout());
+
 		// Disguise: wrap the laser + keypad block models so they can render as the disguised block (from the disguise module).
 		net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin.register(pluginContext -> pluginContext.modifyModelAfterBake().register((model, context) -> {
 			net.minecraft.resources.ResourceLocation id = context.id();
