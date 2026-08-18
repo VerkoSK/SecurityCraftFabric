@@ -56,6 +56,8 @@ public class SCContent {
 	public static net.geforcemods.securitycraft.blocks.LaserFieldBlock LASER_FIELD;
 	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.LaserBlockBlockEntity> LASER_BLOCK_BLOCK_ENTITY;
 	public static BlockEntityType<net.geforcemods.securitycraft.api.OwnableBlockEntity> ABSTRACT_BLOCK_ENTITY;
+	public static Block REINFORCED_DOOR;
+	public static Item UNIVERSAL_OWNER_CHANGER;
 	public static net.geforcemods.securitycraft.blocks.KeyPanelBlock KEY_PANEL;
 	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.KeyPanelBlockEntity> KEY_PANEL_BLOCK_ENTITY;
 	public static Item KEY_PANEL_ITEM;
@@ -605,6 +607,7 @@ public class SCContent {
 		KEY_PANEL = (net.geforcemods.securitycraft.blocks.KeyPanelBlock) registerBlockNoItem("key_panel", key -> new net.geforcemods.securitycraft.blocks.KeyPanelBlock(BlockBehaviour.Properties.of().strength(3.5F).sound(SoundType.METAL).noOcclusion().setId(key)));
 		KEY_PANEL_ITEM = registerItem("keypad_item", new net.geforcemods.securitycraft.items.KeyPanelItem(new Item.Properties().setId(ResourceKey.create(Registries.ITEM, id("keypad_item")))));
 		FRAME = (net.geforcemods.securitycraft.blocks.FrameBlock) register("keypad_frame", key -> new net.geforcemods.securitycraft.blocks.FrameBlock(BlockBehaviour.Properties.of().mapColor(net.minecraft.world.level.material.MapColor.METAL).strength(5.0F).sound(SoundType.METAL).noOcclusion().setId(key)));
+		REINFORCED_DOOR = register("iron_door_reinforced", key -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedDoorBlock(BlockSetType.IRON, BlockBehaviour.Properties.of().mapColor(net.minecraft.world.level.material.MapColor.METAL).strength(5.0F, 12000.0F).requiresCorrectToolForDrops().sound(SoundType.METAL).noOcclusion().setId(key)));
 		net.geforcemods.securitycraft.api.SecurityCraftAPI.registerPasscodeConvertible(new net.geforcemods.securitycraft.blocks.KeypadBlock.Convertible());
 
 		for (String[] entry : REINFORCED)
@@ -619,6 +622,7 @@ public class SCContent {
 		STORAGE_MODULE = registerModule("storage_module", net.geforcemods.securitycraft.misc.ModuleType.STORAGE, false, false, false);
 		DISGUISE_MODULE = registerModule("disguise_module", net.geforcemods.securitycraft.misc.ModuleType.DISGUISE, false, true, false);
 		SPEED_MODULE = registerModule("speed_module", net.geforcemods.securitycraft.misc.ModuleType.SPEED, false, false, false);
+		UNIVERSAL_OWNER_CHANGER = registerItem("universal_owner_changer", new net.geforcemods.securitycraft.items.UniversalOwnerChangerItem(new Item.Properties().stacksTo(1).setId(ResourceKey.create(Registries.ITEM, id("universal_owner_changer")))));
 		LENS = registerItem("lens", new Item(new Item.Properties().setId(ResourceKey.create(Registries.ITEM, id("lens")))));
 
 		PORTABLE_RADAR = (net.geforcemods.securitycraft.blocks.PortableRadarBlock) register("portable_radar", key -> new net.geforcemods.securitycraft.blocks.PortableRadarBlock(mineProp(net.minecraft.world.level.material.MapColor.COLOR_BLACK, 5.0F).setId(key)));
@@ -791,6 +795,8 @@ public class SCContent {
 					output.accept(KEYPAD);
 					output.accept(KEY_PANEL_ITEM);
 					output.accept(FRAME);
+					output.accept(REINFORCED_DOOR);
+					output.accept(UNIVERSAL_OWNER_CHANGER);
 					output.accept(LASER_BLOCK);
 					output.accept(PORTABLE_RADAR);
 					output.accept(REDSTONE_MODULE);
