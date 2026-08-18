@@ -27,6 +27,7 @@ public final class NetworkHandler {
 		PayloadTypeRegistry.playC2S().register(RemoteControlMinePayload.TYPE, RemoteControlMinePayload.CODEC);
 		PayloadTypeRegistry.playC2S().register(RemoveMineFromMRATPayload.TYPE, RemoveMineFromMRATPayload.CODEC);
 		PayloadTypeRegistry.playC2S().register(SetOptionPayload.TYPE, SetOptionPayload.CODEC);
+		PayloadTypeRegistry.playC2S().register(ToggleModulePayload.TYPE, ToggleModulePayload.CODEC);
 	}
 
 	/** Registers the server-side handlers for the client -> server passcode packets. */
@@ -87,6 +88,13 @@ public final class NetworkHandler {
 			if (server != null)
 				server.execute(() -> handleSetOption(player, payload));
 		});
+		ServerPlayNetworking.registerGlobalReceiver(ToggleModulePayload.TYPE, (payload, context) -> {
+			ServerPlayer player = context.player();
+			MinecraftServer server = player.getServer();
+
+			if (server != null)
+				server.execute(() -> handleToggleModule(player, payload));
+		});
 	}
 
 	private static void handleRemoteControlMine(ServerPlayer player, RemoteControlMinePayload payload) {
@@ -95,6 +103,34 @@ public final class NetworkHandler {
 
 		if (!player.isSpectator() && state.getBlock() instanceof net.geforcemods.securitycraft.api.IExplosive explosive && level.getBlockEntity(payload.pos()) instanceof net.geforcemods.securitycraft.api.IOwnable ownable && ownable.isOwnedBy(player))
 			payload.action().act(explosive, level, payload.pos());
+	}
+
+	private static void handleToggleModule(ServerPlayer player, ToggleModulePayload payload) {
+		ServerLevel level = player.serverLevel();
+
+		if (player.isSpectator() || !inReach(player, payload.pos()) || !(level.getBlockEntity(payload.pos()) instanceof net.geforcemods.securitycraft.api.IModuleInventory moduleInv))
+			return;
+
+		if (moduleInv instanceof net.geforcemods.securitycraft.api.IOwnable ownable && !ownable.isOwnedBy(player))
+			return;
+
+		if (moduleInv.isModuleEnabled(payload.moduleType())) {
+			moduleInv.removeModule(payload.moduleType(), true);
+
+			if (moduleInv instanceof net.geforcemods.securitycraft.api.LinkableBlockEntity linkable)
+				linkable.propagate(new net.geforcemods.securitycraft.api.ILinkedAction.ModuleRemoved(payload.moduleType(), true), linkable);
+		}
+		else {
+			net.minecraft.world.item.ItemStack stack = moduleInv.getModule(payload.moduleType());
+
+			moduleInv.insertModule(stack, true);
+
+			if (moduleInv instanceof net.geforcemods.securitycraft.api.LinkableBlockEntity linkable)
+				linkable.propagate(new net.geforcemods.securitycraft.api.ILinkedAction.ModuleInserted(stack, (net.geforcemods.securitycraft.items.ModuleItem) stack.getItem(), true), linkable);
+		}
+
+		if (moduleInv instanceof net.minecraft.world.level.block.entity.BlockEntity be)
+			level.sendBlockUpdated(payload.pos(), be.getBlockState(), be.getBlockState(), 3);
 	}
 
 	private static void handleSetOption(ServerPlayer player, SetOptionPayload payload) {
