@@ -4,7 +4,6 @@ import net.geforcemods.securitycraft.SCContent;
 import net.geforcemods.securitycraft.api.IModuleInventory;
 import net.geforcemods.securitycraft.items.ModuleItem;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
@@ -21,10 +20,6 @@ public class CustomizeBlockMenu extends AbstractContainerMenu {
 	public final BlockEntity be;
 	private final ContainerLevelAccess containerLevelAccess;
 	private final int moduleSlots;
-
-	public CustomizeBlockMenu(int windowId, Inventory inventory, FriendlyByteBuf buf) {
-		this(windowId, inventory.player.level(), buf.readBlockPos(), inventory);
-	}
 
 	public CustomizeBlockMenu(int windowId, Level level, BlockPos pos, Inventory inventory) {
 		super(SCContent.CUSTOMIZE_BLOCK_MENU, windowId);
@@ -48,6 +43,11 @@ public class CustomizeBlockMenu extends AbstractContainerMenu {
 		for (int slot = 0; slot < 9; slot++) {
 			addSlot(new Slot(inventory, slot, 8 + slot * 18, 163));
 		}
+	}
+
+	/** How many of the leading slots are module slots, so the screen knows which ones to outline. */
+	public int moduleSlotCount() {
+		return moduleSlots;
 	}
 
 	@Override
