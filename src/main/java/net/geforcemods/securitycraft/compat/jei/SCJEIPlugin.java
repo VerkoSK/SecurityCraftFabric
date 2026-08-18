@@ -8,6 +8,7 @@ import mezz.jei.api.registration.IRecipeRegistration;
 
 import net.geforcemods.securitycraft.SCContent;
 import net.geforcemods.securitycraft.screen.BlockReinforcerScreen;
+import net.geforcemods.securitycraft.screen.CustomizeBlockScreen;
 import net.geforcemods.securitycraft.util.Utils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -29,6 +30,7 @@ public class SCJEIPlugin implements IModPlugin {
 	@Override
 	public void registerGuiHandlers(IGuiHandlerRegistration registration) {
 		registration.addGuiContainerHandler(BlockReinforcerScreen.class, new SlotMover<>());
+		registration.addGuiContainerHandler(CustomizeBlockScreen.class, new SlotMover<>());
 	}
 
 	@Override
