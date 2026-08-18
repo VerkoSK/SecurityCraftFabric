@@ -1,19 +1,25 @@
 package net.geforcemods.securitycraft.items;
 
+import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.geforcemods.securitycraft.SCContent;
+import net.geforcemods.securitycraft.api.ICustomizable;
 import net.geforcemods.securitycraft.api.IOwnable;
+import net.geforcemods.securitycraft.inventory.CustomizeBlockMenu;
 import net.geforcemods.securitycraft.util.PlayerUtils;
 import net.geforcemods.securitycraft.util.Utils;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.Level;
 
-/**
- * The Universal Block Modifier. Upstream opens the customize-block screen with it, which lets the owner change a
- * block's options; that screen is not ported yet, so for now it reports who owns the block instead. It is also
- * the ingredient the Universal Owner Changer is crafted from.
- */
+/** Opens the customize screen for the block it is used on, so its owner can fit modules and change its options. */
 public class UniversalBlockModifierItem extends Item {
 	public UniversalBlockModifierItem(Item.Properties properties) {
 		super(properties);
@@ -21,13 +27,43 @@ public class UniversalBlockModifierItem extends Item {
 
 	@Override
 	public InteractionResult useOn(UseOnContext ctx) {
-		if (ctx.getLevel().isClientSide)
-			return InteractionResult.SUCCESS;
+		Level level = ctx.getLevel();
+		BlockPos pos = ctx.getClickedPos();
 
-		if (!(ctx.getLevel().getBlockEntity(ctx.getClickedPos()) instanceof IOwnable ownable))
+		if (!(level.getBlockEntity(pos) instanceof ICustomizable))
 			return InteractionResult.PASS;
 
-		PlayerUtils.sendMessageToPlayer(ctx.getPlayer(), Utils.localize(SCContent.UNIVERSAL_BLOCK_MODIFIER.getDescriptionId()), Utils.localize("messages.securitycraft:universalBlockModifier.owner", ownable.getOwner().getName()), ChatFormatting.GREEN);
+		if (level.isClientSide)
+			return InteractionResult.SUCCESS;
+
+		Player player = ctx.getPlayer();
+
+		if (level.getBlockEntity(pos) instanceof IOwnable ownable && !ownable.isOwnedBy(player)) {
+			PlayerUtils.sendMessageToPlayer(player, Utils.localize(SCContent.UNIVERSAL_BLOCK_MODIFIER.getDescriptionId()), Utils.localize("messages.securitycraft:universalBlockModifier.notOwned"), ChatFormatting.RED);
+			return InteractionResult.FAIL;
+		}
+
+		if (player instanceof ServerPlayer serverPlayer) {
+			Component title = level.getBlockState(pos).getBlock().getName();
+
+			serverPlayer.openMenu(new ExtendedScreenHandlerFactory<BlockPos>() {
+				@Override
+				public AbstractContainerMenu createMenu(int windowId, Inventory inventory, Player p) {
+					return new CustomizeBlockMenu(windowId, level, pos, inventory);
+				}
+
+				@Override
+				public Component getDisplayName() {
+					return title;
+				}
+
+				@Override
+				public BlockPos getScreenOpeningData(ServerPlayer p) {
+					return pos;
+				}
+			});
+		}
+
 		return InteractionResult.SUCCESS;
 	}
 }
