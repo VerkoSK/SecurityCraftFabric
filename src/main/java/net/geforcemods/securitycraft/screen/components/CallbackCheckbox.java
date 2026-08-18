@@ -8,9 +8,15 @@ import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 
-/** A checkbox with a callback + custom text colour. Drawn without GUI sprites (which don't exist on MC 1.20.1). */
+import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
+
+/** Copy of vanilla's Checkbox that can change the text colour and drop the shadow, plus a change callback. */
 public class CallbackCheckbox extends AbstractButton {
+	private static final ResourceLocation TEXTURE = new ResourceLocation("textures/gui/checkbox.png");
 	private boolean selected;
 	private final Consumer<Boolean> onChange;
 	private final int textColor;
@@ -30,15 +36,13 @@ public class CallbackCheckbox extends AbstractButton {
 	@Override
 	public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
 		Minecraft minecraft = Minecraft.getInstance();
-		int boxSize = Math.min(width, height);
 
-		guiGraphics.fill(getX(), getY(), getX() + boxSize, getY() + boxSize, 0xFF000000);
-		guiGraphics.fill(getX() + 1, getY() + 1, getX() + boxSize - 1, getY() + boxSize - 1, isFocused() ? 0xFF666666 : 0xFF3C3C3C);
-
-		if (selected)
-			guiGraphics.fill(getX() + 3, getY() + 3, getX() + boxSize - 3, getY() + boxSize - 3, 0xFFE0E0E0);
-
-		guiGraphics.drawString(minecraft.font, getMessage(), getX() + (int) (boxSize * 1.2F), getY() + (boxSize - 8) / 2, 0xFF000000 | textColor, false);
+		RenderSystem.enableDepthTest();
+		RenderSystem.enableBlend();
+		RenderSystem.defaultBlendFunc();
+		RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+		guiGraphics.blit(TEXTURE, getX(), getY(), width, height, isFocused() ? 20.0F : 0.0F, selected ? 20.0F : 0.0F, 20, 20, 64, 64);
+		guiGraphics.drawString(minecraft.font, getMessage(), getX() + (int) (width * 1.2F), getY() + (height - 8) / 2, textColor | Mth.ceil(alpha * 255.0F) << 24, false);
 	}
 
 	@Override

@@ -17,11 +17,11 @@
               "source": "block_entity"
             }
           ],
-          "name": "securitycraft:reinforced_fence_gate"
+          "name": "securitycraft:electrified_iron_fence"
         }
       ],
       "rolls": 1.0
     }
   ],
-  "random_sequence": "securitycraft:blocks/reinforced_fence_gate"
+  "random_sequence": "securitycraft:blocks/electrified_iron_fence"
 }

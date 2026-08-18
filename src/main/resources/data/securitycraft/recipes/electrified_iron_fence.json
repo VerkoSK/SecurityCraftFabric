@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "F": {
+      "tag": "securitycraft:reinforced/wooden_fences"
+    },
+    "I": {
+      "item": "minecraft:iron_ingot"
+    }
+  },
+  "pattern": [
+    " I ",
+    "IFI",
+    " I "
+  ],
+  "result": {
+    "item": "securitycraft:electrified_iron_fence"
+  },
+  "show_notification": true
+}
