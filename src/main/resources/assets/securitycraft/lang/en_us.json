@@ -733,5 +733,18 @@
 	"option.securitycraft.username_logger.repeatedLogInterval.description": "How many seconds have to pass until the same player can be logged again.",
 	"option.securitycraft.username_logger.searchRadius": "Search radius: %s",
 	"option.securitycraft.username_logger.searchRadius.description": "The range in blocks in which the username logger searches for players.",
-	"messages.securitycraft:notOwned": "Sorry, you cannot do that. This is owned by %s."
+	"messages.securitycraft:notOwned": "Sorry, you cannot do that. This is owned by %s.",
+	"module.securitycraft.keypad.blacklist_module.description": "Adding a denylist module to a keypad will ban listed players from interacting with the block.",
+	"module.securitycraft.keypad.harming_module.description": "Adding a harming module to a block that requires a passcode will result in the player getting damaged, if they enter an incorrect code.",
+	"module.securitycraft.keypad.smart_module.description": "Adding a smart module to a block that requires a passcode will result in a cooldown being applied after an incorrect code has been entered. During that time, no new code can be entered.",
+	"module.securitycraft.keypad.whitelist_module.description": "Adding an allowlist module to a keypad will allow listed players to use the block without knowing the code.",
+	"module.securitycraft.laser_block.harming_module.description": "Adding a harming module to a laser block will cause players to take damage if they step through the lasers.",
+	"module.securitycraft.laser_block.redstone_module.description": "Adding a redstone module to a laser block will cause it to emit a 15-block redstone signal when a mob or player walks through the laser.",
+	"module.securitycraft.laser_block.smart_module.description": "Adding a smart module to a laser block will allow to turn off the laser for specific sides of the block.",
+	"module.securitycraft.laser_block.whitelist_module.description": "Adding an allowlist module to a laser block will allow listed players to walk through the lasers without emitting a redstone signal.",
+	"module.securitycraft.key_panel.blacklist_module.description": "Adding a denylist module to a key panel will ban listed players from interacting with the block.",
+	"module.securitycraft.key_panel.harming_module.description": "Adding a harming module to a block that requires a passcode will result in the player getting damaged, if they enter an incorrect code.",
+	"module.securitycraft.key_panel.smart_module.description": "Adding a smart module to a block that requires a passcode will result in a cooldown being applied after an incorrect code has been entered. During that time, no new code can be entered.",
+	"module.securitycraft.key_panel.whitelist_module.description": "Adding an allowlist module to a key panel will allow listed players to use the block without knowing the code.",
+	"module.generic.disguise_module.description": "Adding a disguise module to a block will cause the texture & model of it to change to the texture & model of the block that is added to the disguise module."
 }
