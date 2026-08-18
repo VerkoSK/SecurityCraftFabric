@@ -1,0 +1,9 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"category": "redstone",
+	"pattern": ["II", "II", "II"],
+	"key": {
+		"I": { "item": "securitycraft:reinforced_iron_block" }
+	},
+	"result": { "item": "securitycraft:iron_door_reinforced", "count": 3 }
+}
