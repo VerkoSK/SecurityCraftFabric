@@ -87,7 +87,12 @@ public class SecurityCraftClient implements ClientModInitializer {
 				context.client().levelExtractor.setBlocksDirty(pos.getX(), pos.getY(), pos.getZ(), pos.getX(), pos.getY(), pos.getZ());
 		}));
 
-		Block[] reinforced = SCContent.REINFORCED_BLOCKS.toArray(new Block[0]);
+		//the iron trapdoor has its own artwork, so upstream marks it hasReinforcedTint = false and leaves it untinted
+		java.util.List<Block> tinted = new java.util.ArrayList<>(SCContent.REINFORCED_BLOCKS);
+
+		tinted.remove(SCContent.REINFORCED_BY_NAME.get("reinforced_iron_trapdoor"));
+
+		Block[] reinforced = tinted.toArray(new Block[0]);
 		// 26.x replaced Fabric's ColorProviderRegistry (BlockColor lambda) with BlockColorRegistry + a List<BlockTintSource> indexed by tintindex.
 		BlockTintSource reinforcedTintSource = new BlockTintSource() {
 			@Override

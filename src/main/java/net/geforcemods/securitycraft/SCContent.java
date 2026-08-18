@@ -58,6 +58,9 @@ public class SCContent {
 	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.LaserBlockBlockEntity> LASER_BLOCK_BLOCK_ENTITY;
 	public static BlockEntityType<net.geforcemods.securitycraft.api.OwnableBlockEntity> ABSTRACT_BLOCK_ENTITY;
 	public static Block REINFORCED_DOOR;
+	public static net.geforcemods.securitycraft.blocks.ElectrifiedIronFenceBlock ELECTRIFIED_IRON_FENCE;
+	public static net.geforcemods.securitycraft.blocks.ElectrifiedIronFenceGateBlock ELECTRIFIED_IRON_FENCE_GATE;
+	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.ElectrifiedFenceAndGateBlockEntity> ELECTRIFIED_FENCE_AND_GATE_BLOCK_ENTITY;
 	public static Item UNIVERSAL_OWNER_CHANGER;
 	public static Item UNIVERSAL_BLOCK_MODIFIER;
 	public static net.geforcemods.securitycraft.blocks.KeyPanelBlock KEY_PANEL;
@@ -313,7 +316,6 @@ public class SCContent {
 			{"reinforced_exposed_cut_copper", "cube"},
 			{"reinforced_exposed_cut_copper_slab", "slab"},
 			{"reinforced_exposed_cut_copper_stairs", "stairs"},
-			{"reinforced_fence_gate", "fence_gate"},
 			{"reinforced_glass", "glass"},
 			{"reinforced_glass_pane", "pane"},
 			{"reinforced_glowstone", "cube"},
@@ -616,6 +618,12 @@ public class SCContent {
 		//artwork, so tinting it would grey out an item the original leaves alone
 		REINFORCED_BY_NAME.put("reinforced_iron_door", REINFORCED_DOOR);
 		CUTOUT_BLOCKS.add(REINFORCED_DOOR);
+		//upstream registers the electrified iron fence gate under the legacy name "reinforced_fence_gate"
+		ELECTRIFIED_IRON_FENCE = (net.geforcemods.securitycraft.blocks.ElectrifiedIronFenceBlock) register("electrified_iron_fence", key -> new net.geforcemods.securitycraft.blocks.ElectrifiedIronFenceBlock(BlockBehaviour.Properties.of().mapColor(net.minecraft.world.level.material.MapColor.METAL).strength(5.0F, Float.MAX_VALUE).requiresCorrectToolForDrops().sound(SoundType.METAL).setId(key)));
+		ELECTRIFIED_IRON_FENCE_GATE = (net.geforcemods.securitycraft.blocks.ElectrifiedIronFenceGateBlock) register("reinforced_fence_gate", key -> new net.geforcemods.securitycraft.blocks.ElectrifiedIronFenceGateBlock(BlockBehaviour.Properties.of().mapColor(net.minecraft.world.level.material.MapColor.METAL).strength(5.0F, Float.MAX_VALUE).requiresCorrectToolForDrops().sound(SoundType.METAL).setId(key)));
+		//both textures have transparent pixels; Fabric has no equivalent of the "render_type" model field upstream relies on
+		CUTOUT_BLOCKS.add(ELECTRIFIED_IRON_FENCE);
+		CUTOUT_BLOCKS.add(ELECTRIFIED_IRON_FENCE_GATE);
 		PORTABLE_RADAR = register("portable_radar", key -> new net.geforcemods.securitycraft.blocks.PortableRadarBlock(BlockBehaviour.Properties.of().mapColor(net.minecraft.world.level.material.MapColor.COLOR_BLACK).strength(5.0F, Float.MAX_VALUE).requiresCorrectToolForDrops().setId(key)));
 		net.geforcemods.securitycraft.api.SecurityCraftAPI.registerPasscodeConvertible(new net.geforcemods.securitycraft.blocks.KeypadBlock.Convertible());
 
@@ -702,6 +710,7 @@ public class SCContent {
 		abstractBeBlocks.addAll(REINFORCED_BLOCKS);
 		abstractBeBlocks.add(REINFORCED_DOOR); //kept out of REINFORCED_BLOCKS so it is not tinted, but it still needs the owner block entity
 		ABSTRACT_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("abstract"), FabricBlockEntityTypeBuilder.create((pos, state) -> new net.geforcemods.securitycraft.api.OwnableBlockEntity(ABSTRACT_BLOCK_ENTITY, pos, state), abstractBeBlocks.toArray(new Block[0])).build());
+		ELECTRIFIED_FENCE_AND_GATE_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("electrified_fence_and_gate"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.ElectrifiedFenceAndGateBlockEntity::new, ELECTRIFIED_IRON_FENCE, ELECTRIFIED_IRON_FENCE_GATE).build());
 		MINE_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("mine"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.MineBlockEntity::new, MINE).build());
 		BOUNCING_BETTY_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("bouncing_betty"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.BouncingBettyBlockEntity::new, BOUNCING_BETTY).build());
 		CLAYMORE_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("claymore"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.ClaymoreBlockEntity::new, CLAYMORE).build());
@@ -785,6 +794,8 @@ public class SCContent {
 					output.accept(KEY_PANEL_ITEM);
 					output.accept(FRAME);
 					output.accept(REINFORCED_DOOR);
+					output.accept(ELECTRIFIED_IRON_FENCE);
+					output.accept(ELECTRIFIED_IRON_FENCE_GATE);
 					output.accept(UNIVERSAL_BLOCK_MODIFIER);
 					output.accept(UNIVERSAL_OWNER_CHANGER);
 					output.accept(LASER_BLOCK);
