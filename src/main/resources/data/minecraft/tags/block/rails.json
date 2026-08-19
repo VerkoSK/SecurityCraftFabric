@@ -1,5 +1,6 @@
 {
 	"values": [
 		"securitycraft:track_mine"
-	]
+	],
+	"replace": false
 }
