@@ -76,6 +76,16 @@ public class SCContent {
 	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.ElectrifiedFenceAndGateBlockEntity> ELECTRIFIED_FENCE_AND_GATE_BLOCK_ENTITY;
 	public static Item UNIVERSAL_OWNER_CHANGER;
 	public static Item SC_MANUAL;
+	public static Item CRYSTAL_QUARTZ_ITEM;
+	public static Block CRYSTAL_QUARTZ;
+	public static Block SMOOTH_CRYSTAL_QUARTZ;
+	public static Block CHISELED_CRYSTAL_QUARTZ;
+	public static Block CRYSTAL_QUARTZ_BRICKS;
+	public static Block CRYSTAL_QUARTZ_PILLAR;
+	public static Block CRYSTAL_QUARTZ_STAIRS;
+	public static Block CRYSTAL_QUARTZ_SLAB;
+	public static Block SMOOTH_CRYSTAL_QUARTZ_STAIRS;
+	public static Block SMOOTH_CRYSTAL_QUARTZ_SLAB;
 	public static net.minecraft.world.level.material.FlowingFluid FAKE_WATER;
 	public static net.minecraft.world.level.material.FlowingFluid FLOWING_FAKE_WATER;
 	public static net.minecraft.world.level.material.FlowingFluid FAKE_LAVA;
@@ -260,6 +270,22 @@ public class SCContent {
 			{"reinforced_lever", Blocks.LEVER, "lever"},
 	};
 
+	/**
+	 * The reinforced half of the crystal quartz set. It goes through the same path as {@link #REINFORCED_COPIES},
+	 * copying the vanilla quartz block each one is shaped after; the cyan tint comes from {@link #crystalQuartzProps}.
+	 */
+	private static final Object[][] CRYSTAL_QUARTZ_REINFORCED = {
+			{"reinforced_crystal_quartz_block", Blocks.QUARTZ_BLOCK, "cube"},
+			{"reinforced_smooth_crystal_quartz", Blocks.SMOOTH_QUARTZ, "cube"},
+			{"reinforced_chiseled_crystal_quartz_block", Blocks.CHISELED_QUARTZ_BLOCK, "cube"},
+			{"reinforced_crystal_quartz_bricks", Blocks.QUARTZ_BRICKS, "cube"},
+			{"reinforced_crystal_quartz_pillar", Blocks.QUARTZ_PILLAR, "pillar"},
+			{"reinforced_crystal_quartz_stairs", Blocks.QUARTZ_STAIRS, "stairs"},
+			{"reinforced_crystal_quartz_slab", Blocks.QUARTZ_SLAB, "slab"},
+			{"reinforced_smooth_crystal_quartz_stairs", Blocks.SMOOTH_QUARTZ_STAIRS, "stairs"},
+			{"reinforced_smooth_crystal_quartz_slab", Blocks.SMOOTH_QUARTZ_SLAB, "slab"}
+	};
+
 	private static final String[][] REINFORCED = {
 			{"reinforced_acacia_button", "button"},
 			{"reinforced_acacia_fence", "fence"},
@@ -369,8 +395,6 @@ public class SCContent {
 			{"reinforced_crimson_stairs", "stairs"},
 			{"reinforced_crimson_stem", "pillar"},
 			{"reinforced_crying_obsidian", "cube"},
-			{"reinforced_crystal_quartz_slab", "slab"},
-			{"reinforced_crystal_quartz_stairs", "stairs"},
 			{"reinforced_cut_copper", "cube"},
 			{"reinforced_cut_copper_slab", "slab"},
 			{"reinforced_cut_copper_stairs", "stairs"},
@@ -614,8 +638,6 @@ public class SCContent {
 			{"reinforced_sandstone_wall", "wall"},
 			{"reinforced_shroomlight", "cube"},
 			{"reinforced_smooth_basalt", "cube"},
-			{"reinforced_smooth_crystal_quartz_slab", "slab"},
-			{"reinforced_smooth_crystal_quartz_stairs", "stairs"},
 			{"reinforced_smooth_quartz", "cube"},
 			{"reinforced_smooth_quartz_slab", "slab"},
 			{"reinforced_smooth_quartz_stairs", "stairs"},
@@ -711,13 +733,13 @@ public class SCContent {
 	}
 
 	public static void init() {
-		KEYPAD = register("keypad", key -> new KeypadBlock(BlockBehaviour.Properties.of().strength(2.0F, 12000.0F).requiresCorrectToolForDrops().setId(key)));
-		LASER_BLOCK = (net.geforcemods.securitycraft.blocks.LaserBlock) register("laser_block", key -> new net.geforcemods.securitycraft.blocks.LaserBlock(BlockBehaviour.Properties.of().strength(3.5F).requiresCorrectToolForDrops().sound(SoundType.METAL).setId(key)));
-		LASER_FIELD = (net.geforcemods.securitycraft.blocks.LaserFieldBlock) registerBlockNoItem("laser", key -> new net.geforcemods.securitycraft.blocks.LaserFieldBlock(BlockBehaviour.Properties.of().mapColor(net.minecraft.world.level.material.MapColor.NONE).strength(-1.0F).noLootTable().noOcclusion().setId(key)));
-		KEY_PANEL = (net.geforcemods.securitycraft.blocks.KeyPanelBlock) registerBlockNoItem("key_panel", key -> new net.geforcemods.securitycraft.blocks.KeyPanelBlock(BlockBehaviour.Properties.of().strength(3.5F).sound(SoundType.METAL).noOcclusion().setId(key)));
+		KEYPAD = register("keypad", key -> new KeypadBlock(alwaysDrop(BlockBehaviour.Properties.of().strength(2.0F, 12000.0F)).setId(key)));
+		LASER_BLOCK = (net.geforcemods.securitycraft.blocks.LaserBlock) register("laser_block", key -> new net.geforcemods.securitycraft.blocks.LaserBlock(alwaysDrop(BlockBehaviour.Properties.of().strength(3.5F).sound(SoundType.METAL)).setId(key)));
+		LASER_FIELD = (net.geforcemods.securitycraft.blocks.LaserFieldBlock) registerBlockNoItem("laser", key -> new net.geforcemods.securitycraft.blocks.LaserFieldBlock(alwaysDrop(BlockBehaviour.Properties.of().mapColor(net.minecraft.world.level.material.MapColor.NONE).strength(-1.0F).noLootTable().noOcclusion()).setId(key)));
+		KEY_PANEL = (net.geforcemods.securitycraft.blocks.KeyPanelBlock) registerBlockNoItem("key_panel", key -> new net.geforcemods.securitycraft.blocks.KeyPanelBlock(alwaysDrop(BlockBehaviour.Properties.of().strength(3.5F).sound(SoundType.METAL).noOcclusion()).setId(key)));
 		KEY_PANEL_ITEM = registerItem("keypad_item", new net.geforcemods.securitycraft.items.KeyPanelItem(new Item.Properties().setId(ResourceKey.create(Registries.ITEM, id("keypad_item")))));
-		FRAME = (net.geforcemods.securitycraft.blocks.FrameBlock) register("keypad_frame", key -> new net.geforcemods.securitycraft.blocks.FrameBlock(BlockBehaviour.Properties.of().mapColor(net.minecraft.world.level.material.MapColor.METAL).strength(5.0F).sound(SoundType.METAL).noOcclusion().setId(key)));
-		REINFORCED_DOOR = register("reinforced_iron_door", key -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedDoorBlock(BlockSetType.IRON, BlockBehaviour.Properties.of().mapColor(net.minecraft.world.level.material.MapColor.METAL).strength(5.0F, 12000.0F).requiresCorrectToolForDrops().sound(SoundType.METAL).noOcclusion().setId(key)));
+		FRAME = (net.geforcemods.securitycraft.blocks.FrameBlock) register("keypad_frame", key -> new net.geforcemods.securitycraft.blocks.FrameBlock(alwaysDrop(BlockBehaviour.Properties.of().mapColor(net.minecraft.world.level.material.MapColor.METAL).strength(5.0F).sound(SoundType.METAL).noOcclusion()).setId(key)));
+		REINFORCED_DOOR = register("reinforced_iron_door", key -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedDoorBlock(BlockSetType.IRON, alwaysDrop(BlockBehaviour.Properties.of().mapColor(net.minecraft.world.level.material.MapColor.METAL).strength(5.0F, 12000.0F).sound(SoundType.METAL).noOcclusion()).setId(key)));
 		//listing the door here is what lets the Universal Block Reinforcer turn a vanilla iron door into it, and
 		//the Remover turn it back; both look the counterpart up by the reinforced_<vanilla> name
 		//deliberately NOT added to REINFORCED_BLOCKS: that list drives the grey tint, and the door has its own
@@ -725,14 +747,14 @@ public class SCContent {
 		REINFORCED_BY_NAME.put("reinforced_iron_door", REINFORCED_DOOR);
 		CUTOUT_BLOCKS.add(REINFORCED_DOOR);
 		//upstream registers the electrified iron fence gate under the legacy name "reinforced_fence_gate"
-		ELECTRIFIED_IRON_FENCE = (net.geforcemods.securitycraft.blocks.ElectrifiedIronFenceBlock) register("electrified_iron_fence", new net.geforcemods.securitycraft.blocks.ElectrifiedIronFenceBlock(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(5.0F, Float.MAX_VALUE).requiresCorrectToolForDrops().sound(SoundType.METAL)));
-		ELECTRIFIED_IRON_FENCE_GATE = (net.geforcemods.securitycraft.blocks.ElectrifiedIronFenceGateBlock) register("reinforced_fence_gate", new net.geforcemods.securitycraft.blocks.ElectrifiedIronFenceGateBlock(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(5.0F, Float.MAX_VALUE).requiresCorrectToolForDrops().sound(SoundType.METAL)));
+		ELECTRIFIED_IRON_FENCE = (net.geforcemods.securitycraft.blocks.ElectrifiedIronFenceBlock) register("electrified_iron_fence", new net.geforcemods.securitycraft.blocks.ElectrifiedIronFenceBlock(alwaysDrop(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(5.0F, Float.MAX_VALUE).sound(SoundType.METAL))));
+		ELECTRIFIED_IRON_FENCE_GATE = (net.geforcemods.securitycraft.blocks.ElectrifiedIronFenceGateBlock) register("reinforced_fence_gate", new net.geforcemods.securitycraft.blocks.ElectrifiedIronFenceGateBlock(alwaysDrop(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(5.0F, Float.MAX_VALUE).sound(SoundType.METAL))));
 		//both textures have transparent pixels; Fabric has no equivalent of the "render_type" model field upstream relies on
 		CUTOUT_BLOCKS.add(ELECTRIFIED_IRON_FENCE);
 		CUTOUT_BLOCKS.add(ELECTRIFIED_IRON_FENCE_GATE);
 		//the passcode-protected containers; the furnace family's light level reads the LIT property the way vanilla's does
-		KEYPAD_CHEST = register("keypad_chest", new net.geforcemods.securitycraft.blocks.KeypadChestBlock(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(5.0F, Float.MAX_VALUE).requiresCorrectToolForDrops().sound(SoundType.METAL)));
-		KEYPAD_BARREL = register("keypad_barrel", new net.geforcemods.securitycraft.blocks.KeypadBarrelBlock(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(5.0F, Float.MAX_VALUE).requiresCorrectToolForDrops().sound(SoundType.METAL)));
+		KEYPAD_CHEST = register("keypad_chest", new net.geforcemods.securitycraft.blocks.KeypadChestBlock(alwaysDrop(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(5.0F, Float.MAX_VALUE).sound(SoundType.METAL))));
+		KEYPAD_BARREL = register("keypad_barrel", new net.geforcemods.securitycraft.blocks.KeypadBarrelBlock(alwaysDrop(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(5.0F, Float.MAX_VALUE).sound(SoundType.METAL))));
 		KEYPAD_FURNACE = register("keypad_furnace", new net.geforcemods.securitycraft.blocks.KeypadFurnaceBlock(keypadFurnaceProps()));
 		KEYPAD_SMOKER = register("keypad_smoker", new net.geforcemods.securitycraft.blocks.KeypadSmokerBlock(keypadFurnaceProps()));
 		KEYPAD_BLAST_FURNACE = register("keypad_blast_furnace", new net.geforcemods.securitycraft.blocks.KeypadBlastFurnaceBlock(keypadFurnaceProps()));
@@ -767,6 +789,21 @@ public class SCContent {
 		registerFunctionalReinforced("reinforced_dispenser", new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedDispenserBlock(reinforcedCopy(Blocks.DISPENSER)));
 		registerFunctionalReinforced("reinforced_dropper", new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedDropperBlock(reinforcedCopy(Blocks.DROPPER)));
 		registerFunctionalReinforced("reinforced_observer", new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedObserverBlock(reinforcedCopy(Blocks.OBSERVER)));
+
+		//the crystal quartz set: the mod's own decorative stone, plus its reinforced counterparts
+		CRYSTAL_QUARTZ = register("crystal_quartz", new Block(crystalQuartzProps(Blocks.QUARTZ_BLOCK)));
+		SMOOTH_CRYSTAL_QUARTZ = register("smooth_crystal_quartz", new Block(crystalQuartzProps(Blocks.SMOOTH_QUARTZ)));
+		CHISELED_CRYSTAL_QUARTZ = register("chiseled_crystal_quartz", new Block(crystalQuartzProps(Blocks.CHISELED_QUARTZ_BLOCK)));
+		CRYSTAL_QUARTZ_BRICKS = register("crystal_quartz_bricks", new Block(crystalQuartzProps(Blocks.QUARTZ_BRICKS)));
+		CRYSTAL_QUARTZ_PILLAR = register("crystal_quartz_pillar", new RotatedPillarBlock(crystalQuartzProps(Blocks.QUARTZ_PILLAR)));
+		CRYSTAL_QUARTZ_STAIRS = register("crystal_quartz_stairs", new StairBlock(CRYSTAL_QUARTZ.defaultBlockState(), crystalQuartzProps(Blocks.QUARTZ_STAIRS)));
+		CRYSTAL_QUARTZ_SLAB = register("crystal_quartz_slab", new SlabBlock(crystalQuartzProps(Blocks.QUARTZ_SLAB)));
+		SMOOTH_CRYSTAL_QUARTZ_STAIRS = register("smooth_crystal_quartz_stairs", new StairBlock(SMOOTH_CRYSTAL_QUARTZ.defaultBlockState(), crystalQuartzProps(Blocks.SMOOTH_QUARTZ_STAIRS)));
+		SMOOTH_CRYSTAL_QUARTZ_SLAB = register("smooth_crystal_quartz_slab", new SlabBlock(crystalQuartzProps(Blocks.SMOOTH_QUARTZ_SLAB)));
+		CRYSTAL_QUARTZ_ITEM = registerItem("crystal_quartz_item", new Item(new Item.Properties()));
+
+		for (Object[] entry : CRYSTAL_QUARTZ_REINFORCED)
+			registerReinforcedCopy((String) entry[0], (Block) entry[1], (String) entry[2]);
 
 		for (Object[] entry : REINFORCED_COPIES)
 			registerReinforcedCopy((String) entry[0], (Block) entry[1], (String) entry[2]);
@@ -953,7 +990,14 @@ public class SCContent {
 	/** Registers one of the {@link #REINFORCED_COPIES}: same shape class as vanilla, properties copied off it. */
 	private static void registerReinforcedCopy(String name, Block vanilla, String category) {
 		BlockBehaviour.Properties props = reinforcedCopy(vanilla);
+
+		if (name.contains("crystal_quartz"))
+			props.mapColor(MapColor.COLOR_CYAN);
+
 		Block block = switch (category) {
+			case "pillar" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedPillarBlock(props);
+			case "stairs" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedStairBlock(Blocks.STONE.defaultBlockState(), props);
+			case "slab" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedSlabBlock(props);
 			case "carpet" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedCarpetBlock(props.forceSolidOn());
 			case "glazed_terracotta" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedGlazedTerracottaBlock(props);
 			case "redstone_lamp" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedRedstoneLampBlock(props);
@@ -1064,6 +1108,7 @@ public class SCContent {
 					output.accept(REINFORCED_CAULDRON);
 					output.accept(REINFORCED_BY_NAME.get("reinforced_ladder"));
 					output.accept(REINFORCED_BY_NAME.get("reinforced_hopper"));
+					output.accept(CRYSTAL_QUARTZ_ITEM);
 					output.accept(LENS);
 					output.accept(ALLOWLIST_MODULE);
 					output.accept(DENYLIST_MODULE);
@@ -1156,6 +1201,15 @@ public class SCContent {
 							output.accept(block);
 					}
 
+					output.accept(CRYSTAL_QUARTZ);
+					output.accept(CRYSTAL_QUARTZ_STAIRS);
+					output.accept(CRYSTAL_QUARTZ_SLAB);
+					output.accept(CHISELED_CRYSTAL_QUARTZ);
+					output.accept(CRYSTAL_QUARTZ_BRICKS);
+					output.accept(CRYSTAL_QUARTZ_PILLAR);
+					output.accept(SMOOTH_CRYSTAL_QUARTZ);
+					output.accept(SMOOTH_CRYSTAL_QUARTZ_STAIRS);
+					output.accept(SMOOTH_CRYSTAL_QUARTZ_SLAB);
 					output.accept(ELECTRIFIED_IRON_FENCE);
 					output.accept(ELECTRIFIED_IRON_FENCE_GATE);
 					output.accept(REINFORCED_BY_NAME.get("reinforced_iron_trapdoor"));
@@ -1191,23 +1245,39 @@ public class SCContent {
 		return sorted;
 	}
 
+	/**
+	 * The handful of reinforced blocks whose plain counterpart is not simply their own name minus the prefix. The
+	 * crystal quartz set is the mod's own, so upstream hands the counterpart to the constructor; this port derives
+	 * it from the name everywhere else, which needs these two spelled out.
+	 */
+	private static final Map<String, String> COUNTERPART_EXCEPTIONS = Map.of("reinforced_crystal_quartz_block", "crystal_quartz", "reinforced_chiseled_crystal_quartz_block", "chiseled_crystal_quartz");
+
 	public static Block vanillaCounterpart(Block reinforced) {
-		net.minecraft.resources.ResourceLocation loc = BuiltInRegistries.BLOCK.getKey(reinforced);
+		ResourceLocation loc = BuiltInRegistries.BLOCK.getKey(reinforced);
 
 		if (!loc.getNamespace().equals(SecurityCraft.MODID) || !loc.getPath().startsWith("reinforced_"))
 			return null;
 
-		String path = loc.getPath();
-		Block vanilla = BuiltInRegistries.BLOCK.getValue(ResourceLocation.fromNamespaceAndPath("minecraft", path.substring("reinforced_".length())));
+		String path = COUNTERPART_EXCEPTIONS.getOrDefault(loc.getPath(), loc.getPath().substring("reinforced_".length()));
+		//the crystal quartz set is this mod's own, so its plain form lives in this namespace rather than vanilla's
+		Block counterpart = BuiltInRegistries.BLOCK.get(id(path));
 
-		return vanilla == Blocks.AIR ? null : vanilla;
+		if (counterpart == Blocks.AIR)
+			counterpart = BuiltInRegistries.BLOCK.get(new ResourceLocation("minecraft", path));
+
+		return counterpart == Blocks.AIR ? null : counterpart;
 	}
 
-	public static Block reinforcedCounterpart(Block vanilla) {
-		net.minecraft.resources.ResourceLocation loc = BuiltInRegistries.BLOCK.getKey(vanilla);
+	public static Block reinforcedCounterpart(Block plain) {
+		ResourceLocation loc = BuiltInRegistries.BLOCK.getKey(plain);
 
-		if (!loc.getNamespace().equals("minecraft"))
+		if (!loc.getNamespace().equals("minecraft") && !loc.getNamespace().equals(SecurityCraft.MODID))
 			return null;
+
+		for (Map.Entry<String, String> exception : COUNTERPART_EXCEPTIONS.entrySet()) {
+			if (exception.getValue().equals(loc.getPath()))
+				return REINFORCED_BY_NAME.get(exception.getKey());
+		}
 
 		return REINFORCED_BY_NAME.get("reinforced_" + loc.getPath());
 	}
@@ -1252,7 +1322,25 @@ public class SCContent {
 
 	/** 1:1 with upstream: the furnace family lights up at level 13 while it is smelting. */
 	private static BlockBehaviour.Properties keypadFurnaceProps() {
-		return BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(5.0F, Float.MAX_VALUE).requiresCorrectToolForDrops().sound(SoundType.METAL).lightLevel(state -> state.getValue(net.geforcemods.securitycraft.blocks.AbstractKeypadFurnaceBlock.LIT) ? 13 : 0);
+		return alwaysDrop(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(5.0F, Float.MAX_VALUE).sound(SoundType.METAL)).lightLevel(state -> state.getValue(net.geforcemods.securitycraft.blocks.AbstractKeypadFurnaceBlock.LIT) ? 13 : 0);
+	}
+
+	/**
+	 * Clears the "needs the right tool to drop" flag. Upstream's {@code always_drop} config defaults to true and is
+	 * honoured by overriding Forge's {@code canHarvestBlock}, so every SecurityCraft block drops itself no matter
+	 * what it was mined with - and, because vanilla reads the same flag to pick the mining-speed penalty, breaks at
+	 * the same speed as if the right tool were held. Fabric has no such hook, so the flag is cleared here instead.
+	 */
+	private static BlockBehaviour.Properties alwaysDrop(BlockBehaviour.Properties props) {
+		if (ConfigHandler.alwaysDrop)
+			props.requiresCorrectToolForDrops = false;
+
+		return props;
+	}
+
+	/** The crystal quartz set is vanilla quartz in cyan, so each block copies the quartz block it is shaped after. */
+	private static BlockBehaviour.Properties crystalQuartzProps(Block quartzBlock) {
+		return alwaysDrop(BlockBehaviour.Properties.copy(quartzBlock).mapColor(MapColor.COLOR_CYAN));
 	}
 
 	private static BlockBehaviour.Properties shapeProps(String name) {
@@ -1260,20 +1348,17 @@ public class SCContent {
 		boolean wool = name.contains("wool");
 		BlockBehaviour.Properties p = BlockBehaviour.Properties.of().strength(wood || wool ? 2.0F : 5.0F, 12000.0F).sound(wood ? SoundType.WOOD : wool ? SoundType.WOOL : SoundType.STONE);
 
-		if (!wood && !wool)
-			p.requiresCorrectToolForDrops();
-
-		return p;
+		return alwaysDrop(p);
 	}
 
 	/** 1:1 with upstream SCContent#prop(MapColor, float): the shared base for the standalone explosives. */
 	private static BlockBehaviour.Properties mineProp(MapColor color, float hardness) {
-		return BlockBehaviour.Properties.of().mapColor(color).strength(hardness, Float.MAX_VALUE).requiresCorrectToolForDrops();
+		return alwaysDrop(BlockBehaviour.Properties.of().mapColor(color).strength(hardness, Float.MAX_VALUE));
 	}
 
 	/** 1:1 with upstream SCContent#reinforcedCopy(Block). */
 	private static BlockBehaviour.Properties reinforcedCopy(Block block) {
-		return BlockBehaviour.Properties.ofFullCopy(block).explosionResistance(Float.MAX_VALUE);
+		return alwaysDrop(BlockBehaviour.Properties.ofFullCopy(block).explosionResistance(Float.MAX_VALUE));
 	}
 
 	/** 1:1 with upstream SCContent#blockMine(String, Block). */
@@ -1282,10 +1367,10 @@ public class SCContent {
 	}
 
 	private static BlockBehaviour.Properties glassProps() {
-		return BlockBehaviour.Properties.of().strength(1.5F, 12000.0F).sound(SoundType.GLASS).noOcclusion().isValidSpawn((state, level, pos, type) -> false).isRedstoneConductor((state, level, pos) -> false).isSuffocating((state, level, pos) -> false).isViewBlocking((state, level, pos) -> false);
+		return alwaysDrop(BlockBehaviour.Properties.of().strength(1.5F, 12000.0F).sound(SoundType.GLASS).noOcclusion().isValidSpawn((state, level, pos, type) -> false).isRedstoneConductor((state, level, pos) -> false).isSuffocating((state, level, pos) -> false).isViewBlocking((state, level, pos) -> false));
 	}
 
 	private static BlockBehaviour.Properties paneProps() {
-		return BlockBehaviour.Properties.of().strength(5.0F, 12000.0F).requiresCorrectToolForDrops().sound(SoundType.METAL).noOcclusion();
+		return alwaysDrop(BlockBehaviour.Properties.of().strength(5.0F, 12000.0F).sound(SoundType.METAL).noOcclusion());
 	}
 }

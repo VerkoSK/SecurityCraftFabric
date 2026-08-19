@@ -83,9 +83,11 @@ public class SCManualScreen extends Screen implements StillValid {
 	private static final ResourceLocation ICONS = SCContent.id("textures/gui/info_book_icons.png");
 	private static final ResourceLocation VANILLA_BOOK = new ResourceLocation("textures/gui/book.png");
 	private static final int SUBPAGE_LENGTH = 1285;
-	private static int lastPage = -1;
+	//-1 is the welcome page; it sits at the back of the book, so the manual opens on the first real page instead
+	private static int lastPage = 0;
 	private final MutableComponent intro1 = Utils.localize("gui.securitycraft:scManual.intro.1").setStyle(Style.EMPTY.withUnderlined(true));
 	private final Component ourPatrons = Utils.localize("gui.securitycraft:scManual.patreon.title");
+	private final Component portedBy = Utils.localize("gui.securitycraft:scManual.portedBy");
 	private List<HoverChecker> hoverCheckers = new ArrayList<>();
 	private int currentPage = lastPage;
 	private NonNullList<Ingredient> recipe;
@@ -150,7 +152,7 @@ public class SCManualScreen extends Screen implements StillValid {
 		}
 
 		if (currentPage > -1) {
-			String pageNumberText = (currentPage + 2) + "/" + (SCManualItem.PAGES.size() + 1); //+1 because the "welcome" page is not included
+			String pageNumberText = (currentPage + 1) + "/" + (SCManualItem.PAGES.size() + 1); //+1 because the "welcome" page is not included
 
 			if (subpages.size() > 1)
 				guiGraphics.drawString(font, (currentSubpage + 1) + "/" + subpages.size(), startX + 205, 100, 0x8E8270, false);
@@ -196,7 +198,7 @@ public class SCManualScreen extends Screen implements StillValid {
 			}
 		}
 		else { //"welcome" page
-			String pageNumberText = "1/" + (SCManualItem.PAGES.size() + 1); //+1 because the "welcome" page is not included
+			String pageNumberText = (SCManualItem.PAGES.size() + 1) + "/" + (SCManualItem.PAGES.size() + 1); //the welcome page is the last one
 
 			guiGraphics.drawString(font, intro1, width / 2 - font.width(intro1) / 2, 22, 0, false);
 
@@ -212,6 +214,7 @@ public class SCManualScreen extends Screen implements StillValid {
 				guiGraphics.drawString(font, text, width / 2 - font.width(text) / 2, 180 + 10 * i, 0, false);
 			}
 
+			guiGraphics.drawString(font, portedBy, width / 2 - font.width(portedBy) / 2, 180 + 10 * author.size(), 0, false);
 			guiGraphics.drawString(font, pageNumberText, startX + 240 - font.width(pageNumberText), 182, 0x8E8270, false);
 			guiGraphics.drawString(font, ourPatrons, width / 2 - font.width(ourPatrons) / 2 + 34, 40, 0, false);
 		}
