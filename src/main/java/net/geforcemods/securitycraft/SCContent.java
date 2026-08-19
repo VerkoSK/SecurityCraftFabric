@@ -105,6 +105,21 @@ public class SCContent {
 	public static Item UNIVERSAL_BLOCK_REINFORCER_LVL3;
 	public static Item UNIVERSAL_BLOCK_REMOVER;
 	public static BlockEntityType<KeypadBlockEntity> KEYPAD_BLOCK_ENTITY;
+	public static Block REINFORCED_PISTON;
+	public static Block REINFORCED_STICKY_PISTON;
+	public static Block REINFORCED_PISTON_HEAD;
+	public static Block REINFORCED_MOVING_PISTON;
+	public static Block REINFORCED_CAULDRON;
+	public static Block REINFORCED_WATER_CAULDRON;
+	public static Block REINFORCED_LAVA_CAULDRON;
+	public static Block REINFORCED_POWDER_SNOW_CAULDRON;
+	public static Block REINFORCED_LECTERN;
+	public static Block REINFORCED_CHISELED_BOOKSHELF;
+	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.ReinforcedPistonMovingBlockEntity> REINFORCED_MOVING_PISTON_BLOCK_ENTITY;
+	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.ReinforcedCauldronBlockEntity> REINFORCED_CAULDRON_BLOCK_ENTITY;
+	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.ReinforcedLecternBlockEntity> REINFORCED_LECTERN_BLOCK_ENTITY;
+	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.ReinforcedChiseledBookshelfBlockEntity> REINFORCED_CHISELED_BOOKSHELF_BLOCK_ENTITY;
+	public static net.minecraft.world.inventory.MenuType<net.geforcemods.securitycraft.inventory.ReinforcedLecternMenu> REINFORCED_LECTERN_MENU;
 	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.ReinforcedHopperBlockEntity> REINFORCED_HOPPER_BLOCK_ENTITY;
 	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.ReinforcedDispenserBlockEntity> REINFORCED_DISPENSER_BLOCK_ENTITY;
 	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.ReinforcedDropperBlockEntity> REINFORCED_DROPPER_BLOCK_ENTITY;
@@ -736,6 +751,18 @@ public class SCContent {
 			registerReinforced(entry[0], entry[1]);
 
 		//the reinforced blocks that keep a vanilla block entity of their own, so they cannot go through either table
+		REINFORCED_PISTON = registerFunctionalReinforced("reinforced_piston", new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedPistonBaseBlock(false, reinforcedCopy(Blocks.PISTON)));
+		REINFORCED_STICKY_PISTON = registerFunctionalReinforced("reinforced_sticky_piston", new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedPistonBaseBlock(true, reinforcedCopy(Blocks.STICKY_PISTON)));
+		//the head and the moving piston are placed by the piston itself, never by a player, so they get no item
+		REINFORCED_PISTON_HEAD = registerBlockNoItem("reinforced_piston_head", new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedPistonHeadBlock(reinforcedCopy(Blocks.PISTON_HEAD)));
+		REINFORCED_MOVING_PISTON = registerBlockNoItem("reinforced_moving_piston", new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedMovingPistonBlock(reinforcedCopy(Blocks.MOVING_PISTON)));
+		REINFORCED_CAULDRON = registerFunctionalReinforced("reinforced_cauldron", new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedCauldronBlock(reinforcedCopy(Blocks.CAULDRON), net.geforcemods.securitycraft.blocks.reinforced.ReinforcedCauldronBlock.IReinforcedCauldronInteraction.EMPTY));
+		//the filled cauldrons are states of the empty one, so like vanilla they have no item of their own
+		REINFORCED_WATER_CAULDRON = registerBlockNoItem("reinforced_water_cauldron", new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedLayeredCauldronBlock(reinforcedCopy(Blocks.WATER_CAULDRON), net.minecraft.world.level.block.LayeredCauldronBlock.RAIN, net.geforcemods.securitycraft.blocks.reinforced.ReinforcedCauldronBlock.IReinforcedCauldronInteraction.WATER, Blocks.WATER_CAULDRON));
+		REINFORCED_LAVA_CAULDRON = registerBlockNoItem("reinforced_lava_cauldron", new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedLavaCauldronBlock(reinforcedCopy(Blocks.LAVA_CAULDRON)));
+		REINFORCED_POWDER_SNOW_CAULDRON = registerBlockNoItem("reinforced_powder_snow_cauldron", new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedLayeredCauldronBlock(reinforcedCopy(Blocks.POWDER_SNOW_CAULDRON), net.minecraft.world.level.block.LayeredCauldronBlock.SNOW, net.geforcemods.securitycraft.blocks.reinforced.ReinforcedCauldronBlock.IReinforcedCauldronInteraction.POWDER_SNOW, Blocks.POWDER_SNOW_CAULDRON));
+		REINFORCED_LECTERN = registerFunctionalReinforced("reinforced_lectern", new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedLecternBlock(reinforcedCopy(Blocks.LECTERN)));
+		REINFORCED_CHISELED_BOOKSHELF = registerFunctionalReinforced("reinforced_chiseled_bookshelf", new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedChiseledBookshelfBlock(reinforcedCopy(Blocks.CHISELED_BOOKSHELF)));
 		registerFunctionalReinforced("reinforced_hopper", new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedHopperBlock(reinforcedCopy(Blocks.HOPPER)));
 		registerFunctionalReinforced("reinforced_dispenser", new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedDispenserBlock(reinforcedCopy(Blocks.DISPENSER)));
 		registerFunctionalReinforced("reinforced_dropper", new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedDropperBlock(reinforcedCopy(Blocks.DROPPER)));
@@ -850,6 +877,11 @@ public class SCContent {
 		REINFORCED_DISPENSER_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("reinforced_dispenser"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.ReinforcedDispenserBlockEntity::new, REINFORCED_BY_NAME.get("reinforced_dispenser")).build());
 		REINFORCED_DROPPER_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("reinforced_dropper"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.ReinforcedDropperBlockEntity::new, REINFORCED_BY_NAME.get("reinforced_dropper")).build());
 		REINFORCED_OBSERVER_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("reinforced_observer"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.ReinforcedObserverBlockEntity::new, REINFORCED_BY_NAME.get("reinforced_observer")).build());
+		REINFORCED_MOVING_PISTON_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("reinforced_moving_piston"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.ReinforcedPistonMovingBlockEntity::new, REINFORCED_MOVING_PISTON).build());
+		REINFORCED_CAULDRON_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("reinforced_cauldron"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.ReinforcedCauldronBlockEntity::new, REINFORCED_CAULDRON, REINFORCED_WATER_CAULDRON, REINFORCED_LAVA_CAULDRON, REINFORCED_POWDER_SNOW_CAULDRON).build());
+		REINFORCED_LECTERN_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("reinforced_lectern"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.ReinforcedLecternBlockEntity::new, REINFORCED_LECTERN).build());
+		REINFORCED_CHISELED_BOOKSHELF_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("reinforced_chiseled_bookshelf"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.ReinforcedChiseledBookshelfBlockEntity::new, REINFORCED_CHISELED_BOOKSHELF).build());
+		REINFORCED_LECTERN_MENU = Registry.register(BuiltInRegistries.MENU, id("reinforced_lectern"), new net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType<>((syncId, inv, buf) -> new net.geforcemods.securitycraft.inventory.ReinforcedLecternMenu(syncId, inv, buf)));
 		MINE_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("mine"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.MineBlockEntity::new, MINE).build());
 		BOUNCING_BETTY_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("bouncing_betty"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.BouncingBettyBlockEntity::new, BOUNCING_BETTY).build());
 		CLAYMORE_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("claymore"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.ClaymoreBlockEntity::new, CLAYMORE).build());
@@ -955,10 +987,11 @@ public class SCContent {
 	private static final java.util.Set<String> NON_SOLID_CATEGORIES = java.util.Set.of("cobweb", "chain", "end_rod", "lantern", "ladder", "scaffolding", "lever");
 
 	/** A reinforced block that brings its own block entity, so it is not covered by either reinforced table. */
-	private static void registerFunctionalReinforced(String name, Block block) {
+	private static Block registerFunctionalReinforced(String name, Block block) {
 		register(name, block);
 		REINFORCED_BLOCKS.add(block);
 		REINFORCED_BY_NAME.put(name, block);
+		return block;
 	}
 
 	/**
@@ -1023,9 +1056,12 @@ public class SCContent {
 					output.accept(ELECTRIFIED_IRON_FENCE_GATE);
 					output.accept(REINFORCED_BY_NAME.get("reinforced_iron_trapdoor"));
 					output.accept(REINFORCED_DOOR);
+					output.accept(REINFORCED_PISTON);
+					output.accept(REINFORCED_STICKY_PISTON);
 					output.accept(REINFORCED_BY_NAME.get("reinforced_dispenser"));
 					output.accept(REINFORCED_BY_NAME.get("reinforced_dropper"));
 					output.accept(REINFORCED_BY_NAME.get("reinforced_observer"));
+					output.accept(REINFORCED_CAULDRON);
 					output.accept(REINFORCED_BY_NAME.get("reinforced_ladder"));
 					output.accept(REINFORCED_BY_NAME.get("reinforced_hopper"));
 					output.accept(LENS);
