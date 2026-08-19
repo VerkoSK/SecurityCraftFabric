@@ -84,12 +84,14 @@ public class ReinforcedDoorBlock extends DoorBlock implements IReinforcedBlock, 
 	@Override
 	public void setPlacedBy(Level level, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
 		super.setPlacedBy(level, pos, state, placer, stack);
+		//vanilla's DoorBlock places the upper half from here, so both halves exist by now and both get the owner
 		OwnershipUtils.setPlacedBy(level, pos, placer);
+		OwnershipUtils.setPlacedBy(level, pos.above(), placer);
 	}
 
 	@Override
 	public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-		//only the lower half carries the owner, so the upper half does not fight it for the same data
-		return state.getValue(HALF) == DoubleBlockHalf.LOWER ? OwnershipUtils.newBlockEntity(pos, state) : null;
+		//both halves carry one: an ownerless upper half would be breakable by anyone and would show no owner
+		return new net.geforcemods.securitycraft.blockentities.ReinforcedDoorBlockEntity(pos, state);
 	}
 }
