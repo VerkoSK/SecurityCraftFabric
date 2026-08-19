@@ -19,6 +19,11 @@ public class SecurityCraftClient implements ClientModInitializer {
 		Minecraft.getInstance().setScreen(new net.geforcemods.securitycraft.screen.EditModuleScreen(stack));
 	}
 
+	/** Opens the SecurityCraft Manual (called client-side only). */
+	public static void openManualScreen() {
+		Minecraft.getInstance().setScreen(new net.geforcemods.securitycraft.screen.SCManualScreen());
+	}
+
 	/** Opens the mine remote access tool screen for the given stack (called client-side only). */
 	public static void openMRATScreen(net.minecraft.world.item.ItemStack stack) {
 		Minecraft.getInstance().setScreen(new net.geforcemods.securitycraft.screen.MineRemoteAccessToolScreen(stack));
@@ -77,6 +82,9 @@ public class SecurityCraftClient implements ClientModInitializer {
 		net.minecraft.client.gui.screens.MenuScreens.register(SCContent.LASER_BLOCK_MENU, net.geforcemods.securitycraft.screen.LaserBlockScreen::new);
 		net.minecraft.client.gui.screens.MenuScreens.register(SCContent.DISGUISE_MODULE_MENU, net.geforcemods.securitycraft.screen.DisguiseModuleScreen::new);
 		net.minecraft.client.gui.screens.MenuScreens.register(SCContent.CUSTOMIZE_BLOCK_MENU, net.geforcemods.securitycraft.screen.CustomizeBlockScreen::new);
+		net.minecraft.client.gui.screens.MenuScreens.register(SCContent.KEYPAD_FURNACE_MENU, net.geforcemods.securitycraft.screen.KeypadFurnaceScreen::new);
+		net.minecraft.client.gui.screens.MenuScreens.register(SCContent.KEYPAD_SMOKER_MENU, net.geforcemods.securitycraft.screen.KeypadSmokerScreen::new);
+		net.minecraft.client.gui.screens.MenuScreens.register(SCContent.KEYPAD_BLAST_FURNACE_MENU, net.geforcemods.securitycraft.screen.KeypadBlastFurnaceScreen::new);
 		net.minecraft.client.gui.screens.MenuScreens.register(SCContent.SINGLE_LENS_MENU, net.geforcemods.securitycraft.screen.SingleLensScreen::new);
 		//Without these the claymore's lens slot draws nothing and, worse, spawning a bouncing betty or an IMS bomb
 		//throws because Fabric has no renderer registered for their entity types.
