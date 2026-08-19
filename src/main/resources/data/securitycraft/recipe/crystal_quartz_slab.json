@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "B": [
+      {
+        "item": "securitycraft:crystal_quartz"
+      },
+      {
+        "item": "securitycraft:crystal_quartz_pillar"
+      },
+      {
+        "item": "securitycraft:chiseled_crystal_quartz"
+      }
+    ]
+  },
+  "pattern": [
+    "BBB"
+  ],
+  "result": {
+    "count": 6,
+    "item": "securitycraft:crystal_quartz_slab"
+  },
+  "show_notification": true
+}
