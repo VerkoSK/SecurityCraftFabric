@@ -63,7 +63,11 @@ public class PictureButton extends Button {
 		if (!visible)
 			return;
 
-		super.renderWidget(guiGraphics, mouseX, mouseY, partialTicks);
+		//upstream draws the button background itself instead of letting vanilla do it. Doing the same here is what
+		//keeps the highlighted background tied to the mouse: vanilla picks it for isHoveredOrFocused(), so a button
+		//that was clicked once stays lit for as long as it keeps the focus.
+		isHovered = mouseX >= getX() && mouseY >= getY() && mouseX < getX() + width && mouseY < getY() + height;
+		guiGraphics.blitNineSliced(WIDGETS_LOCATION, getX(), getY(), width, height, 20, 4, 200, 20, 0, 46 + (!active ? 0 : (isHovered ? 40 : 20)));
 
 		if (!blockToRender.isEmpty()) {
 			Font font = Minecraft.getInstance().font;
