@@ -11,6 +11,7 @@ import net.minecraft.world.damagesource.DamageType;
 public class CustomDamageSources {
 	public static final ResourceKey<DamageType> LASER = ResourceKey.create(Registries.DAMAGE_TYPE, SCContent.id("laser"));
 	public static final ResourceKey<DamageType> ELECTRICITY = ResourceKey.create(Registries.DAMAGE_TYPE, SCContent.id("electricity"));
+	public static final ResourceKey<DamageType> FAKE_WATER = ResourceKey.create(Registries.DAMAGE_TYPE, SCContent.id("fake_water"));
 	public static final ResourceKey<DamageType> INCORRECT_PASSCODE = ResourceKey.create(Registries.DAMAGE_TYPE, SCContent.id("incorrect_passcode"));
 
 	private CustomDamageSources() {}
@@ -21,6 +22,10 @@ public class CustomDamageSources {
 
 	public static DamageSource electricity(RegistryAccess registryAccess) {
 		return new DamageSource(registryAccess.lookupOrThrow(Registries.DAMAGE_TYPE).getOrThrow(ELECTRICITY));
+	}
+
+	public static DamageSource fakeWater(RegistryAccess registryAccess) {
+		return new DamageSource(registryAccess.lookupOrThrow(Registries.DAMAGE_TYPE).getOrThrow(FAKE_WATER));
 	}
 
 	public static DamageSource incorrectPasscode(RegistryAccess registryAccess) {
