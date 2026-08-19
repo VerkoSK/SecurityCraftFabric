@@ -736,9 +736,6 @@ public class SCContent {
 			{"reinforced_tuff_brick_stairs", "stairs"},
 			{"reinforced_tuff_brick_wall", "wall"},
 			{"reinforced_tuff_bricks", "cube"},
-			{"reinforced_tuff_slab", "slab"},
-			{"reinforced_tuff_stairs", "stairs"},
-			{"reinforced_tuff_wall", "wall"},
 			{"reinforced_verdant_froglight", "pillar"},
 			{"reinforced_warped_button", "button"},
 			{"reinforced_warped_fence", "fence"},
@@ -1216,7 +1213,6 @@ public class SCContent {
 					output.accept(REINFORCED_CAULDRON);
 					output.accept(REINFORCED_BY_NAME.get("reinforced_ladder"));
 					output.accept(REINFORCED_BY_NAME.get("reinforced_hopper"));
-					output.accept(CRYSTAL_QUARTZ_ITEM);
 					output.accept(LENS);
 					output.accept(ALLOWLIST_MODULE);
 					output.accept(DENYLIST_MODULE);
@@ -1306,16 +1302,6 @@ public class SCContent {
 							output.accept(block);
 					}
 
-					output.accept(CRYSTAL_QUARTZ);
-					output.accept(CRYSTAL_QUARTZ_STAIRS);
-					output.accept(CRYSTAL_QUARTZ_SLAB);
-					output.accept(CHISELED_CRYSTAL_QUARTZ);
-					output.accept(CRYSTAL_QUARTZ_BRICKS);
-					output.accept(CRYSTAL_QUARTZ_PILLAR);
-					output.accept(SMOOTH_CRYSTAL_QUARTZ);
-					output.accept(SMOOTH_CRYSTAL_QUARTZ_STAIRS);
-					output.accept(SMOOTH_CRYSTAL_QUARTZ_SLAB);
-
 					for (ItemLike sign : SECRET_SIGN_ITEMS)
 						output.accept(sign);
 
@@ -1359,7 +1345,13 @@ public class SCContent {
 	 * crystal quartz set is the mod's own, so upstream hands the counterpart to the constructor; this port derives
 	 * it from the name everywhere else, which needs these two spelled out.
 	 */
-	private static final Map<String, String> COUNTERPART_EXCEPTIONS = Map.of("reinforced_crystal_quartz_block", "crystal_quartz", "reinforced_chiseled_crystal_quartz_block", "chiseled_crystal_quartz");
+	private static final Map<String, String> COUNTERPART_EXCEPTIONS = Map.of(
+			"reinforced_crystal_quartz_block", "crystal_quartz",
+			"reinforced_chiseled_crystal_quartz_block", "chiseled_crystal_quartz",
+			"reinforced_grass_path", "dirt_path",
+			"reinforced_hardened_clay", "terracotta",
+			"reinforced_normal_stone_slab", "stone_slab",
+			"reinforced_stone_slab", "smooth_stone_slab");
 
 	public static Block vanillaCounterpart(Block reinforced) {
 		net.minecraft.resources.ResourceLocation loc = BuiltInRegistries.BLOCK.getKey(reinforced);
