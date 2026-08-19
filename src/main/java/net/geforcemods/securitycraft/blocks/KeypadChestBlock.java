@@ -252,7 +252,8 @@ public class KeypadChestBlock extends ChestBlock {
 
 	@Override
 	public RenderShape getRenderShape(BlockState state) {
-		return RenderShape.MODEL;
+		//like every chest, the block model is empty and the chest itself is drawn by its block entity renderer
+		return RenderShape.ENTITYBLOCK_ANIMATED;
 	}
 
 	public static class Convertible implements IPasscodeConvertible {
@@ -311,10 +312,7 @@ public class KeypadChestBlock extends ChestBlock {
 			if (protect)
 				convertedBlock = SCContent.KEYPAD_CHEST;
 			else {
-				convertedBlock = BuiltInRegistries.BLOCK.get(((KeypadChestBlockEntity) chest).getPreviousChest());
-
-				if (convertedBlock == Blocks.AIR)
-					convertedBlock = Blocks.CHEST;
+				convertedBlock = BuiltInRegistries.BLOCK.get(((KeypadChestBlockEntity) chest).getPreviousChest()).map(net.minecraft.core.Holder.Reference::value).orElse(Blocks.CHEST);
 			}
 
 			chest.unpackLootTable(player); //generate loot (if any), so items don't spill out when converting and no additional loot table is generated

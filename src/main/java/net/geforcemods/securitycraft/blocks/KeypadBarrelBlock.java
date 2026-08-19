@@ -258,10 +258,7 @@ public class KeypadBarrelBlock extends Block implements EntityBlock {
 			};
 			CompoundTag tag;
 			BarrelBlockEntity barrel;
-			Block convertedBlock = BuiltInRegistries.BLOCK.get(keypadBarrel.getPreviousBarrel());
-
-			if (convertedBlock == Blocks.AIR)
-				convertedBlock = Blocks.BARREL;
+			Block convertedBlock = BuiltInRegistries.BLOCK.get(keypadBarrel.getPreviousBarrel()).map(net.minecraft.core.Holder.Reference::value).orElse(Blocks.BARREL);
 
 			keypadBarrel.dropAllModules();
 			keypadBarrel.unpackLootTable(player); //generate loot (if any), so items don't spill out when converting and no additional loot table is generated
