@@ -41,7 +41,7 @@ public class ManualPage {
 		add(SCContent.CLAYMORE.asItem());
 		add(SCContent.FRAME.asItem());
 		add(SCContent.IMS.asItem());
-		add(SCContent.KEY_PANEL.asItem());
+		//the key panel gets one page, for its item; SCContent.KEY_PANEL is the block, which has no item of its own
 		add(SCContent.KEYPAD.asItem(), "", true);
 		add(SCContent.KEYPAD_CHEST.asItem(), "", true);
 		add(SCContent.KEYPAD_BARREL.asItem(), "", true);
