@@ -83,11 +83,17 @@ public class SCManualScreen extends Screen implements StillValid {
 	private static final ResourceLocation ICONS = SCContent.id("textures/gui/info_book_icons.png");
 	private static final ResourceLocation VANILLA_BOOK = new ResourceLocation("textures/gui/book.png");
 	private static final int SUBPAGE_LENGTH = 1285;
-	//-1 is the welcome page; it sits at the back of the book, so the manual opens on the first real page instead
-	private static int lastPage = 0;
+	/** The Fabric port's own title page. It is the first page of the book; {@link #ORIGINAL_TITLE_PAGE} is the last. */
+	private static final int PORT_TITLE_PAGE = -2;
+	/** The original mod's title page, with its authors and patrons. It sits at the very back of the book. */
+	private static final int ORIGINAL_TITLE_PAGE = -1;
+	private static int lastPage = PORT_TITLE_PAGE;
 	private final MutableComponent intro1 = Utils.localize("gui.securitycraft:scManual.intro.1").setStyle(Style.EMPTY.withUnderlined(true));
 	private final Component ourPatrons = Utils.localize("gui.securitycraft:scManual.patreon.title");
+	private final MutableComponent portTitle = Utils.localize("gui.securitycraft:scManual.port.title").setStyle(Style.EMPTY.withUnderlined(true));
 	private final Component portedBy = Utils.localize("gui.securitycraft:scManual.portedBy");
+	//scroll notches are fractional on trackpads and free-spinning wheels, so they are added up until they make a page
+	private double scrolledSinceLastPage;
 	private List<HoverChecker> hoverCheckers = new ArrayList<>();
 	private int currentPage = lastPage;
 	private NonNullList<Ingredient> recipe;
@@ -145,14 +151,14 @@ public class SCManualScreen extends Screen implements StillValid {
 	@Override
 	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
 		renderBackground(guiGraphics);
-		guiGraphics.blit(currentPage == -1 ? TITLE_PAGE : (recipe != null && !recipe.isEmpty() ? PAGE : PAGE_WITH_SCROLL), startX, 5, 0, 0, 256, 250);
+		guiGraphics.blit(currentPage < 0 ? TITLE_PAGE : (recipe != null && !recipe.isEmpty() ? PAGE : PAGE_WITH_SCROLL), startX, 5, 0, 0, 256, 250);
 
 		for (Renderable renderable : renderables) {
 			renderable.render(guiGraphics, mouseX, mouseY, partialTicks);
 		}
 
 		if (currentPage > -1) {
-			String pageNumberText = (currentPage + 1) + "/" + (SCManualItem.PAGES.size() + 1); //+1 because the "welcome" page is not included
+			String pageNumberText = (currentPage + 2) + "/" + (SCManualItem.PAGES.size() + 2); //+2 because neither title page is in the list
 
 			if (subpages.size() > 1)
 				guiGraphics.drawString(font, (currentSubpage + 1) + "/" + subpages.size(), startX + 205, 100, 0x8E8270, false);
@@ -197,8 +203,15 @@ public class SCManualScreen extends Screen implements StillValid {
 				}
 			}
 		}
-		else { //"welcome" page
-			String pageNumberText = (SCManualItem.PAGES.size() + 1) + "/" + (SCManualItem.PAGES.size() + 1); //the welcome page is the last one
+		else if (currentPage == PORT_TITLE_PAGE) {
+			String pageNumberText = "1/" + (SCManualItem.PAGES.size() + 2); //+2 because neither title page is in the list
+
+			guiGraphics.drawString(font, portTitle, width / 2 - font.width(portTitle) / 2, 22, 0, false);
+			guiGraphics.drawString(font, portedBy, width / 2 - font.width(portedBy) / 2, 150, 0, false);
+			guiGraphics.drawString(font, pageNumberText, startX + 240 - font.width(pageNumberText), 182, 0x8E8270, false);
+		}
+		else { //the original's own title page, at the back of the book
+			String pageNumberText = (SCManualItem.PAGES.size() + 2) + "/" + (SCManualItem.PAGES.size() + 2);
 
 			guiGraphics.drawString(font, intro1, width / 2 - font.width(intro1) / 2, 22, 0, false);
 
@@ -214,7 +227,6 @@ public class SCManualScreen extends Screen implements StillValid {
 				guiGraphics.drawString(font, text, width / 2 - font.width(text) / 2, 180 + 10 * i, 0, false);
 			}
 
-			guiGraphics.drawString(font, portedBy, width / 2 - font.width(portedBy) / 2, 180 + 10 * author.size(), 0, false);
 			guiGraphics.drawString(font, pageNumberText, startX + 240 - font.width(pageNumberText), 182, 0x8E8270, false);
 			guiGraphics.drawString(font, ourPatrons, width / 2 - font.width(ourPatrons) / 2 + 34, 40, 0, false);
 		}
@@ -237,8 +249,8 @@ public class SCManualScreen extends Screen implements StillValid {
 	}
 
 	private void hideSubpageButtonsOnMainPage() {
-		nextSubpage.visible = currentPage != -1 && subpages.size() > 1;
-		previousSubpage.visible = currentPage != -1 && subpages.size() > 1;
+		nextSubpage.visible = currentPage >= 0 && subpages.size() > 1;
+		previousSubpage.visible = currentPage >= 0 && subpages.size() > 1;
 	}
 
 	@Override
@@ -255,7 +267,7 @@ public class SCManualScreen extends Screen implements StillValid {
 			return true;
 		}
 
-		if (currentPage == -1 && patronList != null && patronList.isMouseOver(mouseX, mouseY) && !patronList.patrons.isEmpty())
+		if (currentPage == ORIGINAL_TITLE_PAGE && patronList != null && patronList.isMouseOver(mouseX, mouseY) && !patronList.patrons.isEmpty())
 			return patronList.mouseScrolled(mouseX, mouseY, scroll);
 
 		if (Screen.hasControlDown() && subpages.size() > 1) {
@@ -271,36 +283,42 @@ public class SCManualScreen extends Screen implements StillValid {
 			return true;
 		}
 
-		switch ((int) Math.signum(scroll)) {
-			case -1:
-				nextPage();
-				break;
-			case 1:
-				previousPage();
-				break;
+		scrolledSinceLastPage += scroll;
+
+		while (scrolledSinceLastPage <= -1.0) {
+			scrolledSinceLastPage++;
+			nextPage();
+		}
+
+		while (scrolledSinceLastPage >= 1.0) {
+			scrolledSinceLastPage--;
+			previousPage();
 		}
 
 		//hide subpage buttons on main page
-		nextSubpage.visible = currentPage != -1 && subpages.size() > 1;
-		previousSubpage.visible = currentPage != -1 && subpages.size() > 1;
+		hideSubpageButtonsOnMainPage();
 		return true;
 	}
 
 	private void nextPage() {
-		currentPage++;
-
-		if (currentPage > SCManualItem.PAGES.size() - 1)
-			currentPage = -1;
+		if (currentPage == PORT_TITLE_PAGE)
+			currentPage = 0;
+		else if (currentPage == ORIGINAL_TITLE_PAGE)
+			currentPage = PORT_TITLE_PAGE;
+		else if (++currentPage > SCManualItem.PAGES.size() - 1)
+			currentPage = ORIGINAL_TITLE_PAGE;
 
 		updateRecipeAndIcons();
 		hideSubpageButtonsOnMainPage();
 	}
 
 	private void previousPage() {
-		currentPage--;
-
-		if (currentPage < -1)
+		if (currentPage == PORT_TITLE_PAGE)
+			currentPage = ORIGINAL_TITLE_PAGE;
+		else if (currentPage == ORIGINAL_TITLE_PAGE)
 			currentPage = SCManualItem.PAGES.size() - 1;
+		else if (--currentPage < 0)
+			currentPage = PORT_TITLE_PAGE;
 
 		updateRecipeAndIcons();
 		hideSubpageButtonsOnMainPage();
@@ -323,7 +341,7 @@ public class SCManualScreen extends Screen implements StillValid {
 	private void updateRecipeAndIcons() {
 		currentSubpage = 0;
 		hoverCheckers.clear();
-		patreonLinkButton.visible = currentPage == -1;
+		patreonLinkButton.visible = currentPage == ORIGINAL_TITLE_PAGE;
 
 		if (currentPage < 0) {
 			for (IngredientDisplay display : displays) {
@@ -563,8 +581,8 @@ public class SCManualScreen extends Screen implements StillValid {
 
 		//set up subpages
 		subpages = font.getSplitter().splitLines(page.helpInfo(), SUBPAGE_LENGTH, Style.EMPTY);
-		nextSubpage.visible = currentPage != -1 && subpages.size() > 1;
-		previousSubpage.visible = currentPage != -1 && subpages.size() > 1;
+		nextSubpage.visible = currentPage >= 0 && subpages.size() > 1;
+		previousSubpage.visible = currentPage >= 0 && subpages.size() > 1;
 	}
 
 	private void resetBlockEntityInfo() {
