@@ -280,7 +280,24 @@
     "securitycraft:reinforced_stone_button",
     "securitycraft:reinforced_polished_blackstone_button",
     "#securitycraft:reinforced/walls",
-    "#securitycraft:reinforced/cauldrons"
+    "#securitycraft:reinforced/cauldrons",
+    "securitycraft:crystal_quartz_slab",
+    "securitycraft:smooth_crystal_quartz",
+    "securitycraft:chiseled_crystal_quartz",
+    "securitycraft:crystal_quartz",
+    "securitycraft:crystal_quartz_bricks",
+    "securitycraft:crystal_quartz_pillar",
+    "securitycraft:crystal_quartz_stairs",
+    "securitycraft:smooth_crystal_quartz_stairs",
+    "securitycraft:smooth_crystal_quartz_slab",
+    "securitycraft:reinforced_smooth_crystal_quartz",
+    "securitycraft:reinforced_chiseled_crystal_quartz_block",
+    "securitycraft:reinforced_crystal_quartz_block",
+    "securitycraft:reinforced_crystal_quartz_bricks",
+    "securitycraft:reinforced_crystal_quartz_pillar",
+    "securitycraft:reinforced_piston",
+    "securitycraft:reinforced_sticky_piston",
+    "securitycraft:reinforced_piston_head"
   ],
   "replace": false
 }
