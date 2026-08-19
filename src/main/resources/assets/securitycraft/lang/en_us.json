@@ -444,9 +444,6 @@
 	"block.securitycraft.reinforced_tuff_brick_slab": "Reinforced Tuff Brick Slab",
 	"block.securitycraft.reinforced_tuff_brick_stairs": "Reinforced Tuff Brick Stairs",
 	"block.securitycraft.reinforced_tuff_brick_wall": "Reinforced Tuff Brick Wall",
-	"block.securitycraft.reinforced_tuff_slab": "Reinforced Tuff Slab",
-	"block.securitycraft.reinforced_tuff_stairs": "Reinforced Tuff Stairs",
-	"block.securitycraft.reinforced_tuff_wall": "Reinforced Tuff Wall",
 	"block.securitycraft.reinforced_warped_button": "Reinforced Warped Button",
 	"block.securitycraft.reinforced_warped_fence": "Reinforced Warped Fence",
 	"block.securitycraft.reinforced_warped_fence_gate": "Reinforced Warped Fence Gate",
@@ -962,5 +959,6 @@
 	"block.securitycraft.secret_spruce_sign": "Secret Spruce Sign",
 	"block.securitycraft.secret_warped_hanging_sign": "Secret Warped Hanging Sign",
 	"block.securitycraft.secret_warped_sign": "Secret Warped Sign",
-	"module.generic.secret_sign.whitelist_module.description": "Adding an allowlist module to a secret sign will allow listed players to interact with, and view the text on it."
+	"module.generic.secret_sign.whitelist_module.description": "Adding an allowlist module to a secret sign will allow listed players to interact with, and view the text on it.",
+	"gui.securitycraft:scManual.port.title": "SecurityCraft Fabric"
 }
