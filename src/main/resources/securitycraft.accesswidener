@@ -49,3 +49,7 @@ extendable	method	net/minecraft/client/gui/screens/inventory/BookViewScreen	upda
 # Fabric has no such hook, so the flag has to be cleared on the properties instead, and vanilla only offers a
 # setter that turns it on.
 accessible	field	net/minecraft/world/level/block/state/BlockBehaviour$Properties	requiresCorrectToolForDrops	Z
+
+# The secret signs draw their text only for the players allowed to read it. Vanilla's SignRenderer no longer
+# exposes a text-drawing hook to override in this version, so SecretSignRenderer/SecretHangingSignRenderer
+# instead swap SignBlockEntity's frontText/backText fields directly through reflection for the render call.
