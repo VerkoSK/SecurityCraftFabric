@@ -11,11 +11,13 @@
 		"#securitycraft:reinforced/wooden_fence_gates",
 		"#securitycraft:reinforced/logs",
 		"#securitycraft:reinforced/planks",
+		"#securitycraft:secret_signs",
 		"#securitycraft:reinforced/wooden_buttons",
 		"#securitycraft:reinforced/wooden_fences",
 		"#securitycraft:reinforced/wooden_pressure_plates",
 		"#securitycraft:reinforced/wooden_slabs",
 		"#securitycraft:reinforced/wooden_stairs",
+		"#securitycraft:secret_hanging_signs",
 		"#securitycraft:reinforced/bamboo_blocks"
 	],
 	"replace": false

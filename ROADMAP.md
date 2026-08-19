@@ -29,7 +29,8 @@ the electrified iron fence and fence gate, 47 further reinforced blocks (carpets
 ladder, lanterns, chain, end rod, cobweb, scaffolding, lever, redstone lamp, grass block, podzol,
 mycelium, sea lantern, bookshelf), fake water and fake lava, the SecurityCraft Manual, and the
 passcode-protected chest, barrel, furnace, smoker and blast furnace, and the reinforced
-hopper, dispenser, dropper, observer, pistons, cauldrons, lectern and chiseled bookshelf.
+hopper, dispenser, dropper, observer, pistons, cauldrons, lectern and chiseled bookshelf, the
+crystal quartz set and the secret signs.
 
 ---
 
@@ -108,11 +109,9 @@ What is left of the original's own blocks once the reinforced set is complete.
 | Content | Notes |
 | --- | --- |
 | Sonic Security System + Portable Tune Player | note-block listening and the linked-block system |
-| Secret signs and hanging signs (all wood types) | |
 | Security Sea Boats (9 types) | |
 | Briefcase | its own passcode and inventory |
 | Incognito Mask, Admin Tool | |
-| Crystal Quartz set (7 blocks) and its reinforced counterparts (9 blocks) | |
 | Horizontal reinforced iron bars | |
 
 Then: bring V1.0 to all 15 supported Minecraft versions, and a full pass comparing this port's
