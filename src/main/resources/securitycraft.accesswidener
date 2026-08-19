@@ -48,3 +48,8 @@ accessible	field	net/minecraft/world/level/block/entity/LecternBlockEntity	dataA
 accessible	field	net/minecraft/client/gui/screens/inventory/BookViewScreen	forwardButton	Lnet/minecraft/client/gui/screens/inventory/PageButton;
 accessible	field	net/minecraft/client/gui/screens/inventory/BookViewScreen	backButton	Lnet/minecraft/client/gui/screens/inventory/PageButton;
 extendable	method	net/minecraft/client/gui/screens/inventory/BookViewScreen	updateButtonVisibility	()V
+
+# The original's always_drop config defaults to true, which it honours by overriding Forge's canHarvestBlock.
+# Fabric has no such hook, so the flag has to be cleared on the properties instead, and vanilla only offers a
+# setter that turns it on.
+accessible	field	net/minecraft/world/level/block/state/BlockBehaviour$Properties	requiresCorrectToolForDrops	Z
