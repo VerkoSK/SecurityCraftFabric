@@ -110,6 +110,12 @@ public class SecurityCraftClient implements ClientModInitializer {
 		// Laser beam: translucent animated texture (render_type declared in the laser block model), tinted at tintindex 0 by the lens colour (red default).
 		ColorProviderRegistry.BLOCK.register(SecurityCraftClient::laserFieldColor, SCContent.LASER_FIELD);
 
+		//the fake liquids have no textures of their own: they borrow water's and lava's, which is what makes them
+		//indistinguishable from the real thing until something walks into them
+		net.fabricmc.fabric.api.client.render.fluid.v1.FluidRenderHandlerRegistry.INSTANCE.register(SCContent.FAKE_WATER, SCContent.FLOWING_FAKE_WATER, new net.fabricmc.fabric.api.client.render.fluid.v1.SimpleFluidRenderHandler(net.fabricmc.fabric.api.client.render.fluid.v1.SimpleFluidRenderHandler.WATER_STILL, net.fabricmc.fabric.api.client.render.fluid.v1.SimpleFluidRenderHandler.WATER_FLOWING, net.fabricmc.fabric.api.client.render.fluid.v1.SimpleFluidRenderHandler.WATER_OVERLAY, 0xFF3F76E4));
+		net.fabricmc.fabric.api.client.render.fluid.v1.FluidRenderHandlerRegistry.INSTANCE.register(SCContent.FAKE_LAVA, SCContent.FLOWING_FAKE_LAVA, new net.fabricmc.fabric.api.client.render.fluid.v1.SimpleFluidRenderHandler(net.minecraft.resources.ResourceLocation.withDefaultNamespace("block/lava_still"), net.minecraft.resources.ResourceLocation.withDefaultNamespace("block/lava_flow")));
+		// Fake water's translucent render layer is declared via "render_type" on its block model JSON, since Fabric's BlockRenderLayerMap (blockrenderlayer-v1) was dropped for MC 1.21.6.
+
 		// Lens item: tinted by its dyed colour via the minecraft:dye tint source in items/lens.json (Fabric's ColorProviderRegistry.ITEM was removed in 1.21.5).
 	}
 }
