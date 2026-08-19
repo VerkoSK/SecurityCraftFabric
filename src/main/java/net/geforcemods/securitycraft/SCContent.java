@@ -721,6 +721,10 @@ public class SCContent {
 		KEYPAD_FURNACE = register("keypad_furnace", new net.geforcemods.securitycraft.blocks.KeypadFurnaceBlock(keypadFurnaceProps()));
 		KEYPAD_SMOKER = register("keypad_smoker", new net.geforcemods.securitycraft.blocks.KeypadSmokerBlock(keypadFurnaceProps()));
 		KEYPAD_BLAST_FURNACE = register("keypad_blast_furnace", new net.geforcemods.securitycraft.blocks.KeypadBlastFurnaceBlock(keypadFurnaceProps()));
+		//the furnace family's front window is a see-through texture, same situation as the reinforced door
+		CUTOUT_BLOCKS.add(KEYPAD_FURNACE);
+		CUTOUT_BLOCKS.add(KEYPAD_SMOKER);
+		CUTOUT_BLOCKS.add(KEYPAD_BLAST_FURNACE);
 		net.geforcemods.securitycraft.api.SecurityCraftAPI.registerPasscodeConvertible(new net.geforcemods.securitycraft.blocks.KeypadBlock.Convertible());
 		net.geforcemods.securitycraft.api.SecurityCraftAPI.registerPasscodeConvertible(new net.geforcemods.securitycraft.blocks.KeypadChestBlock.Convertible());
 		net.geforcemods.securitycraft.api.SecurityCraftAPI.registerPasscodeConvertible(new net.geforcemods.securitycraft.blocks.KeypadBarrelBlock.Convertible());
@@ -955,6 +959,28 @@ public class SCContent {
 		register(name, block);
 		REINFORCED_BLOCKS.add(block);
 		REINFORCED_BY_NAME.put(name, block);
+	}
+
+	/**
+	 * The properties a reinforced block is registered with: copied straight off the vanilla block it reinforces,
+	 * the way upstream's {@code reinforcedCopy} does it, so hardness, tool requirement, sound and light all match.
+	 * Only when there is no vanilla counterpart does this fall back to the by-shape guess.
+	 *
+	 * <p>Upstream copies through Forge's {@code ofFullCopy}, which also carries the four state predicates vanilla's
+	 * own {@code Properties#copy} leaves behind; those matter for glass, so they are re-applied here.
+	 */
+	private static BlockBehaviour.Properties reinforcedProps(String name, String category) {
+		Block vanilla = BuiltInRegistries.BLOCK.get(new ResourceLocation("minecraft", name.substring("reinforced_".length())));
+
+		if (vanilla == Blocks.AIR)
+			return isGlass(name, category) ? glassProps() : category.equals("pane") ? paneProps() : shapeProps(name);
+
+		BlockBehaviour.Properties props = reinforcedCopy(vanilla);
+
+		if (isGlass(name, category))
+			props.isValidSpawn((state, level, pos, type) -> false).isRedstoneConductor((state, level, pos) -> false).isSuffocating((state, level, pos) -> false).isViewBlocking((state, level, pos) -> false);
+
+		return props;
 	}
 
 	private static Block register(String name, Block block) {
