@@ -902,5 +902,22 @@
 	"module.securitycraft.keypad_smoker.whitelist_module.description": "Adding an allowlist module to a Passcode-protected Smoker will allow players to open it without knowing the code. Additionally, Reinforced Hoppers owned by listed players can extract items from the smoker.",
 	"module.securitycraft.reinforced_dispenser.whitelist_module.description": "Adding an allowlist module to a Reinforced Dispenser will allow listed players to access the dispenser's contents. Additionally, Reinforced Hoppers owned by listed players can extract items from the dispenser.",
 	"module.securitycraft.reinforced_dropper.whitelist_module.description": "Adding an allowlist module to a Reinforced Dropper will allow listed players to access the dropper's contents. Additionally, Reinforced Hoppers owned by listed players can extract items from the dropper.",
-	"module.securitycraft.reinforced_hopper.whitelist_module.description": "Adding an allowlist module to a reinforced hopper will allow listed players to access the hopper's contents."
+	"module.securitycraft.reinforced_hopper.whitelist_module.description": "Adding an allowlist module to a reinforced hopper will allow listed players to access the hopper's contents.",
+	"block.securitycraft.reinforced_cauldron": "Reinforced Cauldron",
+	"block.securitycraft.reinforced_chiseled_bookshelf": "Reinforced Chiseled Bookshelf",
+	"block.securitycraft.reinforced_lava_cauldron": "Reinforced Lava Cauldron",
+	"block.securitycraft.reinforced_lectern": "Reinforced Lectern",
+	"block.securitycraft.reinforced_moving_piston": "Reinforced Moving Piston",
+	"block.securitycraft.reinforced_piston": "Reinforced Piston",
+	"block.securitycraft.reinforced_piston_head": "Reinforced Piston Head",
+	"block.securitycraft.reinforced_powder_snow_cauldron": "Reinforced Powder Snow Cauldron",
+	"block.securitycraft.reinforced_sticky_piston": "Reinforced Sticky Piston",
+	"block.securitycraft.reinforced_water_cauldron": "Reinforced Water Cauldron",
+	"help.securitycraft.reinforced_chiseled_bookshelf.info": "The Reinforced Chiseled Bookshelf has the same features as its vanilla counterpart, though only the owner and players on the allowlist can add and remove books.",
+	"module.securitycraft.reinforced_cauldron.whitelist_module.description": "Adding an allowlist module to a Reinforced Cauldron will allow listed players to interact with the Reinforced Cauldron.",
+	"module.securitycraft.reinforced_chiseled_bookshelf.whitelist_module.description": "Adding an allowlist module to a Reinforced Chiseled Bookshelf will allow listed players to interact with the Reinforced Chiseled Bookshelf.",
+	"module.securitycraft.reinforced_lava_cauldron.whitelist_module.description": "Adding an allowlist module to a Reinforced Cauldron will allow listed players to interact with the Reinforced Cauldron.",
+	"module.securitycraft.reinforced_lectern.whitelist_module.description": "Adding an allowlist module to a Reinforced Lectern will allow listed players to read the book in the lectern. They still cannot take the book out.",
+	"module.securitycraft.reinforced_powder_snow_cauldron.whitelist_module.description": "Adding an allowlist module to a Reinforced Cauldron will allow listed players to interact with the Reinforced Cauldron.",
+	"module.securitycraft.reinforced_water_cauldron.whitelist_module.description": "Adding an allowlist module to a Reinforced Cauldron will allow listed players to interact with the Reinforced Cauldron."
 }

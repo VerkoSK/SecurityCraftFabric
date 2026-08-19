@@ -36,3 +36,18 @@ accessible	field	net/minecraft/world/level/block/entity/ChestBlockEntity	openers
 # SCManualScreen draws its widgets itself, in between the page background and the page text, instead of letting
 # Screen#render do it at the end. Upstream reaches the same list through Forge's access transformers.
 accessible	field	net/minecraft/client/gui/screens/Screen	renderables	Ljava/util/List;
+
+# The reinforced pistons, lectern and its block entity re-use vanilla's own logic, which keeps several members
+# private; isFittingBase and openScreen have to be extendable rather than accessible, because vanilla calls them
+# on this and the JVM only dispatches virtually once the private flag is gone.
+accessible	field	net/minecraft/world/level/block/piston/PistonBaseBlock	isSticky	Z
+extendable	method	net/minecraft/world/level/block/piston/PistonHeadBlock	isFittingBase	(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/block/state/BlockState;)Z
+extendable	method	net/minecraft/world/level/block/LecternBlock	openScreen	(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/entity/player/Player;)V
+accessible	field	net/minecraft/world/level/block/entity/LecternBlockEntity	bookAccess	Lnet/minecraft/world/Container;
+accessible	field	net/minecraft/world/level/block/entity/LecternBlockEntity	dataAccess	Lnet/minecraft/world/inventory/ContainerData;
+
+# ReinforcedLecternScreen hides the page buttons from anyone who may not turn the page. Vanilla keeps the two
+# buttons and the method that shows them private; upstream reaches them through Forge's access transformers.
+accessible	field	net/minecraft/client/gui/screens/inventory/BookViewScreen	forwardButton	Lnet/minecraft/client/gui/screens/inventory/PageButton;
+accessible	field	net/minecraft/client/gui/screens/inventory/BookViewScreen	backButton	Lnet/minecraft/client/gui/screens/inventory/PageButton;
+extendable	method	net/minecraft/client/gui/screens/inventory/BookViewScreen	updateButtonVisibility	()V
