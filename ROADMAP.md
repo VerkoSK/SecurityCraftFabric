@@ -22,15 +22,13 @@ modules, the allow/deny list editor, the disguise module screen.
 every block mine), the Mine Remote Access Tool, wire cutters, JEI and Jade integration, creative tab
 ordering.
 
-**V0.5** [RELEASING 25.8.2026] — the ownership system (every reinforced block, door and trapdoor remembers its owner and
+**V0.5** — the ownership system (every reinforced block, door and trapdoor remembers its owner and
 can only be broken by them; team ownership; variable break time), the Universal Owner Changer, the
 Universal Block Modifier and the whole Customize screen including the module enable/disable toggle,
 the electrified iron fence and fence gate, 47 further reinforced blocks (carpets, glazed terracotta,
 ladder, lanterns, chain, end rod, cobweb, scaffolding, lever, redstone lamp, grass block, podzol,
 mycelium, sea lantern, bookshelf), fake water and fake lava, the SecurityCraft Manual, and the
-passcode-protected chest, barrel, furnace, smoker and blast furnace, and the reinforced
-hopper, dispenser, dropper, observer, pistons, cauldrons, lectern and chiseled bookshelf, the
-crystal quartz set and the secret signs.
+passcode-protected chest, barrel, furnace, smoker and blast furnace.
 
 ---
 
@@ -92,12 +90,19 @@ The blocks that shoot back.
 
 ---
 
-## V0.9 — Storage and the block pocket
+## V0.9 — Functional reinforced blocks and storage
 
-What is left of the original's own blocks once the reinforced set is complete.
+The reinforced blocks that are not just a shape: each of these keeps vanilla's behaviour but adds an
+owner, so each needs its own block entity.
 
 | Content | Notes |
 | --- | --- |
+| Reinforced Hopper, Dispenser, Dropper | inventories, so a block entity each |
+| Reinforced Observer | |
+| Reinforced Piston, Sticky Piston | the heaviest of the set: needs the moving-piston block entity and the piston head |
+| Reinforced Lectern | has its own menu |
+| Reinforced Chiseled Bookshelf | |
+| Reinforced Cauldron, Water/Lava/Powder Snow Cauldron | the cauldron interaction table has to be mirrored |
 | Display Case, Glow Display Case | |
 | Secure Redstone Interface | |
 | Block Pocket Manager + Block Pocket Wall | the original's largest single block by code size |
@@ -109,9 +114,11 @@ What is left of the original's own blocks once the reinforced set is complete.
 | Content | Notes |
 | --- | --- |
 | Sonic Security System + Portable Tune Player | note-block listening and the linked-block system |
+| Secret signs and hanging signs (all wood types) | |
 | Security Sea Boats (9 types) | |
 | Briefcase | its own passcode and inventory |
 | Incognito Mask, Admin Tool | |
+| Crystal Quartz set (7 blocks) and its reinforced counterparts (9 blocks) | |
 | Horizontal reinforced iron bars | |
 
 Then: bring V1.0 to all 15 supported Minecraft versions, and a full pass comparing this port's
