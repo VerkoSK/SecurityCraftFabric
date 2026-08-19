@@ -134,6 +134,33 @@ public class SecurityCraftClient implements ClientModInitializer {
 		};
 		BlockColorRegistry.register(List.of(laserTintSource), SCContent.LASER_FIELD);
 
+		//the fake liquids have no textures of their own: they borrow water's and lava's, which is what makes them
+		//indistinguishable from the real thing until something walks into them. Fabric's fluid rendering API was
+		//reworked for 26.x - SimpleFluidRenderHandler and BlockRenderLayerMap.putFluids are gone. FluidModel.Unbaked
+		//now carries the sprite Materials and a BlockTintSource directly, and each Material's own forceTranslucent
+		//flag is what used to be the putFluids render layer.
+		BlockTintSource waterTintSource = new BlockTintSource() {
+			@Override
+			public int color(net.minecraft.world.level.block.state.BlockState state) {
+				return 0xFFFFFFFF;
+			}
+
+			@Override
+			public int colorInWorld(net.minecraft.world.level.block.state.BlockState state, BlockAndTintGetter view, net.minecraft.core.BlockPos pos) {
+				return net.minecraft.client.renderer.BiomeColors.getAverageWaterColor(view, pos) | 0xFF000000;
+			}
+		};
+		net.fabricmc.fabric.api.client.render.fluid.v1.FluidRenderingRegistry.register(SCContent.FAKE_WATER, SCContent.FLOWING_FAKE_WATER, new net.minecraft.client.renderer.block.FluidModel.Unbaked(
+				new net.minecraft.client.resources.model.sprite.Material(net.minecraft.resources.Identifier.withDefaultNamespace("block/water_still"), true),
+				new net.minecraft.client.resources.model.sprite.Material(net.minecraft.resources.Identifier.withDefaultNamespace("block/water_flow"), true),
+				new net.minecraft.client.resources.model.sprite.Material(net.minecraft.resources.Identifier.withDefaultNamespace("block/water_overlay"), true),
+				waterTintSource));
+		net.fabricmc.fabric.api.client.render.fluid.v1.FluidRenderingRegistry.register(SCContent.FAKE_LAVA, SCContent.FLOWING_FAKE_LAVA, new net.minecraft.client.renderer.block.FluidModel.Unbaked(
+				new net.minecraft.client.resources.model.sprite.Material(net.minecraft.resources.Identifier.withDefaultNamespace("block/lava_still")),
+				new net.minecraft.client.resources.model.sprite.Material(net.minecraft.resources.Identifier.withDefaultNamespace("block/lava_flow")),
+				null,
+				state -> 0xFFFFFFFF));
+
 		// Lens item: tinted by its dyed colour via the minecraft:dye tint source in items/lens.json (Fabric's ColorProviderRegistry.ITEM was removed in 1.21.5).
 	}
 }
