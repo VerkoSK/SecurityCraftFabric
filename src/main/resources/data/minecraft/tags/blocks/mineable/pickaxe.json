@@ -272,6 +272,9 @@
 		"securitycraft:reinforced_ice",
 		"securitycraft:reinforced_packed_ice",
 		"securitycraft:reinforced_blue_ice",
+		"securitycraft:reinforced_piston",
+		"securitycraft:reinforced_sticky_piston",
+		"securitycraft:reinforced_piston_head",
 		"securitycraft:reinforced_amethyst_block",
 		"securitycraft:reinforced_mud_bricks",
 		"securitycraft:reinforced_mud_brick_stairs",
@@ -279,7 +282,8 @@
 		"securitycraft:reinforced_packed_mud",
 		"securitycraft:reinforced_stone_button",
 		"securitycraft:reinforced_polished_blackstone_button",
-		"#securitycraft:reinforced/walls"
+		"#securitycraft:reinforced/walls",
+		"#securitycraft:reinforced/cauldrons"
 	],
 	"replace": false
 }
