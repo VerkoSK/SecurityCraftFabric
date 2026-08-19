@@ -455,10 +455,13 @@
 		"securitycraft:reinforced_verdant_froglight",
 		"securitycraft:reinforced_pearlescent_froglight",
 		"securitycraft:reinforced_redstone_block",
+		"securitycraft:reinforced_piston",
+		"securitycraft:reinforced_sticky_piston",
 		"securitycraft:reinforced_observer",
 		"securitycraft:reinforced_hopper",
 		"securitycraft:reinforced_dispenser",
 		"securitycraft:reinforced_dropper",
+		"securitycraft:reinforced_lectern",
 		"securitycraft:reinforced_lever",
 		"securitycraft:reinforced_redstone_lamp",
 		"securitycraft:reinforced_stone_button",
@@ -484,6 +487,10 @@
 		"securitycraft:reinforced_crimson_pressure_plate",
 		"securitycraft:reinforced_warped_pressure_plate",
 		"securitycraft:reinforced_iron_trapdoor",
+		"securitycraft:reinforced_cauldron",
+		"securitycraft:reinforced_water_cauldron",
+		"securitycraft:reinforced_lava_cauldron",
+		"securitycraft:reinforced_powder_snow_cauldron",
 		"securitycraft:reinforced_bamboo_block",
 		"securitycraft:reinforced_stripped_bamboo_block",
 		"securitycraft:reinforced_bamboo_planks",
@@ -494,6 +501,7 @@
 		"securitycraft:reinforced_bamboo_mosaic_slab",
 		"securitycraft:reinforced_bamboo_pressure_plate",
 		"securitycraft:reinforced_bamboo_button",
+		"securitycraft:reinforced_chiseled_bookshelf",
 		"securitycraft:reinforced_cherry_log",
 		"securitycraft:reinforced_cherry_wood",
 		"securitycraft:reinforced_stripped_cherry_log",
@@ -530,7 +538,9 @@
 		"securitycraft:reinforced_crystal_quartz_stairs",
 		"securitycraft:reinforced_smooth_crystal_quartz_stairs",
 		"securitycraft:reinforced_smooth_crystal_quartz_slab",
-		"securitycraft:reinforced_grass_path"
+		"securitycraft:reinforced_grass_path",
+		"securitycraft:reinforced_moving_piston",
+		"securitycraft:reinforced_piston_head"
 	],
 	"replace": false
 }
