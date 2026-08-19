@@ -79,6 +79,14 @@ public class SCContent {
 	public static net.geforcemods.securitycraft.blocks.ElectrifiedIronFenceGateBlock ELECTRIFIED_IRON_FENCE_GATE;
 	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.ElectrifiedFenceAndGateBlockEntity> ELECTRIFIED_FENCE_AND_GATE_BLOCK_ENTITY;
 	public static Item UNIVERSAL_OWNER_CHANGER;
+	public static net.minecraft.world.level.material.FlowingFluid FAKE_WATER;
+	public static net.minecraft.world.level.material.FlowingFluid FLOWING_FAKE_WATER;
+	public static net.minecraft.world.level.material.FlowingFluid FAKE_LAVA;
+	public static net.minecraft.world.level.material.FlowingFluid FLOWING_FAKE_LAVA;
+	public static Block FAKE_WATER_BLOCK;
+	public static Block FAKE_LAVA_BLOCK;
+	public static Item FAKE_WATER_BUCKET;
+	public static Item FAKE_LAVA_BUCKET;
 	public static Item UNIVERSAL_BLOCK_MODIFIER;
 	public static net.geforcemods.securitycraft.blocks.KeyPanelBlock KEY_PANEL;
 	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.KeyPanelBlockEntity> KEY_PANEL_BLOCK_ENTITY;
@@ -700,6 +708,15 @@ public class SCContent {
 		UNIVERSAL_BLOCK_MODIFIER = registerItem("universal_block_modifier", new net.geforcemods.securitycraft.items.UniversalBlockModifierItem(new Item.Properties().stacksTo(1)));
 		UNIVERSAL_OWNER_CHANGER = registerItem("universal_owner_changer", new net.geforcemods.securitycraft.items.UniversalOwnerChangerItem(new Item.Properties().stacksTo(1)));
 		LENS = registerItem("lens", new Item(new Item.Properties()));
+		//the fluids have to exist before their blocks, and the blocks before the buckets, since each refers back
+		FLOWING_FAKE_WATER = Registry.register(BuiltInRegistries.FLUID, id("flowing_fake_water"), new net.geforcemods.securitycraft.fluids.FakeWaterFluid.Flowing());
+		FAKE_WATER = Registry.register(BuiltInRegistries.FLUID, id("fake_water"), new net.geforcemods.securitycraft.fluids.FakeWaterFluid.Source());
+		FLOWING_FAKE_LAVA = Registry.register(BuiltInRegistries.FLUID, id("flowing_fake_lava"), new net.geforcemods.securitycraft.fluids.FakeLavaFluid.Flowing());
+		FAKE_LAVA = Registry.register(BuiltInRegistries.FLUID, id("fake_lava"), new net.geforcemods.securitycraft.fluids.FakeLavaFluid.Source());
+		FAKE_WATER_BLOCK = registerBlockNoItem("fake_water_block", new net.geforcemods.securitycraft.blocks.FakeWaterBlock(reinforcedCopy(Blocks.WATER), () -> FAKE_WATER));
+		FAKE_LAVA_BLOCK = registerBlockNoItem("fake_lava_block", new net.geforcemods.securitycraft.blocks.FakeLavaBlock(reinforcedCopy(Blocks.LAVA), () -> FAKE_LAVA));
+		FAKE_WATER_BUCKET = registerItem("bucket_f_water", new net.geforcemods.securitycraft.items.FakeLiquidBucketItem(() -> FAKE_WATER, new Item.Properties().stacksTo(1)));
+		FAKE_LAVA_BUCKET = registerItem("bucket_f_lava", new net.geforcemods.securitycraft.items.FakeLiquidBucketItem(() -> FAKE_LAVA, new Item.Properties().stacksTo(1)));
 
 		MINE = register("mine", new net.geforcemods.securitycraft.blocks.mines.MineBlock(mineProp(MapColor.METAL, 3.5F).sound(SoundType.METAL).forceSolidOn().pushReaction(PushReaction.NORMAL)));
 		BOUNCING_BETTY = register("bouncing_betty", new net.geforcemods.securitycraft.blocks.mines.BouncingBettyBlock(mineProp(MapColor.METAL, 3.5F).sound(SoundType.METAL).forceSolidOn().pushReaction(PushReaction.NORMAL)));
@@ -909,6 +926,8 @@ public class SCContent {
 					output.accept(UNIVERSAL_BLOCK_REINFORCER_LVL2);
 					output.accept(UNIVERSAL_BLOCK_REINFORCER_LVL3);
 					output.accept(UNIVERSAL_BLOCK_REMOVER);
+					output.accept(FAKE_WATER_BUCKET);
+					output.accept(FAKE_LAVA_BUCKET);
 				})
 				.build();
 		//Fabric's ItemGroupsMixin sorts every non-vanilla creative tab by its ResourceLocation and assigns the tab
