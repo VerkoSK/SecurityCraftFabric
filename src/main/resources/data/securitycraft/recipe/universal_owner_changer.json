@@ -2,8 +2,14 @@
 	"type": "minecraft:crafting_shapeless",
 	"category": "equipment",
 	"ingredients": [
-		{ "item": "securitycraft:universal_block_modifier" },
-		{ "item": "minecraft:name_tag" }
+		{
+			"item": "securitycraft:universal_block_modifier"
+		},
+		{
+			"item": "minecraft:name_tag"
+		}
 	],
-	"result": { "item": "securitycraft:universal_owner_changer" }
+	"result": {
+		"id": "securitycraft:universal_owner_changer"
+	}
 }

@@ -1,21 +1,21 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "category": "redstone",
-  "key": {
-    "G": {
-      "tag": "securitycraft:reinforced/wooden_fence_gates"
-    },
-    "I": {
-      "item": "minecraft:iron_ingot"
-    }
-  },
-  "pattern": [
-    " I ",
-    "IGI",
-    " I "
-  ],
-  "result": {
-    "item": "securitycraft:reinforced_fence_gate"
-  },
-  "show_notification": true
+	"type": "minecraft:crafting_shaped",
+	"category": "redstone",
+	"key": {
+		"G": {
+			"tag": "securitycraft:reinforced/wooden_fence_gates"
+		},
+		"I": {
+			"item": "minecraft:iron_ingot"
+		}
+	},
+	"pattern": [
+		" I ",
+		"IGI",
+		" I "
+	],
+	"result": {
+		"id": "securitycraft:reinforced_fence_gate"
+	},
+	"show_notification": true
 }
