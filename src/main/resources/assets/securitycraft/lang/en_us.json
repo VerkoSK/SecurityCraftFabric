@@ -805,5 +805,13 @@
 	"block.securitycraft.reinforced_white_carpet": "Reinforced White Carpet",
 	"block.securitycraft.reinforced_white_glazed_terracotta": "Reinforced White Glazed Terracotta",
 	"block.securitycraft.reinforced_yellow_carpet": "Reinforced Yellow Carpet",
-	"block.securitycraft.reinforced_yellow_glazed_terracotta": "Reinforced Yellow Glazed Terracotta"
+	"block.securitycraft.reinforced_yellow_glazed_terracotta": "Reinforced Yellow Glazed Terracotta",
+	"death.attack.securitycraft.fakeWater": "%s fell into poisonous water...?",
+	"death.attack.securitycraft.fakeWater.player": "%1$s fell into poisonous water whilst fighting %2$s...?",
+	"gui.securitycraft:scManual.recipe.bucket_f_lava": "The Fake Lava Bucket is created in the brewing stand, by putting any healing potion into the top slot, and up to three lava buckets in the bottom slots.",
+	"gui.securitycraft:scManual.recipe.bucket_f_water": "The Fake Water Bucket is created in the brewing stand, by putting any harming potion into the top slot, and up to three water buckets in the bottom slots.",
+	"help.securitycraft.bucket_f_lava.info": "The fake lava acts the same as lava, except it instantly heals you instead of hurting you.",
+	"help.securitycraft.bucket_f_water.info": "The fake water acts the same as water, except it hurts you, more so than lava, when touched.",
+	"item.securitycraft.bucket_f_lava": "Fake Lava Bucket",
+	"item.securitycraft.bucket_f_water": "Fake Water Bucket"
 }
