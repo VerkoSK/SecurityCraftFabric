@@ -711,6 +711,10 @@ public class SCContent {
 		KEYPAD_FURNACE = register("keypad_furnace", new net.geforcemods.securitycraft.blocks.KeypadFurnaceBlock(keypadFurnaceProps()));
 		KEYPAD_SMOKER = register("keypad_smoker", new net.geforcemods.securitycraft.blocks.KeypadSmokerBlock(keypadFurnaceProps()));
 		KEYPAD_BLAST_FURNACE = register("keypad_blast_furnace", new net.geforcemods.securitycraft.blocks.KeypadBlastFurnaceBlock(keypadFurnaceProps()));
+		//the furnace family's front window is a see-through texture, same situation as the reinforced door
+		CUTOUT_BLOCKS.add(KEYPAD_FURNACE);
+		CUTOUT_BLOCKS.add(KEYPAD_SMOKER);
+		CUTOUT_BLOCKS.add(KEYPAD_BLAST_FURNACE);
 		net.geforcemods.securitycraft.api.SecurityCraftAPI.registerPasscodeConvertible(new net.geforcemods.securitycraft.blocks.KeypadBlock.Convertible());
 		net.geforcemods.securitycraft.api.SecurityCraftAPI.registerPasscodeConvertible(new net.geforcemods.securitycraft.blocks.KeypadChestBlock.Convertible());
 		net.geforcemods.securitycraft.api.SecurityCraftAPI.registerPasscodeConvertible(new net.geforcemods.securitycraft.blocks.KeypadBarrelBlock.Convertible());
@@ -871,19 +875,25 @@ public class SCContent {
 	}
 
 	private static void registerReinforced(String name, String category) {
-		Block block = register(name, key -> switch (category) {
-			case "pillar" -> new RotatedPillarBlock(shapeProps(name).setId(key));
-			case "glass" -> new BaseReinforcedBlock(glassProps().setId(key));
-			case "pane" -> new IronBarsBlock((name.contains("glass") ? glassProps() : paneProps()).setId(key));
-			case "fence" -> new FenceBlock(shapeProps(name).setId(key));
-			case "fence_gate" -> new FenceGateBlock(WoodType.OAK, shapeProps(name).setId(key));
-			case "wall" -> new WallBlock(shapeProps(name).setId(key));
-			case "slab" -> new SlabBlock(shapeProps(name).setId(key));
-			case "stairs" -> new StairBlock(Blocks.STONE.defaultBlockState(), shapeProps(name).setId(key));
-			case "button" -> new ButtonBlock(BlockSetType.STONE, 20, shapeProps(name).setId(key));
-			case "pressure_plate" -> new PressurePlateBlock(BlockSetType.STONE, shapeProps(name).setId(key));
-			case "trapdoor" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedTrapdoorBlock(BlockSetType.IRON, shapeProps(name).setId(key));
-			default -> new BaseReinforcedBlock(shapeProps(name).setId(key));
+		//every shape uses its own reinforced subclass so the block carries an owner; see OwnershipUtils for why
+		//this port keeps the vanilla class as the superclass instead of reimplementing it the way upstream does
+		Block block = register(name, key -> {
+			BlockBehaviour.Properties props = reinforcedProps(name, category).setId(key);
+
+			return switch (category) {
+				case "pillar" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedPillarBlock(props);
+				case "glass" -> new BaseReinforcedBlock(props);
+				case "pane" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedPaneBlock(props);
+				case "fence" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedFenceBlock(props);
+				case "fence_gate" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedFenceGateBlock(props, WoodType.OAK);
+				case "wall" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedWallBlock(props);
+				case "slab" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedSlabBlock(props);
+				case "stairs" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedStairBlock(Blocks.STONE.defaultBlockState(), props);
+				case "button" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedButtonBlock(props, BlockSetType.STONE, 20, false);
+				case "pressure_plate" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedPressurePlateBlock(PressurePlateBlock.Sensitivity.EVERYTHING, props, BlockSetType.STONE);
+				case "trapdoor" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedTrapdoorBlock(BlockSetType.IRON, props);
+				default -> new BaseReinforcedBlock(props);
+			};
 		});
 		REINFORCED_BLOCKS.add(block);
 		REINFORCED_BY_NAME.put(name, block);
@@ -939,6 +949,28 @@ public class SCContent {
 		register(name, block);
 		REINFORCED_BLOCKS.add(block);
 		REINFORCED_BY_NAME.put(name, block);
+	}
+
+	/**
+	 * The properties a reinforced block is registered with: copied straight off the vanilla block it reinforces,
+	 * the way upstream's {@code reinforcedCopy} does it, so hardness, tool requirement, sound and light all match.
+	 * Only when there is no vanilla counterpart does this fall back to the by-shape guess.
+	 *
+	 * <p>Upstream copies through Forge's {@code ofFullCopy}, which also carries the four state predicates vanilla's
+	 * own {@code Properties#copy} leaves behind; those matter for glass, so they are re-applied here.
+	 */
+	private static BlockBehaviour.Properties reinforcedProps(String name, String category) {
+		Block vanilla = BuiltInRegistries.BLOCK.getValue(ResourceLocation.withDefaultNamespace(name.substring("reinforced_".length())));
+
+		if (vanilla == Blocks.AIR)
+			return isGlass(name, category) ? glassProps() : category.equals("pane") ? paneProps() : shapeProps(name);
+
+		BlockBehaviour.Properties props = reinforcedCopy(vanilla);
+
+		if (isGlass(name, category))
+			props.isValidSpawn((state, level, pos, type) -> false).isRedstoneConductor((state, level, pos) -> false).isSuffocating((state, level, pos) -> false).isViewBlocking((state, level, pos) -> false);
+
+		return props;
 	}
 
 	private static Block register(String name, java.util.function.Function<ResourceKey<Block>, Block> factory) {

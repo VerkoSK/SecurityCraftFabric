@@ -43,6 +43,13 @@ public class ManualPage {
 		add(SCContent.IMS.asItem());
 		add(SCContent.KEY_PANEL.asItem());
 		add(SCContent.KEYPAD.asItem(), "", true);
+		add(SCContent.KEYPAD_CHEST.asItem(), "", true);
+		add(SCContent.KEYPAD_BARREL.asItem(), "", true);
+		add(SCContent.KEYPAD_FURNACE.asItem(), "", true);
+		add(SCContent.KEYPAD_SMOKER.asItem(), "", true);
+		add(SCContent.KEYPAD_BLAST_FURNACE.asItem(), "", true);
+		add(SCContent.ELECTRIFIED_IRON_FENCE.asItem());
+		add(SCContent.REINFORCED_BY_NAME.get("reinforced_hopper").asItem());
 		add(SCContent.PORTABLE_RADAR.asItem());
 		add(SCContent.REINFORCED_DOOR.asItem());
 		add(SCContent.ELECTRIFIED_IRON_FENCE_GATE.asItem());
@@ -89,6 +96,7 @@ public class ManualPage {
 		addGroup(PageGroup.FENCE_GATES, SCContent.REINFORCED_BLOCKS.stream().filter(ReinforcedFenceGateBlock.class::isInstance).toList());
 		addGroup(PageGroup.REINFORCED, SCContent.REINFORCED_BLOCKS.stream()
 				.filter(block -> block != SCContent.REINFORCED_BY_NAME.get("reinforced_lever"))
+				.filter(block -> block != SCContent.REINFORCED_BY_NAME.get("reinforced_hopper"))
 				.filter(block -> !(block instanceof ReinforcedButtonBlock || block instanceof ReinforcedPressurePlateBlock || block instanceof ReinforcedFenceGateBlock || block instanceof ReinforcedTrapdoorBlock))
 				.toList());
 	}

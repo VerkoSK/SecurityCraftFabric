@@ -252,7 +252,8 @@ public class KeypadChestBlock extends ChestBlock {
 
 	@Override
 	public RenderShape getRenderShape(BlockState state) {
-		return RenderShape.MODEL;
+		//like every chest, the block model is empty and the chest itself is drawn by its block entity renderer
+		return RenderShape.ENTITYBLOCK_ANIMATED;
 	}
 
 	public static class Convertible implements IPasscodeConvertible {

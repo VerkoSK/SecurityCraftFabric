@@ -1,0 +1,9 @@
+{
+	"values": [
+		"securitycraft:universal_block_modifier",
+		"securitycraft:universal_block_remover",
+		"securitycraft:universal_owner_changer",
+		"#securitycraft:modules"
+	],
+	"replace": false
+}
