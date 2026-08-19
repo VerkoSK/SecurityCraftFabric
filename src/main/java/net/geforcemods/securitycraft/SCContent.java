@@ -1290,11 +1290,14 @@ public class SCContent {
 					for (Block block : sortByVanillaOrder(REINFORCED_BLOCKS)) {
 						if (block != REINFORCED_BY_NAME.get("reinforced_iron_trapdoor"))
 							output.accept(block);
+
+						//the original slots the secret signs in right behind the reinforced lectern, which is what puts
+						//them ahead of everything that sorts by the vanilla redstone tab - the pistons, lever and so on
+						if (block == REINFORCED_LECTERN) {
+							for (ItemLike sign : SECRET_SIGN_ITEMS)
+								output.accept(sign);
+						}
 					}
-
-
-					for (ItemLike sign : SECRET_SIGN_ITEMS)
-						output.accept(sign);
 
 					output.accept(ELECTRIFIED_IRON_FENCE);
 					output.accept(ELECTRIFIED_IRON_FENCE_GATE);

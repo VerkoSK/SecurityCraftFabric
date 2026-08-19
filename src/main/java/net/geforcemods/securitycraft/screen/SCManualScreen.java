@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -14,6 +16,7 @@ import java.util.concurrent.Future;
 
 import net.fabricmc.loader.api.FabricLoader;
 import net.geforcemods.securitycraft.SCContent;
+import net.geforcemods.securitycraft.SecurityCraft;
 import net.geforcemods.securitycraft.api.ICustomizable;
 import net.geforcemods.securitycraft.api.IExplosive;
 import net.geforcemods.securitycraft.api.IModuleInventory;
@@ -127,6 +130,7 @@ public class SCManualScreen extends Screen implements StillValid {
 		startX = (width - 256) / 2;
 		patreonLinkButton = addRenderableWidget(new HyperlinkButton(startX + 225, 143, 16, 16, Component.empty(), b -> handleComponentClicked(Style.EMPTY.withClickEvent(new ClickEvent(Action.OPEN_URL, "https://www.patreon.com/Geforce")))));
 		patronList = addRenderableWidget(new PatronList(112, 90, 90, startX + 130));
+		patronList.fetchPatrons();
 		previousSubpage = addRenderableWidget(new ChangePageButton(startX + 155, startY + 95, false, b -> previousSubpage()));
 		nextSubpage = addRenderableWidget(new ChangePageButton(startX + 180, startY + 95, true, b -> nextSubpage()));
 		addRenderableWidget(new ChangePageButton(startX + 22, startY + 188, false, b -> previousPage()));
@@ -703,10 +707,22 @@ public class SCManualScreen extends Screen implements StillValid {
 			if (!patronsRequested) {
 				//create thread to fetch patrons. without this, and for example if the player has no internet connection, the game will hang
 				patronRequestFuture = executor.submit(() -> {
-					try (BufferedReader reader = new BufferedReader(new InputStreamReader(URI.create(patronListLink).toURL().openStream()))) {
-						return reader.lines().toList();
+					try {
+						//a plain URL#openStream sends no user agent and waits forever on a stalled connection, which is
+						//what left the list stuck on "loading" instead of ever showing the patrons or the error
+						HttpURLConnection connection = (HttpURLConnection) URI.create(patronListLink).toURL().openConnection();
+
+						connection.setRequestProperty("User-Agent", "SecurityCraft-Fabric");
+						connection.setConnectTimeout(5000);
+						connection.setReadTimeout(5000);
+						connection.setInstanceFollowRedirects(true);
+
+						try (BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8))) {
+							return reader.lines().filter(line -> !line.isBlank()).toList();
+						}
 					}
 					catch (IOException e) {
+						SecurityCraft.LOGGER.warn("Could not fetch the patron list", e);
 						error = true;
 						return new ArrayList<>();
 					}
