@@ -164,6 +164,61 @@ public class SCContent {
 	public static net.minecraft.world.inventory.MenuType<net.geforcemods.securitycraft.inventory.LaserBlockMenu> LASER_BLOCK_MENU;
 	public static net.minecraft.world.inventory.MenuType<net.geforcemods.securitycraft.inventory.DisguiseModuleMenu> DISGUISE_MODULE_MENU;
 
+	/**
+	 * The reinforced blocks whose properties are copied straight off their vanilla counterpart, the way upstream's
+	 * {@code reinforcedBlock(name, vanillaBlock, ...)} does it, instead of being spelled out by shape the way the
+	 * {@link #REINFORCED} table above does.
+	 */
+	private static final Object[][] REINFORCED_COPIES = {
+			{"reinforced_white_carpet", Blocks.WHITE_CARPET, "carpet"},
+			{"reinforced_orange_carpet", Blocks.ORANGE_CARPET, "carpet"},
+			{"reinforced_magenta_carpet", Blocks.MAGENTA_CARPET, "carpet"},
+			{"reinforced_light_blue_carpet", Blocks.LIGHT_BLUE_CARPET, "carpet"},
+			{"reinforced_yellow_carpet", Blocks.YELLOW_CARPET, "carpet"},
+			{"reinforced_lime_carpet", Blocks.LIME_CARPET, "carpet"},
+			{"reinforced_pink_carpet", Blocks.PINK_CARPET, "carpet"},
+			{"reinforced_gray_carpet", Blocks.GRAY_CARPET, "carpet"},
+			{"reinforced_light_gray_carpet", Blocks.LIGHT_GRAY_CARPET, "carpet"},
+			{"reinforced_cyan_carpet", Blocks.CYAN_CARPET, "carpet"},
+			{"reinforced_purple_carpet", Blocks.PURPLE_CARPET, "carpet"},
+			{"reinforced_blue_carpet", Blocks.BLUE_CARPET, "carpet"},
+			{"reinforced_brown_carpet", Blocks.BROWN_CARPET, "carpet"},
+			{"reinforced_green_carpet", Blocks.GREEN_CARPET, "carpet"},
+			{"reinforced_red_carpet", Blocks.RED_CARPET, "carpet"},
+			{"reinforced_black_carpet", Blocks.BLACK_CARPET, "carpet"},
+			{"reinforced_moss_carpet", Blocks.MOSS_CARPET, "carpet"},
+			{"reinforced_white_glazed_terracotta", Blocks.WHITE_GLAZED_TERRACOTTA, "glazed_terracotta"},
+			{"reinforced_orange_glazed_terracotta", Blocks.ORANGE_GLAZED_TERRACOTTA, "glazed_terracotta"},
+			{"reinforced_magenta_glazed_terracotta", Blocks.MAGENTA_GLAZED_TERRACOTTA, "glazed_terracotta"},
+			{"reinforced_light_blue_glazed_terracotta", Blocks.LIGHT_BLUE_GLAZED_TERRACOTTA, "glazed_terracotta"},
+			{"reinforced_yellow_glazed_terracotta", Blocks.YELLOW_GLAZED_TERRACOTTA, "glazed_terracotta"},
+			{"reinforced_lime_glazed_terracotta", Blocks.LIME_GLAZED_TERRACOTTA, "glazed_terracotta"},
+			{"reinforced_pink_glazed_terracotta", Blocks.PINK_GLAZED_TERRACOTTA, "glazed_terracotta"},
+			{"reinforced_gray_glazed_terracotta", Blocks.GRAY_GLAZED_TERRACOTTA, "glazed_terracotta"},
+			{"reinforced_light_gray_glazed_terracotta", Blocks.LIGHT_GRAY_GLAZED_TERRACOTTA, "glazed_terracotta"},
+			{"reinforced_cyan_glazed_terracotta", Blocks.CYAN_GLAZED_TERRACOTTA, "glazed_terracotta"},
+			{"reinforced_purple_glazed_terracotta", Blocks.PURPLE_GLAZED_TERRACOTTA, "glazed_terracotta"},
+			{"reinforced_blue_glazed_terracotta", Blocks.BLUE_GLAZED_TERRACOTTA, "glazed_terracotta"},
+			{"reinforced_brown_glazed_terracotta", Blocks.BROWN_GLAZED_TERRACOTTA, "glazed_terracotta"},
+			{"reinforced_green_glazed_terracotta", Blocks.GREEN_GLAZED_TERRACOTTA, "glazed_terracotta"},
+			{"reinforced_red_glazed_terracotta", Blocks.RED_GLAZED_TERRACOTTA, "glazed_terracotta"},
+			{"reinforced_black_glazed_terracotta", Blocks.BLACK_GLAZED_TERRACOTTA, "glazed_terracotta"},
+			{"reinforced_bookshelf", Blocks.BOOKSHELF, "cube"},
+			{"reinforced_sea_lantern", Blocks.SEA_LANTERN, "cube"},
+			{"reinforced_redstone_lamp", Blocks.REDSTONE_LAMP, "redstone_lamp"},
+			{"reinforced_grass_block", Blocks.GRASS_BLOCK, "grass_block"},
+			{"reinforced_podzol", Blocks.PODZOL, "snowy_dirt"},
+			{"reinforced_mycelium", Blocks.MYCELIUM, "snowy_dirt"},
+			{"reinforced_cobweb", Blocks.COBWEB, "cobweb"},
+			{"reinforced_chain", Blocks.CHAIN, "chain"},
+			{"reinforced_end_rod", Blocks.END_ROD, "end_rod"},
+			{"reinforced_lantern", Blocks.LANTERN, "lantern"},
+			{"reinforced_soul_lantern", Blocks.SOUL_LANTERN, "lantern"},
+			{"reinforced_ladder", Blocks.LADDER, "ladder"},
+			{"reinforced_scaffolding", Blocks.SCAFFOLDING, "scaffolding"},
+			{"reinforced_lever", Blocks.LEVER, "lever"},
+	};
+
 	private static final String[][] REINFORCED = {
 			{"reinforced_acacia_button", "button"},
 			{"reinforced_acacia_fence", "fence"},
@@ -640,6 +695,9 @@ public class SCContent {
 		for (String[] entry : REINFORCED)
 			registerReinforced(entry[0], entry[1]);
 
+		for (Object[] entry : REINFORCED_COPIES)
+			registerReinforcedCopy((String) entry[0], (Block) entry[1], (String) entry[2]);
+
 		LIST_MODULE_DATA = Registry.register(BuiltInRegistries.DATA_COMPONENT_TYPE, id("list_module_data"), net.minecraft.core.component.DataComponentType.<net.geforcemods.securitycraft.components.ListModuleData>builder().persistent(net.geforcemods.securitycraft.components.ListModuleData.CODEC).networkSynchronized(net.geforcemods.securitycraft.components.ListModuleData.STREAM_CODEC).cacheEncoding().build());
 		REDSTONE_MODULE = registerModule("redstone_module", net.geforcemods.securitycraft.misc.ModuleType.REDSTONE, false, false, false);
 		ALLOWLIST_MODULE = registerModule("whitelist_module", net.geforcemods.securitycraft.misc.ModuleType.ALLOWLIST, true, true, true);
@@ -785,6 +843,42 @@ public class SCContent {
 		if (category.equals("pane") && name.contains("glass"))
 			GLASS_PANE_BLOCKS.add(block);
 	}
+
+	/** Registers one of the {@link #REINFORCED_COPIES}: same shape class as vanilla, properties copied off it. */
+	private static void registerReinforcedCopy(String name, Block vanilla, String category) {
+		BlockBehaviour.Properties props = reinforcedCopy(vanilla);
+		Block block = switch (category) {
+			case "carpet" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedCarpetBlock(props.forceSolidOn());
+			case "glazed_terracotta" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedGlazedTerracottaBlock(props);
+			case "redstone_lamp" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedRedstoneLampBlock(props);
+			case "grass_block" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedGrassBlock(props);
+			case "snowy_dirt" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedSnowyDirtBlock(props);
+			case "cobweb" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedCobwebBlock(props);
+			case "chain" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedChainBlock(props);
+			case "end_rod" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedEndRodBlock(props);
+			case "lantern" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedLanternBlock(props.pushReaction(PushReaction.BLOCK));
+			case "ladder" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedLadderBlock(props.pushReaction(PushReaction.BLOCK));
+			case "scaffolding" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedScaffoldingBlock(props.pushReaction(PushReaction.NORMAL));
+			case "lever" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedLeverBlock(props.pushReaction(PushReaction.BLOCK).forceSolidOn());
+			default -> new BaseReinforcedBlock(props);
+		};
+
+		//the scaffolding needs vanilla's own block item, which is what lets it be stacked downwards while held
+		if (category.equals("scaffolding")) {
+			registerBlockNoItem(name, block);
+			Registry.register(BuiltInRegistries.ITEM, id(name), new net.minecraft.world.item.ScaffoldingBlockItem(block, new Item.Properties()));
+		}
+		else
+			register(name, block);
+
+		REINFORCED_BLOCKS.add(block);
+		REINFORCED_BY_NAME.put(name, block);
+
+		if (NON_SOLID_CATEGORIES.contains(category))
+			CUTOUT_BLOCKS.add(block);
+	}
+
+	private static final java.util.Set<String> NON_SOLID_CATEGORIES = java.util.Set.of("cobweb", "chain", "end_rod", "lantern", "ladder", "scaffolding", "lever");
 
 	private static Block register(String name, Block block) {
 		Registry.register(BuiltInRegistries.BLOCK, id(name), block);
