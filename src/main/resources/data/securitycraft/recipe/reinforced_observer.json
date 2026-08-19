@@ -6,10 +6,10 @@
 			"item": "securitycraft:reinforced_cobblestone"
 		},
 		"Q": {
-			"tag": "c:gems/quartz"
+			"item": "minecraft:quartz"
 		},
 		"R": {
-			"tag": "c:dusts/redstone"
+			"item": "minecraft:redstone"
 		}
 	},
 	"pattern": [

@@ -6,7 +6,7 @@
 			"tag": "securitycraft:reinforced/cobblestone"
 		},
 		"S": {
-			"tag": "c:rods/wooden"
+			"item": "minecraft:stick"
 		}
 	},
 	"pattern": [
