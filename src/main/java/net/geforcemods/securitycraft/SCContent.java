@@ -63,6 +63,7 @@ public class SCContent {
 	public static net.geforcemods.securitycraft.blocks.ElectrifiedIronFenceGateBlock ELECTRIFIED_IRON_FENCE_GATE;
 	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.ElectrifiedFenceAndGateBlockEntity> ELECTRIFIED_FENCE_AND_GATE_BLOCK_ENTITY;
 	public static Item UNIVERSAL_OWNER_CHANGER;
+	public static Item SC_MANUAL;
 	public static net.minecraft.world.level.material.FlowingFluid FAKE_WATER;
 	public static net.minecraft.world.level.material.FlowingFluid FLOWING_FAKE_WATER;
 	public static net.minecraft.world.level.material.FlowingFluid FAKE_LAVA;
@@ -92,6 +93,23 @@ public class SCContent {
 	public static Item UNIVERSAL_BLOCK_REINFORCER_LVL3;
 	public static Item UNIVERSAL_BLOCK_REMOVER;
 	public static BlockEntityType<KeypadBlockEntity> KEYPAD_BLOCK_ENTITY;
+	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.ReinforcedHopperBlockEntity> REINFORCED_HOPPER_BLOCK_ENTITY;
+	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.ReinforcedDispenserBlockEntity> REINFORCED_DISPENSER_BLOCK_ENTITY;
+	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.ReinforcedDropperBlockEntity> REINFORCED_DROPPER_BLOCK_ENTITY;
+	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.ReinforcedObserverBlockEntity> REINFORCED_OBSERVER_BLOCK_ENTITY;
+	public static Block KEYPAD_CHEST;
+	public static Block KEYPAD_BARREL;
+	public static Block KEYPAD_FURNACE;
+	public static Block KEYPAD_SMOKER;
+	public static Block KEYPAD_BLAST_FURNACE;
+	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.KeypadChestBlockEntity> KEYPAD_CHEST_BLOCK_ENTITY;
+	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.KeypadBarrelBlockEntity> KEYPAD_BARREL_BLOCK_ENTITY;
+	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.KeypadFurnaceBlockEntity> KEYPAD_FURNACE_BLOCK_ENTITY;
+	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.KeypadSmokerBlockEntity> KEYPAD_SMOKER_BLOCK_ENTITY;
+	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.KeypadBlastFurnaceBlockEntity> KEYPAD_BLAST_FURNACE_BLOCK_ENTITY;
+	public static net.minecraft.world.inventory.MenuType<net.geforcemods.securitycraft.inventory.KeypadFurnaceMenu> KEYPAD_FURNACE_MENU;
+	public static net.minecraft.world.inventory.MenuType<net.geforcemods.securitycraft.inventory.KeypadSmokerMenu> KEYPAD_SMOKER_MENU;
+	public static net.minecraft.world.inventory.MenuType<net.geforcemods.securitycraft.inventory.KeypadBlastFurnaceMenu> KEYPAD_BLAST_FURNACE_MENU;
 
 	//explosives
 	public static Block MINE;
@@ -689,10 +707,27 @@ public class SCContent {
 		CUTOUT_BLOCKS.add(ELECTRIFIED_IRON_FENCE);
 		CUTOUT_BLOCKS.add(ELECTRIFIED_IRON_FENCE_GATE);
 		PORTABLE_RADAR = register("portable_radar", key -> new net.geforcemods.securitycraft.blocks.PortableRadarBlock(BlockBehaviour.Properties.of().mapColor(net.minecraft.world.level.material.MapColor.COLOR_BLACK).strength(5.0F, Float.MAX_VALUE).requiresCorrectToolForDrops().setId(key)));
+		//the passcode-protected containers; the furnace family's light level reads the LIT property the way vanilla's does
+		KEYPAD_CHEST = register("keypad_chest", key -> new net.geforcemods.securitycraft.blocks.KeypadChestBlock(BlockBehaviour.Properties.of().mapColor(net.minecraft.world.level.material.MapColor.METAL).strength(5.0F, Float.MAX_VALUE).requiresCorrectToolForDrops().sound(SoundType.METAL).setId(key)));
+		KEYPAD_BARREL = register("keypad_barrel", key -> new net.geforcemods.securitycraft.blocks.KeypadBarrelBlock(BlockBehaviour.Properties.of().mapColor(net.minecraft.world.level.material.MapColor.METAL).strength(5.0F, Float.MAX_VALUE).requiresCorrectToolForDrops().sound(SoundType.METAL).setId(key)));
+		KEYPAD_FURNACE = register("keypad_furnace", key -> new net.geforcemods.securitycraft.blocks.KeypadFurnaceBlock(keypadFurnaceProps().setId(key)));
+		KEYPAD_SMOKER = register("keypad_smoker", key -> new net.geforcemods.securitycraft.blocks.KeypadSmokerBlock(keypadFurnaceProps().setId(key)));
+		KEYPAD_BLAST_FURNACE = register("keypad_blast_furnace", key -> new net.geforcemods.securitycraft.blocks.KeypadBlastFurnaceBlock(keypadFurnaceProps().setId(key)));
 		net.geforcemods.securitycraft.api.SecurityCraftAPI.registerPasscodeConvertible(new net.geforcemods.securitycraft.blocks.KeypadBlock.Convertible());
+		net.geforcemods.securitycraft.api.SecurityCraftAPI.registerPasscodeConvertible(new net.geforcemods.securitycraft.blocks.KeypadChestBlock.Convertible());
+		net.geforcemods.securitycraft.api.SecurityCraftAPI.registerPasscodeConvertible(new net.geforcemods.securitycraft.blocks.KeypadBarrelBlock.Convertible());
+		net.geforcemods.securitycraft.api.SecurityCraftAPI.registerPasscodeConvertible(new net.geforcemods.securitycraft.blocks.AbstractKeypadFurnaceBlock.Convertible(Blocks.FURNACE, KEYPAD_FURNACE));
+		net.geforcemods.securitycraft.api.SecurityCraftAPI.registerPasscodeConvertible(new net.geforcemods.securitycraft.blocks.AbstractKeypadFurnaceBlock.Convertible(Blocks.SMOKER, KEYPAD_SMOKER));
+		net.geforcemods.securitycraft.api.SecurityCraftAPI.registerPasscodeConvertible(new net.geforcemods.securitycraft.blocks.AbstractKeypadFurnaceBlock.Convertible(Blocks.BLAST_FURNACE, KEYPAD_BLAST_FURNACE));
 
 		for (String[] entry : REINFORCED)
 			registerReinforced(entry[0], entry[1]);
+
+		//the reinforced blocks that keep a vanilla block entity of their own, so they cannot go through either table
+		registerFunctionalReinforced("reinforced_hopper", key -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedHopperBlock(reinforcedCopy(Blocks.HOPPER).setId(key)));
+		registerFunctionalReinforced("reinforced_dispenser", key -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedDispenserBlock(reinforcedCopy(Blocks.DISPENSER).setId(key)));
+		registerFunctionalReinforced("reinforced_dropper", key -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedDropperBlock(reinforcedCopy(Blocks.DROPPER).setId(key)));
+		registerFunctionalReinforced("reinforced_observer", key -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedObserverBlock(reinforcedCopy(Blocks.OBSERVER).setId(key)));
 
 		for (Object[] entry : REINFORCED_COPIES)
 			registerReinforcedCopy((String) entry[0], (Block) entry[1], (String) entry[2]);
@@ -754,6 +789,7 @@ public class SCContent {
 		SPEED_MODULE = registerModule("speed_module", net.geforcemods.securitycraft.misc.ModuleType.SPEED, false, false, false);
 		UNIVERSAL_BLOCK_MODIFIER = registerItem("universal_block_modifier", new net.geforcemods.securitycraft.items.UniversalBlockModifierItem(new Item.Properties().stacksTo(1).setId(ResourceKey.create(Registries.ITEM, id("universal_block_modifier")))));
 		UNIVERSAL_OWNER_CHANGER = registerItem("universal_owner_changer", new net.geforcemods.securitycraft.items.UniversalOwnerChangerItem(new Item.Properties().stacksTo(1).setId(ResourceKey.create(Registries.ITEM, id("universal_owner_changer")))));
+		SC_MANUAL = registerItem("sc_manual", new net.geforcemods.securitycraft.items.SCManualItem(new Item.Properties().stacksTo(1).setId(ResourceKey.create(Registries.ITEM, id("sc_manual")))));
 		LENS = registerItem("lens", new Item(new Item.Properties().setId(ResourceKey.create(Registries.ITEM, id("lens")))));
 		//the fluids have to exist before their blocks, and the blocks before the buckets, since each refers back
 		FLOWING_FAKE_WATER = Registry.register(BuiltInRegistries.FLUID, id("flowing_fake_water"), new net.geforcemods.securitycraft.fluids.FakeWaterFluid.Flowing());
@@ -790,6 +826,18 @@ public class SCContent {
 		ABSTRACT_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("abstract"), FabricBlockEntityTypeBuilder.create((pos, state) -> new net.geforcemods.securitycraft.api.OwnableBlockEntity(ABSTRACT_BLOCK_ENTITY, pos, state), abstractBeBlocks.toArray(new Block[0])).build());
 		ELECTRIFIED_FENCE_AND_GATE_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("electrified_fence_and_gate"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.ElectrifiedFenceAndGateBlockEntity::new, ELECTRIFIED_IRON_FENCE, ELECTRIFIED_IRON_FENCE_GATE).build());
 		REINFORCED_DOOR_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("reinforced_door"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.ReinforcedDoorBlockEntity::new, REINFORCED_DOOR).build());
+		KEYPAD_CHEST_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("keypad_chest"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.KeypadChestBlockEntity::new, KEYPAD_CHEST).build());
+		KEYPAD_BARREL_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("keypad_barrel"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.KeypadBarrelBlockEntity::new, KEYPAD_BARREL).build());
+		KEYPAD_FURNACE_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("keypad_furnace"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.KeypadFurnaceBlockEntity::new, KEYPAD_FURNACE).build());
+		KEYPAD_SMOKER_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("keypad_smoker"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.KeypadSmokerBlockEntity::new, KEYPAD_SMOKER).build());
+		KEYPAD_BLAST_FURNACE_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("keypad_blast_furnace"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.KeypadBlastFurnaceBlockEntity::new, KEYPAD_BLAST_FURNACE).build());
+		KEYPAD_FURNACE_MENU = Registry.register(BuiltInRegistries.MENU, id("keypad_furnace"), new net.fabricmc.fabric.api.menu.v1.ExtendedMenuType<>((syncId, inv, pos) -> new net.geforcemods.securitycraft.inventory.KeypadFurnaceMenu(syncId, inv.player.level(), pos, inv), net.minecraft.core.BlockPos.STREAM_CODEC));
+		KEYPAD_SMOKER_MENU = Registry.register(BuiltInRegistries.MENU, id("keypad_smoker"), new net.fabricmc.fabric.api.menu.v1.ExtendedMenuType<>((syncId, inv, pos) -> new net.geforcemods.securitycraft.inventory.KeypadSmokerMenu(syncId, inv.player.level(), pos, inv), net.minecraft.core.BlockPos.STREAM_CODEC));
+		KEYPAD_BLAST_FURNACE_MENU = Registry.register(BuiltInRegistries.MENU, id("keypad_blast_furnace"), new net.fabricmc.fabric.api.menu.v1.ExtendedMenuType<>((syncId, inv, pos) -> new net.geforcemods.securitycraft.inventory.KeypadBlastFurnaceMenu(syncId, inv.player.level(), pos, inv), net.minecraft.core.BlockPos.STREAM_CODEC));
+		REINFORCED_HOPPER_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("reinforced_hopper"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.ReinforcedHopperBlockEntity::new, REINFORCED_BY_NAME.get("reinforced_hopper")).build());
+		REINFORCED_DISPENSER_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("reinforced_dispenser"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.ReinforcedDispenserBlockEntity::new, REINFORCED_BY_NAME.get("reinforced_dispenser")).build());
+		REINFORCED_DROPPER_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("reinforced_dropper"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.ReinforcedDropperBlockEntity::new, REINFORCED_BY_NAME.get("reinforced_dropper")).build());
+		REINFORCED_OBSERVER_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("reinforced_observer"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.ReinforcedObserverBlockEntity::new, REINFORCED_BY_NAME.get("reinforced_observer")).build());
 		MINE_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("mine"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.MineBlockEntity::new, MINE).build());
 		BOUNCING_BETTY_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("bouncing_betty"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.BouncingBettyBlockEntity::new, BOUNCING_BETTY).build());
 		CLAYMORE_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("claymore"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.ClaymoreBlockEntity::new, CLAYMORE).build());
@@ -890,6 +938,14 @@ public class SCContent {
 			CUTOUT_BLOCKS.add(block);
 	}
 
+	/** A reinforced block that brings its own block entity, so it is not covered by either reinforced table. */
+	private static void registerFunctionalReinforced(String name, java.util.function.Function<ResourceKey<Block>, Block> factory) {
+		Block block = register(name, factory);
+
+		REINFORCED_BLOCKS.add(block);
+		REINFORCED_BY_NAME.put(name, block);
+	}
+
 	private static Block register(String name, java.util.function.Function<ResourceKey<Block>, Block> factory) {
 		ResourceKey<Block> blockKey = ResourceKey.create(Registries.BLOCK, id(name));
 		Block block = Registry.register(BuiltInRegistries.BLOCK, blockKey, factory.apply(blockKey));
@@ -909,12 +965,22 @@ public class SCContent {
 				.icon(() -> new ItemStack(KEYPAD))
 				.title(Component.translatable("itemGroup.securitycraft.technical"))
 				.displayItems((params, output) -> {
+					output.accept(SC_MANUAL);
 					output.accept(KEYPAD);
 					output.accept(KEY_PANEL_ITEM);
 					output.accept(FRAME);
+					output.accept(KEYPAD_CHEST);
+					output.accept(KEYPAD_BARREL);
+					output.accept(KEYPAD_FURNACE);
+					output.accept(KEYPAD_SMOKER);
+					output.accept(KEYPAD_BLAST_FURNACE);
 					output.accept(REINFORCED_DOOR);
 					output.accept(ELECTRIFIED_IRON_FENCE);
 					output.accept(ELECTRIFIED_IRON_FENCE_GATE);
+					output.accept(REINFORCED_BY_NAME.get("reinforced_dispenser"));
+					output.accept(REINFORCED_BY_NAME.get("reinforced_dropper"));
+					output.accept(REINFORCED_BY_NAME.get("reinforced_observer"));
+					output.accept(REINFORCED_BY_NAME.get("reinforced_hopper"));
 					output.accept(UNIVERSAL_BLOCK_MODIFIER);
 					output.accept(UNIVERSAL_OWNER_CHANGER);
 					output.accept(LASER_BLOCK);
@@ -1084,6 +1150,11 @@ public class SCContent {
 
 	private static boolean isWood(String name) {
 		return name.matches(".*(oak|spruce|birch|jungle|acacia|mangrove|cherry|bamboo|crimson|warped|planks|mosaic).*");
+	}
+
+	/** 1:1 with upstream: the furnace family lights up at level 13 while it is smelting. */
+	private static BlockBehaviour.Properties keypadFurnaceProps() {
+		return BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(5.0F, Float.MAX_VALUE).requiresCorrectToolForDrops().sound(SoundType.METAL).lightLevel(state -> state.getValue(net.geforcemods.securitycraft.blocks.AbstractKeypadFurnaceBlock.LIT) ? 13 : 0);
 	}
 
 	private static BlockBehaviour.Properties shapeProps(String name) {
