@@ -1,6 +1,8 @@
 {
 	"values": [
-		"#securitycraft:reinforced/slabs"
+		"#securitycraft:reinforced/slabs",
+		"securitycraft:crystal_quartz_slab",
+		"securitycraft:smooth_crystal_quartz_slab"
 	],
 	"replace": false
 }
