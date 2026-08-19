@@ -28,7 +28,8 @@ Universal Block Modifier and the whole Customize screen including the module ena
 the electrified iron fence and fence gate, 47 further reinforced blocks (carpets, glazed terracotta,
 ladder, lanterns, chain, end rod, cobweb, scaffolding, lever, redstone lamp, grass block, podzol,
 mycelium, sea lantern, bookshelf), fake water and fake lava, the SecurityCraft Manual, and the
-passcode-protected chest, barrel, furnace, smoker and blast furnace.
+passcode-protected chest, barrel, furnace, smoker and blast furnace, and the reinforced
+hopper, dispenser, dropper and observer.
 
 ---
 
@@ -97,8 +98,6 @@ owner, so each needs its own block entity.
 
 | Content | Notes |
 | --- | --- |
-| Reinforced Hopper, Dispenser, Dropper | inventories, so a block entity each |
-| Reinforced Observer | |
 | Reinforced Piston, Sticky Piston | the heaviest of the set: needs the moving-piston block entity and the piston head |
 | Reinforced Lectern | has its own menu |
 | Reinforced Chiseled Bookshelf | |
