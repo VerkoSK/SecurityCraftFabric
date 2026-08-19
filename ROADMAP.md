@@ -29,7 +29,7 @@ the electrified iron fence and fence gate, 47 further reinforced blocks (carpets
 ladder, lanterns, chain, end rod, cobweb, scaffolding, lever, redstone lamp, grass block, podzol,
 mycelium, sea lantern, bookshelf), fake water and fake lava, the SecurityCraft Manual, and the
 passcode-protected chest, barrel, furnace, smoker and blast furnace, and the reinforced
-hopper, dispenser, dropper and observer.
+hopper, dispenser, dropper, observer, pistons, cauldrons, lectern and chiseled bookshelf.
 
 ---
 
@@ -91,17 +91,12 @@ The blocks that shoot back.
 
 ---
 
-## V0.9 — Functional reinforced blocks and storage
+## V0.9 — Storage and the block pocket
 
-The reinforced blocks that are not just a shape: each of these keeps vanilla's behaviour but adds an
-owner, so each needs its own block entity.
+What is left of the original's own blocks once the reinforced set is complete.
 
 | Content | Notes |
 | --- | --- |
-| Reinforced Piston, Sticky Piston | the heaviest of the set: needs the moving-piston block entity and the piston head |
-| Reinforced Lectern | has its own menu |
-| Reinforced Chiseled Bookshelf | |
-| Reinforced Cauldron, Water/Lava/Powder Snow Cauldron | the cauldron interaction table has to be mirrored |
 | Display Case, Glow Display Case | |
 | Secure Redstone Interface | |
 | Block Pocket Manager + Block Pocket Wall | the original's largest single block by code size |
