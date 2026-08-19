@@ -125,6 +125,12 @@ public class SecurityCraftClient implements ClientModInitializer {
 		BlockRenderLayerMap.INSTANCE.putBlock(SCContent.LASER_FIELD, RenderType.translucent());
 		ColorProviderRegistry.BLOCK.register(SecurityCraftClient::laserFieldColor, SCContent.LASER_FIELD);
 
+		//the fake liquids have no textures of their own: they borrow water's and lava's, which is what makes them
+		//indistinguishable from the real thing until something walks into them
+		net.fabricmc.fabric.api.client.render.fluid.v1.FluidRenderHandlerRegistry.INSTANCE.register(SCContent.FAKE_WATER, SCContent.FLOWING_FAKE_WATER, new net.fabricmc.fabric.api.client.render.fluid.v1.SimpleFluidRenderHandler(net.fabricmc.fabric.api.client.render.fluid.v1.SimpleFluidRenderHandler.WATER_STILL, net.fabricmc.fabric.api.client.render.fluid.v1.SimpleFluidRenderHandler.WATER_FLOWING, net.fabricmc.fabric.api.client.render.fluid.v1.SimpleFluidRenderHandler.WATER_OVERLAY, 0xFF3F76E4));
+		net.fabricmc.fabric.api.client.render.fluid.v1.FluidRenderHandlerRegistry.INSTANCE.register(SCContent.FAKE_LAVA, SCContent.FLOWING_FAKE_LAVA, new net.fabricmc.fabric.api.client.render.fluid.v1.SimpleFluidRenderHandler(new net.minecraft.resources.ResourceLocation("block/lava_still"), new net.minecraft.resources.ResourceLocation("block/lava_flow")));
+		BlockRenderLayerMap.INSTANCE.putFluids(RenderType.translucent(), SCContent.FAKE_WATER, SCContent.FLOWING_FAKE_WATER);
+
 		// Lens item: tinted by its dyed colour (uncolored lens stays untinted).
 		ColorProviderRegistry.ITEM.register((stack, tintIndex) -> tintIndex == 0 && stack.has(net.minecraft.core.component.DataComponents.DYED_COLOR) ? stack.get(net.minecraft.core.component.DataComponents.DYED_COLOR).rgb() : -1, SCContent.LENS);
 	}
