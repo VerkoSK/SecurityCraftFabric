@@ -1,0 +1,12 @@
+{
+	"required": true,
+	"minVersion": "0.8",
+	"package": "net.geforcemods.securitycraft.mixin",
+	"compatibilityLevel": "JAVA_21",
+	"client": [
+		"ItemModelResolverMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}
