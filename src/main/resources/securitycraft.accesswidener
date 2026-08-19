@@ -23,3 +23,13 @@ accessible	method	net/minecraft/world/level/block/entity/BrushableBlockEntity	ge
 # OwnableBlock registers reinforced blocks as unbreakable and hands the real destroy time back only to the
 # owner, which means reading the destroy time the block asked for. Upstream gets this from a Forge AT.
 accessible	field	net/minecraft/world/level/block/state/BlockBehaviour$Properties	destroyTime	F
+
+# KeypadChestBlock only lets a chest pair up with another chest of the same owner, which means calling vanilla's
+# own partner-facing check first. KeypadChestBlockEntity drives the lid animation and the open/close sounds
+# through the same counter the vanilla chest uses. Upstream gets both from Forge's access transformers.
+extendable	method	net/minecraft/world/level/block/ChestBlock	candidatePartnerFacing	(Lnet/minecraft/world/item/context/BlockPlaceContext;Lnet/minecraft/core/Direction;)Lnet/minecraft/core/Direction;
+accessible	field	net/minecraft/world/level/block/entity/ChestBlockEntity	openersCounter	Lnet/minecraft/world/level/block/entity/ContainerOpenersCounter;
+
+# SCManualScreen draws its widgets itself, in between the page background and the page text, instead of letting
+# Screen#render do it at the end. Upstream reaches the same list through Forge's access transformers.
+accessible	field	net/minecraft/client/gui/screens/Screen	renderables	Ljava/util/List;
