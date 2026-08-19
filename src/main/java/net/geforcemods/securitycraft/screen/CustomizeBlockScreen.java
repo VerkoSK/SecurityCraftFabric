@@ -18,6 +18,7 @@ import net.geforcemods.securitycraft.misc.ModuleType;
 import net.geforcemods.securitycraft.network.SetOptionPayload;
 import net.geforcemods.securitycraft.network.ToggleModulePayload;
 import net.geforcemods.securitycraft.screen.components.CallbackSlider;
+import net.geforcemods.securitycraft.screen.components.ColoredButton;
 import net.geforcemods.securitycraft.screen.components.PictureButton;
 import net.geforcemods.securitycraft.util.IHasExtraAreas;
 import net.geforcemods.securitycraft.util.Utils;
@@ -129,8 +130,12 @@ public class CustomizeBlockScreen extends AbstractContainerScreen<CustomizeBlock
 
 					optionButtons[i] = slider;
 				}
-				else
-					optionButtons[i] = Button.builder(getOptionButtonTitle(option), b -> optionButtonClicked(index)).bounds(x, y, 120, 20).build();
+				else {
+					ColoredButton button = new ColoredButton(x, y, 120, 20, getOptionButtonTitle(option), b -> optionButtonClicked(index));
+
+					button.setFGColor(optionColor(option));
+					optionButtons[i] = button;
+				}
 
 				addRenderableWidget(optionButtons[i]);
 				optionButtons[i].setTooltip(Tooltip.create(getOptionDescription(index)));
@@ -158,11 +163,17 @@ public class CustomizeBlockScreen extends AbstractContainerScreen<CustomizeBlock
 		ClientPlayNetworking.send(new ToggleModulePayload(pos, moduleType));
 	}
 
+	/** Pale yellow while the option still holds its default value, light grey once it has been changed. */
+	private static int optionColor(Option<?> option) {
+		return option.toString().equals(option.getDefaultValue().toString()) ? 16777120 : 14737632;
+	}
+
 	private void optionButtonClicked(int index) {
 		Option<?> tempOption = options[index];
-		Button button = (Button) optionButtons[index];
+		ColoredButton button = (ColoredButton) optionButtons[index];
 
 		tempOption.toggle();
+		button.setFGColor(optionColor(tempOption));
 		button.setMessage(getOptionButtonTitle(tempOption));
 		optionButtons[index].setTooltip(Tooltip.create(getOptionDescription(index)));
 		ClientPlayNetworking.send(new SetOptionPayload(pos, index, true, 0.0));

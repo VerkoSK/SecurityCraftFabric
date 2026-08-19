@@ -1,10 +1,11 @@
 {
 	"type": "minecraft:crafting_shaped",
 	"category": "misc",
+	"group": "securitycraft:lens",
 	"pattern": [
-		" P ",
-		"P P",
-		" P "
+		" P",
+		"P ",
+		" P"
 	],
 	"key": {
 		"P": {
@@ -14,5 +15,6 @@
 	"result": {
 		"id": "securitycraft:lens",
 		"count": 6
-	}
+	},
+	"show_notification": true
 }
