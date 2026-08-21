@@ -22,7 +22,7 @@ modules, the allow/deny list editor, the disguise module screen.
 every block mine), the Mine Remote Access Tool, wire cutters, JEI and Jade integration, creative tab
 ordering.
 
-**V0.5** — the ownership system (every reinforced block, door and trapdoor remembers its owner and
+**V0.5** [RELEASING 25.8.2026] — the ownership system (every reinforced block, door and trapdoor remembers its owner and
 can only be broken by them; team ownership; variable break time), the Universal Owner Changer, the
 Universal Block Modifier and the whole Customize screen including the module enable/disable toggle,
 the electrified iron fence and fence gate, 47 further reinforced blocks (carpets, glazed terracotta,
