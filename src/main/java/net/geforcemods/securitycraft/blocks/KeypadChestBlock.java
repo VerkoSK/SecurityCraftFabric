@@ -113,7 +113,7 @@ public class KeypadChestBlock extends ChestBlock {
 	}
 
 	@Override
-	public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+	public InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
 		if (!(level.getBlockEntity(pos) instanceof KeypadChestBlockEntity be))
 			return InteractionResult.PASS;
 
@@ -148,7 +148,7 @@ public class KeypadChestBlock extends ChestBlock {
 
 	public void activate(BlockState state, Level level, BlockPos pos, Player player) {
 		if (!level.isClientSide) {
-			ChestBlock block = (ChestBlock) state.getBlock();
+			KeypadChestBlock block = (KeypadChestBlock) state.getBlock();
 			MenuProvider menuProvider = block.getMenuProvider(state, level, pos);
 
 			if (menuProvider != null) {
@@ -319,11 +319,11 @@ public class KeypadChestBlock extends ChestBlock {
 			}
 
 			chest.unpackLootTable(player); //generate loot (if any), so items don't spill out when converting and no additional loot table is generated
-			tag = chest.saveWithFullMetadata();
+			tag = chest.saveWithFullMetadata(level.registryAccess());
 			chest.clearContent();
 			level.setBlockAndUpdate(pos, convertedBlock.defaultBlockState().setValue(FACING, facing).setValue(TYPE, type));
 			chest = (ChestBlockEntity) level.getBlockEntity(pos);
-			chest.load(tag);
+			chest.loadWithComponents(tag, level.registryAccess());
 
 			if (protect) {
 				if (player != null)

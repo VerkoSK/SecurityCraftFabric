@@ -81,8 +81,7 @@ public abstract class AbstractKeypadFurnaceBlock extends OwnableBlock implements
 	public void setPlacedBy(Level level, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
 		super.setPlacedBy(level, pos, state, placer, stack);
 
-		if (stack.hasCustomHoverName() && level.getBlockEntity(pos) instanceof AbstractKeypadFurnaceBlockEntity be)
-			be.setCustomName(stack.getHoverName());
+		//adaptation: BlockItem itself copies the item's custom name component onto the placed block entity now, so there is nothing left to do here
 	}
 
 	@Override
@@ -125,7 +124,7 @@ public abstract class AbstractKeypadFurnaceBlock extends OwnableBlock implements
 	}
 
 	@Override
-	public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+	public InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
 		if (!(level.getBlockEntity(pos) instanceof AbstractKeypadFurnaceBlockEntity be))
 			return InteractionResult.PASS;
 
@@ -262,12 +261,12 @@ public abstract class AbstractKeypadFurnaceBlock extends OwnableBlock implements
 			else
 				((net.geforcemods.securitycraft.api.IModuleInventory) furnace).dropAllModules();
 
-			net.minecraft.nbt.CompoundTag tag = furnace.saveWithFullMetadata();
+			net.minecraft.nbt.CompoundTag tag = furnace.saveWithFullMetadata(level.registryAccess());
 
 			furnace.clearContent();
 			level.setBlockAndUpdate(pos, convertedState);
 			furnace = (net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity) level.getBlockEntity(pos);
-			furnace.load(tag);
+			furnace.loadWithComponents(tag, level.registryAccess());
 
 			if (protect && player != null)
 				((net.geforcemods.securitycraft.api.IOwnable) furnace).setOwner(player.getName().getString(), player.getUUID().toString());

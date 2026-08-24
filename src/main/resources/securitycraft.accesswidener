@@ -58,3 +58,8 @@ accessible	method	net/minecraft/client/renderer/blockentity/SignRenderer	transla
 accessible	method	net/minecraft/client/renderer/blockentity/SignRenderer	renderSign	(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;IILnet/minecraft/world/level/block/state/properties/WoodType;Lnet/minecraft/client/model/Model;)V
 accessible	method	net/minecraft/client/renderer/blockentity/SignRenderer	renderSignText	(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/entity/SignText;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;IIIZ)V
 accessible	method	net/minecraft/client/renderer/blockentity/HangingSignRenderer	translateSign	(Lcom/mojang/blaze3d/vertex/PoseStack;FLnet/minecraft/world/level/block/state/BlockState;)V
+
+# ReinforcedLayeredCauldronBlock lowers the fill level when an entity on fire steps in, the same way vanilla's
+# own water/powder snow cauldrons put a fire out. Vanilla keeps that hook private; upstream reaches it through
+# a Forge access transformer.
+extendable	method	net/minecraft/world/level/block/LayeredCauldronBlock	handleEntityOnFireInside	(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)V

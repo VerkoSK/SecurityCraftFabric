@@ -2,18 +2,19 @@ package net.geforcemods.securitycraft.inventory;
 
 import net.geforcemods.securitycraft.SCContent;
 import net.geforcemods.securitycraft.blockentities.ReinforcedLecternBlockEntity;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.LecternMenu;
 import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.level.Level;
 
 public class ReinforcedLecternMenu extends LecternMenu {
 	public final ReinforcedLecternBlockEntity be;
 
 	/** Client-side constructor: reads the position sent by the block entity's screen-opening data. */
-	public ReinforcedLecternMenu(int id, Inventory inventory, FriendlyByteBuf buf) {
-		this(id, (ReinforcedLecternBlockEntity) inventory.player.level().getBlockEntity(buf.readBlockPos()));
+	public ReinforcedLecternMenu(int id, Level level, BlockPos pos, Inventory inventory) {
+		this(id, (ReinforcedLecternBlockEntity) level.getBlockEntity(pos));
 	}
 
 	public ReinforcedLecternMenu(int id, ReinforcedLecternBlockEntity be) {
