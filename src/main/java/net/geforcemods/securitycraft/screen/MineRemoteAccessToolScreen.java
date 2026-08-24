@@ -139,7 +139,10 @@ public class MineRemoteAccessToolScreen extends Screen implements StillValid {
 		int startX = (width - xSize) / 2;
 		int startY = (height - ySize) / 2;
 
-		renderBackground(guiGraphics, mouseX, mouseY, partialTicks);
+		//the inherited renderBackground draws vanilla's dark full-screen gradient (meant for menu-style screens
+		//with no world behind them); this is an in-hand item screen, so it needs the plain transparent background
+		//the way CheckPasscodeScreen and SetPasscodeScreen already do it
+		renderTransparentBackground(guiGraphics);
 		guiGraphics.blit(TEXTURE, startX, startY, 0, 0, xSize, ySize);
 		super.render(guiGraphics, mouseX, mouseY, partialTicks);
 		guiGraphics.drawString(font, title, startX + xSize / 2 - font.width(title) / 2, startY + 6, 0xFF404040, false);
