@@ -139,17 +139,23 @@ public class MineRemoteAccessToolScreen extends Screen implements StillValid {
 		int startX = (width - xSize) / 2;
 		int startY = (height - ySize) / 2;
 
-		//the inherited renderBackground draws vanilla's dark full-screen gradient (meant for menu-style screens
-		//with no world behind them); this is an in-hand item screen, so it needs the plain transparent background
-		//the way CheckPasscodeScreen and SetPasscodeScreen already do it
-		renderTransparentBackground(guiGraphics);
-		guiGraphics.blit(TEXTURE, startX, startY, 0, 0, xSize, ySize);
+		//render() calls this.renderBackground(...) internally, so drawing the panel from here as well as from
+		//the override below drew it twice and let the default renderBackground's blur paint over it afterwards
 		super.render(guiGraphics, mouseX, mouseY, partialTicks);
 		guiGraphics.drawString(font, title, startX + xSize / 2 - font.width(title) / 2, startY + 6, 0xFF404040, false);
 
 		for (int i = 0; i < 6; i++) {
 			guiGraphics.drawString(font, lines[i], startX + xSize / 2 - lengths[i] + 25, startY + i * 25 + 33, 0xFF404040, false);
 		}
+	}
+
+	@Override
+	public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+		//the default renderBackground blurs the world and draws vanilla's in-world-menu vignette texture over it,
+		//meant for menu-style screens; this is an in-hand item screen, so it needs the plain transparent
+		//background the way CheckPasscodeScreen and SetPasscodeScreen already do it, with the panel drawn on top
+		renderTransparentBackground(guiGraphics);
+		guiGraphics.blit(TEXTURE, (width - xSize) / 2, (height - ySize) / 2, 0, 0, xSize, ySize);
 	}
 
 	private void buttonClicked(int mine, int action) {
