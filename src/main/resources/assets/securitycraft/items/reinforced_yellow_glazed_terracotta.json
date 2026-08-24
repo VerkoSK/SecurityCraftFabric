@@ -1,0 +1,12 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "securitycraft:item/reinforced_yellow_glazed_terracotta",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": 10066329
+      }
+    ]
+  }
+}

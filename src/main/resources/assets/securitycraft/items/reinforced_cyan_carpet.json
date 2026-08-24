@@ -1,0 +1,12 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "securitycraft:item/reinforced_cyan_carpet",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": 10066329
+      }
+    ]
+  }
+}

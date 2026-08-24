@@ -1,0 +1,12 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "securitycraft:item/reinforced_smooth_crystal_quartz",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": 10066329
+      }
+    ]
+  }
+}
