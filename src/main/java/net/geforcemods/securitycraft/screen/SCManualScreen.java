@@ -51,7 +51,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
@@ -80,11 +80,11 @@ import net.minecraft.world.level.block.Block;
  * </ul>
  */
 public class SCManualScreen extends Screen implements StillValid {
-	private static final ResourceLocation PAGE = SCContent.id("textures/gui/info_book_texture.png");
-	private static final ResourceLocation PAGE_WITH_SCROLL = SCContent.id("textures/gui/info_book_texture_special.png"); //for items without a recipe
-	private static final ResourceLocation TITLE_PAGE = SCContent.id("textures/gui/info_book_title_page.png");
-	private static final ResourceLocation ICONS = SCContent.id("textures/gui/info_book_icons.png");
-	private static final ResourceLocation VANILLA_BOOK = new ResourceLocation("textures/gui/book.png");
+	private static final Identifier PAGE = SCContent.id("textures/gui/info_book_texture.png");
+	private static final Identifier PAGE_WITH_SCROLL = SCContent.id("textures/gui/info_book_texture_special.png"); //for items without a recipe
+	private static final Identifier TITLE_PAGE = SCContent.id("textures/gui/info_book_title_page.png");
+	private static final Identifier ICONS = SCContent.id("textures/gui/info_book_icons.png");
+	private static final Identifier VANILLA_BOOK = Identifier.withDefaultNamespace("textures/gui/book.png");
 	private static final int SUBPAGE_LENGTH = 1285;
 	/** The Fabric port's own title page. It is the first page of the book; {@link #ORIGINAL_TITLE_PAGE} is the last. */
 	private static final int PORT_TITLE_PAGE = -2;
