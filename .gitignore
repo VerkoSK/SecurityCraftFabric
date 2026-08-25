@@ -24,3 +24,9 @@ eclipse/
 # OS
 .DS_Store
 Thumbs.db
+
+# Local-only project docs (never tracked, never pushed)
+/CHANGELOG.md
+/CURSEFORGE.md
+/PORTING.md
+/BUILD_NOTES_26x.md
