@@ -1,83 +1,71 @@
 # SecurityCraft (Fabric)
 
-A **Fabric** port of [SecurityCraft](https://github.com/Geforce132/SecurityCraft), the popular
-security/defence mod originally written for Forge/NeoForge by the SecurityCraft team
-(Geforce, bl4ckscor3, Redstone_Dubstep, ChainmailPickaxe).
+A **Fabric** port of [SecurityCraft](https://github.com/Geforce132/SecurityCraft), the security and
+defence mod originally written for Forge/NeoForge by the SecurityCraft team (Geforce, bl4ckscor3,
+Redstone_Dubstep, ChainmailPickaxe).
 
 > The original mod is licensed MIT. This port keeps that license and preserves the original
 > copyright and attribution. It is **not** affiliated with or endorsed by the original authors.
 
 ---
 
-## Status
+## Status — V0.5
 
-This is an **incremental, honest** port. SecurityCraft is one of the largest Minecraft mods
-(~565 Java classes + ~5,000 resource files **per version**), so a full 1:1 port of every feature
-across many Minecraft versions is a long road. Rather than dump a non-compiling code drop, this
-repo grows a **working core** feature-by-feature and version-by-version.
+SecurityCraft is one of the largest Minecraft mods there is, so this port grows a **working core**
+feature by feature rather than dropping a half-compiling copy of everything at once. Every feature
+is measured against the original mod's own branch for the same Minecraft version, so "done" means
+*behaves like the original*, not *behaves plausibly*.
 
-### Ported so far (base branch, MC 1.21.1)
+### In the mod so far
 
-| Feature | State |
-|---|---|
-| Reinforced blocks (stone, cobblestone, stone bricks, smooth stone, oak planks, dirt, iron block, glass) | ✅ blast-resistant, own creative tab, textures, loot |
-| Keypad | ✅ ownable + salted-hash passcode + redstone pulse + GUI + networking |
-| Owner API (`Owner`, `IOwnable`, `OwnableBlockEntity`) | ✅ foundation for all ownable blocks |
-| `/securitycraft` command | ✅ `help`, `version` |
-| Creative tab, lang, models, blockstates, loot tables | ✅ |
+| | |
+| --- | --- |
+| **Reinforced blocks** | the complete set — every block the original reinforces on this Minecraft version, including the carpets, glazed terracotta, ladder, lanterns, chain, end rod, cobweb, scaffolding, lever, and the functional ones: hopper, dispenser, dropper, observer, pistons, cauldrons, lectern, chiseled bookshelf |
+| **Ownership** | every owned block remembers who placed it and can only be broken by them, with team ownership, variable break time and the Universal Owner Changer |
+| **Universal Block Reinforcer / Remover** | all three reinforcer levels, with their colour chooser |
+| **Universal Block Modifier** | the full Customize screen: module slots, per-block options, and enabling or disabling a module without taking it out |
+| **Modules** | all eight, with the allow/deny list editor and the disguise module screen |
+| **Passcode-protected blocks** | keypad, key panel, keypad frame, and the passcode chest, barrel, furnace, smoker and blast furnace |
+| **Laser block** | laser fields, per-side configuration and dyed lenses |
+| **Explosives** | the whole set of 42 — mine, bouncing betty, claymore, IMS, track mine and every block mine — plus the Mine Remote Access Tool and the wire cutters |
+| **Portable Radar** | |
+| **Electrified iron fence and fence gate** | |
+| **Secret signs** | standing, wall and hanging, for every wood type |
+| **Crystal quartz set** | plain and reinforced |
+| **Fake water and fake lava** | |
+| **SecurityCraft Manual** | the in-game manual, with its recipe pages |
+| **Mod compatibility** | JEI and Jade |
 
-See [PORTING.md](PORTING.md) for the full roadmap (remaining features + the version matrix).
+[**ROADMAP.md**](ROADMAP.md) lists what is still missing and which release each piece is planned
+for, all the way to V1.0.
 
 ---
 
+## Supported Minecraft versions
+
+One branch per Minecraft version, each a complete source tree rather than a preprocessor target:
+
+`1.20.1` · `1.20.6` · `1.21.1` · `1.21.3` · `1.21.4` · `1.21.5` · `1.21.6` · `1.21.7` · `1.21.8` ·
+`1.21.10` · `1.21.11` · `26.1` · `26.1.1` · `26.1.2` · `26.2`
+
+New features land on **1.20.1** first and are only carried to the other branches once they have been
+tested there, so the newest release may reach some branches a little later than others.
+
 ## Building
 
-Requires JDK 21.
+Check out the branch for the Minecraft version you want, then:
 
 ```bash
 ./gradlew build
 ```
 
-The built jar lands in `build/libs/`. Run the dev client with `./gradlew runClient`.
-
-## Versions (one branch per Minecraft version)
-
-The port is carried across the recent Minecraft releases the upstream mod supports. Each
-version is its own branch (matching upstream's own branch-per-version layout). Check out the
-branch for your Minecraft version and run `./gradlew build`.
-
-| Minecraft | Branch | Mappings | Build |
-|---|---|---|---|
-| 1.20.6 | [`1.20.6`](../../tree/1.20.6) | Mojang | ✅ |
-| 1.21.1 | [`1.21.1`](../../tree/1.21.1) | Mojang | ✅ |
-| 1.21.3 | [`1.21.3`](../../tree/1.21.3) | Mojang | ✅ |
-| 1.21.4 | [`1.21.4`](../../tree/1.21.4) | Mojang | ✅ |
-| 1.21.5 | [`1.21.5`](../../tree/1.21.5) | Mojang | ✅ |
-| 1.21.6 | [`1.21.6`](../../tree/1.21.6) | Mojang | ✅ |
-| 1.21.7 | [`1.21.7`](../../tree/1.21.7) | Mojang | ✅ |
-| 1.21.8 | [`1.21.8`](../../tree/1.21.8) | Mojang | ✅ |
-| 1.21.10 | [`1.21.10`](../../tree/1.21.10) | Mojang | ✅ |
-| 1.21.11 | [`1.21.11`](../../tree/1.21.11) | **Yarn** | ✅ |
-| 26.1 | [`26.1`](../../tree/26.1) | — | ⛔ no mappings published for 26.x yet |
-| 26.1.1 | [`26.1.1`](../../tree/26.1.1) | — | ⛔ no mappings published for 26.x yet |
-| 26.1.2 | [`26.1.2`](../../tree/26.1.2) | — | ⛔ no mappings published for 26.x yet |
-| 26.2 | [`26.2`](../../tree/26.2) | — | ⛔ no mappings published for 26.x yet |
-
-**All 10 releases from 1.20.6 through 1.21.11 build green.** 1.21.11 is built against **Yarn**
-mappings (needs Fabric Loom 1.17.13 + Gradle 9.6.1 — an old Loom was the real blocker, not the
-mappings). The **26.x** branches are fully configured (Java 25, Loom 1.17.13, Fabric API 0.154.2)
-but cannot build yet: Minecraft 26.x publishes **no named mappings** — Mojang's manifest ships no
-`client_mappings`, and Yarn has not released 26.x — so Fabric has nothing readable to compile
-against. See [BUILD_NOTES_26x.md](../../tree/26.2/BUILD_NOTES_26x.md).
-
-Each newer version required real API adaptation — mandatory registration IDs (1.21.2),
-`EnumProperty<Direction>` (1.21.2), the `items/` model system (1.21.4), `Optional` NBT getters
-(1.21.5), `ValueInput`/`ValueOutput` serialization (1.21.6), the `isClientSide()` / `KeyEvent`
-input changes (1.21.9), and a full Mojang→Yarn source translation (1.21.11). PORTING.md lists
-each delta per version.
+The jar lands in `build/libs/`. `./gradlew runClient` and `./gradlew runServer` start a development
+game. The JDK each branch needs is declared in its own `build.gradle` and downloaded automatically
+by the toolchain resolver — 17 for 1.20.1, newer for the later branches.
 
 ## Credits
 
-- **Original mod & all assets:** the SecurityCraft team — Geforce, bl4ckscor3, Redstone_Dubstep,
+- **Original mod and all assets:** the SecurityCraft team — Geforce, bl4ckscor3, Redstone_Dubstep,
   ChainmailPickaxe. <https://github.com/Geforce132/SecurityCraft>
-- **License:** [MIT](LICENSE) (unchanged from upstream).
+- **Fabric port:** Verkos.
+- **License:** [MIT](LICENSE), unchanged from the original.
