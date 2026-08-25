@@ -10,8 +10,10 @@ import net.minecraft.world.entity.player.Inventory;
 /** Ported 1:1 from upstream's {@code KeypadBlastFurnaceScreen}: the vanilla blast furnace screen with the keypad blast furnace's menu. */
 public class KeypadBlastFurnaceScreen extends AbstractFurnaceScreen<KeypadBlastFurnaceMenu> {
 	private static final ResourceLocation TEXTURE = new ResourceLocation("textures/gui/container/blast_furnace.png");
+	private static final ResourceLocation LIT_PROGRESS_SPRITE = new ResourceLocation("container/blast_furnace/lit_progress");
+	private static final ResourceLocation BURN_PROGRESS_SPRITE = new ResourceLocation("container/blast_furnace/burn_progress");
 
 	public KeypadBlastFurnaceScreen(KeypadBlastFurnaceMenu menu, Inventory inv, Component title) {
-		super(menu, new BlastingRecipeBookComponent(), inv, menu.be.hasCustomName() ? menu.be.getCustomName() : title, TEXTURE);
+		super(menu, new BlastingRecipeBookComponent(), inv, menu.be.hasCustomName() ? menu.be.getCustomName() : title, LIT_PROGRESS_SPRITE, BURN_PROGRESS_SPRITE, TEXTURE);
 	}
 }

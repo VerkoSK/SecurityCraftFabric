@@ -25,6 +25,7 @@ import net.minecraft.world.Container;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -88,23 +89,29 @@ public class KeypadBarrelBlock extends Block implements EntityBlock {
 
 	@Override
 	public void setPlacedBy(Level level, BlockPos pos, BlockState state, LivingEntity entity, ItemStack stack) {
-		if (stack.hasCustomHoverName() && level.getBlockEntity(pos) instanceof KeypadBarrelBlockEntity barrel)
-			barrel.setCustomName(stack.getHoverName());
-
+		//adaptation: BlockItem itself copies the item's custom name component onto the placed block entity now, so there is nothing left to do here
 		OwnershipUtils.setPlacedBy(level, pos, entity);
 	}
 
 	@Override
-	public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+	public ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
 		if (!(level.getBlockEntity(pos) instanceof KeypadBarrelBlockEntity be))
-			return InteractionResult.PASS;
+			return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
 
-		if (player.getItemInHand(hand).is(Items.FROG_SPAWN_EGG) && be.isOwnedBy(player)) {
+		if (stack.is(Items.FROG_SPAWN_EGG) && be.isOwnedBy(player)) {
 			if (!level.isClientSide)
 				level.setBlockAndUpdate(pos, state.cycle(FROG));
 
-			return InteractionResult.SUCCESS;
+			return ItemInteractionResult.SUCCESS;
 		}
+
+		return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+	}
+
+	@Override
+	public InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
+		if (!(level.getBlockEntity(pos) instanceof KeypadBarrelBlockEntity be))
+			return InteractionResult.PASS;
 
 		if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
 			if (be.isDenied(player)) {
@@ -229,7 +236,7 @@ public class KeypadBarrelBlock extends Block implements EntityBlock {
 			KeypadBarrelBlockEntity keypadBarrel;
 
 			barrel.unpackLootTable(player); //generate loot (if any), so items don't spill out when converting and no additional loot table is generated
-			tag = barrel.saveWithFullMetadata();
+			tag = barrel.saveWithFullMetadata(level.registryAccess());
 			barrel.clearContent();
 			horizontalFacing = switch (generalFacing) {
 				case UP, DOWN -> player == null ? Direction.NORTH : player.getDirection().getOpposite();
@@ -237,7 +244,7 @@ public class KeypadBarrelBlock extends Block implements EntityBlock {
 			};
 			level.setBlockAndUpdate(pos, SCContent.KEYPAD_BARREL.defaultBlockState().setValue(HORIZONTAL_FACING, horizontalFacing).setValue(LID_FACING, generalFacing).setValue(OPEN, false));
 			keypadBarrel = (KeypadBarrelBlockEntity) level.getBlockEntity(pos);
-			keypadBarrel.load(tag);
+			keypadBarrel.loadWithComponents(tag, level.registryAccess());
 			keypadBarrel.setPreviousBarrel(state.getBlock());
 
 			if (player != null)
@@ -265,11 +272,11 @@ public class KeypadBarrelBlock extends Block implements EntityBlock {
 
 			keypadBarrel.dropAllModules();
 			keypadBarrel.unpackLootTable(player); //generate loot (if any), so items don't spill out when converting and no additional loot table is generated
-			tag = keypadBarrel.saveWithFullMetadata();
+			tag = keypadBarrel.saveWithFullMetadata(level.registryAccess());
 			keypadBarrel.clearContent();
 			level.setBlockAndUpdate(pos, convertedBlock.defaultBlockState().setValue(BarrelBlock.FACING, direction).setValue(OPEN, false));
 			barrel = (BarrelBlockEntity) level.getBlockEntity(pos);
-			barrel.load(tag);
+			barrel.loadWithComponents(tag, level.registryAccess());
 			return true;
 		}
 	}

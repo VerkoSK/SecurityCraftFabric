@@ -70,7 +70,7 @@ public class UniversalOwnerChangerItem extends Item {
 			return InteractionResult.FAIL;
 		}
 
-		if (!stack.hasCustomHoverName() && !isDefault) {
+		if (!stack.has(net.minecraft.core.component.DataComponents.CUSTOM_NAME) && !isDefault) {
 			message(player, "messages.securitycraft:universalOwnerChanger.noName", ChatFormatting.RED);
 			return InteractionResult.FAIL;
 		}
@@ -81,7 +81,7 @@ public class UniversalOwnerChangerItem extends Item {
 				return InteractionResult.FAIL;
 			}
 
-			if (!stack.hasCustomHoverName())
+			if (!stack.has(net.minecraft.core.component.DataComponents.CUSTOM_NAME))
 				newOwner = player.getName().getString();
 		}
 

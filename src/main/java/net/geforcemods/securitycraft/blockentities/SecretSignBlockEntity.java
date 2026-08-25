@@ -12,6 +12,7 @@ import net.geforcemods.securitycraft.api.Option.BooleanOption;
 import net.geforcemods.securitycraft.api.Owner;
 import net.geforcemods.securitycraft.misc.ModuleType;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -55,20 +56,20 @@ public class SecretSignBlockEntity extends SignBlockEntity implements IOwnable, 
 	}
 
 	@Override
-	public void saveAdditional(CompoundTag tag) {
-		super.saveAdditional(tag);
+	public void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+		super.saveAdditional(tag, registries);
 
-		writeModuleInventory(tag);
+		writeModuleInventory(tag, registries);
 		writeModuleStates(tag);
 		writeOptions(tag);
 		owner.save(tag, needsValidation());
 	}
 
 	@Override
-	public void load(CompoundTag tag) {
-		super.load(tag);
+	public void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+		super.loadAdditional(tag, registries);
 
-		modules = readModuleInventory(tag);
+		modules = readModuleInventory(tag, registries);
 		moduleStates = readModuleStates(tag);
 		readOptions(tag);
 		owner.load(tag);
@@ -127,8 +128,8 @@ public class SecretSignBlockEntity extends SignBlockEntity implements IOwnable, 
 	}
 
 	@Override
-	public CompoundTag getUpdateTag() {
-		return saveWithoutMetadata();
+	public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+		return saveWithoutMetadata(registries);
 	}
 
 	@Override

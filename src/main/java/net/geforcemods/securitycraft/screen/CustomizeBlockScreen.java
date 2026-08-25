@@ -105,7 +105,7 @@ public class CustomizeBlockScreen extends AbstractContainerScreen<CustomizeBlock
 						slider = new CallbackSlider(x, y, 120, 20, doubleOption.getMin(), doubleOption.getMax(), doubleOption.get(), doubleOption.getIncrement(), s -> {
 							doubleOption.setValue(s.getValue());
 							optionButtons[index].setTooltip(Tooltip.create(getOptionDescription(index)));
-							ClientPlayNetworking.send(SetOptionPayload.CHANNEL, new SetOptionPayload(pos, index, false, doubleOption.get()).write());
+							ClientPlayNetworking.send(new SetOptionPayload(pos, index, false, doubleOption.get()));
 						}) {
 							@Override
 							protected void updateMessage() {
@@ -119,7 +119,7 @@ public class CustomizeBlockScreen extends AbstractContainerScreen<CustomizeBlock
 						slider = new CallbackSlider(x, y, 120, 20, intOption.getMin(), intOption.getMax(), intOption.get(), 1.0, s -> {
 							intOption.setValue(s.getValueInt());
 							optionButtons[index].setTooltip(Tooltip.create(getOptionDescription(index)));
-							ClientPlayNetworking.send(SetOptionPayload.CHANNEL, new SetOptionPayload(pos, index, false, intOption.get()).write());
+							ClientPlayNetworking.send(new SetOptionPayload(pos, index, false, intOption.get()));
 						}) {
 							@Override
 							protected void updateMessage() {
@@ -160,7 +160,7 @@ public class CustomizeBlockScreen extends AbstractContainerScreen<CustomizeBlock
 			moduleInv.insertModule(moduleInv.getModule(moduleType), true);
 		}
 
-		ClientPlayNetworking.send(ToggleModulePayload.CHANNEL, new ToggleModulePayload(pos, moduleType).write());
+		ClientPlayNetworking.send(new ToggleModulePayload(pos, moduleType));
 	}
 
 	/** Pale yellow while the option still holds its default value, light grey once it has been changed. */
@@ -176,7 +176,7 @@ public class CustomizeBlockScreen extends AbstractContainerScreen<CustomizeBlock
 		button.setFGColor(optionColor(tempOption));
 		button.setMessage(getOptionButtonTitle(tempOption));
 		optionButtons[index].setTooltip(Tooltip.create(getOptionDescription(index)));
-		ClientPlayNetworking.send(SetOptionPayload.CHANNEL, new SetOptionPayload(pos, index, true, 0.0).write());
+		ClientPlayNetworking.send(new SetOptionPayload(pos, index, true, 0.0));
 	}
 
 	@Override

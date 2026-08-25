@@ -154,7 +154,7 @@ public class SCManualScreen extends Screen implements StillValid {
 
 	@Override
 	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
-		renderBackground(guiGraphics);
+		renderBackground(guiGraphics, mouseX, mouseY, partialTicks);
 		guiGraphics.blit(currentPage < 0 ? TITLE_PAGE : (recipe != null && !recipe.isEmpty() ? PAGE : PAGE_WITH_SCROLL), startX, 5, 0, 0, 256, 250);
 
 		for (Renderable renderable : renderables) {
@@ -258,24 +258,24 @@ public class SCManualScreen extends Screen implements StillValid {
 	}
 
 	@Override
-	public boolean mouseScrolled(double mouseX, double mouseY, double scroll) {
+	public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
 		if (Screen.hasShiftDown()) {
 			for (IngredientDisplay display : displays) {
 				if (display != null)
-					display.changeRenderingStack(-scroll);
+					display.changeRenderingStack(-scrollY);
 			}
 
 			if (pageIcon != null)
-				pageIcon.changeRenderingStack(-scroll);
+				pageIcon.changeRenderingStack(-scrollY);
 
 			return true;
 		}
 
 		if (currentPage == ORIGINAL_TITLE_PAGE && patronList != null && patronList.isMouseOver(mouseX, mouseY) && !patronList.patrons.isEmpty())
-			return patronList.mouseScrolled(mouseX, mouseY, scroll);
+			return patronList.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
 
 		if (Screen.hasControlDown() && subpages.size() > 1) {
-			switch ((int) Math.signum(scroll)) {
+			switch ((int) Math.signum(scrollY)) {
 				case -1:
 					nextSubpage();
 					break;
@@ -287,7 +287,7 @@ public class SCManualScreen extends Screen implements StillValid {
 			return true;
 		}
 
-		scrolledSinceLastPage += scroll;
+		scrolledSinceLastPage += scrollY;
 
 		while (scrolledSinceLastPage <= -1.0) {
 			scrolledSinceLastPage++;
@@ -383,7 +383,9 @@ public class SCManualScreen extends Screen implements StillValid {
 			Level level = Minecraft.getInstance().level;
 			RegistryAccess registryAccess = level.registryAccess();
 
-			for (Recipe<?> object : level.getRecipeManager().getRecipes()) {
+			for (net.minecraft.world.item.crafting.RecipeHolder<?> holder : level.getRecipeManager().getRecipes()) {
+				Recipe<?> object = holder.value();
+
 				if (object instanceof ShapedRecipe shapedRecipe) {
 					ItemStack resultItem = shapedRecipe.getResultItem(registryAccess);
 
@@ -401,7 +403,7 @@ public class SCManualScreen extends Screen implements StillValid {
 				}
 				else if (object instanceof ShapelessRecipe shapelessRecipe && shapelessRecipe.getResultItem(registryAccess).is(item)) {
 					//don't show keycard reset recipes
-					if (shapelessRecipe.getId().getPath().endsWith("_reset"))
+					if (holder.id().getPath().endsWith("_reset"))
 						continue;
 
 					NonNullList<Ingredient> recipeItems = NonNullList.<Ingredient>withSize(shapelessRecipe.getIngredients().size(), Ingredient.EMPTY);
@@ -426,7 +428,9 @@ public class SCManualScreen extends Screen implements StillValid {
 				recipeStacks.put(i, new ItemStack[pageItems.size()]);
 			}
 
-			for (Recipe<?> object : Minecraft.getInstance().level.getRecipeManager().getRecipes()) {
+			for (net.minecraft.world.item.crafting.RecipeHolder<?> holder : Minecraft.getInstance().level.getRecipeManager().getRecipes()) {
+				Recipe<?> object = holder.value();
+
 				if (stacksLeft == 0)
 					break;
 
@@ -451,7 +455,7 @@ public class SCManualScreen extends Screen implements StillValid {
 				}
 				else if (object instanceof ShapelessRecipe shapelessRecipe && !shapelessRecipe.getResultItem(registryAccess).isEmpty() && pageItems.contains(shapelessRecipe.getResultItem(registryAccess).getItem())) {
 					//don't show keycard reset recipes
-					if (shapelessRecipe.getId().getPath().endsWith("_reset"))
+					if (holder.id().getPath().endsWith("_reset"))
 						continue;
 
 					NonNullList<Ingredient> ingredients = shapelessRecipe.getIngredients();
@@ -695,8 +699,8 @@ public class SCManualScreen extends Screen implements StillValid {
 		}
 
 		@Override
-		public boolean mouseScrolled(double mouseX, double mouseY, double scroll) {
-			scrollDistance -= scroll * ROW_HEIGHT;
+		public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+			scrollDistance -= scrollY * ROW_HEIGHT;
 			return true;
 		}
 
@@ -741,7 +745,7 @@ public class SCManualScreen extends Screen implements StillValid {
 		}
 
 		@Override
-		public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+		public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
 			if (visible) {
 				isHovered = mouseX >= getX() && mouseY >= getY() && mouseX < getX() + width && mouseY < getY() + height;
 				guiGraphics.blit(VANILLA_BOOK, getX(), getY(), isHoveredOrFocused() ? 23 : 0, textureY, 23, 13);
