@@ -1,54 +1,71 @@
 # SecurityCraft (Fabric)
 
-A **Fabric** port of [SecurityCraft](https://github.com/Geforce132/SecurityCraft), the popular
-security/defence mod originally written for Forge/NeoForge by the SecurityCraft team
-(Geforce, bl4ckscor3, Redstone_Dubstep, ChainmailPickaxe).
+A **Fabric** port of [SecurityCraft](https://github.com/Geforce132/SecurityCraft), the security and
+defence mod originally written for Forge/NeoForge by the SecurityCraft team (Geforce, bl4ckscor3,
+Redstone_Dubstep, ChainmailPickaxe).
 
 > The original mod is licensed MIT. This port keeps that license and preserves the original
 > copyright and attribution. It is **not** affiliated with or endorsed by the original authors.
 
 ---
 
-## Status
+## Status — V0.5
 
-This is an **incremental, honest** port. SecurityCraft is one of the largest Minecraft mods
-(~565 Java classes + ~5,000 resource files **per version**), so a full 1:1 port of every feature
-across many Minecraft versions is a long road. Rather than dump a non-compiling code drop, this
-repo grows a **working core** feature-by-feature and version-by-version.
+SecurityCraft is one of the largest Minecraft mods there is, so this port grows a **working core**
+feature by feature rather than dropping a half-compiling copy of everything at once. Every feature
+is measured against the original mod's own branch for the same Minecraft version, so "done" means
+*behaves like the original*, not *behaves plausibly*.
 
-### Ported so far (base branch, MC 1.21.1)
+### In the mod so far
 
-| Feature | State |
-|---|---|
-| Reinforced blocks (stone, cobblestone, stone bricks, smooth stone, oak planks, dirt, iron block, glass) | ✅ blast-resistant, own creative tab, textures, loot |
-| Keypad | ✅ ownable + salted-hash passcode + redstone pulse + GUI + networking |
-| Owner API (`Owner`, `IOwnable`, `OwnableBlockEntity`) | ✅ foundation for all ownable blocks |
-| `/securitycraft` command | ✅ `help`, `version` |
-| Creative tab, lang, models, blockstates, loot tables | ✅ |
+| | |
+| --- | --- |
+| **Reinforced blocks** | the complete set — every block the original reinforces on this Minecraft version, including the carpets, glazed terracotta, ladder, lanterns, chain, end rod, cobweb, scaffolding, lever, and the functional ones: hopper, dispenser, dropper, observer, pistons, cauldrons, lectern, chiseled bookshelf |
+| **Ownership** | every owned block remembers who placed it and can only be broken by them, with team ownership, variable break time and the Universal Owner Changer |
+| **Universal Block Reinforcer / Remover** | all three reinforcer levels, with their colour chooser |
+| **Universal Block Modifier** | the full Customize screen: module slots, per-block options, and enabling or disabling a module without taking it out |
+| **Modules** | all eight, with the allow/deny list editor and the disguise module screen |
+| **Passcode-protected blocks** | keypad, key panel, keypad frame, and the passcode chest, barrel, furnace, smoker and blast furnace |
+| **Laser block** | laser fields, per-side configuration and dyed lenses |
+| **Explosives** | the whole set of 42 — mine, bouncing betty, claymore, IMS, track mine and every block mine — plus the Mine Remote Access Tool and the wire cutters |
+| **Portable Radar** | |
+| **Electrified iron fence and fence gate** | |
+| **Secret signs** | standing, wall and hanging, for every wood type |
+| **Crystal quartz set** | plain and reinforced |
+| **Fake water and fake lava** | |
+| **SecurityCraft Manual** | the in-game manual, with its recipe pages |
+| **Mod compatibility** | JEI and Jade |
 
-See [PORTING.md](PORTING.md) for the full roadmap (remaining features + the version matrix).
+[**ROADMAP.md**](ROADMAP.md) lists what is still missing and which release each piece is planned
+for, all the way to V1.0.
 
 ---
 
+## Supported Minecraft versions
+
+One branch per Minecraft version, each a complete source tree rather than a preprocessor target:
+
+`1.20.1` · `1.20.6` · `1.21.1` · `1.21.3` · `1.21.4` · `1.21.5` · `1.21.6` · `1.21.7` · `1.21.8` ·
+`1.21.10` · `1.21.11` · `26.1` · `26.1.1` · `26.1.2` · `26.2`
+
+New features land on **1.20.1** first and are only carried to the other branches once they have been
+tested there, so the newest release may reach some branches a little later than others.
+
 ## Building
 
-Requires JDK 21.
+Check out the branch for the Minecraft version you want, then:
 
 ```bash
 ./gradlew build
 ```
 
-The built jar lands in `build/libs/`. Run the dev client with `./gradlew runClient`.
-
-## Target versions
-
-The port is being carried across the last ~10 Minecraft releases the upstream mod supports.
-The base branch targets **1.21.1**; each additional version is added as its own branch/target
-(see [PORTING.md](PORTING.md)). Newer versions (1.21.2+) require extra work because Mojang made
-block/item registration IDs mandatory — that is tracked per-version.
+The jar lands in `build/libs/`. `./gradlew runClient` and `./gradlew runServer` start a development
+game. The JDK each branch needs is declared in its own `build.gradle` and downloaded automatically
+by the toolchain resolver — 17 for 1.20.1, newer for the later branches.
 
 ## Credits
 
-- **Original mod & all assets:** the SecurityCraft team — Geforce, bl4ckscor3, Redstone_Dubstep,
+- **Original mod and all assets:** the SecurityCraft team — Geforce, bl4ckscor3, Redstone_Dubstep,
   ChainmailPickaxe. <https://github.com/Geforce132/SecurityCraft>
-- **License:** [MIT](LICENSE) (unchanged from upstream).
+- **Fabric port:** Verkos.
+- **License:** [MIT](LICENSE), unchanged from the original.
