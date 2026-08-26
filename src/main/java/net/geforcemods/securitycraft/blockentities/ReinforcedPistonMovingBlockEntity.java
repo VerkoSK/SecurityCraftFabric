@@ -9,6 +9,7 @@ import net.geforcemods.securitycraft.api.IOwnable;
 import net.geforcemods.securitycraft.api.Owner;
 import net.geforcemods.securitycraft.blocks.reinforced.ReinforcedPistonBaseBlock;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -71,8 +72,8 @@ public class ReinforcedPistonMovingBlockEntity extends BlockEntity implements IO
 	}
 
 	@Override
-	public CompoundTag getUpdateTag() {
-		return saveWithoutMetadata();
+	public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+		return saveWithoutMetadata(registries);
 	}
 
 	@Override
@@ -285,7 +286,7 @@ public class ReinforcedPistonMovingBlockEntity extends BlockEntity implements IO
 					BlockEntity be = pushedState.hasBlockEntity() ? ((EntityBlock) pushedState.getBlock()).newBlockEntity(worldPosition, pushedState) : null;
 
 					if (be != null) {
-						be.load(movedBlockEntityTag);
+						be.loadWithComponents(movedBlockEntityTag, level.registryAccess());
 						level.setBlockEntity(be);
 
 						if (be instanceof IModuleInventory moduleInv) {
@@ -300,7 +301,7 @@ public class ReinforcedPistonMovingBlockEntity extends BlockEntity implements IO
 				}
 
 				level.setBlock(worldPosition, pushedState, 3);
-				level.neighborChanged(worldPosition, pushedState.getBlock(), worldPosition);
+				level.neighborChanged(worldPosition, pushedState.getBlock(), net.minecraft.world.level.redstone.ExperimentalRedstoneUtils.initialOrientation(level, extending ? direction : direction.getOpposite(), null));
 			}
 		}
 	}
@@ -331,7 +332,7 @@ public class ReinforcedPistonMovingBlockEntity extends BlockEntity implements IO
 							BlockEntity storedBe = pushedState.hasBlockEntity() ? ((EntityBlock) pushedState.getBlock()).newBlockEntity(be.worldPosition, pushedState) : null;
 
 							if (storedBe != null) {
-								storedBe.load(be.movedBlockEntityTag);
+								storedBe.loadWithComponents(be.movedBlockEntityTag, level.registryAccess());
 								level.setBlockEntity(storedBe);
 
 								if (storedBe instanceof IModuleInventory moduleInv) {
@@ -346,7 +347,7 @@ public class ReinforcedPistonMovingBlockEntity extends BlockEntity implements IO
 						}
 
 						level.setBlock(pos, pushedState, 67);
-						level.neighborChanged(pos, pushedState.getBlock(), pos);
+						level.neighborChanged(pos, pushedState.getBlock(), net.minecraft.world.level.redstone.ExperimentalRedstoneUtils.initialOrientation(level, be.extending ? be.direction : be.direction.getOpposite(), null));
 					}
 				}
 			}
@@ -364,11 +365,11 @@ public class ReinforcedPistonMovingBlockEntity extends BlockEntity implements IO
 	}
 
 	@Override
-	public void load(CompoundTag tag) {
+	public void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
 		HolderGetter<Block> holderGetter;
 
-		super.load(tag);
-		holderGetter = level != null ? level.holderLookup(Registries.BLOCK) : BuiltInRegistries.BLOCK.asLookup();
+		super.loadAdditional(tag, registries);
+		holderGetter = (HolderGetter<Block>) (level != null ? level.holderLookup(Registries.BLOCK) : BuiltInRegistries.BLOCK);
 		movedState = NbtUtils.readBlockState(holderGetter, tag.getCompound("blockState"));
 		direction = Direction.from3DDataValue(tag.getInt("facing"));
 		progress = tag.getFloat("progress");
@@ -380,8 +381,8 @@ public class ReinforcedPistonMovingBlockEntity extends BlockEntity implements IO
 	}
 
 	@Override
-	public void saveAdditional(CompoundTag tag) {
-		super.saveAdditional(tag);
+	public void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+		super.saveAdditional(tag, registries);
 		tag.put("blockState", NbtUtils.writeBlockState(movedState));
 		tag.putInt("facing", direction.get3DDataValue());
 		tag.putFloat("progress", lastProgress);

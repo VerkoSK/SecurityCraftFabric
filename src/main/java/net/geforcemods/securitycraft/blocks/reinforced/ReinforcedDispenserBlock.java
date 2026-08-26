@@ -68,7 +68,7 @@ public class ReinforcedDispenserBlock extends DispenserBlock implements IReinfor
 	}
 
 	@Override
-	public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+	public InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
 		//only allow the owner or players on the allowlist to access a reinforced dispenser
 		if (!level.isClientSide && level.getBlockEntity(pos) instanceof ReinforcedDispenserBlockEntity be && (be.isOwnedBy(player) || be.isAllowed(player)))
 			player.openMenu(be);
@@ -104,11 +104,11 @@ public class ReinforcedDispenserBlock extends DispenserBlock implements IReinfor
 	}
 
 	@Override
-	public BlockState updateShape(BlockState state, Direction facing, BlockState facingState, LevelAccessor level, BlockPos currentPos, BlockPos facingPos) {
+	protected BlockState updateShape(BlockState state, net.minecraft.world.level.LevelReader level, net.minecraft.world.level.ScheduledTickAccess tickAccess, BlockPos currentPos, Direction facing, BlockPos facingPos, BlockState facingState, net.minecraft.util.RandomSource random) {
 		if (state.getValue(WATERLOGGED))
-			level.scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
+			tickAccess.scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
 
-		return super.updateShape(state, facing, facingState, level, currentPos, facingPos);
+		return super.updateShape(state, level, tickAccess, currentPos, facing, facingPos, facingState, random);
 	}
 
 	@Override

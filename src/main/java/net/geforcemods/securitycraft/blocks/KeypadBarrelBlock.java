@@ -48,7 +48,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition.Builder;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
 
@@ -64,7 +63,7 @@ public class KeypadBarrelBlock extends Block implements EntityBlock {
 	//upstream's DisguisableBlock superclass also implements SimpleWaterloggedBlock and carries a WATERLOGGED
 	//property; since that class doesn't exist in this port, waterlogging is dropped along with it rather than
 	//half-ported without its updateShape/getFluidState plumbing
-	public static final DirectionProperty HORIZONTAL_FACING = BlockStateProperties.HORIZONTAL_FACING;
+	public static final EnumProperty<Direction> HORIZONTAL_FACING = BlockStateProperties.HORIZONTAL_FACING;
 	public static final EnumProperty<LidFacing> LID_FACING = EnumProperty.create("lid_facing", LidFacing.class);
 	public static final BooleanProperty OPEN = BlockStateProperties.OPEN;
 	public static final BooleanProperty FROG = BooleanProperty.create("frog");
@@ -88,23 +87,29 @@ public class KeypadBarrelBlock extends Block implements EntityBlock {
 
 	@Override
 	public void setPlacedBy(Level level, BlockPos pos, BlockState state, LivingEntity entity, ItemStack stack) {
-		if (stack.hasCustomHoverName() && level.getBlockEntity(pos) instanceof KeypadBarrelBlockEntity barrel)
-			barrel.setCustomName(stack.getHoverName());
-
+		//adaptation: BlockItem itself copies the item's custom name component onto the placed block entity now, so there is nothing left to do here
 		OwnershipUtils.setPlacedBy(level, pos, entity);
 	}
 
 	@Override
-	public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+	public InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
 		if (!(level.getBlockEntity(pos) instanceof KeypadBarrelBlockEntity be))
 			return InteractionResult.PASS;
 
-		if (player.getItemInHand(hand).is(Items.FROG_SPAWN_EGG) && be.isOwnedBy(player)) {
+		if (stack.is(Items.FROG_SPAWN_EGG) && be.isOwnedBy(player)) {
 			if (!level.isClientSide)
 				level.setBlockAndUpdate(pos, state.cycle(FROG));
 
 			return InteractionResult.SUCCESS;
 		}
+
+		return InteractionResult.PASS;
+	}
+
+	@Override
+	public InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
+		if (!(level.getBlockEntity(pos) instanceof KeypadBarrelBlockEntity be))
+			return InteractionResult.PASS;
 
 		if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
 			if (be.isDenied(player)) {
@@ -229,7 +234,7 @@ public class KeypadBarrelBlock extends Block implements EntityBlock {
 			KeypadBarrelBlockEntity keypadBarrel;
 
 			barrel.unpackLootTable(player); //generate loot (if any), so items don't spill out when converting and no additional loot table is generated
-			tag = barrel.saveWithFullMetadata();
+			tag = barrel.saveWithFullMetadata(level.registryAccess());
 			barrel.clearContent();
 			horizontalFacing = switch (generalFacing) {
 				case UP, DOWN -> player == null ? Direction.NORTH : player.getDirection().getOpposite();
@@ -237,7 +242,7 @@ public class KeypadBarrelBlock extends Block implements EntityBlock {
 			};
 			level.setBlockAndUpdate(pos, SCContent.KEYPAD_BARREL.defaultBlockState().setValue(HORIZONTAL_FACING, horizontalFacing).setValue(LID_FACING, generalFacing).setValue(OPEN, false));
 			keypadBarrel = (KeypadBarrelBlockEntity) level.getBlockEntity(pos);
-			keypadBarrel.load(tag);
+			keypadBarrel.loadWithComponents(tag, level.registryAccess());
 			keypadBarrel.setPreviousBarrel(state.getBlock());
 
 			if (player != null)
@@ -258,18 +263,18 @@ public class KeypadBarrelBlock extends Block implements EntityBlock {
 			};
 			CompoundTag tag;
 			BarrelBlockEntity barrel;
-			Block convertedBlock = BuiltInRegistries.BLOCK.get(keypadBarrel.getPreviousBarrel());
+			Block convertedBlock = BuiltInRegistries.BLOCK.getValue(keypadBarrel.getPreviousBarrel());
 
 			if (convertedBlock == Blocks.AIR)
 				convertedBlock = Blocks.BARREL;
 
 			keypadBarrel.dropAllModules();
 			keypadBarrel.unpackLootTable(player); //generate loot (if any), so items don't spill out when converting and no additional loot table is generated
-			tag = keypadBarrel.saveWithFullMetadata();
+			tag = keypadBarrel.saveWithFullMetadata(level.registryAccess());
 			keypadBarrel.clearContent();
 			level.setBlockAndUpdate(pos, convertedBlock.defaultBlockState().setValue(BarrelBlock.FACING, direction).setValue(OPEN, false));
 			barrel = (BarrelBlockEntity) level.getBlockEntity(pos);
-			barrel.load(tag);
+			barrel.loadWithComponents(tag, level.registryAccess());
 			return true;
 		}
 	}

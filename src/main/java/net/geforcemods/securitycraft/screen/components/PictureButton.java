@@ -4,7 +4,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
@@ -13,6 +12,10 @@ import net.minecraft.world.level.block.Block;
 
 /** A vanilla-looking button that draws a GUI sprite, a texture subregion or an item icon on top of the button background. */
 public class PictureButton extends Button {
+	//adaptation: vanilla's button background moved from one nine-sliced WIDGETS_LOCATION texture to three separate sprites
+	private static final ResourceLocation BUTTON_SPRITE = ResourceLocation.withDefaultNamespace("widget/button");
+	private static final ResourceLocation BUTTON_DISABLED_SPRITE = ResourceLocation.withDefaultNamespace("widget/button_disabled");
+	private static final ResourceLocation BUTTON_HIGHLIGHTED_SPRITE = ResourceLocation.withDefaultNamespace("widget/button_highlighted");
 	private ItemStack blockToRender = ItemStack.EMPTY;
 	private ItemStack itemToRender = ItemStack.EMPTY;
 	private ResourceLocation sprite;
@@ -67,7 +70,7 @@ public class PictureButton extends Button {
 		//keeps the highlighted background tied to the mouse: vanilla picks it for isHoveredOrFocused(), so a button
 		//that was clicked once stays lit for as long as it keeps the focus.
 		isHovered = mouseX >= getX() && mouseY >= getY() && mouseX < getX() + width && mouseY < getY() + height;
-		guiGraphics.blitNineSliced(WIDGETS_LOCATION, getX(), getY(), width, height, 20, 4, 200, 20, 0, 46 + (!active ? 0 : (isHovered ? 40 : 20)));
+		guiGraphics.blitSprite(net.minecraft.client.renderer.RenderType::guiTextured, !active ? BUTTON_DISABLED_SPRITE : (isHovered ? BUTTON_HIGHLIGHTED_SPRITE : BUTTON_SPRITE), getX(), getY(), width, height);
 
 		if (!blockToRender.isEmpty()) {
 			Font font = Minecraft.getInstance().font;
@@ -82,10 +85,11 @@ public class PictureButton extends Button {
 			guiGraphics.renderItemDecorations(font, itemToRender, getX() + 2, getY() + 2, "");
 		}
 		else if (getSpriteLocation() != null) {
+			//a texture width means the location points at a raw texture and a subregion of it should be drawn, otherwise it is a GUI sprite
 			if (textureWidth > 0)
-				guiGraphics.blit(RenderType::guiTextured, getSpriteLocation(), getX() + drawOffsetX, getY() + drawOffsetY, u, v, drawWidth, drawHeight, textureWidth, textureHeight);
+				guiGraphics.blit(net.minecraft.client.renderer.RenderType::guiTextured, getSpriteLocation(), getX() + drawOffsetX, getY() + drawOffsetY, u, v, drawWidth, drawHeight, drawWidth, drawHeight, textureWidth, textureHeight);
 			else
-				guiGraphics.blitSprite(RenderType::guiTextured, getSpriteLocation(), getX() + drawOffsetX, getY() + drawOffsetY, drawWidth, drawHeight);
+				guiGraphics.blitSprite(net.minecraft.client.renderer.RenderType::guiTextured, getSpriteLocation(), getX() + drawOffsetX, getY() + drawOffsetY, drawWidth, drawHeight);
 		}
 	}
 

@@ -27,10 +27,10 @@ import snownee.jade.api.config.IPluginConfig;
  */
 @WailaPlugin(SecurityCraft.MODID)
 public final class SCJadePlugin implements IWailaPlugin, IBlockComponentProvider {
-	private static final ResourceLocation ID = new ResourceLocation(SecurityCraft.MODID, "info");
-	private static final ResourceLocation SHOW_OWNER = new ResourceLocation(SecurityCraft.MODID, "showowner");
-	private static final ResourceLocation SHOW_MODULES = new ResourceLocation(SecurityCraft.MODID, "showmodules");
-	private static final ResourceLocation SHOW_CUSTOM_NAME = new ResourceLocation(SecurityCraft.MODID, "showcustomname");
+	private static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(SecurityCraft.MODID, "info");
+	private static final ResourceLocation SHOW_OWNER = ResourceLocation.fromNamespaceAndPath(SecurityCraft.MODID, "showowner");
+	private static final ResourceLocation SHOW_MODULES = ResourceLocation.fromNamespaceAndPath(SecurityCraft.MODID, "showmodules");
+	private static final ResourceLocation SHOW_CUSTOM_NAME = ResourceLocation.fromNamespaceAndPath(SecurityCraft.MODID, "showcustomname");
 
 	@Override
 	public void registerClient(IWailaClientRegistration registration) {

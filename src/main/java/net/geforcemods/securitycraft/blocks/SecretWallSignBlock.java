@@ -25,8 +25,8 @@ import net.minecraft.world.phys.BlockHitResult;
 public class SecretWallSignBlock extends WallSignBlock {
 	private final float destroyTimeForOwner;
 
-	public SecretWallSignBlock(BlockBehaviour.Properties properties, WoodType woodType) {
-		super(OwnableBlock.withReinforcedDestroyTime(properties), woodType);
+	public SecretWallSignBlock(WoodType woodType, BlockBehaviour.Properties properties) {
+		super(woodType, OwnableBlock.withReinforcedDestroyTime(properties));
 		destroyTimeForOwner = OwnableBlock.getStoredDestroyTime();
 	}
 
@@ -41,12 +41,12 @@ public class SecretWallSignBlock extends WallSignBlock {
 	}
 
 	@Override
-	public void playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
+	public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
 		//prevents dropping twice the amount of modules when breaking the block in creative mode
 		if (player.isCreative() && level.getBlockEntity(pos) instanceof IModuleInventory inv)
 			inv.getInventory().clear();
 
-		super.playerWillDestroy(level, pos, state, player);
+		return super.playerWillDestroy(level, pos, state, player);
 	}
 
 	@Override
@@ -58,9 +58,9 @@ public class SecretWallSignBlock extends WallSignBlock {
 	}
 
 	@Override
-	public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+	public InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
 		if (level.getBlockEntity(pos) instanceof SecretSignBlockEntity be && (be.isOwnedBy(player) || be.isAllowed(player)))
-			return super.use(state, level, pos, player, hand, hit);
+			return super.useWithoutItem(state, level, pos, player, hit);
 
 		return InteractionResult.PASS;
 	}

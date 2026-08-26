@@ -60,6 +60,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.ShapedRecipe;
 import net.minecraft.world.item.crafting.ShapelessRecipe;
 import net.minecraft.world.level.Level;
@@ -84,7 +85,7 @@ public class SCManualScreen extends Screen implements StillValid {
 	private static final ResourceLocation PAGE_WITH_SCROLL = SCContent.id("textures/gui/info_book_texture_special.png"); //for items without a recipe
 	private static final ResourceLocation TITLE_PAGE = SCContent.id("textures/gui/info_book_title_page.png");
 	private static final ResourceLocation ICONS = SCContent.id("textures/gui/info_book_icons.png");
-	private static final ResourceLocation VANILLA_BOOK = new ResourceLocation("textures/gui/book.png");
+	private static final ResourceLocation VANILLA_BOOK = ResourceLocation.withDefaultNamespace("textures/gui/book.png");
 	private static final int SUBPAGE_LENGTH = 1285;
 	/** The Fabric port's own title page. It is the first page of the book; {@link #ORIGINAL_TITLE_PAGE} is the last. */
 	private static final int PORT_TITLE_PAGE = -2;
@@ -154,8 +155,8 @@ public class SCManualScreen extends Screen implements StillValid {
 
 	@Override
 	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
-		renderBackground(guiGraphics);
-		guiGraphics.blit(currentPage < 0 ? TITLE_PAGE : (recipe != null && !recipe.isEmpty() ? PAGE : PAGE_WITH_SCROLL), startX, 5, 0, 0, 256, 250);
+		renderBackground(guiGraphics, mouseX, mouseY, partialTicks);
+		guiGraphics.blit(net.minecraft.client.renderer.RenderType::guiTextured, currentPage < 0 ? TITLE_PAGE : (recipe != null && !recipe.isEmpty() ? PAGE : PAGE_WITH_SCROLL), startX, 5, 0, 0, 256, 250, 256, 256);
 
 		for (Renderable renderable : renderables) {
 			renderable.render(guiGraphics, mouseX, mouseY, partialTicks);
@@ -175,22 +176,22 @@ public class SCManualScreen extends Screen implements StillValid {
 			guiGraphics.drawString(font, pageNumberText, startX + 240 - font.width(pageNumberText), 182, 0x8E8270, false);
 
 			if (ownable)
-				guiGraphics.blit(ICONS, startX + 29, 118, 1, 1, 16, 16);
+				guiGraphics.blit(net.minecraft.client.renderer.RenderType::guiTextured, ICONS, startX + 29, 118, 1, 1, 16, 16, 256, 256);
 
 			if (passcodeProtected)
-				guiGraphics.blit(ICONS, startX + 55, 118, 18, 1, 17, 16);
+				guiGraphics.blit(net.minecraft.client.renderer.RenderType::guiTextured, ICONS, startX + 55, 118, 18, 1, 17, 16, 256, 256);
 
 			if (explosive)
-				guiGraphics.blit(ICONS, startX + 107, 117, 54, 1, 18, 18);
+				guiGraphics.blit(net.minecraft.client.renderer.RenderType::guiTextured, ICONS, startX + 107, 117, 54, 1, 18, 18, 256, 256);
 
 			if (customizable)
-				guiGraphics.blit(ICONS, startX + 136, 118, 88, 1, 16, 16);
+				guiGraphics.blit(net.minecraft.client.renderer.RenderType::guiTextured, ICONS, startX + 136, 118, 88, 1, 16, 16, 256, 256);
 
 			if (moduleInventory)
-				guiGraphics.blit(ICONS, startX + 163, 118, 105, 1, 16, 16);
+				guiGraphics.blit(net.minecraft.client.renderer.RenderType::guiTextured, ICONS, startX + 163, 118, 105, 1, 16, 16, 256, 256);
 
 			if (customizable || moduleInventory)
-				guiGraphics.blit(ICONS, startX + 213, 118, 72, 1, 16, 16);
+				guiGraphics.blit(net.minecraft.client.renderer.RenderType::guiTextured, ICONS, startX + 213, 118, 72, 1, 16, 16, 256, 256);
 
 			for (int i = 0; i < hoverCheckers.size(); i++) {
 				HoverChecker chc = hoverCheckers.get(i);
@@ -258,24 +259,24 @@ public class SCManualScreen extends Screen implements StillValid {
 	}
 
 	@Override
-	public boolean mouseScrolled(double mouseX, double mouseY, double scroll) {
+	public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
 		if (Screen.hasShiftDown()) {
 			for (IngredientDisplay display : displays) {
 				if (display != null)
-					display.changeRenderingStack(-scroll);
+					display.changeRenderingStack(-scrollY);
 			}
 
 			if (pageIcon != null)
-				pageIcon.changeRenderingStack(-scroll);
+				pageIcon.changeRenderingStack(-scrollY);
 
 			return true;
 		}
 
 		if (currentPage == ORIGINAL_TITLE_PAGE && patronList != null && patronList.isMouseOver(mouseX, mouseY) && !patronList.patrons.isEmpty())
-			return patronList.mouseScrolled(mouseX, mouseY, scroll);
+			return patronList.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
 
 		if (Screen.hasControlDown() && subpages.size() > 1) {
-			switch ((int) Math.signum(scroll)) {
+			switch ((int) Math.signum(scrollY)) {
 				case -1:
 					nextSubpage();
 					break;
@@ -287,7 +288,7 @@ public class SCManualScreen extends Screen implements StillValid {
 			return true;
 		}
 
-		scrolledSinceLastPage += scroll;
+		scrolledSinceLastPage += scrollY;
 
 		while (scrolledSinceLastPage <= -1.0) {
 			scrolledSinceLastPage++;
@@ -349,10 +350,10 @@ public class SCManualScreen extends Screen implements StillValid {
 
 		if (currentPage < 0) {
 			for (IngredientDisplay display : displays) {
-				display.setIngredient(Ingredient.EMPTY);
+				display.setIngredient(Ingredient.of());
 			}
 
-			pageIcon.setIngredient(Ingredient.EMPTY);
+			pageIcon.setIngredient(Ingredient.of());
 			recipe = null;
 			nextSubpage.visible = false;
 			previousSubpage.visible = false;
@@ -381,99 +382,107 @@ public class SCManualScreen extends Screen implements StillValid {
 
 		if (pageGroup == PageGroup.NONE) {
 			Level level = Minecraft.getInstance().level;
-			RegistryAccess registryAccess = level.registryAccess();
+			net.minecraft.util.context.ContextMap contextMap = net.minecraft.world.item.crafting.display.SlotDisplayContext.fromLevel(level);
 
-			for (Recipe<?> object : level.getRecipeManager().getRecipes()) {
-				if (object instanceof ShapedRecipe shapedRecipe) {
-					ItemStack resultItem = shapedRecipe.getResultItem(registryAccess);
+			outer:
+			for (net.minecraft.client.gui.screens.recipebook.RecipeCollection collection : Minecraft.getInstance().player.getRecipeBook().getCollections()) {
+				for (net.minecraft.world.item.crafting.display.RecipeDisplayEntry entry : collection.getRecipes()) {
+					net.minecraft.world.item.crafting.display.RecipeDisplay display = entry.display();
 
-					if (resultItem.is(item)) {
-						NonNullList<Ingredient> ingredients = shapedRecipe.getIngredients();
-						NonNullList<Ingredient> recipeItems = NonNullList.<Ingredient>withSize(9, Ingredient.EMPTY);
+					if (display.result().resolveForStacks(contextMap).stream().noneMatch(stack -> stack.is(item)))
+						continue;
+
+					if (display instanceof net.minecraft.world.item.crafting.display.ShapedCraftingRecipeDisplay shaped) {
+						List<net.minecraft.world.item.crafting.display.SlotDisplay> ingredients = shaped.ingredients();
+						NonNullList<Ingredient> recipeItems = NonNullList.<Ingredient>withSize(9, Ingredient.of());
 
 						for (int i = 0; i < ingredients.size(); i++) {
-							recipeItems.set(getCraftMatrixPosition(i, shapedRecipe.getWidth(), shapedRecipe.getHeight()), ingredients.get(i));
+							List<ItemStack> stacks = ingredients.get(i).resolveForStacks(contextMap);
+
+							if (!stacks.isEmpty())
+								recipeItems.set(getCraftMatrixPosition(i, shaped.width(), shaped.height()), Ingredient.of(stacks.stream().map(ItemStack::getItem)));
 						}
 
 						this.recipe = recipeItems;
-						break;
+						break outer;
 					}
-				}
-				else if (object instanceof ShapelessRecipe shapelessRecipe && shapelessRecipe.getResultItem(registryAccess).is(item)) {
-					//don't show keycard reset recipes
-					if (shapelessRecipe.getId().getPath().endsWith("_reset"))
-						continue;
+					else if (display instanceof net.minecraft.world.item.crafting.display.ShapelessCraftingRecipeDisplay shapeless) {
+						List<net.minecraft.world.item.crafting.display.SlotDisplay> ingredients = shapeless.ingredients();
+						NonNullList<Ingredient> recipeItems = NonNullList.<Ingredient>withSize(ingredients.size(), Ingredient.of());
 
-					NonNullList<Ingredient> recipeItems = NonNullList.<Ingredient>withSize(shapelessRecipe.getIngredients().size(), Ingredient.EMPTY);
+						for (int i = 0; i < ingredients.size(); i++) {
+							List<ItemStack> stacks = ingredients.get(i).resolveForStacks(contextMap);
 
-					for (int i = 0; i < recipeItems.size(); i++) {
-						recipeItems.set(i, shapelessRecipe.getIngredients().get(i));
+							if (!stacks.isEmpty())
+								recipeItems.set(i, Ingredient.of(stacks.stream().map(ItemStack::getItem)));
+						}
+
+						this.recipe = recipeItems;
+						break outer;
 					}
-
-					this.recipe = recipeItems;
-					break;
 				}
 			}
 		}
 		else if (pageGroup.hasRecipeGrid()) {
 			Level level = Minecraft.getInstance().level;
-			RegistryAccess registryAccess = level.registryAccess();
+			net.minecraft.util.context.ContextMap contextMap = net.minecraft.world.item.crafting.display.SlotDisplayContext.fromLevel(level);
 			java.util.Map<Integer, ItemStack[]> recipeStacks = new java.util.HashMap<>();
-			List<Item> pageItems = java.util.Arrays.stream(pageGroup.getItems().getItems()).map(ItemStack::getItem).toList();
+			List<Item> pageItems = pageGroup.getItems().items().stream().map(net.minecraft.core.Holder::value).toList();
 			int stacksLeft = pageItems.size();
 
 			for (int i = 0; i < 9; i++) {
 				recipeStacks.put(i, new ItemStack[pageItems.size()]);
 			}
 
-			for (Recipe<?> object : Minecraft.getInstance().level.getRecipeManager().getRecipes()) {
-				if (stacksLeft == 0)
-					break;
+			outer:
+			for (net.minecraft.client.gui.screens.recipebook.RecipeCollection collection : Minecraft.getInstance().player.getRecipeBook().getCollections()) {
+				for (net.minecraft.world.item.crafting.display.RecipeDisplayEntry entry : collection.getRecipes()) {
+					if (stacksLeft == 0)
+						break outer;
 
-				if (object instanceof ShapedRecipe shapedRecipe) {
-					if (!shapedRecipe.getResultItem(registryAccess).isEmpty() && pageItems.contains(shapedRecipe.getResultItem(registryAccess).getItem())) {
-						NonNullList<Ingredient> ingredients = shapedRecipe.getIngredients();
+					net.minecraft.world.item.crafting.display.RecipeDisplay display = entry.display();
+					List<ItemStack> resultStacks = display.result().resolveForStacks(contextMap);
+					ItemStack resultItem = resultStacks.isEmpty() ? ItemStack.EMPTY : resultStacks.get(0);
+
+					if (resultItem.isEmpty() || !pageItems.contains(resultItem.getItem()))
+						continue;
+
+					int indexToAddAt = pageItems.indexOf(resultItem.getItem());
+
+					if (display instanceof net.minecraft.world.item.crafting.display.ShapedCraftingRecipeDisplay shaped) {
+						List<net.minecraft.world.item.crafting.display.SlotDisplay> ingredients = shaped.ingredients();
 
 						for (int i = 0; i < ingredients.size(); i++) {
-							ItemStack[] items = ingredients.get(i).getItems();
+							List<ItemStack> items = ingredients.get(i).resolveForStacks(contextMap);
 
-							if (items.length == 0)
+							if (items.isEmpty())
 								continue;
 
-							int indexToAddAt = pageItems.indexOf(shapedRecipe.getResultItem(registryAccess).getItem());
-
 							//first item needs to suffice since multiple recipes are being cycled through
-							recipeStacks.get(getCraftMatrixPosition(i, shapedRecipe.getWidth(), shapedRecipe.getHeight()))[indexToAddAt] = items[0];
+							recipeStacks.get(getCraftMatrixPosition(i, shaped.width(), shaped.height()))[indexToAddAt] = items.get(0);
+						}
+
+						stacksLeft--;
+					}
+					else if (display instanceof net.minecraft.world.item.crafting.display.ShapelessCraftingRecipeDisplay shapeless) {
+						List<net.minecraft.world.item.crafting.display.SlotDisplay> ingredients = shapeless.ingredients();
+
+						for (int i = 0; i < ingredients.size(); i++) {
+							List<ItemStack> items = ingredients.get(i).resolveForStacks(contextMap);
+
+							if (items.isEmpty())
+								continue;
+
+							recipeStacks.get(i)[indexToAddAt] = items.get(0);
 						}
 
 						stacksLeft--;
 					}
 				}
-				else if (object instanceof ShapelessRecipe shapelessRecipe && !shapelessRecipe.getResultItem(registryAccess).isEmpty() && pageItems.contains(shapelessRecipe.getResultItem(registryAccess).getItem())) {
-					//don't show keycard reset recipes
-					if (shapelessRecipe.getId().getPath().endsWith("_reset"))
-						continue;
-
-					NonNullList<Ingredient> ingredients = shapelessRecipe.getIngredients();
-
-					for (int i = 0; i < ingredients.size(); i++) {
-						ItemStack[] items = ingredients.get(i).getItems();
-
-						if (items.length == 0)
-							continue;
-
-						int indexToAddAt = pageItems.indexOf(shapelessRecipe.getResultItem(registryAccess).getItem());
-
-						//first item needs to suffice since multiple recipes are being cycled through
-						recipeStacks.get(i)[indexToAddAt] = items[0];
-					}
-
-					stacksLeft--;
-				}
 			}
 
-			recipe = NonNullList.withSize(9, Ingredient.EMPTY);
-			recipeStacks.forEach((i, stackArray) -> recipe.set(i, Ingredient.of(java.util.Arrays.stream(stackArray).map(s -> s == null ? ItemStack.EMPTY : s))));
+			recipe = NonNullList.withSize(9, Ingredient.of());
+			recipeStacks.forEach((i, stackArray) -> recipe.set(i, Ingredient.of(java.util.Arrays.stream(stackArray).filter(s -> s != null && !s.isEmpty()).map(ItemStack::getItem))));
 		}
 
 		if (page.hasRecipeDescription()) {
@@ -571,7 +580,7 @@ public class SCManualScreen extends Screen implements StillValid {
 					int index = (i * 3) + j;
 
 					if (index >= recipe.size())
-						displays[index].setIngredient(Ingredient.EMPTY);
+						displays[index].setIngredient(Ingredient.of());
 					else
 						displays[index].setIngredient(recipe.get(index));
 				}
@@ -579,7 +588,7 @@ public class SCManualScreen extends Screen implements StillValid {
 		}
 		else {
 			for (IngredientDisplay display : displays) {
-				display.setIngredient(Ingredient.EMPTY);
+				display.setIngredient(Ingredient.of());
 			}
 		}
 
@@ -695,8 +704,8 @@ public class SCManualScreen extends Screen implements StillValid {
 		}
 
 		@Override
-		public boolean mouseScrolled(double mouseX, double mouseY, double scroll) {
-			scrollDistance -= scroll * ROW_HEIGHT;
+		public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+			scrollDistance -= scrollY * ROW_HEIGHT;
 			return true;
 		}
 
@@ -741,11 +750,9 @@ public class SCManualScreen extends Screen implements StillValid {
 		}
 
 		@Override
-		public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
-			if (visible) {
-				isHovered = mouseX >= getX() && mouseY >= getY() && mouseX < getX() + width && mouseY < getY() + height;
-				guiGraphics.blit(VANILLA_BOOK, getX(), getY(), isHoveredOrFocused() ? 23 : 0, textureY, 23, 13);
-			}
+		protected void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+			isHovered = mouseX >= getX() && mouseY >= getY() && mouseX < getX() + width && mouseY < getY() + height;
+			guiGraphics.blit(net.minecraft.client.renderer.RenderType::guiTextured, VANILLA_BOOK, getX(), getY(), isHoveredOrFocused() ? 23 : 0, textureY, 23, 13, 256, 256);
 		}
 	}
 
@@ -757,7 +764,7 @@ public class SCManualScreen extends Screen implements StillValid {
 		@Override
 		public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
 			isHovered = mouseX >= getX() && mouseY >= getY() && mouseX < getX() + width && mouseY < getY() + height;
-			guiGraphics.blit(ICONS, getX(), getY(), isHoveredOrFocused() ? 138 : 122, 1, 16, 16);
+			guiGraphics.blit(net.minecraft.client.renderer.RenderType::guiTextured, ICONS, getX(), getY(), isHoveredOrFocused() ? 138 : 122, 1, 16, 16, 256, 256);
 		}
 	}
 

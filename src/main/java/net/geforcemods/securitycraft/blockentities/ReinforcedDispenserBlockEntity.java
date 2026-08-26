@@ -11,6 +11,7 @@ import net.geforcemods.securitycraft.items.ModuleItem;
 import net.geforcemods.securitycraft.misc.ModuleType;
 import net.geforcemods.securitycraft.util.Utils;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -50,20 +51,20 @@ public class ReinforcedDispenserBlockEntity extends DispenserBlockEntity impleme
 	}
 
 	@Override
-	public void load(CompoundTag tag) {
-		super.load(tag);
+	public void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+		super.loadAdditional(tag, registries);
 
 		owner.load(tag);
-		modules = readModuleInventory(tag);
+		modules = readModuleInventory(tag, registries);
 		moduleStates = readModuleStates(tag);
 	}
 
 	@Override
-	public void saveAdditional(CompoundTag tag) {
-		super.saveAdditional(tag);
+	public void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+		super.saveAdditional(tag, registries);
 
 		owner.save(tag, needsValidation());
-		writeModuleInventory(tag);
+		writeModuleInventory(tag, registries);
 		writeModuleStates(tag);
 	}
 

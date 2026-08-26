@@ -20,6 +20,7 @@ import net.geforcemods.securitycraft.misc.ModuleType;
 import net.geforcemods.securitycraft.util.PasscodeUtils;
 import net.geforcemods.securitycraft.util.Utils;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.Vec3i;
@@ -98,15 +99,15 @@ public class KeypadBarrelBlockEntity extends RandomizableContainerBlockEntity im
 	}
 
 	@Override
-	public void saveAdditional(CompoundTag tag) {
+	public void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
 		long cooldownLeft;
 
-		super.saveAdditional(tag);
+		super.saveAdditional(tag, registries);
 
 		if (!trySaveLootTable(tag))
-			ContainerHelper.saveAllItems(tag, items);
+			ContainerHelper.saveAllItems(tag, items, registries);
 
-		writeModuleInventory(tag);
+		writeModuleInventory(tag, registries);
 		writeModuleStates(tag);
 		writeOptions(tag);
 		cooldownLeft = getCooldownEnd() - System.currentTimeMillis();
@@ -123,15 +124,15 @@ public class KeypadBarrelBlockEntity extends RandomizableContainerBlockEntity im
 	}
 
 	@Override
-	public void load(CompoundTag tag) {
-		super.load(tag);
+	public void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+		super.loadAdditional(tag, registries);
 
 		items = NonNullList.withSize(getContainerSize(), ItemStack.EMPTY);
 
 		if (!tryLoadLootTable(tag))
-			ContainerHelper.loadAllItems(tag, items);
+			ContainerHelper.loadAllItems(tag, items, registries);
 
-		modules = readModuleInventory(tag);
+		modules = readModuleInventory(tag, registries);
 		moduleStates = readModuleStates(tag);
 		readOptions(tag);
 		cooldownEnd = System.currentTimeMillis() + tag.getLong("cooldownLeft");
@@ -146,7 +147,7 @@ public class KeypadBarrelBlockEntity extends RandomizableContainerBlockEntity im
 			String savedPreviousBarrel = tag.getString("previous_barrel");
 
 			if (!savedPreviousBarrel.isBlank()) {
-				ResourceLocation parsedPreviousBarrel = new ResourceLocation(savedPreviousBarrel);
+				ResourceLocation parsedPreviousBarrel = ResourceLocation.parse(savedPreviousBarrel);
 
 				if (parsedPreviousBarrel.getPath() != null && !parsedPreviousBarrel.getPath().isBlank())
 					previousBarrel = parsedPreviousBarrel;
@@ -155,8 +156,8 @@ public class KeypadBarrelBlockEntity extends RandomizableContainerBlockEntity im
 	}
 
 	@Override
-	public CompoundTag getUpdateTag() {
-		CompoundTag tag = saveWithoutMetadata();
+	public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+		CompoundTag tag = saveWithoutMetadata(registries);
 
 		tag.remove("passcodeHash");
 		tag.remove("salt");
@@ -346,7 +347,7 @@ public class KeypadBarrelBlockEntity extends RandomizableContainerBlockEntity im
 			case SIDEWAYS -> state.getValue(KeypadBarrelBlock.HORIZONTAL_FACING);
 			case DOWN -> Direction.DOWN;
 		};
-		Vec3i facingNormal = normalFacing.getNormal();
+		Vec3i facingNormal = normalFacing.getUnitVec3i();
 		double x = worldPosition.getX() + 0.5D + facingNormal.getX() / 2.0D;
 		double y = worldPosition.getY() + 0.5D + facingNormal.getY() / 2.0D;
 		double z = worldPosition.getZ() + 0.5D + facingNormal.getZ() / 2.0D;
