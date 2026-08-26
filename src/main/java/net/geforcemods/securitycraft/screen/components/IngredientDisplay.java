@@ -36,7 +36,7 @@ public class IngredientDisplay implements Renderable {
 	}
 
 	public void setIngredient(Ingredient ingredient) {
-		stacks = ingredient.getItems();
+		stacks = ingredient.items().map(ItemStack::new).toArray(ItemStack[]::new);
 		currentRenderingStack = 0;
 		ticksToChange = DISPLAY_LENGTH;
 	}

@@ -22,6 +22,7 @@ java {
 
 repositories {
 	maven { url = 'https://maven.fabricmc.net/' }
+	maven { url = 'https://api.modrinth.com/maven' } // Jade
 	mavenCentral()
 }
 
@@ -31,6 +32,9 @@ dependencies {
 	mappings loom.officialMojangMappings()
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+	//Jade is optional at runtime; compiling against it is what lets the plugin exist at all
+	modCompileOnly "maven.modrinth:jade:${project.jade_version}"
+	modLocalRuntime "maven.modrinth:jade:${project.jade_version}"
 }
 
 processResources {

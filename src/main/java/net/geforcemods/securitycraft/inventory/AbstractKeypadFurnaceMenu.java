@@ -17,8 +17,8 @@ public abstract class AbstractKeypadFurnaceMenu extends AbstractFurnaceMenu {
 	public final AbstractKeypadFurnaceBlockEntity be;
 	private final ContainerLevelAccess containerLevelAccess;
 
-	protected AbstractKeypadFurnaceMenu(MenuType<?> menuType, RecipeType<? extends AbstractCookingRecipe> recipeType, RecipeBookType recipeBookType, int windowId, Inventory inventory, AbstractKeypadFurnaceBlockEntity be) {
-		super(menuType, recipeType, recipeBookType, windowId, inventory, be, be.getFurnaceData());
+	protected AbstractKeypadFurnaceMenu(MenuType<?> menuType, RecipeType<? extends AbstractCookingRecipe> recipeType, net.minecraft.resources.ResourceKey<net.minecraft.world.item.crafting.RecipePropertySet> recipePropertySet, RecipeBookType recipeBookType, int windowId, Inventory inventory, AbstractKeypadFurnaceBlockEntity be) {
+		super(menuType, recipeType, recipePropertySet, recipeBookType, windowId, inventory, be, be.getFurnaceData());
 
 		furnaceBlock = be.getBlockState().getBlock();
 		this.be = be;

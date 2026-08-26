@@ -20,7 +20,7 @@ public class ReinforcedFenceGateBlock extends FenceGateBlock implements IReinfor
 	private final float destroyTimeForOwner;
 
 	public ReinforcedFenceGateBlock(BlockBehaviour.Properties properties, WoodType woodType) {
-		super(OwnableBlock.withReinforcedDestroyTime(properties), woodType);
+		super(woodType, OwnableBlock.withReinforcedDestroyTime(properties));
 		destroyTimeForOwner = OwnableBlock.getStoredDestroyTime();
 	}
 

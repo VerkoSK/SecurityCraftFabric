@@ -5,7 +5,6 @@ import net.geforcemods.securitycraft.util.OwnershipUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -35,12 +34,12 @@ public class ElectrifiedIronFenceGateBlock extends FenceGateBlock implements Ent
 		//upstream passes the iron door sounds to Forge's (properties, openSound, closeSound) constructor, which
 		//vanilla does not have; the wood type given here is never heard, because the only two places that would
 		//play its sounds are use (blocked) and neighborChanged (overridden below with the iron door sounds)
-		super(OwnableBlock.withReinforcedDestroyTime(properties), WoodType.OAK);
+		super(WoodType.OAK, OwnableBlock.withReinforcedDestroyTime(properties));
 		destroyTimeForOwner = OwnableBlock.getStoredDestroyTime();
 	}
 
 	@Override
-	public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, BlockPos fromPos, boolean isMoving) {
+	public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, net.minecraft.world.level.redstone.Orientation orientation, boolean isMoving) {
 		if (!level.isClientSide) {
 			boolean powered = level.hasNeighborSignal(pos);
 
@@ -67,7 +66,7 @@ public class ElectrifiedIronFenceGateBlock extends FenceGateBlock implements Ent
 	}
 
 	@Override
-	public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+	public InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
 		return InteractionResult.FAIL;
 	}
 

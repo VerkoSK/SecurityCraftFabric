@@ -19,6 +19,6 @@ public class KeypadFurnaceMenu extends AbstractKeypadFurnaceMenu {
 	}
 
 	public KeypadFurnaceMenu(int windowId, Inventory inventory, AbstractKeypadFurnaceBlockEntity be) {
-		super(SCContent.KEYPAD_FURNACE_MENU, RecipeType.SMELTING, RecipeBookType.FURNACE, windowId, inventory, be);
+		super(SCContent.KEYPAD_FURNACE_MENU, RecipeType.SMELTING, net.minecraft.world.item.crafting.RecipePropertySet.FURNACE_INPUT, RecipeBookType.FURNACE, windowId, inventory, be);
 	}
 }

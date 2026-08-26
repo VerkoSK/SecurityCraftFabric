@@ -21,11 +21,11 @@ public class CustomDamageSources {
 	}
 
 	public static DamageSource electricity(RegistryAccess registryAccess) {
-		return new DamageSource(registryAccess.registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(ELECTRICITY));
+		return new DamageSource(registryAccess.lookupOrThrow(Registries.DAMAGE_TYPE).getOrThrow(ELECTRICITY));
 	}
 
 	public static DamageSource fakeWater(RegistryAccess registryAccess) {
-		return new DamageSource(registryAccess.registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(FAKE_WATER));
+		return new DamageSource(registryAccess.lookupOrThrow(Registries.DAMAGE_TYPE).getOrThrow(FAKE_WATER));
 	}
 
 	public static DamageSource incorrectPasscode(RegistryAccess registryAccess) {

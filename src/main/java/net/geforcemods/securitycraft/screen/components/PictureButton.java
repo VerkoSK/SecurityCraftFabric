@@ -13,6 +13,10 @@ import net.minecraft.world.level.block.Block;
 
 /** A vanilla-looking button that draws a GUI sprite or an item icon on top of the button background. */
 public class PictureButton extends Button {
+	//adaptation: vanilla's button background moved from one nine-sliced WIDGETS_LOCATION texture to three separate sprites
+	private static final ResourceLocation BUTTON_SPRITE = ResourceLocation.withDefaultNamespace("widget/button");
+	private static final ResourceLocation BUTTON_DISABLED_SPRITE = ResourceLocation.withDefaultNamespace("widget/button_disabled");
+	private static final ResourceLocation BUTTON_HIGHLIGHTED_SPRITE = ResourceLocation.withDefaultNamespace("widget/button_highlighted");
 	private ItemStack blockToRender = ItemStack.EMPTY;
 	private ItemStack itemToRender = ItemStack.EMPTY;
 	private ResourceLocation sprite;
@@ -49,7 +53,7 @@ public class PictureButton extends Button {
 		//keeps the highlighted background tied to the mouse: vanilla picks it for isHoveredOrFocused(), so a button
 		//that was clicked once stays lit for as long as it keeps the focus.
 		isHovered = mouseX >= getX() && mouseY >= getY() && mouseX < getX() + width && mouseY < getY() + height;
-		guiGraphics.blitNineSliced(WIDGETS_LOCATION, getX(), getY(), width, height, 20, 4, 200, 20, 0, 46 + (!active ? 0 : (isHovered ? 40 : 20)));
+		guiGraphics.blitSprite(RenderType::guiTextured, !active ? BUTTON_DISABLED_SPRITE : (isHovered ? BUTTON_HIGHLIGHTED_SPRITE : BUTTON_SPRITE), getX(), getY(), width, height);
 
 		Font font = Minecraft.getInstance().font;
 
