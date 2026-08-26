@@ -5,12 +5,6 @@ accessWidener	v2	named
 accessible	field	net/minecraft/client/gui/components/EditBox	value	Ljava/lang/String;
 extendable	method	net/minecraft/client/gui/components/EditBox	scrollTo	(I)V
 
-# BaseFullMineBlock#wasExploded compares its position against the explosion's center. Forge patches in
-# Explosion#getPosition(), vanilla keeps x/y/z private.
-accessible	field	net/minecraft/world/level/Explosion	x	D
-accessible	field	net/minecraft/world/level/Explosion	y	D
-accessible	field	net/minecraft/world/level/Explosion	z	D
-
 # BrushableMineBlockEntity re-implements BrushableBlockEntity#brush/#checkReset on top of vanilla's private brushing
 # state. Upstream gets the same access from NeoForge's access transformers.
 # Do NOT widen BrushableBlockEntity#brushingCompleted: `accessible` makes a private method final, which would clash
@@ -57,11 +51,6 @@ extendable	method	net/minecraft/client/gui/screens/inventory/BookViewScreen	upda
 # setter that turns it on.
 accessible	field	net/minecraft/world/level/block/state/BlockBehaviour$Properties	requiresCorrectToolForDrops	Z
 
-# The secret signs draw their text only for the players allowed to read it, which means overriding the one method
-# vanilla's sign renderer routes everything through, and calling the three helpers it uses. All four are
-# package-private; upstream reaches them through Forge's access transformers.
-extendable	method	net/minecraft/client/renderer/blockentity/SignRenderer	renderSignWithText	(Lnet/minecraft/world/level/block/entity/SignBlockEntity;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;IILnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/block/SignBlock;Lnet/minecraft/world/level/block/state/properties/WoodType;Lnet/minecraft/client/model/Model;)V
-accessible	method	net/minecraft/client/renderer/blockentity/SignRenderer	translateSign	(Lcom/mojang/blaze3d/vertex/PoseStack;FLnet/minecraft/world/level/block/state/BlockState;)V
-accessible	method	net/minecraft/client/renderer/blockentity/SignRenderer	renderSign	(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;IILnet/minecraft/world/level/block/state/properties/WoodType;Lnet/minecraft/client/model/Model;)V
-accessible	method	net/minecraft/client/renderer/blockentity/SignRenderer	renderSignText	(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/entity/SignText;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;IIIZ)V
-accessible	method	net/minecraft/client/renderer/blockentity/HangingSignRenderer	translateSign	(Lcom/mojang/blaze3d/vertex/PoseStack;FLnet/minecraft/world/level/block/state/BlockState;)V
+# The secret signs draw their text only for the players allowed to read it. Vanilla's SignRenderer no longer
+# exposes a text-drawing hook to override in this version, so SecretSignRenderer/SecretHangingSignRenderer
+# instead swap SignBlockEntity's frontText/backText fields directly through reflection for the render call.

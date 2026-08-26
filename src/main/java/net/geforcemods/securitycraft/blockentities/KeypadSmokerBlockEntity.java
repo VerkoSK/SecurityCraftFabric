@@ -16,8 +16,8 @@ public class KeypadSmokerBlockEntity extends AbstractKeypadFurnaceBlockEntity {
 	}
 
 	@Override
-	protected int getBurnDuration(ItemStack fuel) {
-		return super.getBurnDuration(fuel) / 2;
+	protected int getBurnDuration(net.minecraft.world.level.block.entity.FuelValues fuelValues, ItemStack fuel) {
+		return super.getBurnDuration(fuelValues, fuel) / 2;
 	}
 
 	@Override

@@ -45,7 +45,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
  * handling are 1:1 with upstream's {@code CustomizeBlockScreen}.
  */
 public class CustomizeBlockScreen extends AbstractContainerScreen<CustomizeBlockMenu> implements IHasExtraAreas, ContainerListener {
-	private static final ResourceLocation BEACON_GUI = new ResourceLocation("textures/gui/container/beacon.png");
+	private static final ResourceLocation BEACON_GUI = ResourceLocation.withDefaultNamespace("textures/gui/container/beacon.png");
 	private final List<Rect2i> extraAreas = new ArrayList<>();
 	private final IModuleInventory moduleInv;
 	private final BlockPos pos;
@@ -203,7 +203,7 @@ public class CustomizeBlockScreen extends AbstractContainerScreen<CustomizeBlock
 	public void dataChanged(AbstractContainerMenu menu, int slotIndex, int value) {}
 
 	private Component getModuleTooltipText(ItemStack stack, ModuleItem moduleItem) {
-		return Utils.localize(stack.getDescriptionId())
+		return Utils.localize(stack.getItem().getDescriptionId())
 				.append(Component.literal(":"))
 				.withStyle(ChatFormatting.RESET)
 				.append(Component.literal("\n\n"))
@@ -232,7 +232,7 @@ public class CustomizeBlockScreen extends AbstractContainerScreen<CustomizeBlock
 				ModuleType type = moduleItem.getModuleType();
 
 				if (indicators.containsKey(type))
-					guiGraphics.blit(BEACON_GUI, leftPos + slot.x - 2, topPos + slot.y + 16, 20, 20, indicators.get(type) ? 88 : 110, 219, 21, 22, 256, 256);
+					guiGraphics.blit(net.minecraft.client.renderer.RenderType::guiTextured, BEACON_GUI, leftPos + slot.x - 2, topPos + slot.y + 16, indicators.get(type) ? 88 : 110, 219, 20, 20, 21, 22, 256, 256);
 			}
 		}
 
@@ -247,7 +247,7 @@ public class CustomizeBlockScreen extends AbstractContainerScreen<CustomizeBlock
 
 	@Override
 	protected void renderBg(GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
-		guiGraphics.blit(texture, leftPos, topPos, 0, 0, imageWidth, imageHeight);
+		guiGraphics.blit(net.minecraft.client.renderer.RenderType::guiTextured, texture, leftPos, topPos, 0, 0, imageWidth, imageHeight, 256, 256);
 	}
 
 	@Override

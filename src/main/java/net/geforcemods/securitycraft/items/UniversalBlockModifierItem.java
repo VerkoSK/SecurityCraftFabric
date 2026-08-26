@@ -9,7 +9,6 @@ import net.geforcemods.securitycraft.util.PlayerUtils;
 import net.geforcemods.securitycraft.util.Utils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
@@ -68,7 +67,7 @@ public class UniversalBlockModifierItem extends Item {
 		if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
 			Component title = be instanceof Nameable nameable ? nameable.getDisplayName() : Component.translatable(be.getBlockState().getBlock().getDescriptionId());
 
-			serverPlayer.openMenu(new ExtendedScreenHandlerFactory() {
+			serverPlayer.openMenu(new ExtendedScreenHandlerFactory<BlockPos>() {
 				@Override
 				public AbstractContainerMenu createMenu(int windowId, Inventory inventory, Player p) {
 					return new CustomizeBlockMenu(windowId, level, pos, inventory);
@@ -80,8 +79,8 @@ public class UniversalBlockModifierItem extends Item {
 				}
 
 				@Override
-				public void writeScreenOpeningData(ServerPlayer p, FriendlyByteBuf buf) {
-					buf.writeBlockPos(pos);
+				public BlockPos getScreenOpeningData(ServerPlayer p) {
+					return pos;
 				}
 			});
 		}

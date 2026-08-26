@@ -6,7 +6,7 @@ import net.geforcemods.securitycraft.blockentities.ReinforcedHopperBlockEntity;
 import net.geforcemods.securitycraft.blocks.OwnableBlock;
 import net.geforcemods.securitycraft.util.OwnershipUtils;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.InteractionHand;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -58,7 +58,7 @@ public class ReinforcedHopperBlock extends HopperBlock implements IReinforcedBlo
 	}
 
 	@Override
-	public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+	public InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
 		//only allow the owner or players on the allowlist to access a reinforced hopper
 		if (!level.isClientSide && level.getBlockEntity(pos) instanceof ReinforcedHopperBlockEntity be && (be.isOwnedBy(player) || be.isAllowed(player)))
 			player.openMenu(be);
@@ -67,15 +67,15 @@ public class ReinforcedHopperBlock extends HopperBlock implements IReinforcedBlo
 	}
 
 	@Override
-	public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
-		if (!state.is(newState.getBlock()) && level.getBlockEntity(pos) instanceof ReinforcedHopperBlockEntity be) {
-			if (isMoving)
+	protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel level, BlockPos pos, boolean movedByPiston) {
+		if (level.getBlockEntity(pos) instanceof ReinforcedHopperBlockEntity be) {
+			if (movedByPiston)
 				be.clearContent(); //clear the items from the block before it is moved by a piston to prevent duplication
 
 			level.updateNeighbourForOutputSignal(pos, this);
 		}
 
-		super.onRemove(state, level, pos, newState, isMoving);
+		super.affectNeighborsAfterRemoval(state, level, pos, movedByPiston);
 	}
 
 	@Override

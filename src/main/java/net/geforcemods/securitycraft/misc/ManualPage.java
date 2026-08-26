@@ -117,7 +117,7 @@ public class ManualPage {
 		if (items.isEmpty())
 			return;
 
-		group.setItems(Ingredient.of(items.stream().map(ItemStack::new)));
+		group.setItems(Ingredient.of(items.stream()));
 		SCManualItem.PAGES.add(new SCManualPage(items.get(0), group, Utils.localize(group.getTitle()), Utils.localize("help." + group.getSpecialInfoKey()), "", false));
 	}
 

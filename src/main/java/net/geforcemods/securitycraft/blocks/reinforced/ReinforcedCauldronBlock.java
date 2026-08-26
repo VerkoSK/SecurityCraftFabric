@@ -3,29 +3,33 @@ package net.geforcemods.securitycraft.blocks.reinforced;
 import java.util.Map;
 import java.util.function.Predicate;
 
+import com.mojang.serialization.MapCodec;
+
 import net.geforcemods.securitycraft.SCContent;
 import net.geforcemods.securitycraft.api.IReinforcedBlock;
 import net.geforcemods.securitycraft.blockentities.ReinforcedCauldronBlockEntity;
 import net.geforcemods.securitycraft.blocks.OwnableBlock;
 import net.geforcemods.securitycraft.util.OwnershipUtils;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.cauldron.CauldronInteraction;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.DyeableLeatherItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUtils;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.alchemy.PotionUtils;
+import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -37,7 +41,7 @@ import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.minecraft.world.level.block.LevelEvent;
 import net.minecraft.world.level.block.ShulkerBoxBlock;
-import net.minecraft.world.level.block.entity.BannerBlockEntity;
+import net.minecraft.world.level.block.entity.BannerPatternLayers;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
@@ -55,11 +59,17 @@ import net.minecraft.world.phys.shapes.VoxelShape;
  * config check in {@code canHarvestBlock} (not ported, see {@code ReinforcedHopperBlock}).
  */
 public class ReinforcedCauldronBlock extends AbstractCauldronBlock implements IReinforcedBlock, EntityBlock {
+	public static final MapCodec<ReinforcedCauldronBlock> CODEC = simpleCodec(properties -> new ReinforcedCauldronBlock(properties, IReinforcedCauldronInteraction.EMPTY));
 	private final float destroyTimeForOwner;
 
-	public ReinforcedCauldronBlock(BlockBehaviour.Properties properties, Map<Item, CauldronInteraction> interactions) {
+	public ReinforcedCauldronBlock(BlockBehaviour.Properties properties, CauldronInteraction.InteractionMap interactions) {
 		super(OwnableBlock.withReinforcedDestroyTime(properties), interactions);
 		destroyTimeForOwner = OwnableBlock.getStoredDestroyTime();
+	}
+
+	@Override
+	protected MapCodec<? extends AbstractCauldronBlock> codec() {
+		return CODEC;
 	}
 
 	@Override
@@ -74,19 +84,19 @@ public class ReinforcedCauldronBlock extends AbstractCauldronBlock implements IR
 
 			if (entity instanceof Player player) {
 				if (level.getBlockEntity(pos) instanceof ReinforcedCauldronBlockEntity be && be.isAllowedToInteract(player))
-					return SHAPE;
+					return super.getShape(state, level, pos, collisionContext);
 				else
 					return Shapes.block();
 			}
 		}
 
-		return SHAPE;
+		return super.getShape(state, level, pos, collisionContext);
 	}
 
 	@Override
-	public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+	public InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
 		if (level.getBlockEntity(pos) instanceof ReinforcedCauldronBlockEntity be && be.isAllowedToInteract(player))
-			return super.use(state, level, pos, player, hand, hit);
+			return super.useItemOn(stack, state, level, pos, player, hand, hit);
 
 		return InteractionResult.PASS;
 	}
@@ -168,14 +178,15 @@ public class ReinforcedCauldronBlock extends AbstractCauldronBlock implements IR
 
 	public static void updateBlockState(Level level, BlockPos pos, BlockState newState, BlockEntity be) {
 		CompoundTag tag = null;
+		HolderLookup.Provider registries = level.registryAccess();
 
 		if (be != null)
-			tag = be.saveWithoutMetadata();
+			tag = be.saveCustomOnly(registries);
 
 		level.setBlockAndUpdate(pos, newState);
 
 		if (tag != null)
-			level.getBlockEntity(pos).load(tag);
+			level.getBlockEntity(pos).loadCustomOnly(tag, registries);
 	}
 
 	/**
@@ -184,10 +195,10 @@ public class ReinforcedCauldronBlock extends AbstractCauldronBlock implements IR
 	 * builds them (without Forge's cauldron-interaction helpers, which don't exist on Fabric).
 	 */
 	public interface IReinforcedCauldronInteraction extends CauldronInteraction {
-		Map<Item, CauldronInteraction> EMPTY = CauldronInteraction.newInteractionMap();
-		Map<Item, CauldronInteraction> WATER = CauldronInteraction.newInteractionMap();
-		Map<Item, CauldronInteraction> LAVA = CauldronInteraction.newInteractionMap();
-		Map<Item, CauldronInteraction> POWDER_SNOW = CauldronInteraction.newInteractionMap();
+		InteractionMap EMPTY = CauldronInteraction.newInteractionMap("reinforced_empty");
+		InteractionMap WATER = CauldronInteraction.newInteractionMap("reinforced_water");
+		InteractionMap LAVA = CauldronInteraction.newInteractionMap("reinforced_lava");
+		InteractionMap POWDER_SNOW = CauldronInteraction.newInteractionMap("reinforced_powder_snow");
 		CauldronInteraction FILL_WATER = (state, level, pos, player, hand, stack) -> emptyBucket(level, pos, player, hand, stack, SCContent.REINFORCED_WATER_CAULDRON.defaultBlockState().setValue(LayeredCauldronBlock.LEVEL, 3), SoundEvents.BUCKET_EMPTY);
 		CauldronInteraction FILL_LAVA = (state, level, pos, player, hand, stack) -> emptyBucket(level, pos, player, hand, stack, SCContent.REINFORCED_LAVA_CAULDRON.defaultBlockState(), SoundEvents.BUCKET_EMPTY_LAVA);
 		CauldronInteraction FILL_POWDER_SNOW = (state, level, pos, player, hand, stack) -> emptyBucket(level, pos, player, hand, stack, SCContent.REINFORCED_POWDER_SNOW_CAULDRON.defaultBlockState().setValue(LayeredCauldronBlock.LEVEL, 3), SoundEvents.BUCKET_EMPTY_POWDER_SNOW);
@@ -198,72 +209,66 @@ public class ReinforcedCauldronBlock extends AbstractCauldronBlock implements IR
 				return InteractionResult.PASS;
 			else {
 				if (!level.isClientSide) {
-					ItemStack shulker = new ItemStack(Blocks.SHULKER_BOX);
-
-					if (stack.hasTag())
-						shulker.setTag(stack.getTag().copy());
-
-					player.setItemInHand(hand, shulker);
+					player.setItemInHand(hand, stack.transmuteCopy(Blocks.SHULKER_BOX, 1));
 					player.awardStat(Stats.CLEAN_SHULKER_BOX);
 					ReinforcedLayeredCauldronBlock.lowerFillLevel(state, level, pos);
 				}
 
-				return InteractionResult.sidedSuccess(level.isClientSide);
+				return (level.isClientSide ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER);
 			}
 		};
 		CauldronInteraction BANNER = (state, level, pos, player, hand, stack) -> {
-			if (BannerBlockEntity.getPatternCount(stack) <= 0)
+			BannerPatternLayers layers = stack.getOrDefault(DataComponents.BANNER_PATTERNS, BannerPatternLayers.EMPTY);
+
+			if (layers.layers().isEmpty())
 				return InteractionResult.PASS;
 			else {
 				if (!level.isClientSide) {
-					ItemStack banner = stack.copy();
+					ItemStack stackCopy = stack.copyWithCount(1);
 
-					banner.setCount(1);
-					BannerBlockEntity.removeLastPattern(banner);
-
-					if (!player.getAbilities().instabuild)
-						stack.shrink(1);
+					stackCopy.set(DataComponents.BANNER_PATTERNS, layers.removeLast());
+					stack.consume(1, player);
 
 					if (stack.isEmpty())
-						player.setItemInHand(hand, banner);
-					else if (player.getInventory().add(banner))
+						player.setItemInHand(hand, stackCopy);
+					else if (player.getInventory().add(stackCopy))
 						player.inventoryMenu.sendAllDataToRemote();
 					else
-						player.drop(banner, false);
+						player.drop(stackCopy, false);
 
 					player.awardStat(Stats.CLEAN_BANNER);
 					ReinforcedLayeredCauldronBlock.lowerFillLevel(state, level, pos);
 				}
 
-				return InteractionResult.sidedSuccess(level.isClientSide);
+				return (level.isClientSide ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER);
 			}
 		};
 		CauldronInteraction DYED_ITEM = (state, level, pos, player, hand, stack) -> {
-			Item item = stack.getItem();
-
-			if (!(item instanceof DyeableLeatherItem leatherItem))
+			if (!stack.is(ItemTags.DYEABLE) || !stack.has(DataComponents.DYED_COLOR))
 				return InteractionResult.PASS;
 			else {
-				if (!leatherItem.hasCustomColor(stack))
-					return InteractionResult.PASS;
-				else {
-					if (!level.isClientSide) {
-						leatherItem.clearColor(stack);
-						player.awardStat(Stats.CLEAN_ARMOR);
-						ReinforcedLayeredCauldronBlock.lowerFillLevel(state, level, pos);
-					}
-
-					return InteractionResult.sidedSuccess(level.isClientSide);
+				if (!level.isClientSide) {
+					stack.remove(DataComponents.DYED_COLOR);
+					player.awardStat(Stats.CLEAN_ARMOR);
+					ReinforcedLayeredCauldronBlock.lowerFillLevel(state, level, pos);
 				}
+
+				return (level.isClientSide ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER);
 			}
 		};
 
 		static void bootStrap() {
-			addDefaultInteractions(EMPTY);
-			EMPTY.put(Items.POTION, (state, level, pos, player, hand, stack) -> {
-				if (PotionUtils.getPotion(stack) != Potions.WATER)
-					return InteractionResult.PASS;
-				else {
+			Map<Item, CauldronInteraction> emptyMap = EMPTY.map();
+			Map<Item, CauldronInteraction> waterMap = WATER.map();
+			Map<Item, CauldronInteraction> lavaMap = LAVA.map();
+			Map<Item, CauldronInteraction> powderSnowMap = POWDER_SNOW.map();
+			Map<Item, CauldronInteraction> vanillaWaterMap = CauldronInteraction.WATER.map();
+
+			addDefaultInteractions(emptyMap);
+			emptyMap.put(Items.POTION, (state, level, pos, player, hand, stack) -> {
+				PotionContents potionContents = stack.get(DataComponents.POTION_CONTENTS);
+
+				if (potionContents != null && potionContents.is(Potions.WATER)) {
 					if (!level.isClientSide) {
 						Item item = stack.getItem();
 
@@ -275,16 +280,18 @@ public class ReinforcedCauldronBlock extends AbstractCauldronBlock implements IR
 						level.gameEvent(null, GameEvent.FLUID_PLACE, pos);
 					}
 
-					return InteractionResult.sidedSuccess(level.isClientSide);
+					return (level.isClientSide ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER);
 				}
+
+				return InteractionResult.PASS;
 			});
-			addDefaultInteractions(WATER);
-			WATER.put(Items.BUCKET, (state, level, pos, player, hand, stack) -> fillBucket(state, level, pos, player, hand, stack, new ItemStack(Items.WATER_BUCKET), s -> s.getValue(LayeredCauldronBlock.LEVEL) == 3, SoundEvents.BUCKET_FILL));
-			WATER.put(Items.GLASS_BOTTLE, (state, level, pos, player, hand, stack) -> {
+			addDefaultInteractions(waterMap);
+			waterMap.put(Items.BUCKET, (state, level, pos, player, hand, stack) -> fillBucket(state, level, pos, player, hand, stack, new ItemStack(Items.WATER_BUCKET), s -> s.getValue(LayeredCauldronBlock.LEVEL) == 3, SoundEvents.BUCKET_FILL));
+			waterMap.put(Items.GLASS_BOTTLE, (state, level, pos, player, hand, stack) -> {
 				if (!level.isClientSide) {
 					Item item = stack.getItem();
 
-					player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.WATER)));
+					player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, PotionContents.createItemStack(Items.POTION, Potions.WATER)));
 					player.awardStat(Stats.USE_CAULDRON);
 					player.awardStat(Stats.ITEM_USED.get(item));
 					ReinforcedLayeredCauldronBlock.lowerFillLevel(state, level, pos);
@@ -292,69 +299,74 @@ public class ReinforcedCauldronBlock extends AbstractCauldronBlock implements IR
 					level.gameEvent(null, GameEvent.FLUID_PICKUP, pos);
 				}
 
-				return InteractionResult.sidedSuccess(level.isClientSide);
+				return (level.isClientSide ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER);
 			});
-			WATER.put(Items.POTION, (state, level, pos, player, hand, stack) -> {
-				if (state.getValue(LayeredCauldronBlock.LEVEL) != 3 && PotionUtils.getPotion(stack) == Potions.WATER) {
-					if (!level.isClientSide) {
-						player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, new ItemStack(Items.GLASS_BOTTLE)));
-						player.awardStat(Stats.USE_CAULDRON);
-						player.awardStat(Stats.ITEM_USED.get(stack.getItem()));
-						updateBlockState(level, pos, state.cycle(LayeredCauldronBlock.LEVEL), null);
-						level.playSound(null, pos, SoundEvents.BOTTLE_EMPTY, SoundSource.BLOCKS, 1.0F, 1.0F);
-						level.gameEvent(null, GameEvent.FLUID_PLACE, pos);
-					}
+			waterMap.put(Items.POTION, (state, level, pos, player, hand, stack) -> {
+				if (state.getValue(LayeredCauldronBlock.LEVEL) != 3) {
+					PotionContents potionContents = stack.get(DataComponents.POTION_CONTENTS);
 
-					return InteractionResult.sidedSuccess(level.isClientSide);
+					if (potionContents != null && potionContents.is(Potions.WATER)) {
+						if (!level.isClientSide) {
+							player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, new ItemStack(Items.GLASS_BOTTLE)));
+							player.awardStat(Stats.USE_CAULDRON);
+							player.awardStat(Stats.ITEM_USED.get(stack.getItem()));
+							updateBlockState(level, pos, state.cycle(LayeredCauldronBlock.LEVEL), null);
+							level.playSound(null, pos, SoundEvents.BOTTLE_EMPTY, SoundSource.BLOCKS, 1.0F, 1.0F);
+							level.gameEvent(null, GameEvent.FLUID_PLACE, pos);
+						}
+
+						return (level.isClientSide ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER);
+					}
 				}
-				else
-					return InteractionResult.PASS;
+
+				return InteractionResult.PASS;
 			});
-			WATER.put(Items.LEATHER_BOOTS, DYED_ITEM);
-			WATER.put(Items.LEATHER_LEGGINGS, DYED_ITEM);
-			WATER.put(Items.LEATHER_CHESTPLATE, DYED_ITEM);
-			WATER.put(Items.LEATHER_HELMET, DYED_ITEM);
-			WATER.put(Items.LEATHER_HORSE_ARMOR, DYED_ITEM);
-			WATER.put(Items.WHITE_BANNER, BANNER);
-			WATER.put(Items.GRAY_BANNER, BANNER);
-			WATER.put(Items.BLACK_BANNER, BANNER);
-			WATER.put(Items.BLUE_BANNER, BANNER);
-			WATER.put(Items.BROWN_BANNER, BANNER);
-			WATER.put(Items.CYAN_BANNER, BANNER);
-			WATER.put(Items.GREEN_BANNER, BANNER);
-			WATER.put(Items.LIGHT_BLUE_BANNER, BANNER);
-			WATER.put(Items.LIGHT_GRAY_BANNER, BANNER);
-			WATER.put(Items.LIME_BANNER, BANNER);
-			WATER.put(Items.MAGENTA_BANNER, BANNER);
-			WATER.put(Items.ORANGE_BANNER, BANNER);
-			WATER.put(Items.PINK_BANNER, BANNER);
-			WATER.put(Items.PURPLE_BANNER, BANNER);
-			WATER.put(Items.RED_BANNER, BANNER);
-			WATER.put(Items.YELLOW_BANNER, BANNER);
-			WATER.put(Items.WHITE_SHULKER_BOX, SHULKER_BOX);
-			WATER.put(Items.GRAY_SHULKER_BOX, SHULKER_BOX);
-			WATER.put(Items.BLACK_SHULKER_BOX, SHULKER_BOX);
-			WATER.put(Items.BLUE_SHULKER_BOX, SHULKER_BOX);
-			WATER.put(Items.BROWN_SHULKER_BOX, SHULKER_BOX);
-			WATER.put(Items.CYAN_SHULKER_BOX, SHULKER_BOX);
-			WATER.put(Items.GREEN_SHULKER_BOX, SHULKER_BOX);
-			WATER.put(Items.LIGHT_BLUE_SHULKER_BOX, SHULKER_BOX);
-			WATER.put(Items.LIGHT_GRAY_SHULKER_BOX, SHULKER_BOX);
-			WATER.put(Items.LIME_SHULKER_BOX, SHULKER_BOX);
-			WATER.put(Items.MAGENTA_SHULKER_BOX, SHULKER_BOX);
-			WATER.put(Items.ORANGE_SHULKER_BOX, SHULKER_BOX);
-			WATER.put(Items.PINK_SHULKER_BOX, SHULKER_BOX);
-			WATER.put(Items.PURPLE_SHULKER_BOX, SHULKER_BOX);
-			WATER.put(Items.RED_SHULKER_BOX, SHULKER_BOX);
-			WATER.put(Items.YELLOW_SHULKER_BOX, SHULKER_BOX);
-			LAVA.put(Items.BUCKET, (state, level, pos, player, hand, stack) -> fillBucket(state, level, pos, player, hand, stack, new ItemStack(Items.LAVA_BUCKET), s -> true, SoundEvents.BUCKET_FILL_LAVA));
-			addDefaultInteractions(LAVA);
-			POWDER_SNOW.put(Items.BUCKET, (state, level, pos, player, hand, stack) -> fillBucket(state, level, pos, player, hand, stack, new ItemStack(Items.POWDER_SNOW_BUCKET), l -> l.getValue(LayeredCauldronBlock.LEVEL) == 3, SoundEvents.BUCKET_FILL_POWDER_SNOW));
-			addDefaultInteractions(POWDER_SNOW);
+			waterMap.put(Items.LEATHER_BOOTS, DYED_ITEM);
+			waterMap.put(Items.LEATHER_LEGGINGS, DYED_ITEM);
+			waterMap.put(Items.LEATHER_CHESTPLATE, DYED_ITEM);
+			waterMap.put(Items.LEATHER_HELMET, DYED_ITEM);
+			waterMap.put(Items.LEATHER_HORSE_ARMOR, DYED_ITEM);
+			waterMap.put(Items.WOLF_ARMOR, DYED_ITEM);
+			waterMap.put(Items.WHITE_BANNER, BANNER);
+			waterMap.put(Items.GRAY_BANNER, BANNER);
+			waterMap.put(Items.BLACK_BANNER, BANNER);
+			waterMap.put(Items.BLUE_BANNER, BANNER);
+			waterMap.put(Items.BROWN_BANNER, BANNER);
+			waterMap.put(Items.CYAN_BANNER, BANNER);
+			waterMap.put(Items.GREEN_BANNER, BANNER);
+			waterMap.put(Items.LIGHT_BLUE_BANNER, BANNER);
+			waterMap.put(Items.LIGHT_GRAY_BANNER, BANNER);
+			waterMap.put(Items.LIME_BANNER, BANNER);
+			waterMap.put(Items.MAGENTA_BANNER, BANNER);
+			waterMap.put(Items.ORANGE_BANNER, BANNER);
+			waterMap.put(Items.PINK_BANNER, BANNER);
+			waterMap.put(Items.PURPLE_BANNER, BANNER);
+			waterMap.put(Items.RED_BANNER, BANNER);
+			waterMap.put(Items.YELLOW_BANNER, BANNER);
+			waterMap.put(Items.WHITE_SHULKER_BOX, SHULKER_BOX);
+			waterMap.put(Items.GRAY_SHULKER_BOX, SHULKER_BOX);
+			waterMap.put(Items.BLACK_SHULKER_BOX, SHULKER_BOX);
+			waterMap.put(Items.BLUE_SHULKER_BOX, SHULKER_BOX);
+			waterMap.put(Items.BROWN_SHULKER_BOX, SHULKER_BOX);
+			waterMap.put(Items.CYAN_SHULKER_BOX, SHULKER_BOX);
+			waterMap.put(Items.GREEN_SHULKER_BOX, SHULKER_BOX);
+			waterMap.put(Items.LIGHT_BLUE_SHULKER_BOX, SHULKER_BOX);
+			waterMap.put(Items.LIGHT_GRAY_SHULKER_BOX, SHULKER_BOX);
+			waterMap.put(Items.LIME_SHULKER_BOX, SHULKER_BOX);
+			waterMap.put(Items.MAGENTA_SHULKER_BOX, SHULKER_BOX);
+			waterMap.put(Items.ORANGE_SHULKER_BOX, SHULKER_BOX);
+			waterMap.put(Items.PINK_SHULKER_BOX, SHULKER_BOX);
+			waterMap.put(Items.PURPLE_SHULKER_BOX, SHULKER_BOX);
+			waterMap.put(Items.RED_SHULKER_BOX, SHULKER_BOX);
+			waterMap.put(Items.YELLOW_SHULKER_BOX, SHULKER_BOX);
+			lavaMap.put(Items.BUCKET, (state, level, pos, player, hand, stack) -> fillBucket(state, level, pos, player, hand, stack, new ItemStack(Items.LAVA_BUCKET), s -> true, SoundEvents.BUCKET_FILL_LAVA));
+			addDefaultInteractions(lavaMap);
+			powderSnowMap.put(Items.BUCKET, (state, level, pos, player, hand, stack) -> fillBucket(state, level, pos, player, hand, stack, new ItemStack(Items.POWDER_SNOW_BUCKET), l -> l.getValue(LayeredCauldronBlock.LEVEL) == 3, SoundEvents.BUCKET_FILL_POWDER_SNOW));
+			addDefaultInteractions(powderSnowMap);
 
 			//add dyeable item interactions; upstream also registers SCContent.BRIEFCASE here, which this port hasn't registered yet
-			CauldronInteraction.WATER.put(SCContent.LENS, CauldronInteraction.DYED_ITEM);
-			WATER.put(SCContent.LENS, DYED_ITEM);
+			vanillaWaterMap.put(SCContent.LENS, DYED_ITEM);
+			waterMap.put(SCContent.LENS, DYED_ITEM);
 		}
 
 		static void addDefaultInteractions(Map<Item, CauldronInteraction> interactions) {
@@ -378,7 +390,7 @@ public class ReinforcedCauldronBlock extends AbstractCauldronBlock implements IR
 					level.gameEvent(null, GameEvent.FLUID_PICKUP, pos);
 				}
 
-				return InteractionResult.sidedSuccess(level.isClientSide);
+				return (level.isClientSide ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER);
 			}
 		}
 
@@ -394,7 +406,7 @@ public class ReinforcedCauldronBlock extends AbstractCauldronBlock implements IR
 				level.gameEvent(null, GameEvent.FLUID_PLACE, pos);
 			}
 
-			return InteractionResult.sidedSuccess(level.isClientSide);
+			return (level.isClientSide ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER);
 		}
 	}
 }

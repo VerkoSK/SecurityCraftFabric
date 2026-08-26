@@ -19,12 +19,12 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.Mth;
 import net.minecraft.world.CompoundContainer;
 import net.minecraft.world.Container;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.LivingEntity;
@@ -103,7 +103,7 @@ public class KeypadChestBlock extends ChestBlock {
 	private final float destroyTimeForOwner;
 
 	public KeypadChestBlock(BlockBehaviour.Properties properties) {
-		super(OwnableBlock.withReinforcedDestroyTime(properties), () -> SCContent.KEYPAD_CHEST_BLOCK_ENTITY);
+		super(() -> SCContent.KEYPAD_CHEST_BLOCK_ENTITY, OwnableBlock.withReinforcedDestroyTime(properties));
 		destroyTimeForOwner = OwnableBlock.getStoredDestroyTime();
 	}
 
@@ -113,7 +113,7 @@ public class KeypadChestBlock extends ChestBlock {
 	}
 
 	@Override
-	public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+	public InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
 		if (!(level.getBlockEntity(pos) instanceof KeypadChestBlockEntity be))
 			return InteractionResult.PASS;
 
@@ -148,7 +148,7 @@ public class KeypadChestBlock extends ChestBlock {
 
 	public void activate(BlockState state, Level level, BlockPos pos, Player player) {
 		if (!level.isClientSide) {
-			ChestBlock block = (ChestBlock) state.getBlock();
+			KeypadChestBlock block = (KeypadChestBlock) state.getBlock();
 			MenuProvider menuProvider = block.getMenuProvider(state, level, pos);
 
 			if (menuProvider != null) {
@@ -208,13 +208,13 @@ public class KeypadChestBlock extends ChestBlock {
 	//such hook, and neighborChanged below already covers the case this port needs
 
 	@Override
-	public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
+	protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel level, BlockPos pos, boolean movedByPiston) {
 		//replaces upstream's un-ported SCEventHandler#onBlockEventBreak generic module-drop hook, matching the
 		//inline onRemove pattern this port already uses for KeypadBlock
-		if (!state.is(newState.getBlock()) && level.getBlockEntity(pos) instanceof IModuleInventory inv && inv.shouldDropModules())
+		if (level.getBlockEntity(pos) instanceof IModuleInventory inv && inv.shouldDropModules())
 			inv.dropAllModules();
 
-		super.onRemove(state, level, pos, newState, isMoving);
+		super.affectNeighborsAfterRemoval(state, level, pos, movedByPiston);
 	}
 
 	@Override
@@ -252,8 +252,10 @@ public class KeypadChestBlock extends ChestBlock {
 
 	@Override
 	public RenderShape getRenderShape(BlockState state) {
-		//like every chest, the block model is empty and the chest itself is drawn by its block entity renderer
-		return RenderShape.ENTITYBLOCK_ANIMATED;
+		//like every chest, the block model is empty and the chest itself is drawn by its block entity renderer;
+		//ENTITYBLOCK_ANIMATED was removed for this Minecraft version, and vanilla's own ChestBlock doesn't
+		//override this at all (falling back to the default MODEL), so this matches that
+		return RenderShape.MODEL;
 	}
 
 	public static class Convertible implements IPasscodeConvertible {
@@ -312,18 +314,18 @@ public class KeypadChestBlock extends ChestBlock {
 			if (protect)
 				convertedBlock = SCContent.KEYPAD_CHEST;
 			else {
-				convertedBlock = BuiltInRegistries.BLOCK.get(((KeypadChestBlockEntity) chest).getPreviousChest());
+				convertedBlock = BuiltInRegistries.BLOCK.getValue(((KeypadChestBlockEntity) chest).getPreviousChest());
 
 				if (convertedBlock == Blocks.AIR)
 					convertedBlock = Blocks.CHEST;
 			}
 
 			chest.unpackLootTable(player); //generate loot (if any), so items don't spill out when converting and no additional loot table is generated
-			tag = chest.saveWithFullMetadata();
+			tag = chest.saveWithFullMetadata(level.registryAccess());
 			chest.clearContent();
 			level.setBlockAndUpdate(pos, convertedBlock.defaultBlockState().setValue(FACING, facing).setValue(TYPE, type));
 			chest = (ChestBlockEntity) level.getBlockEntity(pos);
-			chest.load(tag);
+			chest.loadWithComponents(tag, level.registryAccess());
 
 			if (protect) {
 				if (player != null)

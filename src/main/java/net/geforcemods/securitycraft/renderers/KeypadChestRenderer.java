@@ -80,7 +80,7 @@ public class KeypadChestRenderer implements BlockEntityRenderer<KeypadChestBlock
 	}
 
 	@Override
-	public void render(KeypadChestBlockEntity be, float partialTicks, PoseStack pose, MultiBufferSource buffer, int packedLight, int packedOverlay) {
+	public void render(KeypadChestBlockEntity be, float partialTicks, PoseStack pose, MultiBufferSource buffer, int packedLight, int packedOverlay, net.minecraft.world.phys.Vec3 cameraPos) {
 		Level level = be.getLevel();
 		boolean hasLevel = level != null;
 		BlockState state = hasLevel ? be.getBlockState() : SCContent.KEYPAD_CHEST.defaultBlockState().setValue(ChestBlock.FACING, Direction.SOUTH);

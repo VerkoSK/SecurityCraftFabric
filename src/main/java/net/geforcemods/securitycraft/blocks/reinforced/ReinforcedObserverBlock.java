@@ -73,11 +73,10 @@ public class ReinforcedObserverBlock extends ObserverBlock implements IReinforce
 	}
 
 	@Override
-	public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
-		if (!state.is(newState.getBlock()))
-			level.removeBlockEntity(pos); //vanilla's ObserverBlock has no block entity to clean up, ours does
+	protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel level, BlockPos pos, boolean movedByPiston) {
+		level.removeBlockEntity(pos); //vanilla's ObserverBlock has no block entity to clean up, ours does
 
-		super.onRemove(state, level, pos, newState, isMoving);
+		super.affectNeighborsAfterRemoval(state, level, pos, movedByPiston);
 	}
 
 	//upstream also overrides Forge's canConnectRedstone; vanilla has no such hook, redstone connection is decided

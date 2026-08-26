@@ -23,9 +23,9 @@ import net.geforcemods.securitycraft.items.ModuleItem;
 import net.geforcemods.securitycraft.misc.ModuleType;
 import net.geforcemods.securitycraft.util.PasscodeUtils;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -56,7 +56,7 @@ import net.minecraft.world.level.block.state.BlockState;
  * kept at the same render-only level as {@link KeypadBlockEntity}: an enabled disguise module swaps the client
  * model via {@link RenderDataBlockEntity}, but the hitbox/shape stays the furnace's own.
  */
-public abstract class AbstractKeypadFurnaceBlockEntity extends AbstractFurnaceBlockEntity implements PasscodeProtected, IOwnable, IModuleInventory, ICustomizable, ExtendedScreenHandlerFactory, RenderDataBlockEntity {
+public abstract class AbstractKeypadFurnaceBlockEntity extends AbstractFurnaceBlockEntity implements PasscodeProtected, IOwnable, IModuleInventory, ICustomizable, ExtendedScreenHandlerFactory<BlockPos>, RenderDataBlockEntity {
 	private Owner owner = new Owner();
 	private String salt = UUID.randomUUID().toString();
 	private String passcodeHash = null;
@@ -101,8 +101,8 @@ public abstract class AbstractKeypadFurnaceBlockEntity extends AbstractFurnaceBl
 	}
 
 	public static void serverTick(Level level, BlockPos pos, BlockState state, AbstractKeypadFurnaceBlockEntity be) {
-		if (!be.isDisabled())
-			AbstractFurnaceBlockEntity.serverTick(level, pos, state, be);
+		if (!be.isDisabled() && level instanceof net.minecraft.server.level.ServerLevel serverLevel)
+			AbstractFurnaceBlockEntity.serverTick(serverLevel, pos, state, be);
 	}
 
 	public void startOpen(Player player) {
@@ -275,14 +275,14 @@ public abstract class AbstractKeypadFurnaceBlockEntity extends AbstractFurnaceBl
 	}
 
 	@Override
-	public void writeScreenOpeningData(ServerPlayer player, FriendlyByteBuf buf) {
-		buf.writeBlockPos(worldPosition);
+	public BlockPos getScreenOpeningData(ServerPlayer player) {
+		return worldPosition;
 	}
 
 	@Override
-	public void saveAdditional(CompoundTag tag) {
-		super.saveAdditional(tag);
-		writeModuleInventory(tag);
+	public void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+		super.saveAdditional(tag, registries);
+		writeModuleInventory(tag, registries);
 		writeModuleStates(tag);
 		writeOptions(tag);
 
@@ -297,24 +297,24 @@ public abstract class AbstractKeypadFurnaceBlockEntity extends AbstractFurnaceBl
 	}
 
 	@Override
-	public void load(CompoundTag tag) {
-		super.load(tag);
+	public void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+		super.loadAdditional(tag, registries);
 
-		modules = readModuleInventory(tag);
+		modules = readModuleInventory(tag, registries);
 		moduleStates = readModuleStates(tag);
 		readOptions(tag);
-		cooldownEnd = System.currentTimeMillis() + tag.getLong("cooldownLeft");
+		cooldownEnd = System.currentTimeMillis() + tag.getLongOr("cooldownLeft", 0L);
 		owner = Owner.fromCompound(tag);
 
 		if (tag.contains("salt"))
-			salt = tag.getString("salt");
+			salt = tag.getStringOr("salt", "");
 
-		passcodeHash = tag.contains("passcodeHash") ? tag.getString("passcodeHash") : null;
+		passcodeHash = tag.contains("passcodeHash") ? tag.getStringOr("passcodeHash", null) : null;
 	}
 
 	@Override
-	public CompoundTag getUpdateTag() {
-		CompoundTag tag = saveWithoutMetadata();
+	public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+		CompoundTag tag = saveWithoutMetadata(registries);
 
 		tag.remove("passcodeHash");
 		tag.remove("salt");

@@ -22,6 +22,7 @@ import net.geforcemods.securitycraft.util.BlockUtils;
 import net.geforcemods.securitycraft.util.PasscodeUtils;
 import net.geforcemods.securitycraft.util.Utils;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -71,11 +72,11 @@ public class KeypadChestBlockEntity extends ChestBlockEntity implements Passcode
 	}
 
 	@Override
-	public void saveAdditional(CompoundTag tag) {
+	public void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
 		long cooldownLeft;
 
-		super.saveAdditional(tag);
-		writeModuleInventory(tag);
+		super.saveAdditional(tag, registries);
+		writeModuleInventory(tag, registries);
 		writeModuleStates(tag);
 		writeOptions(tag);
 		cooldownLeft = getCooldownEnd() - System.currentTimeMillis();
@@ -92,25 +93,25 @@ public class KeypadChestBlockEntity extends ChestBlockEntity implements Passcode
 	}
 
 	@Override
-	public void load(CompoundTag tag) {
-		super.load(tag);
+	public void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+		super.loadAdditional(tag, registries);
 
-		modules = readModuleInventory(tag);
+		modules = readModuleInventory(tag, registries);
 		moduleStates = readModuleStates(tag);
 		readOptions(tag);
-		cooldownEnd = System.currentTimeMillis() + tag.getLong("cooldownLeft");
+		cooldownEnd = System.currentTimeMillis() + tag.getLongOr("cooldownLeft", 0L);
 
 		if (tag.contains("salt"))
-			salt = tag.getString("salt");
+			salt = tag.getStringOr("salt", "");
 
-		passcodeHash = tag.contains("passcodeHash") ? tag.getString("passcodeHash") : null;
+		passcodeHash = tag.contains("passcodeHash") ? tag.getStringOr("passcodeHash", null) : null;
 		owner.load(tag);
 
 		if (tag.contains("previous_chest")) {
-			String savedPreviousChest = tag.getString("previous_chest");
+			String savedPreviousChest = tag.getStringOr("previous_chest", "");
 
 			if (!savedPreviousChest.isBlank()) {
-				ResourceLocation parsedPreviousChest = new ResourceLocation(savedPreviousChest);
+				ResourceLocation parsedPreviousChest = ResourceLocation.parse(savedPreviousChest);
 
 				if (parsedPreviousChest.getPath() != null && !parsedPreviousChest.getPath().isBlank())
 					previousChest = parsedPreviousChest;
@@ -119,8 +120,8 @@ public class KeypadChestBlockEntity extends ChestBlockEntity implements Passcode
 	}
 
 	@Override
-	public CompoundTag getUpdateTag() {
-		CompoundTag tag = saveWithoutMetadata();
+	public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+		CompoundTag tag = saveWithoutMetadata(registries);
 
 		tag.remove("passcodeHash");
 		tag.remove("salt");

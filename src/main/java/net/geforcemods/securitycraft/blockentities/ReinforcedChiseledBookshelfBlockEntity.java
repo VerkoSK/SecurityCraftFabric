@@ -9,6 +9,7 @@ import net.geforcemods.securitycraft.api.IOwnable;
 import net.geforcemods.securitycraft.api.Owner;
 import net.geforcemods.securitycraft.misc.ModuleType;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -41,28 +42,28 @@ public class ReinforcedChiseledBookshelfBlockEntity extends ChiseledBookShelfBlo
 	}
 
 	@Override
-	public void load(CompoundTag tag) {
-		super.load(tag);
+	public void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+		super.loadAdditional(tag, registries);
 
 		owner.load(tag);
-		modules = readModuleInventory(tag);
+		modules = readModuleInventory(tag, registries);
 		moduleStates = readModuleStates(tag);
 	}
 
 	@Override
-	public void saveAdditional(CompoundTag tag) {
-		super.saveAdditional(tag);
+	public void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+		super.saveAdditional(tag, registries);
 
 		if (owner != null)
 			owner.save(tag, needsValidation());
 
-		writeModuleInventory(tag);
+		writeModuleInventory(tag, registries);
 		writeModuleStates(tag);
 	}
 
 	@Override
-	public CompoundTag getUpdateTag() {
-		return saveWithoutMetadata();
+	public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+		return saveWithoutMetadata(registries);
 	}
 
 	@Override

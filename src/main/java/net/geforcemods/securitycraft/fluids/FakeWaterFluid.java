@@ -45,7 +45,7 @@ public abstract class FakeWaterFluid extends FlowingFluid {
 	}
 
 	@Override
-	protected boolean canConvertToSource(Level level) {
+	protected boolean canConvertToSource(net.minecraft.server.level.ServerLevel level) {
 		return false;
 	}
 
