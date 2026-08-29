@@ -35,20 +35,38 @@ public record GlobalPositions(List<GlobalPos> positions) {
 	public static Codec<GlobalPositions> codec(int size) {
 		//@formatter:off
 		return RecordCodecBuilder.create(
-				instance -> instance.group(nullableSizedCodec(GlobalPos.CODEC, size).fieldOf("positions").forGetter(GlobalPositions::positions))
-				.apply(instance, GlobalPositions::new));
+				instance -> instance.group(nullableListCodec(GlobalPos.CODEC).fieldOf("positions").forGetter(globalPositions -> resized(globalPositions.positions(), size)))
+				.apply(instance, positions -> new GlobalPositions(resized(positions, size))));
 		//@formatter:on
 	}
 
 	public static StreamCodec<ByteBuf, GlobalPositions> streamCodec(int size) {
 		//@formatter:off
 		return StreamCodec.composite(
-				nullableSizedStreamCodec(GlobalPos.STREAM_CODEC, size, DUMMY_GLOBAL_POS), GlobalPositions::positions,
-				GlobalPositions::new);
+				nullableSizedStreamCodec(GlobalPos.STREAM_CODEC, size, DUMMY_GLOBAL_POS), globalPositions -> resized(globalPositions.positions(), size),
+				positions -> new GlobalPositions(resized(positions, size)));
 		//@formatter:on
 	}
 
-	private static <A> Codec<List<A>> nullableSizedCodec(Codec<A> baseCodec, int size) {
+	/**
+	 * Forces a decoded list to exactly {@code size} slots by padding with null or dropping the overflow. The stored data
+	 * is always this length in normal play, but a hand-written component, a data pack or a world carried over from an
+	 * older build can hand back a different count; without this the exact-size check below would reject the whole item
+	 * during {@code ItemStack.validatedStreamCodec} re-encoding and drop the connection on the next inventory packet.
+	 */
+	private static List<GlobalPos> resized(List<GlobalPos> positions, int size) {
+		if (positions.size() == size)
+			return positions;
+
+		List<GlobalPos> resized = new ArrayList<>(size);
+
+		for (int i = 0; i < size; i++)
+			resized.add(i < positions.size() ? positions.get(i) : null);
+
+		return resized;
+	}
+
+	private static <A> Codec<List<A>> nullableListCodec(Codec<A> baseCodec) {
 		return new NullableListCodec<>(new Codec<>() {
 			@Override
 			public <R> DataResult<Pair<A, R>> decode(DynamicOps<R> ops, R input) {
@@ -59,7 +77,7 @@ public record GlobalPositions(List<GlobalPos> positions) {
 			public <R> DataResult<R> encode(A input, DynamicOps<R> ops, R prefix) {
 				return input == null ? DataResult.success(ops.emptyMap()) : baseCodec.encode(input, ops, prefix);
 			}
-		}, size, size);
+		}, 0, Integer.MAX_VALUE);
 	}
 
 	private static <A> StreamCodec<ByteBuf, List<A>> nullableSizedStreamCodec(StreamCodec<ByteBuf, A> baseStreamCodec, int size, A dummy) {
