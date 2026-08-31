@@ -42,6 +42,8 @@ import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.entity.ContainerOpenersCounter;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 /**
  * Common base for the keypad furnace family (furnace, smoker, blast furnace): a vanilla furnace guarded by a
@@ -280,36 +282,33 @@ public abstract class AbstractKeypadFurnaceBlockEntity extends AbstractFurnaceBl
 	}
 
 	@Override
-	public void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-		super.saveAdditional(tag, registries);
-		writeModuleInventory(tag, registries);
-		writeModuleStates(tag);
-		writeOptions(tag);
+	public void saveAdditional(ValueOutput output) {
+		super.saveAdditional(output);
+		writeModuleInventory(output);
+		writeModuleStates(output);
+		writeOptions(output);
 
 		long cooldownLeft = getCooldownEnd() - System.currentTimeMillis();
 
-		tag.putLong("cooldownLeft", cooldownLeft <= 0 ? -1 : cooldownLeft);
-		tag.putString("salt", salt);
-		owner.save(tag);
+		output.putLong("cooldownLeft", cooldownLeft <= 0 ? -1 : cooldownLeft);
+		output.putString("salt", salt);
+		owner.save(output);
 
 		if (passcodeHash != null)
-			tag.putString("passcodeHash", passcodeHash);
+			output.putString("passcodeHash", passcodeHash);
 	}
 
 	@Override
-	public void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-		super.loadAdditional(tag, registries);
+	public void loadAdditional(ValueInput input) {
+		super.loadAdditional(input);
 
-		modules = readModuleInventory(tag, registries);
-		moduleStates = readModuleStates(tag);
-		readOptions(tag);
-		cooldownEnd = System.currentTimeMillis() + tag.getLongOr("cooldownLeft", 0L);
-		owner = Owner.fromCompound(tag);
-
-		if (tag.contains("salt"))
-			salt = tag.getStringOr("salt", "");
-
-		passcodeHash = tag.contains("passcodeHash") ? tag.getStringOr("passcodeHash", null) : null;
+		modules = readModuleInventory(input);
+		moduleStates = readModuleStates(input);
+		readOptions(input);
+		cooldownEnd = System.currentTimeMillis() + input.getLongOr("cooldownLeft", 0L);
+		owner = Owner.load(input);
+		salt = input.getStringOr("salt", salt);
+		passcodeHash = input.getString("passcodeHash").orElse(null);
 	}
 
 	@Override

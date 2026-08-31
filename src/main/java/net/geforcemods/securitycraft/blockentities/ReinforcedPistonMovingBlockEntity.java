@@ -34,6 +34,8 @@ import net.minecraft.world.level.block.piston.PistonBaseBlock;
 import net.minecraft.world.level.block.piston.PistonHeadBlock;
 import net.minecraft.world.level.block.piston.PistonMath;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.PistonType;
 import net.minecraft.world.level.material.PushReaction;
@@ -68,7 +70,7 @@ public class ReinforcedPistonMovingBlockEntity extends BlockEntity implements IO
 		this.direction = direction;
 		this.extending = extending;
 		this.isSourcePiston = shouldHeadBeRendered;
-		this.owner = Owner.fromCompound(tag);
+		this.owner = Owner.fromTag(tag);
 	}
 
 	@Override
@@ -286,7 +288,7 @@ public class ReinforcedPistonMovingBlockEntity extends BlockEntity implements IO
 					BlockEntity be = pushedState.hasBlockEntity() ? ((EntityBlock) pushedState.getBlock()).newBlockEntity(worldPosition, pushedState) : null;
 
 					if (be != null) {
-						be.loadWithComponents(movedBlockEntityTag, level.registryAccess());
+						net.geforcemods.securitycraft.util.BlockUtils.loadBlockEntityWithComponents(be, movedBlockEntityTag, level.registryAccess());
 						level.setBlockEntity(be);
 
 						if (be instanceof IModuleInventory moduleInv) {
@@ -332,7 +334,7 @@ public class ReinforcedPistonMovingBlockEntity extends BlockEntity implements IO
 							BlockEntity storedBe = pushedState.hasBlockEntity() ? ((EntityBlock) pushedState.getBlock()).newBlockEntity(be.worldPosition, pushedState) : null;
 
 							if (storedBe != null) {
-								storedBe.loadWithComponents(be.movedBlockEntityTag, level.registryAccess());
+								net.geforcemods.securitycraft.util.BlockUtils.loadBlockEntityWithComponents(storedBe, be.movedBlockEntityTag, level.registryAccess());
 								level.setBlockEntity(storedBe);
 
 								if (storedBe instanceof IModuleInventory moduleInv) {
@@ -365,35 +367,32 @@ public class ReinforcedPistonMovingBlockEntity extends BlockEntity implements IO
 	}
 
 	@Override
-	public void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-		HolderGetter<Block> holderGetter;
-
-		super.loadAdditional(tag, registries);
-		holderGetter = (HolderGetter<Block>) (level != null ? level.holderLookup(Registries.BLOCK) : BuiltInRegistries.BLOCK);
-		movedState = NbtUtils.readBlockState(holderGetter, tag.getCompoundOrEmpty("blockState"));
-		direction = Direction.from3DDataValue(tag.getIntOr("facing", 0));
-		progress = tag.getFloatOr("progress", 0.0F);
+	public void loadAdditional(ValueInput input) {
+		super.loadAdditional(input);
+		movedState = input.read("blockState", BlockState.CODEC).orElseGet(Blocks.AIR::defaultBlockState);
+		direction = Direction.from3DDataValue(input.getIntOr("facing", 0));
+		progress = input.getFloatOr("progress", 0.0F);
 		lastProgress = progress;
-		extending = tag.getBooleanOr("extending", false);
-		isSourcePiston = tag.getBooleanOr("source", false);
-		movedBlockEntityTag = (CompoundTag) tag.get("movedBlockEntityTag");
-		owner.load(tag);
+		extending = input.getBooleanOr("extending", false);
+		isSourcePiston = input.getBooleanOr("source", false);
+		movedBlockEntityTag = input.read("movedBlockEntityTag", CompoundTag.CODEC).orElse(null);
+		owner = Owner.load(input);
 	}
 
 	@Override
-	public void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-		super.saveAdditional(tag, registries);
-		tag.put("blockState", NbtUtils.writeBlockState(movedState));
-		tag.putInt("facing", direction.get3DDataValue());
-		tag.putFloat("progress", lastProgress);
-		tag.putBoolean("extending", extending);
-		tag.putBoolean("source", isSourcePiston);
+	public void saveAdditional(ValueOutput output) {
+		super.saveAdditional(output);
+		output.store("blockState", BlockState.CODEC, movedState);
+		output.putInt("facing", direction.get3DDataValue());
+		output.putFloat("progress", lastProgress);
+		output.putBoolean("extending", extending);
+		output.putBoolean("source", isSourcePiston);
 
 		if (movedBlockEntityTag != null)
-			tag.put("movedBlockEntityTag", movedBlockEntityTag);
+			output.store("movedBlockEntityTag", CompoundTag.CODEC, movedBlockEntityTag);
 
 		if (owner != null)
-			owner.save(tag, needsValidation());
+			owner.save(output, needsValidation());
 	}
 
 	public VoxelShape getCollisionShape(BlockGetter level, BlockPos pos) {

@@ -41,6 +41,9 @@ public class KeypadChestSpecialModelRenderer implements SpecialModelRenderer<Voi
 	}
 
 	@Override
+	public void getExtents(java.util.Set<org.joml.Vector3f> extents) {}
+
+	@Override
 	public Void extractArgument(ItemStack stack) {
 		return null;
 	}
