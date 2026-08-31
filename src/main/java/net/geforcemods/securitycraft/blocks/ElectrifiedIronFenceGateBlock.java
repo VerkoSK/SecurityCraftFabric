@@ -41,7 +41,7 @@ public class ElectrifiedIronFenceGateBlock extends FenceGateBlock implements Ent
 
 	@Override
 	public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, net.minecraft.world.level.redstone.Orientation orientation, boolean isMoving) {
-		if (!level.isClientSide) {
+		if (!level.isClientSide()) {
 			boolean powered = level.hasNeighborSignal(pos);
 
 			if (state.getValue(POWERED) != powered) {
@@ -72,7 +72,7 @@ public class ElectrifiedIronFenceGateBlock extends FenceGateBlock implements Ent
 	}
 
 	@Override
-	public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity, InsideBlockEffectApplier effectApplier) {
+	public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity, InsideBlockEffectApplier effectApplier, boolean stillInside) {
 		if (state.getValue(OPEN))
 			return;
 

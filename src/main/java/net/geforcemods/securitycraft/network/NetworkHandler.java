@@ -83,14 +83,14 @@ public final class NetworkHandler {
 		});
 		ServerPlayNetworking.registerGlobalReceiver(SetOptionPayload.TYPE, (payload, context) -> {
 			ServerPlayer player = context.player();
-			MinecraftServer server = player.getServer();
+			MinecraftServer server = player.level().getServer();
 
 			if (server != null)
 				server.execute(() -> handleSetOption(player, payload));
 		});
 		ServerPlayNetworking.registerGlobalReceiver(ToggleModulePayload.TYPE, (payload, context) -> {
 			ServerPlayer player = context.player();
-			MinecraftServer server = player.getServer();
+			MinecraftServer server = player.level().getServer();
 
 			if (server != null)
 				server.execute(() -> handleToggleModule(player, payload));

@@ -91,8 +91,8 @@ public class ReinforcedLayeredCauldronBlock extends LayeredCauldronBlock impleme
 	//handleEntityOnFireInside is private on this MC version, so entityInside is overridden instead, replicating its
 	//on-fire branch (the only one relevant here; the stalactite-drip branch lives in canReceiveStalactiteDrip/entityInside's other caller)
 	@Override
-	protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity, InsideBlockEffectApplier effectApplier) {
-		if (!level.isClientSide && level instanceof net.minecraft.server.level.ServerLevel serverLevel && entity.isOnFire() && isEntityInsideContent(state, pos, entity)) {
+	protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity, InsideBlockEffectApplier effectApplier, boolean stillInside) {
+		if (!level.isClientSide() && level instanceof net.minecraft.server.level.ServerLevel serverLevel && entity.isOnFire() && isEntityInsideContent(state, pos, entity)) {
 			entity.clearFire();
 
 			if (entity.mayInteract(serverLevel, pos))

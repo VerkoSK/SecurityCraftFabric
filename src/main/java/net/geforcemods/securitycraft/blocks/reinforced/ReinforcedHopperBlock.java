@@ -60,7 +60,7 @@ public class ReinforcedHopperBlock extends HopperBlock implements IReinforcedBlo
 	@Override
 	public InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
 		//only allow the owner or players on the allowlist to access a reinforced hopper
-		if (!level.isClientSide && level.getBlockEntity(pos) instanceof ReinforcedHopperBlockEntity be && (be.isOwnedBy(player) || be.isAllowed(player)))
+		if (!level.isClientSide() && level.getBlockEntity(pos) instanceof ReinforcedHopperBlockEntity be && (be.isOwnedBy(player) || be.isAllowed(player)))
 			player.openMenu(be);
 
 		return InteractionResult.SUCCESS;
@@ -85,7 +85,7 @@ public class ReinforcedHopperBlock extends HopperBlock implements IReinforcedBlo
 
 	@Override
 	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-		return level.isClientSide ? null : createTickerHelper(type, SCContent.REINFORCED_HOPPER_BLOCK_ENTITY, ReinforcedHopperBlockEntity::pushItemsTick);
+		return level.isClientSide() ? null : createTickerHelper(type, SCContent.REINFORCED_HOPPER_BLOCK_ENTITY, ReinforcedHopperBlockEntity::pushItemsTick);
 	}
 
 	@Override

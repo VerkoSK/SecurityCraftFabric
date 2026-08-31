@@ -255,7 +255,7 @@ public class SCManualScreen extends Screen implements StillValid {
 
 	@Override
 	public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
-		if (Screen.hasShiftDown()) {
+		if (Minecraft.getInstance().hasShiftDown()) {
 			for (IngredientDisplay display : displays) {
 				if (display != null)
 					display.changeRenderingStack(-scrollY);
@@ -270,7 +270,7 @@ public class SCManualScreen extends Screen implements StillValid {
 		if (currentPage == ORIGINAL_TITLE_PAGE && patronList != null && patronList.isMouseOver(mouseX, mouseY) && !patronList.patrons.isEmpty())
 			return patronList.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
 
-		if (Screen.hasControlDown() && subpages.size() > 1) {
+		if (Minecraft.getInstance().hasControlDown() && subpages.size() > 1) {
 			switch ((int) Math.signum(scrollY)) {
 				case -1:
 					nextSubpage();
@@ -602,19 +602,19 @@ public class SCManualScreen extends Screen implements StillValid {
 	}
 
 	@Override
-	public boolean mouseClicked(double mouseX, double mouseY, int button) {
+	public boolean mouseClicked(net.minecraft.client.input.MouseButtonEvent event, boolean doubleClick) {
 		if (patronList != null)
-			patronList.mouseClicked(mouseX, mouseY, button);
+			patronList.mouseClicked(event, doubleClick);
 
-		return super.mouseClicked(mouseX, mouseY, button);
+		return super.mouseClicked(event, doubleClick);
 	}
 
 	@Override
-	public boolean mouseReleased(double mouseX, double mouseY, int button) {
+	public boolean mouseReleased(net.minecraft.client.input.MouseButtonEvent event) {
 		if (patronList != null)
-			patronList.mouseReleased(mouseX, mouseY, button);
+			patronList.mouseReleased(event);
 
-		return super.mouseReleased(mouseX, mouseY, button);
+		return super.mouseReleased(event);
 	}
 
 	/**

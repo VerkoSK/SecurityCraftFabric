@@ -43,7 +43,7 @@ public class UniversalBlockModifierItem extends Item {
 
 			//FAIL on the client makes Fabric swallow the interaction packet, so the server would never run this and
 			//the "not owned" message would never be sent; SUCCESS still lets the packet through
-			if (level.isClientSide)
+			if (level.isClientSide())
 				return level.getBlockEntity(hitResult.getBlockPos()) instanceof IModuleInventory ? InteractionResult.SUCCESS : InteractionResult.PASS;
 
 			return modifier.onItemUseFirst(new UseOnContext(player, hand, hitResult));
@@ -64,7 +64,7 @@ public class UniversalBlockModifierItem extends Item {
 			return InteractionResult.FAIL;
 		}
 
-		if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
+		if (!level.isClientSide() && player instanceof ServerPlayer serverPlayer) {
 			Component title = be instanceof Nameable nameable ? nameable.getDisplayName() : Component.translatable(be.getBlockState().getBlock().getDescriptionId());
 
 			serverPlayer.openMenu(new ExtendedScreenHandlerFactory<BlockPos>() {

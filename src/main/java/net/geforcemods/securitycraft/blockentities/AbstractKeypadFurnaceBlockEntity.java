@@ -73,7 +73,7 @@ public abstract class AbstractKeypadFurnaceBlockEntity extends AbstractFurnaceBl
 	private ContainerOpenersCounter openersCounter = new ContainerOpenersCounter() {
 		@Override
 		protected void onOpen(Level level, BlockPos pos, BlockState state) {
-			if (level.isClientSide)
+			if (level.isClientSide())
 				return;
 
 			level.playSound(null, pos, SoundEvents.IRON_DOOR_OPEN, SoundSource.BLOCKS, 1.0F, 1.0F);
@@ -82,7 +82,7 @@ public abstract class AbstractKeypadFurnaceBlockEntity extends AbstractFurnaceBl
 
 		@Override
 		protected void onClose(Level level, BlockPos pos, BlockState state) {
-			if (level.isClientSide)
+			if (level.isClientSide())
 				return;
 
 			level.playSound(null, pos, SoundEvents.IRON_DOOR_CLOSE, SoundSource.BLOCKS, 1.0F, 1.0F);
@@ -93,7 +93,7 @@ public abstract class AbstractKeypadFurnaceBlockEntity extends AbstractFurnaceBl
 		protected void openerCountChanged(Level level, BlockPos pos, BlockState state, int oldCount, int newCount) {}
 
 		@Override
-		protected boolean isOwnContainer(Player player) {
+		public boolean isOwnContainer(Player player) {
 			return player.containerMenu instanceof AbstractKeypadFurnaceMenu menu && menu.be == AbstractKeypadFurnaceBlockEntity.this;
 		}
 	};
@@ -109,7 +109,7 @@ public abstract class AbstractKeypadFurnaceBlockEntity extends AbstractFurnaceBl
 
 	public void startOpen(Player player) {
 		if (!isRemoved() && !player.isSpectator())
-			openersCounter.incrementOpeners(player, level, worldPosition, getBlockState());
+			openersCounter.incrementOpeners(player, level, worldPosition, getBlockState(), player.getContainerInteractionRange());
 	}
 
 	public void stopOpen(Player player) {

@@ -23,7 +23,7 @@ accessible	field	net/minecraft/world/level/block/state/BlockBehaviour$Properties
 # KeypadChestBlock only lets a chest pair up with another chest of the same owner, which means calling vanilla's
 # own partner-facing check first. KeypadChestBlockEntity drives the lid animation and the open/close sounds
 # through the same counter the vanilla chest uses. Upstream gets both from Forge's access transformers.
-extendable	method	net/minecraft/world/level/block/ChestBlock	candidatePartnerFacing	(Lnet/minecraft/world/item/context/BlockPlaceContext;Lnet/minecraft/core/Direction;)Lnet/minecraft/core/Direction;
+accessible	method	net/minecraft/world/level/block/ChestBlock	candidatePartnerFacing	(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/Direction;)Lnet/minecraft/core/Direction;
 accessible	field	net/minecraft/world/level/block/entity/ChestBlockEntity	openersCounter	Lnet/minecraft/world/level/block/entity/ContainerOpenersCounter;
 
 # SCManualScreen draws its widgets itself, in between the page background and the page text, instead of letting
@@ -50,6 +50,6 @@ extendable	method	net/minecraft/client/gui/screens/inventory/BookViewScreen	upda
 # setter that turns it on.
 accessible	field	net/minecraft/world/level/block/state/BlockBehaviour$Properties	requiresCorrectToolForDrops	Z
 
-# The secret signs draw their text only for the players allowed to read it. Vanilla's SignRenderer no longer
-# exposes a text-drawing hook to override in this version, so SecretSignRenderer/SecretHangingSignRenderer
-# instead swap SignBlockEntity's frontText/backText fields directly through reflection for the render call.
+# The secret signs draw their text only for the players allowed to read it. Vanilla's AbstractSignRenderer keeps
+# its text-drawing hook private in this version, so SecretSignRenderer/SecretHangingSignRenderer blank the text
+# on the extracted SignRenderState instead, which needs no widened access.

@@ -103,7 +103,7 @@ public class KeypadChestBlock extends ChestBlock {
 	private final float destroyTimeForOwner;
 
 	public KeypadChestBlock(BlockBehaviour.Properties properties) {
-		super(() -> SCContent.KEYPAD_CHEST_BLOCK_ENTITY, OwnableBlock.withReinforcedDestroyTime(properties));
+		super(() -> SCContent.KEYPAD_CHEST_BLOCK_ENTITY, net.minecraft.sounds.SoundEvents.CHEST_OPEN, net.minecraft.sounds.SoundEvents.CHEST_CLOSE, OwnableBlock.withReinforcedDestroyTime(properties));
 		destroyTimeForOwner = OwnableBlock.getStoredDestroyTime();
 	}
 
@@ -117,7 +117,7 @@ public class KeypadChestBlock extends ChestBlock {
 		if (!(level.getBlockEntity(pos) instanceof KeypadChestBlockEntity be))
 			return InteractionResult.PASS;
 
-		if (!level.isClientSide && !isBlocked(level, pos) && player instanceof ServerPlayer serverPlayer) {
+		if (!level.isClientSide() && !isBlocked(level, pos) && player instanceof ServerPlayer serverPlayer) {
 			if (be.isDenied(player)) {
 				if (be.sendsDenylistMessage())
 					PlayerUtils.sendMessageToPlayer(player, Utils.localize(getDescriptionId()), Utils.localize("messages.securitycraft:module.onDenylist"), ChatFormatting.RED);
@@ -147,7 +147,7 @@ public class KeypadChestBlock extends ChestBlock {
 	}
 
 	public void activate(BlockState state, Level level, BlockPos pos, Player player) {
-		if (!level.isClientSide) {
+		if (!level.isClientSide()) {
 			KeypadChestBlock block = (KeypadChestBlock) state.getBlock();
 			MenuProvider menuProvider = block.getMenuProvider(state, level, pos);
 
@@ -176,11 +176,38 @@ public class KeypadChestBlock extends ChestBlock {
 	}
 
 	@Override
-	public Direction candidatePartnerFacing(BlockPlaceContext ctx, Direction dir) {
-		Direction returnValue = super.candidatePartnerFacing(ctx, dir);
+	public BlockState getStateForPlacement(BlockPlaceContext ctx) {
+		net.minecraft.world.level.block.state.properties.ChestType type = net.minecraft.world.level.block.state.properties.ChestType.SINGLE;
+		Direction chestFacing = ctx.getHorizontalDirection().getOpposite();
+		Level level = ctx.getLevel();
+		BlockPos clickedPos = ctx.getClickedPos();
+		boolean isSneaking = ctx.isSecondaryUseActive();
+		Direction clickedFace = ctx.getClickedFace();
+
+		if (clickedFace.getAxis().isHorizontal() && isSneaking) {
+			Direction neighborChestFacing = candidatePartnerFacing(level, clickedPos, clickedFace.getOpposite(), ctx.getPlayer());
+
+			if (neighborChestFacing != null && neighborChestFacing.getAxis() != clickedFace.getAxis()) {
+				chestFacing = neighborChestFacing;
+				type = neighborChestFacing.getCounterClockWise() == clickedFace.getOpposite() ? net.minecraft.world.level.block.state.properties.ChestType.RIGHT : net.minecraft.world.level.block.state.properties.ChestType.LEFT;
+			}
+		}
+
+		if (type == net.minecraft.world.level.block.state.properties.ChestType.SINGLE && !isSneaking) {
+			if (chestFacing == candidatePartnerFacing(level, clickedPos, chestFacing.getClockWise(), ctx.getPlayer()))
+				type = net.minecraft.world.level.block.state.properties.ChestType.LEFT;
+			else
+				type = chestFacing == candidatePartnerFacing(level, clickedPos, chestFacing.getCounterClockWise(), ctx.getPlayer()) ? net.minecraft.world.level.block.state.properties.ChestType.RIGHT : net.minecraft.world.level.block.state.properties.ChestType.SINGLE;
+		}
+
+		return defaultBlockState().setValue(FACING, chestFacing).setValue(TYPE, type).setValue(WATERLOGGED, level.getFluidState(clickedPos).getType() == net.minecraft.world.level.material.Fluids.WATER);
+	}
+
+	public Direction candidatePartnerFacing(Level level, BlockPos pos, Direction dir, Player player) {
+		Direction returnValue = super.candidatePartnerFacing(level, pos, dir);
 
 		//only connect to chests which have the same owner
-		if (returnValue != null && ctx.getLevel().getBlockEntity(ctx.getClickedPos().relative(dir)) instanceof IOwnable ownable && ownable.isOwnedBy(ctx.getPlayer()))
+		if (returnValue != null && level.getBlockEntity(pos.relative(dir)) instanceof IOwnable ownable && ownable.isOwnedBy(player))
 			return returnValue;
 
 		return null;
@@ -229,7 +256,7 @@ public class KeypadChestBlock extends ChestBlock {
 
 	@Override
 	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-		return level.isClientSide ? createTickerHelper(type, SCContent.KEYPAD_CHEST_BLOCK_ENTITY, KeypadChestBlockEntity::lidAnimateTick) : null;
+		return level.isClientSide() ? createTickerHelper(type, SCContent.KEYPAD_CHEST_BLOCK_ENTITY, KeypadChestBlockEntity::lidAnimateTick) : null;
 	}
 
 	public static boolean isBlocked(Level level, BlockPos pos) {

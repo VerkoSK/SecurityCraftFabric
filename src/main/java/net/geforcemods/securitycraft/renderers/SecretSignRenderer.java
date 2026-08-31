@@ -1,24 +1,21 @@
 package net.geforcemods.securitycraft.renderers;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-
 import net.geforcemods.securitycraft.blockentities.SecretSignBlockEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.blockentity.SignRenderer;
+import net.minecraft.client.renderer.blockentity.state.SignRenderState;
+import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
 import net.minecraft.world.level.block.entity.SignText;
 import net.minecraft.world.phys.Vec3;
 
 /**
- * Draws the sign normally, but swaps a side's stored text out for a blank {@link SignText} before delegating to
- * vanilla's own renderer whenever the viewing player is not allowed to read that side, then restores it afterward.
- * Vanilla's {@code SignRenderer} no longer exposes a text-drawing hook to override directly in this version, and
- * {@link SignBlockEntity#setText} carries edit-side effects (re-validating click commands, marking the block
- * entity dirty) that a per-frame render swap shouldn't trigger, so the {@code frontText}/{@code backText} fields
- * are swapped directly through reflection instead.
+ * Draws the sign normally, but blanks a side's text in the render state before it is drawn whenever the viewing
+ * player is not allowed to read that side. Vanilla's {@code AbstractSignRenderer} keeps its text-drawing hook
+ * private in this version, so the swap happens on the extracted {@link SignRenderState} instead of on the block
+ * entity, which also avoids the edit-side effects {@code SignBlockEntity#setText} carries.
  */
 public class SecretSignRenderer extends SignRenderer {
 	public SecretSignRenderer(BlockEntityRendererProvider.Context ctx) {
@@ -26,30 +23,17 @@ public class SecretSignRenderer extends SignRenderer {
 	}
 
 	@Override
-	public void render(SignBlockEntity be, float partialTicks, PoseStack pose, MultiBufferSource bufferSource, int packedLight, int packedOverlay, Vec3 cameraPos) {
-		if (!(be instanceof SecretSignBlockEntity sign)) {
-			super.render(be, partialTicks, pose, bufferSource, packedLight, packedOverlay, cameraPos);
-			return;
+	public void extractRenderState(SignBlockEntity be, SignRenderState state, float partialTick, Vec3 cameraPos, ModelFeatureRenderer.CrumblingOverlay crumblingOverlay) {
+		super.extractRenderState(be, state, partialTick, cameraPos, crumblingOverlay);
+
+		if (be instanceof SecretSignBlockEntity sign) {
+			LocalPlayer player = Minecraft.getInstance().player;
+
+			if (!sign.isPlayerAllowedToSeeText(player, true))
+				state.frontText = new SignText();
+
+			if (!sign.isPlayerAllowedToSeeText(player, false))
+				state.backText = new SignText();
 		}
-
-		LocalPlayer player = Minecraft.getInstance().player;
-		SignText originalFront = be.getFrontText();
-		SignText originalBack = be.getBackText();
-		boolean seesFront = sign.isPlayerAllowedToSeeText(player, true);
-		boolean seesBack = sign.isPlayerAllowedToSeeText(player, false);
-
-		if (!seesFront)
-			SecretSignTextAccess.setFrontText(be, new SignText());
-
-		if (!seesBack)
-			SecretSignTextAccess.setBackText(be, new SignText());
-
-		super.render(be, partialTicks, pose, bufferSource, packedLight, packedOverlay, cameraPos);
-
-		if (!seesFront)
-			SecretSignTextAccess.setFrontText(be, originalFront);
-
-		if (!seesBack)
-			SecretSignTextAccess.setBackText(be, originalBack);
 	}
 }
