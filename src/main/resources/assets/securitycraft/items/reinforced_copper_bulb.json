@@ -1,0 +1,9 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "securitycraft:item/reinforced_copper_bulb",
+    "tints": [
+      { "type": "minecraft:constant", "value": 10066329 }
+    ]
+  }
+}
