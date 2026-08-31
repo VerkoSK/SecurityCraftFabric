@@ -1333,6 +1333,11 @@ public class SCContent {
 					//upstream keeps the iron trapdoor out of the sorted run (its item group is MANUAL) and appends
 					//it, the door and the two electrified blocks at the end of the tab instead
 					for (Block block : sortByVanillaOrder(REINFORCED_BLOCKS)) {
+						if (block.asItem() == net.minecraft.world.item.Items.AIR) {
+							net.geforcemods.securitycraft.SecurityCraft.LOGGER.warn("Reinforced block {} has no item and was left out of the creative tab", BuiltInRegistries.BLOCK.getKey(block));
+							continue;
+						}
+
 						if (block != REINFORCED_BY_NAME.get("reinforced_iron_trapdoor"))
 							output.accept(block);
 
