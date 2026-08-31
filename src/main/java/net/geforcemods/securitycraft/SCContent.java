@@ -301,7 +301,7 @@ public class SCContent {
 			{"reinforced_podzol", Blocks.PODZOL, "snowy_dirt"},
 			{"reinforced_mycelium", Blocks.MYCELIUM, "snowy_dirt"},
 			{"reinforced_cobweb", Blocks.COBWEB, "cobweb"},
-			{"reinforced_chain", Blocks.CHAIN, "chain"},
+			{"reinforced_chain", Blocks.IRON_CHAIN, "chain"},
 			{"reinforced_end_rod", Blocks.END_ROD, "end_rod"},
 			{"reinforced_lantern", Blocks.LANTERN, "lantern"},
 			{"reinforced_soul_lantern", Blocks.SOUL_LANTERN, "lantern"},

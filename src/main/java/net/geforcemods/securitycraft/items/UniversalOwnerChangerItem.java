@@ -44,7 +44,7 @@ public class UniversalOwnerChangerItem extends Item {
 			if (!(stack.getItem() instanceof UniversalOwnerChangerItem changer))
 				return InteractionResult.PASS;
 
-			if (level.isClientSide)
+			if (level.isClientSide())
 				return level.getBlockEntity(hitResult.getBlockPos()) instanceof IOwnable ? InteractionResult.SUCCESS : InteractionResult.PASS;
 
 			return changer.changeOwner(stack, new UseOnContext(player, hand, hitResult));

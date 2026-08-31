@@ -67,7 +67,7 @@ public final class OwnershipUtils {
 	/** Makes the placing player the owner of the block that was just placed. */
 	public static void setPlacedBy(Level level, BlockPos pos, LivingEntity placer) {
 		if (placer instanceof Player player && level.getBlockEntity(pos) instanceof IOwnable ownable)
-			ownable.setOwner(player.getGameProfile().getName(), player.getUUID().toString());
+			ownable.setOwner(player.getGameProfile().name(), player.getUUID().toString());
 	}
 
 	/** The block entity every owned block carries, which is what actually stores the owner. */

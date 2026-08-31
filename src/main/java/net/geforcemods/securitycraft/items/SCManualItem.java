@@ -23,9 +23,9 @@ public class SCManualItem extends Item {
 	public InteractionResult use(Level level, Player player, InteractionHand hand) {
 		//the screen is opened through the client entrypoint, like every other screen in this port: naming a client
 		//class here directly makes Fabric refuse to load this item on a dedicated server
-		if (level.isClientSide)
+		if (level.isClientSide())
 			SecurityCraftClient.openManualScreen();
 
-		return level.isClientSide ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER;
+		return level.isClientSide() ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER;
 	}
 }

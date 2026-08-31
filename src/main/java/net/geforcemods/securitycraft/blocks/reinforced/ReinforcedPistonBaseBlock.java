@@ -80,7 +80,7 @@ public class ReinforcedPistonBaseBlock extends PistonBaseBlock implements IReinf
 
 	@Override
 	public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean isMoving) {
-		if (!oldState.is(state.getBlock()) && !level.isClientSide && level.getBlockEntity(pos) instanceof OwnableBlockEntity)
+		if (!oldState.is(state.getBlock()) && !level.isClientSide() && level.getBlockEntity(pos) instanceof OwnableBlockEntity)
 			checkIfExtend(level, pos, state);
 	}
 
@@ -134,7 +134,7 @@ public class ReinforcedPistonBaseBlock extends PistonBaseBlock implements IReinf
 		Direction direction = state.getValue(FACING);
 		BlockState extendedState = state.setValue(EXTENDED, true);
 
-		if (!level.isClientSide) {
+		if (!level.isClientSide()) {
 			boolean isPowered = getNeighborSignal(level, pos, direction);
 
 			if (isPowered && (id == 1 || id == 2)) {

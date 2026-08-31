@@ -96,7 +96,7 @@ public class KeypadBarrelBlock extends Block implements EntityBlock {
 			return InteractionResult.PASS;
 
 		if (stack.is(Items.FROG_SPAWN_EGG) && be.isOwnedBy(player)) {
-			if (!level.isClientSide)
+			if (!level.isClientSide())
 				level.setBlockAndUpdate(pos, state.cycle(FROG));
 
 			return InteractionResult.SUCCESS;
@@ -110,7 +110,7 @@ public class KeypadBarrelBlock extends Block implements EntityBlock {
 		if (!(level.getBlockEntity(pos) instanceof KeypadBarrelBlockEntity be))
 			return InteractionResult.PASS;
 
-		if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
+		if (!level.isClientSide() && player instanceof ServerPlayer serverPlayer) {
 			if (be.isDenied(player)) {
 				if (be.sendsDenylistMessage())
 					PlayerUtils.sendMessageToPlayer(player, Utils.localize(getDescriptionId()), Utils.localize("messages.securitycraft:module.onDenylist"), ChatFormatting.RED);
@@ -140,7 +140,7 @@ public class KeypadBarrelBlock extends Block implements EntityBlock {
 	}
 
 	public void activate(BlockState state, Level level, BlockPos pos, Player player) {
-		if (!level.isClientSide) {
+		if (!level.isClientSide()) {
 			MenuProvider menuProvider = getMenuProvider(state, level, pos);
 
 			if (menuProvider != null) {
@@ -189,7 +189,7 @@ public class KeypadBarrelBlock extends Block implements EntityBlock {
 	}
 
 	@Override
-	public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
+	public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos, net.minecraft.core.Direction direction) {
 		return AbstractContainerMenu.getRedstoneSignalFromBlockEntity(level.getBlockEntity(pos));
 	}
 

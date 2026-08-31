@@ -206,7 +206,7 @@ public class ElectrifiedIronFenceBlock extends OwnableBlock {
 	}
 
 	@Override
-	public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity, InsideBlockEffectApplier effectApplier) {
+	public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity, InsideBlockEffectApplier effectApplier, boolean stillInside) {
 		hurtOrConvertEntity(this, state, level, pos, entity);
 	}
 
@@ -236,7 +236,7 @@ public class ElectrifiedIronFenceBlock extends OwnableBlock {
 			if (be.allowsOwnableEntity(ownableEntity))
 				return;
 		}
-		else if (!level.isClientSide) {
+		else if (!level.isClientSide()) {
 			LightningBolt lightning = EntityType.LIGHTNING_BOLT.create(level, net.minecraft.world.entity.EntitySpawnReason.TRIGGERED);
 
 			lightning.setPos(Vec3.atBottomCenterOf(pos));

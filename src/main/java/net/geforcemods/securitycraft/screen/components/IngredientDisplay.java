@@ -1,8 +1,8 @@
 package net.geforcemods.securitycraft.screen.components;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Renderable;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 
@@ -29,7 +29,7 @@ public class IngredientDisplay implements Renderable {
 	}
 
 	public void tick() {
-		if (!Screen.hasShiftDown() && --ticksToChange <= 0) {
+		if (!Minecraft.getInstance().hasShiftDown() && --ticksToChange <= 0) {
 			changeRenderingStack(1);
 			ticksToChange = DISPLAY_LENGTH;
 		}

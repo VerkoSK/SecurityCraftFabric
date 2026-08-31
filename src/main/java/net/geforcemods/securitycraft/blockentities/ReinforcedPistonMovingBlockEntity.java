@@ -270,7 +270,7 @@ public class ReinforcedPistonMovingBlockEntity extends BlockEntity implements IO
 	 * Removes the piston's BlockEntity and stops any movement
 	 */
 	public void finalTick() {
-		if (level != null && (lastProgress < 1.0F || level.isClientSide)) {
+		if (level != null && (lastProgress < 1.0F || level.isClientSide())) {
 			progress = 1.0F;
 			lastProgress = progress;
 			level.removeBlockEntity(worldPosition);
@@ -313,7 +313,7 @@ public class ReinforcedPistonMovingBlockEntity extends BlockEntity implements IO
 		be.lastProgress = be.progress;
 
 		if (be.lastProgress >= 1.0F) {
-			if (level.isClientSide && be.deathTicks < 5)
+			if (level.isClientSide() && be.deathTicks < 5)
 				++be.deathTicks;
 			else {
 				level.removeBlockEntity(pos);
