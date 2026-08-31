@@ -45,6 +45,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.ContainerOpenersCounter;
 import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 /**
  * Ported from upstream's {@code KeypadBarrelBlockEntity}, extending vanilla's {@link RandomizableContainerBlockEntity}
@@ -99,59 +101,54 @@ public class KeypadBarrelBlockEntity extends RandomizableContainerBlockEntity im
 	}
 
 	@Override
-	public void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+	public void saveAdditional(ValueOutput output) {
 		long cooldownLeft;
 
-		super.saveAdditional(tag, registries);
+		super.saveAdditional(output);
 
-		if (!trySaveLootTable(tag))
-			ContainerHelper.saveAllItems(tag, items, registries);
+		if (!trySaveLootTable(output))
+			ContainerHelper.saveAllItems(output, items);
 
-		writeModuleInventory(tag, registries);
-		writeModuleStates(tag);
-		writeOptions(tag);
+		writeModuleInventory(output);
+		writeModuleStates(output);
+		writeOptions(output);
 		cooldownLeft = getCooldownEnd() - System.currentTimeMillis();
-		tag.putLong("cooldownLeft", cooldownLeft <= 0 ? -1 : cooldownLeft);
-		tag.putString("salt", salt);
+		output.putLong("cooldownLeft", cooldownLeft <= 0 ? -1 : cooldownLeft);
+		output.putString("salt", salt);
 
 		if (passcodeHash != null)
-			tag.putString("passcodeHash", passcodeHash);
+			output.putString("passcodeHash", passcodeHash);
 
-		owner.save(tag);
+		owner.save(output);
 
 		if (previousBarrel != null)
-			tag.putString("previous_barrel", previousBarrel.toString());
+			output.putString("previous_barrel", previousBarrel.toString());
 	}
 
 	@Override
-	public void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-		super.loadAdditional(tag, registries);
+	public void loadAdditional(ValueInput input) {
+		super.loadAdditional(input);
 
 		items = NonNullList.withSize(getContainerSize(), ItemStack.EMPTY);
 
-		if (!tryLoadLootTable(tag))
-			ContainerHelper.loadAllItems(tag, items, registries);
+		if (!tryLoadLootTable(input))
+			ContainerHelper.loadAllItems(input, items);
 
-		modules = readModuleInventory(tag, registries);
-		moduleStates = readModuleStates(tag);
-		readOptions(tag);
-		cooldownEnd = System.currentTimeMillis() + tag.getLongOr("cooldownLeft", 0L);
+		modules = readModuleInventory(input);
+		moduleStates = readModuleStates(input);
+		readOptions(input);
+		cooldownEnd = System.currentTimeMillis() + input.getLongOr("cooldownLeft", 0L);
+		salt = input.getStringOr("salt", salt);
+		passcodeHash = input.getString("passcodeHash").orElse(null);
+		owner = Owner.load(input);
 
-		if (tag.contains("salt"))
-			salt = tag.getStringOr("salt", "");
+		String savedPreviousBarrel = input.getStringOr("previous_barrel", "");
 
-		passcodeHash = tag.contains("passcodeHash") ? tag.getStringOr("passcodeHash", null) : null;
-		owner.load(tag);
+		if (!savedPreviousBarrel.isBlank()) {
+			ResourceLocation parsedPreviousBarrel = ResourceLocation.parse(savedPreviousBarrel);
 
-		if (tag.contains("previous_barrel")) {
-			String savedPreviousBarrel = tag.getStringOr("previous_barrel", "");
-
-			if (!savedPreviousBarrel.isBlank()) {
-				ResourceLocation parsedPreviousBarrel = ResourceLocation.parse(savedPreviousBarrel);
-
-				if (parsedPreviousBarrel.getPath() != null && !parsedPreviousBarrel.getPath().isBlank())
-					previousBarrel = parsedPreviousBarrel;
-			}
+			if (parsedPreviousBarrel.getPath() != null && !parsedPreviousBarrel.getPath().isBlank())
+				previousBarrel = parsedPreviousBarrel;
 		}
 	}
 

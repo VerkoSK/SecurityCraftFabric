@@ -28,6 +28,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.entity.LecternBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 /**
  * The reinforced counterpart of vanilla's lectern block entity.
@@ -47,24 +49,24 @@ public class ReinforcedLecternBlockEntity extends LecternBlockEntity implements 
 	}
 
 	@Override
-	public void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-		super.loadAdditional(tag, registries);
-		owner.load(tag);
-		modules = readModuleInventory(tag, registries);
-		moduleStates = readModuleStates(tag);
-		readOptions(tag);
+	public void loadAdditional(ValueInput input) {
+		super.loadAdditional(input);
+		owner = Owner.load(input);
+		modules = readModuleInventory(input);
+		moduleStates = readModuleStates(input);
+		readOptions(input);
 	}
 
 	@Override
-	public void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-		super.saveAdditional(tag, registries);
+	public void saveAdditional(ValueOutput output) {
+		super.saveAdditional(output);
 
 		if (owner != null)
-			owner.save(tag, needsValidation());
+			owner.save(output, needsValidation());
 
-		writeModuleInventory(tag, registries);
-		writeModuleStates(tag);
-		writeOptions(tag);
+		writeModuleInventory(output);
+		writeModuleStates(output);
+		writeOptions(output);
 	}
 
 	@Override
