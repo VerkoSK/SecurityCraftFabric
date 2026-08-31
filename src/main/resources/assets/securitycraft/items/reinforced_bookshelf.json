@@ -1,9 +1,0 @@
-{
-  "model": {
-    "type": "minecraft:model",
-    "model": "securitycraft:item/reinforced_bookshelf",
-    "tints": [
-      { "type": "minecraft:constant", "value": 10066329 }
-    ]
-  }
-}
