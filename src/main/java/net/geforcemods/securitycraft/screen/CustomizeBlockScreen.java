@@ -31,7 +31,7 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerListener;
@@ -45,12 +45,12 @@ import net.minecraft.world.level.block.entity.BlockEntity;
  * handling are 1:1 with upstream's {@code CustomizeBlockScreen}.
  */
 public class CustomizeBlockScreen extends AbstractContainerScreen<CustomizeBlockMenu> implements IHasExtraAreas, ContainerListener {
-	private static final ResourceLocation BEACON_GUI = ResourceLocation.withDefaultNamespace("textures/gui/container/beacon.png");
+	private static final Identifier BEACON_GUI = Identifier.withDefaultNamespace("textures/gui/container/beacon.png");
 	private final List<Rect2i> extraAreas = new ArrayList<>();
 	private final IModuleInventory moduleInv;
 	private final BlockPos pos;
 	private final int maxNumberOfModules;
-	private final ResourceLocation texture;
+	private final Identifier texture;
 	private final Option<?>[] options;
 	private final ModuleButton[] descriptionButtons;
 	private final EnumMap<ModuleType, Boolean> indicators = new EnumMap<>(ModuleType.class);

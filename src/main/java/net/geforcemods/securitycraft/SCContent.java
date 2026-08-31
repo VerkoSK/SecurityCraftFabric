@@ -1186,7 +1186,7 @@ public class SCContent {
 	 * own {@code Properties#copy} leaves behind; those matter for glass, so they are re-applied here.
 	 */
 	private static BlockBehaviour.Properties reinforcedProps(String name, String category) {
-		Block vanilla = BuiltInRegistries.BLOCK.getValue(ResourceLocation.withDefaultNamespace(name.substring("reinforced_".length())));
+		Block vanilla = BuiltInRegistries.BLOCK.getValue(Identifier.withDefaultNamespace(name.substring("reinforced_".length())));
 
 		if (vanilla == Blocks.AIR)
 			return isGlass(name, category) ? glassProps() : category.equals("pane") ? paneProps() : shapeProps(name);
@@ -1409,13 +1409,13 @@ public class SCContent {
 		Block counterpart = BuiltInRegistries.BLOCK.getValue(id(path));
 
 		if (counterpart == Blocks.AIR)
-			counterpart = BuiltInRegistries.BLOCK.getValue(ResourceLocation.fromNamespaceAndPath("minecraft", path));
+			counterpart = BuiltInRegistries.BLOCK.getValue(Identifier.fromNamespaceAndPath("minecraft", path));
 
 		return counterpart == Blocks.AIR ? null : counterpart;
 	}
 
 	public static Block reinforcedCounterpart(Block plain) {
-		net.minecraft.resources.ResourceLocation loc = BuiltInRegistries.BLOCK.getKey(plain);
+		net.minecraft.resources.Identifier loc = BuiltInRegistries.BLOCK.getKey(plain);
 
 		if (!loc.getNamespace().equals("minecraft") && !loc.getNamespace().equals(SecurityCraft.MODID))
 			return null;

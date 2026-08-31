@@ -9,7 +9,7 @@ import net.geforcemods.securitycraft.util.Utils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.Nameable;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -27,10 +27,10 @@ import snownee.jade.api.config.IPluginConfig;
  */
 @WailaPlugin(SecurityCraft.MODID)
 public final class SCJadePlugin implements IWailaPlugin, IBlockComponentProvider {
-	private static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(SecurityCraft.MODID, "info");
-	private static final ResourceLocation SHOW_OWNER = ResourceLocation.fromNamespaceAndPath(SecurityCraft.MODID, "showowner");
-	private static final ResourceLocation SHOW_MODULES = ResourceLocation.fromNamespaceAndPath(SecurityCraft.MODID, "showmodules");
-	private static final ResourceLocation SHOW_CUSTOM_NAME = ResourceLocation.fromNamespaceAndPath(SecurityCraft.MODID, "showcustomname");
+	private static final Identifier ID = Identifier.fromNamespaceAndPath(SecurityCraft.MODID, "info");
+	private static final Identifier SHOW_OWNER = Identifier.fromNamespaceAndPath(SecurityCraft.MODID, "showowner");
+	private static final Identifier SHOW_MODULES = Identifier.fromNamespaceAndPath(SecurityCraft.MODID, "showmodules");
+	private static final Identifier SHOW_CUSTOM_NAME = Identifier.fromNamespaceAndPath(SecurityCraft.MODID, "showcustomname");
 
 	@Override
 	public void registerClient(IWailaClientRegistration registration) {
@@ -74,7 +74,7 @@ public final class SCJadePlugin implements IWailaPlugin, IBlockComponentProvider
 	}
 
 	@Override
-	public ResourceLocation getUid() {
+	public Identifier getUid() {
 		return ID;
 	}
 }

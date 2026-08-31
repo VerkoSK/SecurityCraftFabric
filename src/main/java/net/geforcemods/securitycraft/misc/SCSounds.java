@@ -3,7 +3,7 @@ package net.geforcemods.securitycraft.misc;
 import net.geforcemods.securitycraft.SCContent;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 
 /**
@@ -15,7 +15,7 @@ public enum SCSounds {
 	LOCK("lock");
 
 	public final String path;
-	public final ResourceLocation location;
+	public final Identifier location;
 	public final SoundEvent event;
 
 	private SCSounds(String path) {

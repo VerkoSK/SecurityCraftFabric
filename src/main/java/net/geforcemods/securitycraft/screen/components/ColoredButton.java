@@ -1,6 +1,6 @@
 package net.geforcemods.securitycraft.screen.components;
 
-import net.minecraft.client.gui.Font;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
@@ -23,7 +23,11 @@ public class ColoredButton extends Button {
 	}
 
 	@Override
-	public void renderString(GuiGraphics guiGraphics, Font font, int color) {
-		super.renderString(guiGraphics, font, (active ? fgColor : 0xA0A0A0) | Mth.ceil(alpha * 255.0F) << 24);
+	protected void renderContents(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+		renderDefaultSprite(guiGraphics);
+
+		int color = (active ? fgColor : 0xA0A0A0) | Mth.ceil(alpha * 255.0F) << 24;
+
+		guiGraphics.drawCenteredString(Minecraft.getInstance().font, getMessage(), getX() + width / 2, getY() + (height - 8) / 2, color);
 	}
 }

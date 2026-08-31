@@ -50,7 +50,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
@@ -76,11 +76,11 @@ import net.minecraft.world.level.block.Block;
  * </ul>
  */
 public class SCManualScreen extends Screen implements StillValid {
-	private static final ResourceLocation PAGE = SCContent.id("textures/gui/info_book_texture.png");
-	private static final ResourceLocation PAGE_WITH_SCROLL = SCContent.id("textures/gui/info_book_texture_special.png"); //for items without a recipe
-	private static final ResourceLocation TITLE_PAGE = SCContent.id("textures/gui/info_book_title_page.png");
-	private static final ResourceLocation ICONS = SCContent.id("textures/gui/info_book_icons.png");
-	private static final ResourceLocation VANILLA_BOOK = ResourceLocation.withDefaultNamespace("textures/gui/book.png");
+	private static final Identifier PAGE = SCContent.id("textures/gui/info_book_texture.png");
+	private static final Identifier PAGE_WITH_SCROLL = SCContent.id("textures/gui/info_book_texture_special.png"); //for items without a recipe
+	private static final Identifier TITLE_PAGE = SCContent.id("textures/gui/info_book_title_page.png");
+	private static final Identifier ICONS = SCContent.id("textures/gui/info_book_icons.png");
+	private static final Identifier VANILLA_BOOK = Identifier.withDefaultNamespace("textures/gui/book.png");
 	private static final int SUBPAGE_LENGTH = 1285;
 	/** The Fabric port's own title page. It is the first page of the book; {@link #ORIGINAL_TITLE_PAGE} is the last. */
 	private static final int PORT_TITLE_PAGE = -2;
@@ -124,7 +124,7 @@ public class SCManualScreen extends Screen implements StillValid {
 		byte startY = 2;
 
 		startX = (width - 256) / 2;
-		patreonLinkButton = addRenderableWidget(new HyperlinkButton(startX + 225, 143, 16, 16, Component.empty(), b -> handleComponentClicked(Style.EMPTY.withClickEvent(new ClickEvent.OpenUrl(java.net.URI.create("https://www.patreon.com/Geforce"))))));
+		patreonLinkButton = addRenderableWidget(new HyperlinkButton(startX + 225, 143, 16, 16, Component.empty(), b -> Screen.clickUrlAction(Minecraft.getInstance(), this, java.net.URI.create("https://www.patreon.com/Geforce"))));
 		patronList = addRenderableWidget(new PatronList(112, 90, 90, startX + 130));
 		patronList.fetchPatrons();
 		previousSubpage = addRenderableWidget(new ChangePageButton(startX + 155, startY + 95, false, b -> previousSubpage()));
@@ -745,11 +745,8 @@ public class SCManualScreen extends Screen implements StillValid {
 		}
 
 		@Override
-		public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
-			if (visible) {
-				isHovered = mouseX >= getX() && mouseY >= getY() && mouseX < getX() + width && mouseY < getY() + height;
-				guiGraphics.blit(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, VANILLA_BOOK, getX(), getY(), isHoveredOrFocused() ? 23 : 0, textureY, 23, 13, 256, 256);
-			}
+		protected void renderContents(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+			guiGraphics.blit(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, VANILLA_BOOK, getX(), getY(), isHoveredOrFocused() ? 23 : 0, textureY, 23, 13, 256, 256);
 		}
 	}
 
@@ -759,8 +756,7 @@ public class SCManualScreen extends Screen implements StillValid {
 		}
 
 		@Override
-		public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
-			isHovered = mouseX >= getX() && mouseY >= getY() && mouseX < getX() + width && mouseY < getY() + height;
+		protected void renderContents(GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
 			guiGraphics.blit(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, ICONS, getX(), getY(), isHoveredOrFocused() ? 138 : 122, 1, 16, 16, 256, 256);
 		}
 	}
