@@ -325,7 +325,7 @@ public class KeypadChestBlock extends ChestBlock {
 			chest.clearContent();
 			level.setBlockAndUpdate(pos, convertedBlock.defaultBlockState().setValue(FACING, facing).setValue(TYPE, type));
 			chest = (ChestBlockEntity) level.getBlockEntity(pos);
-			chest.loadWithComponents(tag, level.registryAccess());
+			net.geforcemods.securitycraft.util.BlockUtils.loadBlockEntityWithComponents(chest, tag, level.registryAccess());
 
 			if (protect) {
 				if (player != null)

@@ -72,6 +72,11 @@ public class ReinforcedCauldronBlock extends AbstractCauldronBlock implements IR
 		return CODEC;
 	}
 
+	/** Reinstates {@code AbstractCauldronBlock#isEntityInsideContent}, which was removed in MC 1.21.6. */
+	protected boolean isEntityInsideContent(BlockState state, BlockPos pos, Entity entity) {
+		return entity.getY() < pos.getY() + getContentHeight(state) && entity.getBoundingBox().maxY > pos.getY() + 0.25D;
+	}
+
 	@Override
 	public float getDestroyProgress(BlockState state, Player player, BlockGetter level, BlockPos pos) {
 		return OwnershipUtils.getDestroyProgress(destroyTimeForOwner, state, player, level, pos);
@@ -186,7 +191,7 @@ public class ReinforcedCauldronBlock extends AbstractCauldronBlock implements IR
 		level.setBlockAndUpdate(pos, newState);
 
 		if (tag != null)
-			level.getBlockEntity(pos).loadCustomOnly(tag, registries);
+			net.geforcemods.securitycraft.util.BlockUtils.loadBlockEntityCustomOnly(level.getBlockEntity(pos), tag, registries);
 	}
 
 	/**

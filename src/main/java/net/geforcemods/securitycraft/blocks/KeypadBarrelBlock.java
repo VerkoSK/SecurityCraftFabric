@@ -239,7 +239,7 @@ public class KeypadBarrelBlock extends Block implements EntityBlock {
 			};
 			level.setBlockAndUpdate(pos, SCContent.KEYPAD_BARREL.defaultBlockState().setValue(HORIZONTAL_FACING, horizontalFacing).setValue(LID_FACING, generalFacing).setValue(OPEN, false));
 			keypadBarrel = (KeypadBarrelBlockEntity) level.getBlockEntity(pos);
-			keypadBarrel.loadWithComponents(tag, level.registryAccess());
+			net.geforcemods.securitycraft.util.BlockUtils.loadBlockEntityWithComponents(keypadBarrel, tag, level.registryAccess());
 			keypadBarrel.setPreviousBarrel(state.getBlock());
 
 			if (player != null)
@@ -271,7 +271,7 @@ public class KeypadBarrelBlock extends Block implements EntityBlock {
 			keypadBarrel.clearContent();
 			level.setBlockAndUpdate(pos, convertedBlock.defaultBlockState().setValue(BarrelBlock.FACING, direction).setValue(OPEN, false));
 			barrel = (BarrelBlockEntity) level.getBlockEntity(pos);
-			barrel.loadWithComponents(tag, level.registryAccess());
+			net.geforcemods.securitycraft.util.BlockUtils.loadBlockEntityWithComponents(barrel, tag, level.registryAccess());
 			return true;
 		}
 	}

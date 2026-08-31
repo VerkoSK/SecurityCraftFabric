@@ -11,6 +11,7 @@ import net.geforcemods.securitycraft.util.PlayerUtils;
 import net.geforcemods.securitycraft.util.Utils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -70,7 +71,7 @@ public class UniversalOwnerChangerItem extends Item {
 			return InteractionResult.FAIL;
 		}
 
-		if (!stack.hasCustomHoverName() && !isDefault) {
+		if (!stack.has(DataComponents.CUSTOM_NAME) && !isDefault) {
 			message(player, "messages.securitycraft:universalOwnerChanger.noName", ChatFormatting.RED);
 			return InteractionResult.FAIL;
 		}
@@ -81,7 +82,7 @@ public class UniversalOwnerChangerItem extends Item {
 				return InteractionResult.FAIL;
 			}
 
-			if (!stack.hasCustomHoverName())
+			if (!stack.has(DataComponents.CUSTOM_NAME))
 				newOwner = player.getName().getString();
 		}
 
