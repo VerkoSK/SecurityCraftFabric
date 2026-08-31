@@ -11,9 +11,7 @@ import net.geforcemods.securitycraft.items.ModuleItem;
 import net.geforcemods.securitycraft.misc.ModuleType;
 import net.geforcemods.securitycraft.util.Utils;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -21,6 +19,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.entity.DispenserBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 /**
  * The reinforced counterpart of vanilla's dispenser block entity: owner + allowlist/disguise modules layered
@@ -51,21 +51,21 @@ public class ReinforcedDispenserBlockEntity extends DispenserBlockEntity impleme
 	}
 
 	@Override
-	public void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-		super.loadAdditional(tag, registries);
+	public void loadAdditional(ValueInput input) {
+		super.loadAdditional(input);
 
-		owner.load(tag);
-		modules = readModuleInventory(tag, registries);
-		moduleStates = readModuleStates(tag);
+		owner = Owner.load(input);
+		modules = readModuleInventory(input);
+		moduleStates = readModuleStates(input);
 	}
 
 	@Override
-	public void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-		super.saveAdditional(tag, registries);
+	public void saveAdditional(ValueOutput output) {
+		super.saveAdditional(output);
 
-		owner.save(tag, needsValidation());
-		writeModuleInventory(tag, registries);
-		writeModuleStates(tag);
+		owner.save(output, needsValidation());
+		writeModuleInventory(output);
+		writeModuleStates(output);
 	}
 
 	@Override

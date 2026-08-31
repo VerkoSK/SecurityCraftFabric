@@ -40,6 +40,8 @@ import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.ChestType;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 /**
  * Ported from upstream's {@code KeypadChestBlockEntity}. Cannot extend the port's {@link net.geforcemods.securitycraft.api.CustomizableBlockEntity}
@@ -72,50 +74,45 @@ public class KeypadChestBlockEntity extends ChestBlockEntity implements Passcode
 	}
 
 	@Override
-	public void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+	public void saveAdditional(ValueOutput output) {
 		long cooldownLeft;
 
-		super.saveAdditional(tag, registries);
-		writeModuleInventory(tag, registries);
-		writeModuleStates(tag);
-		writeOptions(tag);
+		super.saveAdditional(output);
+		writeModuleInventory(output);
+		writeModuleStates(output);
+		writeOptions(output);
 		cooldownLeft = getCooldownEnd() - System.currentTimeMillis();
-		tag.putLong("cooldownLeft", cooldownLeft <= 0 ? -1 : cooldownLeft);
-		tag.putString("salt", salt);
+		output.putLong("cooldownLeft", cooldownLeft <= 0 ? -1 : cooldownLeft);
+		output.putString("salt", salt);
 
 		if (passcodeHash != null)
-			tag.putString("passcodeHash", passcodeHash);
+			output.putString("passcodeHash", passcodeHash);
 
-		owner.save(tag);
+		owner.save(output);
 
 		if (previousChest != null)
-			tag.putString("previous_chest", previousChest.toString());
+			output.putString("previous_chest", previousChest.toString());
 	}
 
 	@Override
-	public void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-		super.loadAdditional(tag, registries);
+	public void loadAdditional(ValueInput input) {
+		super.loadAdditional(input);
 
-		modules = readModuleInventory(tag, registries);
-		moduleStates = readModuleStates(tag);
-		readOptions(tag);
-		cooldownEnd = System.currentTimeMillis() + tag.getLongOr("cooldownLeft", 0L);
+		modules = readModuleInventory(input);
+		moduleStates = readModuleStates(input);
+		readOptions(input);
+		cooldownEnd = System.currentTimeMillis() + input.getLongOr("cooldownLeft", 0L);
+		salt = input.getStringOr("salt", salt);
+		passcodeHash = input.getString("passcodeHash").orElse(null);
+		owner = Owner.load(input);
 
-		if (tag.contains("salt"))
-			salt = tag.getStringOr("salt", "");
+		String savedPreviousChest = input.getStringOr("previous_chest", "");
 
-		passcodeHash = tag.contains("passcodeHash") ? tag.getStringOr("passcodeHash", null) : null;
-		owner.load(tag);
+		if (!savedPreviousChest.isBlank()) {
+			ResourceLocation parsedPreviousChest = ResourceLocation.parse(savedPreviousChest);
 
-		if (tag.contains("previous_chest")) {
-			String savedPreviousChest = tag.getStringOr("previous_chest", "");
-
-			if (!savedPreviousChest.isBlank()) {
-				ResourceLocation parsedPreviousChest = ResourceLocation.parse(savedPreviousChest);
-
-				if (parsedPreviousChest.getPath() != null && !parsedPreviousChest.getPath().isBlank())
-					previousChest = parsedPreviousChest;
-			}
+			if (parsedPreviousChest.getPath() != null && !parsedPreviousChest.getPath().isBlank())
+				previousChest = parsedPreviousChest;
 		}
 	}
 
@@ -334,7 +331,13 @@ public class KeypadChestBlockEntity extends ChestBlockEntity implements Passcode
 			insertModule(other.getModule(type), false);
 		}
 
-		readOptions(other.writeOptions(new CompoundTag()));
+		Option<?>[] ownOptions = customOptions();
+		Option<?>[] otherOptions = other.customOptions();
+
+		for (int i = 0; i < ownOptions.length; i++) {
+			ownOptions[i].copy(otherOptions[i]);
+		}
+
 		copyPasscodeFrom(other);
 	}
 

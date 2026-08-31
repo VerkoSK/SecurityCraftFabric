@@ -151,7 +151,7 @@ public class SCManualScreen extends Screen implements StillValid {
 	@Override
 	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
 		renderBackground(guiGraphics, mouseX, mouseY, partialTicks);
-		guiGraphics.blit(net.minecraft.client.renderer.RenderType::guiTextured, currentPage < 0 ? TITLE_PAGE : (recipe != null && !recipe.isEmpty() ? PAGE : PAGE_WITH_SCROLL), startX, 5, 0, 0, 256, 250, 256, 256);
+		guiGraphics.blit(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, currentPage < 0 ? TITLE_PAGE : (recipe != null && !recipe.isEmpty() ? PAGE : PAGE_WITH_SCROLL), startX, 5, 0, 0, 256, 250, 256, 256);
 
 		for (Renderable renderable : renderables) {
 			renderable.render(guiGraphics, mouseX, mouseY, partialTicks);
@@ -171,33 +171,33 @@ public class SCManualScreen extends Screen implements StillValid {
 			guiGraphics.drawString(font, pageNumberText, startX + 240 - font.width(pageNumberText), 182, 0x8E8270, false);
 
 			if (ownable)
-				guiGraphics.blit(net.minecraft.client.renderer.RenderType::guiTextured, ICONS, startX + 29, 118, 1, 1, 16, 16, 256, 256);
+				guiGraphics.blit(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, ICONS, startX + 29, 118, 1, 1, 16, 16, 256, 256);
 
 			if (passcodeProtected)
-				guiGraphics.blit(net.minecraft.client.renderer.RenderType::guiTextured, ICONS, startX + 55, 118, 18, 1, 17, 16, 256, 256);
+				guiGraphics.blit(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, ICONS, startX + 55, 118, 18, 1, 17, 16, 256, 256);
 
 			if (explosive)
-				guiGraphics.blit(net.minecraft.client.renderer.RenderType::guiTextured, ICONS, startX + 107, 117, 54, 1, 18, 18, 256, 256);
+				guiGraphics.blit(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, ICONS, startX + 107, 117, 54, 1, 18, 18, 256, 256);
 
 			if (customizable)
-				guiGraphics.blit(net.minecraft.client.renderer.RenderType::guiTextured, ICONS, startX + 136, 118, 88, 1, 16, 16, 256, 256);
+				guiGraphics.blit(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, ICONS, startX + 136, 118, 88, 1, 16, 16, 256, 256);
 
 			if (moduleInventory)
-				guiGraphics.blit(net.minecraft.client.renderer.RenderType::guiTextured, ICONS, startX + 163, 118, 105, 1, 16, 16, 256, 256);
+				guiGraphics.blit(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, ICONS, startX + 163, 118, 105, 1, 16, 16, 256, 256);
 
 			if (customizable || moduleInventory)
-				guiGraphics.blit(net.minecraft.client.renderer.RenderType::guiTextured, ICONS, startX + 213, 118, 72, 1, 16, 16, 256, 256);
+				guiGraphics.blit(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, ICONS, startX + 213, 118, 72, 1, 16, 16, 256, 256);
 
 			for (int i = 0; i < hoverCheckers.size(); i++) {
 				HoverChecker chc = hoverCheckers.get(i);
 
 				if (chc != null && chc.checkHover(mouseX, mouseY)) {
 					if (chc instanceof TextHoverChecker thc && thc.getName() != null) {
-						guiGraphics.renderComponentTooltip(font, thc.getLines(), mouseX, mouseY);
+						guiGraphics.setComponentTooltipForNextFrame(font, thc.getLines(), mouseX, mouseY);
 						break;
 					}
 					else if (i < displays.length && !displays[i].getCurrentStack().isEmpty()) {
-						guiGraphics.renderTooltip(font, displays[i].getCurrentStack(), mouseX, mouseY);
+						guiGraphics.setTooltipForNextFrame(font, displays[i].getCurrentStack(), mouseX, mouseY);
 						break;
 					}
 				}
@@ -672,7 +672,7 @@ public class SCManualScreen extends Screen implements StillValid {
 					guiGraphics.drawString(font, patron, getX() + 2, rowTop + 2, 0, false);
 
 					if (mouseX >= getX() && mouseX < getX() + width - 6 && mouseY >= rowTop && mouseY < rowTop + ROW_HEIGHT && font.width(patron) >= width - 6)
-						guiGraphics.renderTooltip(font, List.of(Component.literal(patron)), Optional.empty(), mouseX, rowTop);
+						guiGraphics.setTooltipForNextFrame(font, List.<Component>of(Component.literal(patron)), Optional.empty(), mouseX, rowTop);
 				}
 
 				guiGraphics.disableScissor();
@@ -748,7 +748,7 @@ public class SCManualScreen extends Screen implements StillValid {
 		public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
 			if (visible) {
 				isHovered = mouseX >= getX() && mouseY >= getY() && mouseX < getX() + width && mouseY < getY() + height;
-				guiGraphics.blit(net.minecraft.client.renderer.RenderType::guiTextured, VANILLA_BOOK, getX(), getY(), isHoveredOrFocused() ? 23 : 0, textureY, 23, 13, 256, 256);
+				guiGraphics.blit(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, VANILLA_BOOK, getX(), getY(), isHoveredOrFocused() ? 23 : 0, textureY, 23, 13, 256, 256);
 			}
 		}
 	}
@@ -761,7 +761,7 @@ public class SCManualScreen extends Screen implements StillValid {
 		@Override
 		public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
 			isHovered = mouseX >= getX() && mouseY >= getY() && mouseX < getX() + width && mouseY < getY() + height;
-			guiGraphics.blit(net.minecraft.client.renderer.RenderType::guiTextured, ICONS, getX(), getY(), isHoveredOrFocused() ? 138 : 122, 1, 16, 16, 256, 256);
+			guiGraphics.blit(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, ICONS, getX(), getY(), isHoveredOrFocused() ? 138 : 122, 1, 16, 16, 256, 256);
 		}
 	}
 

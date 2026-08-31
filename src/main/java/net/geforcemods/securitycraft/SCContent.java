@@ -31,10 +31,11 @@ import net.minecraft.world.level.block.ButtonBlock;
 import net.minecraft.world.level.block.FenceBlock;
 import net.minecraft.world.level.block.FenceGateBlock;
 import net.minecraft.world.level.block.IronBarsBlock;
-import net.minecraft.world.level.block.PressurePlateBlock;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.TrapDoorBlock;
 import net.minecraft.world.level.block.WallBlock;
@@ -956,8 +957,8 @@ public class SCContent {
 				case "wall" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedWallBlock(props);
 				case "slab" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedSlabBlock(props);
 				case "stairs" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedStairBlock(Blocks.STONE.defaultBlockState(), props);
-				case "button" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedButtonBlock(props, BlockSetType.STONE, 20, false);
-				case "pressure_plate" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedPressurePlateBlock(PressurePlateBlock.Sensitivity.EVERYTHING, props, BlockSetType.STONE);
+				case "button" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedButtonBlock(props, BlockSetType.STONE, 20);
+				case "pressure_plate" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedPressurePlateBlock(props, BlockSetType.STONE);
 				case "trapdoor" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedTrapdoorBlock(BlockSetType.IRON, props);
 				default -> new BaseReinforcedBlock(props);
 			};
@@ -1039,7 +1040,7 @@ public class SCContent {
 	 * own {@code Properties#copy} leaves behind; those matter for glass, so they are re-applied here.
 	 */
 	private static BlockBehaviour.Properties reinforcedProps(String name, String category) {
-		Block vanilla = BuiltInRegistries.BLOCK.get(ResourceLocation.withDefaultNamespace(name.substring("reinforced_".length())));
+		Block vanilla = BuiltInRegistries.BLOCK.getValue(ResourceLocation.withDefaultNamespace(name.substring("reinforced_".length())));
 
 		if (vanilla == Blocks.AIR)
 			return isGlass(name, category) ? glassProps() : category.equals("pane") ? paneProps() : shapeProps(name);

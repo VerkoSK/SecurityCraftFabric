@@ -1,5 +1,6 @@
 package net.geforcemods.securitycraft.api;
 
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
@@ -132,6 +133,16 @@ public class Owner {
 		owner.name = input.getStringOr(DEFAULT_OWNER_NAME, DEFAULT_OWNER_NAME);
 		owner.uuid = input.getStringOr(DEFAULT_OWNER_UUID, DEFAULT_OWNER_UUID);
 		owner.validated = input.getBooleanOr("ownerValidated", true);
+		return owner;
+	}
+
+	/** Reads the owner straight out of a raw block-entity {@link CompoundTag}, for the few call sites (moving pistons) that only have the tag. */
+	public static Owner fromTag(CompoundTag tag) {
+		Owner owner = new Owner();
+
+		owner.name = tag.getStringOr(DEFAULT_OWNER_NAME, DEFAULT_OWNER_NAME);
+		owner.uuid = tag.getStringOr(DEFAULT_OWNER_UUID, DEFAULT_OWNER_UUID);
+		owner.validated = tag.getBooleanOr("ownerValidated", true);
 		return owner;
 	}
 

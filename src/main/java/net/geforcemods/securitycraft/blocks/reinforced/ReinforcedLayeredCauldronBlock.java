@@ -51,6 +51,11 @@ public class ReinforcedLayeredCauldronBlock extends LayeredCauldronBlock impleme
 		return OwnershipUtils.getDestroyProgress(destroyTimeForOwner, state, player, level, pos);
 	}
 
+	/** Reinstates {@code AbstractCauldronBlock#isEntityInsideContent}, which was removed in MC 1.21.6. */
+	protected boolean isEntityInsideContent(BlockState state, BlockPos pos, Entity entity) {
+		return entity.getY() < pos.getY() + getContentHeight(state) && entity.getBoundingBox().maxY > pos.getY() + 0.25D;
+	}
+
 	@Override
 	public VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext collisionContext) {
 		if (collisionContext instanceof EntityCollisionContext ctx && ctx.getEntity() != null) {

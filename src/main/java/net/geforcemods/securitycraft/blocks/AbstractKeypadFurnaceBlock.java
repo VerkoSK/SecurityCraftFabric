@@ -253,7 +253,7 @@ public abstract class AbstractKeypadFurnaceBlock extends OwnableBlock implements
 			furnace.clearContent();
 			level.setBlockAndUpdate(pos, convertedState);
 			furnace = (net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity) level.getBlockEntity(pos);
-			furnace.loadWithComponents(tag, level.registryAccess());
+			net.geforcemods.securitycraft.util.BlockUtils.loadBlockEntityWithComponents(furnace, tag, level.registryAccess());
 
 			if (protect && player != null)
 				((net.geforcemods.securitycraft.api.IOwnable) furnace).setOwner(player.getName().getString(), player.getUUID().toString());
