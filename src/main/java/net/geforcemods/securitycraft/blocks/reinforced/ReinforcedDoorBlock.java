@@ -30,7 +30,7 @@ public class ReinforcedDoorBlock extends DoorBlock implements IReinforcedBlock, 
 	private final float destroyTimeForOwner;
 
 	public ReinforcedDoorBlock(BlockSetType type, BlockBehaviour.Properties properties) {
-		super(OwnableBlock.withReinforcedDestroyTime(properties), type);
+		super(type, OwnableBlock.withReinforcedDestroyTime(properties));
 		destroyTimeForOwner = OwnableBlock.getStoredDestroyTime();
 	}
 
@@ -65,7 +65,7 @@ public class ReinforcedDoorBlock extends DoorBlock implements IReinforcedBlock, 
 	}
 
 	@Override
-	public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, BlockPos fromPos, boolean movedByPiston) {
+	public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, net.minecraft.world.level.redstone.Orientation orientation, boolean movedByPiston) {
 		boolean active = hasActiveKeypadNextTo(level, pos, state);
 
 		if (active != state.getValue(BlockStateProperties.OPEN)) {

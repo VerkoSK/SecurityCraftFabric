@@ -18,6 +18,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.entity.ChiseledBookShelfBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 /**
  * The reinforced counterpart of vanilla's chiseled bookshelf block entity: owner + allowlist module layered
@@ -42,23 +44,23 @@ public class ReinforcedChiseledBookshelfBlockEntity extends ChiseledBookShelfBlo
 	}
 
 	@Override
-	public void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-		super.loadAdditional(tag, registries);
+	public void loadAdditional(ValueInput input) {
+		super.loadAdditional(input);
 
-		owner.load(tag);
-		modules = readModuleInventory(tag, registries);
-		moduleStates = readModuleStates(tag);
+		owner = Owner.load(input);
+		modules = readModuleInventory(input);
+		moduleStates = readModuleStates(input);
 	}
 
 	@Override
-	public void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-		super.saveAdditional(tag, registries);
+	public void saveAdditional(ValueOutput output) {
+		super.saveAdditional(output);
 
 		if (owner != null)
-			owner.save(tag, needsValidation());
+			owner.save(output, needsValidation());
 
-		writeModuleInventory(tag, registries);
-		writeModuleStates(tag);
+		writeModuleInventory(output);
+		writeModuleStates(output);
 	}
 
 	@Override

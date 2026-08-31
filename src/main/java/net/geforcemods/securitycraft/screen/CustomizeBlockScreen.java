@@ -45,7 +45,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
  * handling are 1:1 with upstream's {@code CustomizeBlockScreen}.
  */
 public class CustomizeBlockScreen extends AbstractContainerScreen<CustomizeBlockMenu> implements IHasExtraAreas, ContainerListener {
-	private static final ResourceLocation BEACON_GUI = new ResourceLocation("textures/gui/container/beacon.png");
+	private static final ResourceLocation BEACON_GUI = ResourceLocation.withDefaultNamespace("textures/gui/container/beacon.png");
 	private final List<Rect2i> extraAreas = new ArrayList<>();
 	private final IModuleInventory moduleInv;
 	private final BlockPos pos;
@@ -105,7 +105,7 @@ public class CustomizeBlockScreen extends AbstractContainerScreen<CustomizeBlock
 						slider = new CallbackSlider(x, y, 120, 20, doubleOption.getMin(), doubleOption.getMax(), doubleOption.get(), doubleOption.getIncrement(), s -> {
 							doubleOption.setValue(s.getValue());
 							optionButtons[index].setTooltip(Tooltip.create(getOptionDescription(index)));
-							ClientPlayNetworking.send(SetOptionPayload.CHANNEL, new SetOptionPayload(pos, index, false, doubleOption.get()).write());
+							ClientPlayNetworking.send(new SetOptionPayload(pos, index, false, doubleOption.get()));
 						}) {
 							@Override
 							protected void updateMessage() {
@@ -119,7 +119,7 @@ public class CustomizeBlockScreen extends AbstractContainerScreen<CustomizeBlock
 						slider = new CallbackSlider(x, y, 120, 20, intOption.getMin(), intOption.getMax(), intOption.get(), 1.0, s -> {
 							intOption.setValue(s.getValueInt());
 							optionButtons[index].setTooltip(Tooltip.create(getOptionDescription(index)));
-							ClientPlayNetworking.send(SetOptionPayload.CHANNEL, new SetOptionPayload(pos, index, false, intOption.get()).write());
+							ClientPlayNetworking.send(new SetOptionPayload(pos, index, false, intOption.get()));
 						}) {
 							@Override
 							protected void updateMessage() {
@@ -160,7 +160,7 @@ public class CustomizeBlockScreen extends AbstractContainerScreen<CustomizeBlock
 			moduleInv.insertModule(moduleInv.getModule(moduleType), true);
 		}
 
-		ClientPlayNetworking.send(ToggleModulePayload.CHANNEL, new ToggleModulePayload(pos, moduleType).write());
+		ClientPlayNetworking.send(new ToggleModulePayload(pos, moduleType));
 	}
 
 	/** Pale yellow while the option still holds its default value, light grey once it has been changed. */
@@ -176,7 +176,7 @@ public class CustomizeBlockScreen extends AbstractContainerScreen<CustomizeBlock
 		button.setFGColor(optionColor(tempOption));
 		button.setMessage(getOptionButtonTitle(tempOption));
 		optionButtons[index].setTooltip(Tooltip.create(getOptionDescription(index)));
-		ClientPlayNetworking.send(SetOptionPayload.CHANNEL, new SetOptionPayload(pos, index, true, 0.0).write());
+		ClientPlayNetworking.send(new SetOptionPayload(pos, index, true, 0.0));
 	}
 
 	@Override
@@ -203,7 +203,7 @@ public class CustomizeBlockScreen extends AbstractContainerScreen<CustomizeBlock
 	public void dataChanged(AbstractContainerMenu menu, int slotIndex, int value) {}
 
 	private Component getModuleTooltipText(ItemStack stack, ModuleItem moduleItem) {
-		return Utils.localize(stack.getDescriptionId())
+		return Utils.localize(stack.getItem().getDescriptionId())
 				.append(Component.literal(":"))
 				.withStyle(ChatFormatting.RESET)
 				.append(Component.literal("\n\n"))
@@ -232,7 +232,7 @@ public class CustomizeBlockScreen extends AbstractContainerScreen<CustomizeBlock
 				ModuleType type = moduleItem.getModuleType();
 
 				if (indicators.containsKey(type))
-					guiGraphics.blit(BEACON_GUI, leftPos + slot.x - 2, topPos + slot.y + 16, 20, 20, indicators.get(type) ? 88 : 110, 219, 21, 22, 256, 256);
+					guiGraphics.blit(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, BEACON_GUI, leftPos + slot.x - 2, topPos + slot.y + 16, indicators.get(type) ? 88 : 110, 219, 20, 20, 21, 22, 256, 256);
 			}
 		}
 
@@ -247,7 +247,7 @@ public class CustomizeBlockScreen extends AbstractContainerScreen<CustomizeBlock
 
 	@Override
 	protected void renderBg(GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
-		guiGraphics.blit(texture, leftPos, topPos, 0, 0, imageWidth, imageHeight);
+		guiGraphics.blit(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, texture, leftPos, topPos, 0, 0, imageWidth, imageHeight, 256, 256);
 	}
 
 	@Override
