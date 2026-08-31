@@ -848,6 +848,16 @@ public class SCContent {
 		registerFunctionalReinforced("reinforced_dispenser", new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedDispenserBlock(reinforcedCopy(Blocks.DISPENSER)));
 		registerFunctionalReinforced("reinforced_dropper", new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedDropperBlock(reinforcedCopy(Blocks.DROPPER)));
 		registerFunctionalReinforced("reinforced_observer", new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedObserverBlock(reinforcedCopy(Blocks.OBSERVER)));
+		//the copper bulb, copper grate and lightning rod: registered here because each carries vanilla state the shape tables cannot express
+		registerFunctionalReinforced("reinforced_copper_bulb", new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedCopperBulbBlock(reinforcedCopy(Blocks.COPPER_BULB)));
+		registerFunctionalReinforced("reinforced_exposed_copper_bulb", new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedCopperBulbBlock(reinforcedCopy(Blocks.EXPOSED_COPPER_BULB)));
+		registerFunctionalReinforced("reinforced_weathered_copper_bulb", new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedCopperBulbBlock(reinforcedCopy(Blocks.WEATHERED_COPPER_BULB)));
+		registerFunctionalReinforced("reinforced_oxidized_copper_bulb", new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedCopperBulbBlock(reinforcedCopy(Blocks.OXIDIZED_COPPER_BULB)));
+		registerFunctionalReinforced("reinforced_copper_grate", new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedCopperGrateBlock(reinforcedCopy(Blocks.COPPER_GRATE)));
+		registerFunctionalReinforced("reinforced_exposed_copper_grate", new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedCopperGrateBlock(reinforcedCopy(Blocks.EXPOSED_COPPER_GRATE)));
+		registerFunctionalReinforced("reinforced_weathered_copper_grate", new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedCopperGrateBlock(reinforcedCopy(Blocks.WEATHERED_COPPER_GRATE)));
+		registerFunctionalReinforced("reinforced_oxidized_copper_grate", new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedCopperGrateBlock(reinforcedCopy(Blocks.OXIDIZED_COPPER_GRATE)));
+		registerFunctionalReinforced("reinforced_lightning_rod", new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedLightningRodBlock(reinforcedCopy(Blocks.LIGHTNING_ROD)));
 
 		//the crystal quartz set: the mod's own decorative stone, plus its reinforced counterparts
 		CRYSTAL_QUARTZ = register("crystal_quartz", new Block(crystalQuartzProps(Blocks.QUARTZ_BLOCK)));
