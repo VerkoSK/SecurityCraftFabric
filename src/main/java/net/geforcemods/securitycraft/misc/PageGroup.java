@@ -1,6 +1,7 @@
 package net.geforcemods.securitycraft.misc;
 
-import net.minecraft.world.item.crafting.Ingredient;
+import java.util.List;
+import net.minecraft.world.item.ItemStack;
 
 /** 1:1 with the upstream enum of the same name. */
 public enum PageGroup {
@@ -21,7 +22,7 @@ public enum PageGroup {
 	private final boolean hasRecipeGrid;
 	private final String title;
 	private final String specialInfoKey;
-	private Ingredient items = Ingredient.EMPTY;
+	private List<ItemStack> items = List.of();
 
 	PageGroup(boolean hasRecipeGrid, String title, String specialInfoKey) {
 		this.hasRecipeGrid = hasRecipeGrid;
@@ -41,11 +42,11 @@ public enum PageGroup {
 		return specialInfoKey;
 	}
 
-	public Ingredient getItems() {
+	public List<ItemStack> getItems() {
 		return items;
 	}
 
-	public void setItems(Ingredient items) {
+	public void setItems(List<ItemStack> items) {
 		this.items = items;
 	}
 }

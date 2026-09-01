@@ -12,7 +12,6 @@ import net.geforcemods.securitycraft.util.Utils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Block;
 
 /**
@@ -117,7 +116,7 @@ public class ManualPage {
 		if (items.isEmpty())
 			return;
 
-		group.setItems(Ingredient.of(items.stream().map(ItemStack::new)));
+		group.setItems(items.stream().map(ItemStack::new).toList());
 		SCManualItem.PAGES.add(new SCManualPage(items.get(0), group, Utils.localize(group.getTitle()), Utils.localize("help." + group.getSpecialInfoKey()), "", false));
 	}
 
