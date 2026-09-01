@@ -23,7 +23,7 @@ public class SecurityCraftClient implements ClientModInitializer {
 
 	/** Opens the SecurityCraft Manual (called client-side only). */
 	public static void openManualScreen() {
-		Minecraft.getInstance().setScreen(new net.geforcemods.securitycraft.screen.SCManualScreen());
+		Minecraft.getInstance().setScreenAndShow(new net.geforcemods.securitycraft.screen.SCManualScreen());
 	}
 
 	/** Opens the mine remote access tool screen for the given stack (called client-side only). */
@@ -69,14 +69,11 @@ public class SecurityCraftClient implements ClientModInitializer {
 		return 0xFFFFFFFF;
 	}
 
-	/**
-	 * Vanilla's sign renderers are typed to the vanilla sign block entity, so a renderer extending one cannot also
-	 * declare itself a renderer of the secret sign's own block entity. Upstream never has to say so, because Forge's
-	 * registration is not generic; this is the cast that costs.
-	 */
-	@SuppressWarnings("unchecked")
-	private static <T extends net.minecraft.world.level.block.entity.BlockEntity> void registerSignRenderer(net.minecraft.world.level.block.entity.BlockEntityType<T> type, java.util.function.Function<net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context, ? extends net.minecraft.client.renderer.blockentity.BlockEntityRenderer<?>> provider) {
-		net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry.register(type, ctx -> (net.minecraft.client.renderer.blockentity.BlockEntityRenderer<T>) provider.apply(ctx));
+	@SuppressWarnings({"unchecked", "rawtypes"})
+	private static <T extends net.minecraft.world.level.block.entity.BlockEntity, S extends net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState> void registerBlockEntityRenderer(net.minecraft.world.level.block.entity.BlockEntityType<?> type, net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider<T, S> provider) {
+		//the secret sign / keypad chest renderers are typed to their vanilla parent block entity, not to the SC subtype the
+		//block entity type is parameterised with, so Fabric's generic register call cannot unify the two without this cast
+		net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry.register((net.minecraft.world.level.block.entity.BlockEntityType) type, (net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider) provider);
 	}
 
 	@Override
@@ -102,10 +99,9 @@ public class SecurityCraftClient implements ClientModInitializer {
 		net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(SCContent.IMS_BOMB_ENTITY, net.geforcemods.securitycraft.renderers.IMSBombRenderer::new);
 		//the chest's block model is empty, so both the placed block and the item are drawn by its own renderer
 		//the secret signs draw their text only for the players allowed to read it
-		registerSignRenderer(SCContent.SECRET_SIGN_BLOCK_ENTITY, net.geforcemods.securitycraft.renderers.SecretSignRenderer::new);
-		registerSignRenderer(SCContent.SECRET_HANGING_SIGN_BLOCK_ENTITY, net.geforcemods.securitycraft.renderers.SecretHangingSignRenderer::new);
-		net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry.register(SCContent.KEYPAD_CHEST_BLOCK_ENTITY, net.geforcemods.securitycraft.renderers.KeypadChestRenderer::new);
-		net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry.INSTANCE.register(SCContent.KEYPAD_CHEST, new net.geforcemods.securitycraft.renderers.KeypadChestItemRenderer());
+		registerBlockEntityRenderer(SCContent.SECRET_SIGN_BLOCK_ENTITY, net.geforcemods.securitycraft.renderers.SecretSignRenderer::new);
+		registerBlockEntityRenderer(SCContent.SECRET_HANGING_SIGN_BLOCK_ENTITY, net.geforcemods.securitycraft.renderers.SecretHangingSignRenderer::new);
+		registerBlockEntityRenderer(SCContent.KEYPAD_CHEST_BLOCK_ENTITY, net.geforcemods.securitycraft.renderers.KeypadChestRenderer::new);
 		net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry.register(SCContent.CLAYMORE_BLOCK_ENTITY, net.geforcemods.securitycraft.renderers.ClaymoreRenderer::new);
 		ClientPlayNetworking.registerGlobalReceiver(net.geforcemods.securitycraft.network.UpdateLaserColorsPayload.TYPE, (payload, context) -> context.client().execute(() -> {
 			for (net.minecraft.core.BlockPos pos : payload.positions())

@@ -206,7 +206,7 @@ public class CustomizeBlockScreen extends AbstractContainerScreen<CustomizeBlock
 	public void dataChanged(AbstractContainerMenu menu, int slotIndex, int value) {}
 
 	private Component getModuleTooltipText(ItemStack stack, ModuleItem moduleItem) {
-		return Utils.localize(stack.getDescriptionId())
+		return Utils.localize(stack.getItem().getDescriptionId())
 				.append(Component.literal(":"))
 				.withStyle(ChatFormatting.RESET)
 				.append(Component.literal("\n\n"))

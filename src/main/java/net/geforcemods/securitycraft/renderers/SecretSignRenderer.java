@@ -1,41 +1,39 @@
 package net.geforcemods.securitycraft.renderers;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-
 import net.geforcemods.securitycraft.blockentities.SecretSignBlockEntity;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.Model;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.client.renderer.blockentity.SignRenderer;
-import net.minecraft.world.level.block.SignBlock;
+import net.minecraft.client.renderer.blockentity.StandingSignRenderer;
+import net.minecraft.client.renderer.blockentity.state.StandingSignRenderState;
+import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.WoodType;
+import net.minecraft.world.level.block.entity.SignText;
+import net.minecraft.world.phys.Vec3;
 
-/** Ported from upstream's {@code SecretSignRenderer}, unchanged: nothing here is Forge-specific. */
-public class SecretSignRenderer extends SignRenderer {
+/**
+ * Ported from upstream's {@code SecretSignRenderer}: the standing secret sign only shows its text to players
+ * allowed to read it. Upstream/NeoForge suppress a single side's text through a {@code submitSignText} hook that
+ * Fabric's sign renderer has no equivalent of, so this blanks the disallowed side's {@link SignText} in the
+ * render state instead, which the vanilla renderer then draws as an empty sign.
+ */
+public class SecretSignRenderer extends StandingSignRenderer {
 	public SecretSignRenderer(BlockEntityRendererProvider.Context ctx) {
 		super(ctx);
 	}
 
 	@Override
-	public void renderSignWithText(SignBlockEntity be, PoseStack pose, MultiBufferSource bufferSource, int packedLight, int packedOverlay, BlockState state, SignBlock block, WoodType woodType, Model model) {
-		if (be instanceof SecretSignBlockEntity sign) {
+	public void extractRenderState(SignBlockEntity be, StandingSignRenderState state, float partialTick, Vec3 cameraPos, ModelFeatureRenderer.CrumblingOverlay crumblingOverlay) {
+		super.extractRenderState(be, state, partialTick, cameraPos, crumblingOverlay);
+
+		if (be instanceof SecretSignBlockEntity secretSign) {
 			LocalPlayer player = Minecraft.getInstance().player;
 
-			pose.pushPose();
-			translateSign(pose, -block.getYRotationDegrees(state), state);
-			renderSign(pose, bufferSource, packedLight, packedOverlay, woodType, model);
+			if (!secretSign.isPlayerAllowedToSeeText(player, true))
+				state.frontText = new SignText();
 
-			if (sign.isPlayerAllowedToSeeText(player, true))
-				renderSignText(be.getBlockPos(), be.getFrontText(), pose, bufferSource, packedLight, be.getTextLineHeight(), be.getMaxTextLineWidth(), true);
-
-			if (sign.isPlayerAllowedToSeeText(player, false))
-				renderSignText(be.getBlockPos(), be.getBackText(), pose, bufferSource, packedLight, be.getTextLineHeight(), be.getMaxTextLineWidth(), false);
-
-			pose.popPose();
+			if (!secretSign.isPlayerAllowedToSeeText(player, false))
+				state.backText = new SignText();
 		}
 	}
 }
