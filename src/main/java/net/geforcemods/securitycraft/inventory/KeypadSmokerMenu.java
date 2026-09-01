@@ -5,7 +5,7 @@ import net.geforcemods.securitycraft.blockentities.AbstractKeypadFurnaceBlockEnt
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.RecipeBookType;
-import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.RecipePropertySet;
 import net.minecraft.world.level.Level;
 
 public class KeypadSmokerMenu extends AbstractKeypadFurnaceMenu {
@@ -14,6 +14,6 @@ public class KeypadSmokerMenu extends AbstractKeypadFurnaceMenu {
 	}
 
 	public KeypadSmokerMenu(int windowId, Inventory inventory, AbstractKeypadFurnaceBlockEntity be) {
-		super(SCContent.KEYPAD_SMOKER_MENU, RecipeType.SMOKING, RecipeBookType.SMOKER, windowId, inventory, be);
+		super(SCContent.KEYPAD_SMOKER_MENU, RecipePropertySet.SMOKER_INPUT, RecipeBookType.SMOKER, windowId, inventory, be);
 	}
 }

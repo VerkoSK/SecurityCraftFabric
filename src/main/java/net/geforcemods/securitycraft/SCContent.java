@@ -11,6 +11,7 @@ import net.geforcemods.securitycraft.blockentities.KeypadBlockEntity;
 import net.geforcemods.securitycraft.blocks.KeypadBlock;
 import net.geforcemods.securitycraft.blocks.reinforced.BaseReinforcedBlock;
 import net.geforcemods.securitycraft.items.BlockReinforcerItem;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -260,39 +261,39 @@ public class SCContent {
 	 * {@link #REINFORCED} table above does.
 	 */
 	private static final Object[][] REINFORCED_COPIES = {
-			{"reinforced_white_carpet", Blocks.WHITE_CARPET, "carpet"},
-			{"reinforced_orange_carpet", Blocks.ORANGE_CARPET, "carpet"},
-			{"reinforced_magenta_carpet", Blocks.MAGENTA_CARPET, "carpet"},
-			{"reinforced_light_blue_carpet", Blocks.LIGHT_BLUE_CARPET, "carpet"},
-			{"reinforced_yellow_carpet", Blocks.YELLOW_CARPET, "carpet"},
-			{"reinforced_lime_carpet", Blocks.LIME_CARPET, "carpet"},
-			{"reinforced_pink_carpet", Blocks.PINK_CARPET, "carpet"},
-			{"reinforced_gray_carpet", Blocks.GRAY_CARPET, "carpet"},
-			{"reinforced_light_gray_carpet", Blocks.LIGHT_GRAY_CARPET, "carpet"},
-			{"reinforced_cyan_carpet", Blocks.CYAN_CARPET, "carpet"},
-			{"reinforced_purple_carpet", Blocks.PURPLE_CARPET, "carpet"},
-			{"reinforced_blue_carpet", Blocks.BLUE_CARPET, "carpet"},
-			{"reinforced_brown_carpet", Blocks.BROWN_CARPET, "carpet"},
-			{"reinforced_green_carpet", Blocks.GREEN_CARPET, "carpet"},
-			{"reinforced_red_carpet", Blocks.RED_CARPET, "carpet"},
-			{"reinforced_black_carpet", Blocks.BLACK_CARPET, "carpet"},
+			{"reinforced_white_carpet", Blocks.CARPET.pick(DyeColor.WHITE), "carpet"},
+			{"reinforced_orange_carpet", Blocks.CARPET.pick(DyeColor.ORANGE), "carpet"},
+			{"reinforced_magenta_carpet", Blocks.CARPET.pick(DyeColor.MAGENTA), "carpet"},
+			{"reinforced_light_blue_carpet", Blocks.CARPET.pick(DyeColor.LIGHT_BLUE), "carpet"},
+			{"reinforced_yellow_carpet", Blocks.CARPET.pick(DyeColor.YELLOW), "carpet"},
+			{"reinforced_lime_carpet", Blocks.CARPET.pick(DyeColor.LIME), "carpet"},
+			{"reinforced_pink_carpet", Blocks.CARPET.pick(DyeColor.PINK), "carpet"},
+			{"reinforced_gray_carpet", Blocks.CARPET.pick(DyeColor.GRAY), "carpet"},
+			{"reinforced_light_gray_carpet", Blocks.CARPET.pick(DyeColor.LIGHT_GRAY), "carpet"},
+			{"reinforced_cyan_carpet", Blocks.CARPET.pick(DyeColor.CYAN), "carpet"},
+			{"reinforced_purple_carpet", Blocks.CARPET.pick(DyeColor.PURPLE), "carpet"},
+			{"reinforced_blue_carpet", Blocks.CARPET.pick(DyeColor.BLUE), "carpet"},
+			{"reinforced_brown_carpet", Blocks.CARPET.pick(DyeColor.BROWN), "carpet"},
+			{"reinforced_green_carpet", Blocks.CARPET.pick(DyeColor.GREEN), "carpet"},
+			{"reinforced_red_carpet", Blocks.CARPET.pick(DyeColor.RED), "carpet"},
+			{"reinforced_black_carpet", Blocks.CARPET.pick(DyeColor.BLACK), "carpet"},
 			{"reinforced_moss_carpet", Blocks.MOSS_CARPET, "carpet"},
-			{"reinforced_white_glazed_terracotta", Blocks.WHITE_GLAZED_TERRACOTTA, "glazed_terracotta"},
-			{"reinforced_orange_glazed_terracotta", Blocks.ORANGE_GLAZED_TERRACOTTA, "glazed_terracotta"},
-			{"reinforced_magenta_glazed_terracotta", Blocks.MAGENTA_GLAZED_TERRACOTTA, "glazed_terracotta"},
-			{"reinforced_light_blue_glazed_terracotta", Blocks.LIGHT_BLUE_GLAZED_TERRACOTTA, "glazed_terracotta"},
-			{"reinforced_yellow_glazed_terracotta", Blocks.YELLOW_GLAZED_TERRACOTTA, "glazed_terracotta"},
-			{"reinforced_lime_glazed_terracotta", Blocks.LIME_GLAZED_TERRACOTTA, "glazed_terracotta"},
-			{"reinforced_pink_glazed_terracotta", Blocks.PINK_GLAZED_TERRACOTTA, "glazed_terracotta"},
-			{"reinforced_gray_glazed_terracotta", Blocks.GRAY_GLAZED_TERRACOTTA, "glazed_terracotta"},
-			{"reinforced_light_gray_glazed_terracotta", Blocks.LIGHT_GRAY_GLAZED_TERRACOTTA, "glazed_terracotta"},
-			{"reinforced_cyan_glazed_terracotta", Blocks.CYAN_GLAZED_TERRACOTTA, "glazed_terracotta"},
-			{"reinforced_purple_glazed_terracotta", Blocks.PURPLE_GLAZED_TERRACOTTA, "glazed_terracotta"},
-			{"reinforced_blue_glazed_terracotta", Blocks.BLUE_GLAZED_TERRACOTTA, "glazed_terracotta"},
-			{"reinforced_brown_glazed_terracotta", Blocks.BROWN_GLAZED_TERRACOTTA, "glazed_terracotta"},
-			{"reinforced_green_glazed_terracotta", Blocks.GREEN_GLAZED_TERRACOTTA, "glazed_terracotta"},
-			{"reinforced_red_glazed_terracotta", Blocks.RED_GLAZED_TERRACOTTA, "glazed_terracotta"},
-			{"reinforced_black_glazed_terracotta", Blocks.BLACK_GLAZED_TERRACOTTA, "glazed_terracotta"},
+			{"reinforced_white_glazed_terracotta", Blocks.GLAZED_TERRACOTTA.pick(DyeColor.WHITE), "glazed_terracotta"},
+			{"reinforced_orange_glazed_terracotta", Blocks.GLAZED_TERRACOTTA.pick(DyeColor.ORANGE), "glazed_terracotta"},
+			{"reinforced_magenta_glazed_terracotta", Blocks.GLAZED_TERRACOTTA.pick(DyeColor.MAGENTA), "glazed_terracotta"},
+			{"reinforced_light_blue_glazed_terracotta", Blocks.GLAZED_TERRACOTTA.pick(DyeColor.LIGHT_BLUE), "glazed_terracotta"},
+			{"reinforced_yellow_glazed_terracotta", Blocks.GLAZED_TERRACOTTA.pick(DyeColor.YELLOW), "glazed_terracotta"},
+			{"reinforced_lime_glazed_terracotta", Blocks.GLAZED_TERRACOTTA.pick(DyeColor.LIME), "glazed_terracotta"},
+			{"reinforced_pink_glazed_terracotta", Blocks.GLAZED_TERRACOTTA.pick(DyeColor.PINK), "glazed_terracotta"},
+			{"reinforced_gray_glazed_terracotta", Blocks.GLAZED_TERRACOTTA.pick(DyeColor.GRAY), "glazed_terracotta"},
+			{"reinforced_light_gray_glazed_terracotta", Blocks.GLAZED_TERRACOTTA.pick(DyeColor.LIGHT_GRAY), "glazed_terracotta"},
+			{"reinforced_cyan_glazed_terracotta", Blocks.GLAZED_TERRACOTTA.pick(DyeColor.CYAN), "glazed_terracotta"},
+			{"reinforced_purple_glazed_terracotta", Blocks.GLAZED_TERRACOTTA.pick(DyeColor.PURPLE), "glazed_terracotta"},
+			{"reinforced_blue_glazed_terracotta", Blocks.GLAZED_TERRACOTTA.pick(DyeColor.BLUE), "glazed_terracotta"},
+			{"reinforced_brown_glazed_terracotta", Blocks.GLAZED_TERRACOTTA.pick(DyeColor.BROWN), "glazed_terracotta"},
+			{"reinforced_green_glazed_terracotta", Blocks.GLAZED_TERRACOTTA.pick(DyeColor.GREEN), "glazed_terracotta"},
+			{"reinforced_red_glazed_terracotta", Blocks.GLAZED_TERRACOTTA.pick(DyeColor.RED), "glazed_terracotta"},
+			{"reinforced_black_glazed_terracotta", Blocks.GLAZED_TERRACOTTA.pick(DyeColor.BLACK), "glazed_terracotta"},
 			{"reinforced_bookshelf", Blocks.BOOKSHELF, "cube"},
 			{"reinforced_sea_lantern", Blocks.SEA_LANTERN, "cube"},
 			{"reinforced_redstone_lamp", Blocks.REDSTONE_LAMP, "redstone_lamp"},
@@ -300,7 +301,7 @@ public class SCContent {
 			{"reinforced_podzol", Blocks.PODZOL, "snowy_dirt"},
 			{"reinforced_mycelium", Blocks.MYCELIUM, "snowy_dirt"},
 			{"reinforced_cobweb", Blocks.COBWEB, "cobweb"},
-			{"reinforced_chain", Blocks.CHAIN, "chain"},
+			{"reinforced_chain", Blocks.IRON_CHAIN, "chain"},
 			{"reinforced_end_rod", Blocks.END_ROD, "end_rod"},
 			{"reinforced_lantern", Blocks.LANTERN, "lantern"},
 			{"reinforced_soul_lantern", Blocks.SOUL_LANTERN, "lantern"},
@@ -815,11 +816,11 @@ public class SCContent {
 		//the head and the moving piston are placed by the piston itself, never by a player, so they get no item
 		REINFORCED_PISTON_HEAD = registerBlockNoItem("reinforced_piston_head", key -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedPistonHeadBlock(reinforcedCopy(Blocks.PISTON_HEAD).setId(key)));
 		REINFORCED_MOVING_PISTON = registerBlockNoItem("reinforced_moving_piston", key -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedMovingPistonBlock(reinforcedCopy(Blocks.MOVING_PISTON).setId(key)));
-		REINFORCED_CAULDRON = registerFunctionalReinforced("reinforced_cauldron", key -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedCauldronBlock(reinforcedCopy(Blocks.CAULDRON).setId(key), net.minecraft.core.cauldron.CauldronInteraction.EMPTY));
+		REINFORCED_CAULDRON = registerFunctionalReinforced("reinforced_cauldron", key -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedCauldronBlock(reinforcedCopy(Blocks.CAULDRON).setId(key), net.geforcemods.securitycraft.blocks.reinforced.ReinforcedCauldronBlock.IReinforcedCauldronInteraction.EMPTY));
 		//the filled cauldrons are states of the empty one, so like vanilla they have no item of their own
-		REINFORCED_WATER_CAULDRON = registerBlockNoItem("reinforced_water_cauldron", key -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedLayeredCauldronBlock(reinforcedCopy(Blocks.WATER_CAULDRON).setId(key), net.minecraft.world.level.block.LayeredCauldronBlock.RAIN, net.minecraft.core.cauldron.CauldronInteraction.WATER, Blocks.WATER_CAULDRON));
+		REINFORCED_WATER_CAULDRON = registerBlockNoItem("reinforced_water_cauldron", key -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedLayeredCauldronBlock(reinforcedCopy(Blocks.WATER_CAULDRON).setId(key), net.minecraft.world.level.biome.Biome.Precipitation.RAIN, net.geforcemods.securitycraft.blocks.reinforced.ReinforcedCauldronBlock.IReinforcedCauldronInteraction.WATER, Blocks.WATER_CAULDRON));
 		REINFORCED_LAVA_CAULDRON = registerBlockNoItem("reinforced_lava_cauldron", key -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedLavaCauldronBlock(reinforcedCopy(Blocks.LAVA_CAULDRON).setId(key)));
-		REINFORCED_POWDER_SNOW_CAULDRON = registerBlockNoItem("reinforced_powder_snow_cauldron", key -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedLayeredCauldronBlock(reinforcedCopy(Blocks.POWDER_SNOW_CAULDRON).setId(key), net.minecraft.world.level.block.LayeredCauldronBlock.SNOW, net.minecraft.core.cauldron.CauldronInteraction.POWDER_SNOW, Blocks.POWDER_SNOW_CAULDRON));
+		REINFORCED_POWDER_SNOW_CAULDRON = registerBlockNoItem("reinforced_powder_snow_cauldron", key -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedLayeredCauldronBlock(reinforcedCopy(Blocks.POWDER_SNOW_CAULDRON).setId(key), net.minecraft.world.level.biome.Biome.Precipitation.SNOW, net.geforcemods.securitycraft.blocks.reinforced.ReinforcedCauldronBlock.IReinforcedCauldronInteraction.POWDER_SNOW, Blocks.POWDER_SNOW_CAULDRON));
 		REINFORCED_LECTERN = registerFunctionalReinforced("reinforced_lectern", key -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedLecternBlock(reinforcedCopy(Blocks.LECTERN).setId(key)));
 		REINFORCED_CHISELED_BOOKSHELF = registerFunctionalReinforced("reinforced_chiseled_bookshelf", key -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedChiseledBookshelfBlock(reinforcedCopy(Blocks.CHISELED_BOOKSHELF).setId(key)));
 		registerFunctionalReinforced("reinforced_hopper", key -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedHopperBlock(reinforcedCopy(Blocks.HOPPER).setId(key)));
@@ -840,71 +841,71 @@ public class SCContent {
 		CRYSTAL_QUARTZ_ITEM = registerItem("crystal_quartz_item", new Item(new Item.Properties().setId(ResourceKey.create(Registries.ITEM, id("crystal_quartz_item")))));
 
 		//the secret signs: only their owner and the players on their allowlist can read what is written on them
-		SECRET_OAK_SIGN = registerBlockNoItem("secret_sign_standing", new net.geforcemods.securitycraft.blocks.SecretStandingSignBlock(reinforcedCopy(Blocks.OAK_SIGN), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.OAK_SIGN)));
-		SECRET_OAK_WALL_SIGN = registerBlockNoItem("secret_sign_wall", new net.geforcemods.securitycraft.blocks.SecretWallSignBlock(reinforcedCopy(Blocks.OAK_SIGN), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.OAK_SIGN)));
-		SECRET_OAK_HANGING_SIGN = registerBlockNoItem("secret_oak_hanging_sign", new net.geforcemods.securitycraft.blocks.SecretCeilingHangingSignBlock(reinforcedCopy(Blocks.OAK_HANGING_SIGN), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.OAK_HANGING_SIGN)));
-		SECRET_OAK_WALL_HANGING_SIGN = registerBlockNoItem("secret_oak_wall_hanging_sign", new net.geforcemods.securitycraft.blocks.SecretWallHangingSignBlock(reinforcedCopy(Blocks.OAK_HANGING_SIGN), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.OAK_HANGING_SIGN)));
-		SECRET_SIGN_ITEMS.add(registerItem("secret_sign_item", new net.minecraft.world.item.SignItem(new Item.Properties().stacksTo(16), SECRET_OAK_SIGN, SECRET_OAK_WALL_SIGN)));
+		SECRET_OAK_SIGN = registerBlockNoItem("secret_sign_standing", key -> new net.geforcemods.securitycraft.blocks.SecretStandingSignBlock(reinforcedCopy(Blocks.OAK_SIGN).overrideDescription("block.securitycraft.secret_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.OAK_SIGN)));
+		SECRET_OAK_WALL_SIGN = registerBlockNoItem("secret_sign_wall", key -> new net.geforcemods.securitycraft.blocks.SecretWallSignBlock(reinforcedCopy(Blocks.OAK_SIGN).overrideDescription("block.securitycraft.secret_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.OAK_SIGN)));
+		SECRET_OAK_HANGING_SIGN = registerBlockNoItem("secret_oak_hanging_sign", key -> new net.geforcemods.securitycraft.blocks.SecretCeilingHangingSignBlock(reinforcedCopy(Blocks.OAK_HANGING_SIGN).overrideDescription("block.securitycraft.secret_oak_hanging_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.OAK_HANGING_SIGN)));
+		SECRET_OAK_WALL_HANGING_SIGN = registerBlockNoItem("secret_oak_wall_hanging_sign", key -> new net.geforcemods.securitycraft.blocks.SecretWallHangingSignBlock(reinforcedCopy(Blocks.OAK_HANGING_SIGN).overrideDescription("block.securitycraft.secret_oak_hanging_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.OAK_HANGING_SIGN)));
+		SECRET_SIGN_ITEMS.add(registerItem("secret_sign_item", new net.minecraft.world.item.SignItem(SECRET_OAK_SIGN, SECRET_OAK_WALL_SIGN, new Item.Properties().stacksTo(16))));
 		SECRET_SIGN_ITEMS.add(registerItem("secret_oak_hanging_sign", new net.minecraft.world.item.HangingSignItem(SECRET_OAK_HANGING_SIGN, SECRET_OAK_WALL_HANGING_SIGN, new Item.Properties().stacksTo(16))));
-		SECRET_SPRUCE_SIGN = registerBlockNoItem("secret_spruce_sign_standing", new net.geforcemods.securitycraft.blocks.SecretStandingSignBlock(reinforcedCopy(Blocks.SPRUCE_SIGN), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.SPRUCE_SIGN)));
-		SECRET_SPRUCE_WALL_SIGN = registerBlockNoItem("secret_spruce_sign_wall", new net.geforcemods.securitycraft.blocks.SecretWallSignBlock(reinforcedCopy(Blocks.SPRUCE_SIGN), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.SPRUCE_SIGN)));
-		SECRET_SPRUCE_HANGING_SIGN = registerBlockNoItem("secret_spruce_hanging_sign", new net.geforcemods.securitycraft.blocks.SecretCeilingHangingSignBlock(reinforcedCopy(Blocks.SPRUCE_HANGING_SIGN), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.SPRUCE_HANGING_SIGN)));
-		SECRET_SPRUCE_WALL_HANGING_SIGN = registerBlockNoItem("secret_spruce_wall_hanging_sign", new net.geforcemods.securitycraft.blocks.SecretWallHangingSignBlock(reinforcedCopy(Blocks.SPRUCE_HANGING_SIGN), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.SPRUCE_HANGING_SIGN)));
-		SECRET_SIGN_ITEMS.add(registerItem("secret_spruce_sign_item", new net.minecraft.world.item.SignItem(new Item.Properties().stacksTo(16), SECRET_SPRUCE_SIGN, SECRET_SPRUCE_WALL_SIGN)));
+		SECRET_SPRUCE_SIGN = registerBlockNoItem("secret_spruce_sign_standing", key -> new net.geforcemods.securitycraft.blocks.SecretStandingSignBlock(reinforcedCopy(Blocks.SPRUCE_SIGN).overrideDescription("block.securitycraft.secret_spruce_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.SPRUCE_SIGN)));
+		SECRET_SPRUCE_WALL_SIGN = registerBlockNoItem("secret_spruce_sign_wall", key -> new net.geforcemods.securitycraft.blocks.SecretWallSignBlock(reinforcedCopy(Blocks.SPRUCE_SIGN).overrideDescription("block.securitycraft.secret_spruce_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.SPRUCE_SIGN)));
+		SECRET_SPRUCE_HANGING_SIGN = registerBlockNoItem("secret_spruce_hanging_sign", key -> new net.geforcemods.securitycraft.blocks.SecretCeilingHangingSignBlock(reinforcedCopy(Blocks.SPRUCE_HANGING_SIGN).overrideDescription("block.securitycraft.secret_spruce_hanging_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.SPRUCE_HANGING_SIGN)));
+		SECRET_SPRUCE_WALL_HANGING_SIGN = registerBlockNoItem("secret_spruce_wall_hanging_sign", key -> new net.geforcemods.securitycraft.blocks.SecretWallHangingSignBlock(reinforcedCopy(Blocks.SPRUCE_HANGING_SIGN).overrideDescription("block.securitycraft.secret_spruce_hanging_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.SPRUCE_HANGING_SIGN)));
+		SECRET_SIGN_ITEMS.add(registerItem("secret_spruce_sign_item", new net.minecraft.world.item.SignItem(SECRET_SPRUCE_SIGN, SECRET_SPRUCE_WALL_SIGN, new Item.Properties().stacksTo(16))));
 		SECRET_SIGN_ITEMS.add(registerItem("secret_spruce_hanging_sign", new net.minecraft.world.item.HangingSignItem(SECRET_SPRUCE_HANGING_SIGN, SECRET_SPRUCE_WALL_HANGING_SIGN, new Item.Properties().stacksTo(16))));
-		SECRET_BIRCH_SIGN = registerBlockNoItem("secret_birch_sign_standing", new net.geforcemods.securitycraft.blocks.SecretStandingSignBlock(reinforcedCopy(Blocks.BIRCH_SIGN), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.BIRCH_SIGN)));
-		SECRET_BIRCH_WALL_SIGN = registerBlockNoItem("secret_birch_sign_wall", new net.geforcemods.securitycraft.blocks.SecretWallSignBlock(reinforcedCopy(Blocks.BIRCH_SIGN), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.BIRCH_SIGN)));
-		SECRET_BIRCH_HANGING_SIGN = registerBlockNoItem("secret_birch_hanging_sign", new net.geforcemods.securitycraft.blocks.SecretCeilingHangingSignBlock(reinforcedCopy(Blocks.BIRCH_HANGING_SIGN), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.BIRCH_HANGING_SIGN)));
-		SECRET_BIRCH_WALL_HANGING_SIGN = registerBlockNoItem("secret_birch_wall_hanging_sign", new net.geforcemods.securitycraft.blocks.SecretWallHangingSignBlock(reinforcedCopy(Blocks.BIRCH_HANGING_SIGN), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.BIRCH_HANGING_SIGN)));
-		SECRET_SIGN_ITEMS.add(registerItem("secret_birch_sign_item", new net.minecraft.world.item.SignItem(new Item.Properties().stacksTo(16), SECRET_BIRCH_SIGN, SECRET_BIRCH_WALL_SIGN)));
+		SECRET_BIRCH_SIGN = registerBlockNoItem("secret_birch_sign_standing", key -> new net.geforcemods.securitycraft.blocks.SecretStandingSignBlock(reinforcedCopy(Blocks.BIRCH_SIGN).overrideDescription("block.securitycraft.secret_birch_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.BIRCH_SIGN)));
+		SECRET_BIRCH_WALL_SIGN = registerBlockNoItem("secret_birch_sign_wall", key -> new net.geforcemods.securitycraft.blocks.SecretWallSignBlock(reinforcedCopy(Blocks.BIRCH_SIGN).overrideDescription("block.securitycraft.secret_birch_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.BIRCH_SIGN)));
+		SECRET_BIRCH_HANGING_SIGN = registerBlockNoItem("secret_birch_hanging_sign", key -> new net.geforcemods.securitycraft.blocks.SecretCeilingHangingSignBlock(reinforcedCopy(Blocks.BIRCH_HANGING_SIGN).overrideDescription("block.securitycraft.secret_birch_hanging_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.BIRCH_HANGING_SIGN)));
+		SECRET_BIRCH_WALL_HANGING_SIGN = registerBlockNoItem("secret_birch_wall_hanging_sign", key -> new net.geforcemods.securitycraft.blocks.SecretWallHangingSignBlock(reinforcedCopy(Blocks.BIRCH_HANGING_SIGN).overrideDescription("block.securitycraft.secret_birch_hanging_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.BIRCH_HANGING_SIGN)));
+		SECRET_SIGN_ITEMS.add(registerItem("secret_birch_sign_item", new net.minecraft.world.item.SignItem(SECRET_BIRCH_SIGN, SECRET_BIRCH_WALL_SIGN, new Item.Properties().stacksTo(16))));
 		SECRET_SIGN_ITEMS.add(registerItem("secret_birch_hanging_sign", new net.minecraft.world.item.HangingSignItem(SECRET_BIRCH_HANGING_SIGN, SECRET_BIRCH_WALL_HANGING_SIGN, new Item.Properties().stacksTo(16))));
-		SECRET_JUNGLE_SIGN = registerBlockNoItem("secret_jungle_sign_standing", new net.geforcemods.securitycraft.blocks.SecretStandingSignBlock(reinforcedCopy(Blocks.JUNGLE_SIGN), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.JUNGLE_SIGN)));
-		SECRET_JUNGLE_WALL_SIGN = registerBlockNoItem("secret_jungle_sign_wall", new net.geforcemods.securitycraft.blocks.SecretWallSignBlock(reinforcedCopy(Blocks.JUNGLE_SIGN), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.JUNGLE_SIGN)));
-		SECRET_JUNGLE_HANGING_SIGN = registerBlockNoItem("secret_jungle_hanging_sign", new net.geforcemods.securitycraft.blocks.SecretCeilingHangingSignBlock(reinforcedCopy(Blocks.JUNGLE_HANGING_SIGN), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.JUNGLE_HANGING_SIGN)));
-		SECRET_JUNGLE_WALL_HANGING_SIGN = registerBlockNoItem("secret_jungle_wall_hanging_sign", new net.geforcemods.securitycraft.blocks.SecretWallHangingSignBlock(reinforcedCopy(Blocks.JUNGLE_HANGING_SIGN), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.JUNGLE_HANGING_SIGN)));
-		SECRET_SIGN_ITEMS.add(registerItem("secret_jungle_sign_item", new net.minecraft.world.item.SignItem(new Item.Properties().stacksTo(16), SECRET_JUNGLE_SIGN, SECRET_JUNGLE_WALL_SIGN)));
+		SECRET_JUNGLE_SIGN = registerBlockNoItem("secret_jungle_sign_standing", key -> new net.geforcemods.securitycraft.blocks.SecretStandingSignBlock(reinforcedCopy(Blocks.JUNGLE_SIGN).overrideDescription("block.securitycraft.secret_jungle_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.JUNGLE_SIGN)));
+		SECRET_JUNGLE_WALL_SIGN = registerBlockNoItem("secret_jungle_sign_wall", key -> new net.geforcemods.securitycraft.blocks.SecretWallSignBlock(reinforcedCopy(Blocks.JUNGLE_SIGN).overrideDescription("block.securitycraft.secret_jungle_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.JUNGLE_SIGN)));
+		SECRET_JUNGLE_HANGING_SIGN = registerBlockNoItem("secret_jungle_hanging_sign", key -> new net.geforcemods.securitycraft.blocks.SecretCeilingHangingSignBlock(reinforcedCopy(Blocks.JUNGLE_HANGING_SIGN).overrideDescription("block.securitycraft.secret_jungle_hanging_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.JUNGLE_HANGING_SIGN)));
+		SECRET_JUNGLE_WALL_HANGING_SIGN = registerBlockNoItem("secret_jungle_wall_hanging_sign", key -> new net.geforcemods.securitycraft.blocks.SecretWallHangingSignBlock(reinforcedCopy(Blocks.JUNGLE_HANGING_SIGN).overrideDescription("block.securitycraft.secret_jungle_hanging_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.JUNGLE_HANGING_SIGN)));
+		SECRET_SIGN_ITEMS.add(registerItem("secret_jungle_sign_item", new net.minecraft.world.item.SignItem(SECRET_JUNGLE_SIGN, SECRET_JUNGLE_WALL_SIGN, new Item.Properties().stacksTo(16))));
 		SECRET_SIGN_ITEMS.add(registerItem("secret_jungle_hanging_sign", new net.minecraft.world.item.HangingSignItem(SECRET_JUNGLE_HANGING_SIGN, SECRET_JUNGLE_WALL_HANGING_SIGN, new Item.Properties().stacksTo(16))));
-		SECRET_ACACIA_SIGN = registerBlockNoItem("secret_acacia_sign_standing", new net.geforcemods.securitycraft.blocks.SecretStandingSignBlock(reinforcedCopy(Blocks.ACACIA_SIGN), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.ACACIA_SIGN)));
-		SECRET_ACACIA_WALL_SIGN = registerBlockNoItem("secret_acacia_sign_wall", new net.geforcemods.securitycraft.blocks.SecretWallSignBlock(reinforcedCopy(Blocks.ACACIA_SIGN), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.ACACIA_SIGN)));
-		SECRET_ACACIA_HANGING_SIGN = registerBlockNoItem("secret_acacia_hanging_sign", new net.geforcemods.securitycraft.blocks.SecretCeilingHangingSignBlock(reinforcedCopy(Blocks.ACACIA_HANGING_SIGN), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.ACACIA_HANGING_SIGN)));
-		SECRET_ACACIA_WALL_HANGING_SIGN = registerBlockNoItem("secret_acacia_wall_hanging_sign", new net.geforcemods.securitycraft.blocks.SecretWallHangingSignBlock(reinforcedCopy(Blocks.ACACIA_HANGING_SIGN), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.ACACIA_HANGING_SIGN)));
-		SECRET_SIGN_ITEMS.add(registerItem("secret_acacia_sign_item", new net.minecraft.world.item.SignItem(new Item.Properties().stacksTo(16), SECRET_ACACIA_SIGN, SECRET_ACACIA_WALL_SIGN)));
+		SECRET_ACACIA_SIGN = registerBlockNoItem("secret_acacia_sign_standing", key -> new net.geforcemods.securitycraft.blocks.SecretStandingSignBlock(reinforcedCopy(Blocks.ACACIA_SIGN).overrideDescription("block.securitycraft.secret_acacia_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.ACACIA_SIGN)));
+		SECRET_ACACIA_WALL_SIGN = registerBlockNoItem("secret_acacia_sign_wall", key -> new net.geforcemods.securitycraft.blocks.SecretWallSignBlock(reinforcedCopy(Blocks.ACACIA_SIGN).overrideDescription("block.securitycraft.secret_acacia_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.ACACIA_SIGN)));
+		SECRET_ACACIA_HANGING_SIGN = registerBlockNoItem("secret_acacia_hanging_sign", key -> new net.geforcemods.securitycraft.blocks.SecretCeilingHangingSignBlock(reinforcedCopy(Blocks.ACACIA_HANGING_SIGN).overrideDescription("block.securitycraft.secret_acacia_hanging_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.ACACIA_HANGING_SIGN)));
+		SECRET_ACACIA_WALL_HANGING_SIGN = registerBlockNoItem("secret_acacia_wall_hanging_sign", key -> new net.geforcemods.securitycraft.blocks.SecretWallHangingSignBlock(reinforcedCopy(Blocks.ACACIA_HANGING_SIGN).overrideDescription("block.securitycraft.secret_acacia_hanging_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.ACACIA_HANGING_SIGN)));
+		SECRET_SIGN_ITEMS.add(registerItem("secret_acacia_sign_item", new net.minecraft.world.item.SignItem(SECRET_ACACIA_SIGN, SECRET_ACACIA_WALL_SIGN, new Item.Properties().stacksTo(16))));
 		SECRET_SIGN_ITEMS.add(registerItem("secret_acacia_hanging_sign", new net.minecraft.world.item.HangingSignItem(SECRET_ACACIA_HANGING_SIGN, SECRET_ACACIA_WALL_HANGING_SIGN, new Item.Properties().stacksTo(16))));
-		SECRET_DARK_OAK_SIGN = registerBlockNoItem("secret_dark_oak_sign_standing", new net.geforcemods.securitycraft.blocks.SecretStandingSignBlock(reinforcedCopy(Blocks.DARK_OAK_SIGN), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.DARK_OAK_SIGN)));
-		SECRET_DARK_OAK_WALL_SIGN = registerBlockNoItem("secret_dark_oak_sign_wall", new net.geforcemods.securitycraft.blocks.SecretWallSignBlock(reinforcedCopy(Blocks.DARK_OAK_SIGN), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.DARK_OAK_SIGN)));
-		SECRET_DARK_OAK_HANGING_SIGN = registerBlockNoItem("secret_dark_oak_hanging_sign", new net.geforcemods.securitycraft.blocks.SecretCeilingHangingSignBlock(reinforcedCopy(Blocks.DARK_OAK_HANGING_SIGN), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.DARK_OAK_HANGING_SIGN)));
-		SECRET_DARK_OAK_WALL_HANGING_SIGN = registerBlockNoItem("secret_dark_oak_wall_hanging_sign", new net.geforcemods.securitycraft.blocks.SecretWallHangingSignBlock(reinforcedCopy(Blocks.DARK_OAK_HANGING_SIGN), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.DARK_OAK_HANGING_SIGN)));
-		SECRET_SIGN_ITEMS.add(registerItem("secret_dark_oak_sign_item", new net.minecraft.world.item.SignItem(new Item.Properties().stacksTo(16), SECRET_DARK_OAK_SIGN, SECRET_DARK_OAK_WALL_SIGN)));
+		SECRET_DARK_OAK_SIGN = registerBlockNoItem("secret_dark_oak_sign_standing", key -> new net.geforcemods.securitycraft.blocks.SecretStandingSignBlock(reinforcedCopy(Blocks.DARK_OAK_SIGN).overrideDescription("block.securitycraft.secret_dark_oak_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.DARK_OAK_SIGN)));
+		SECRET_DARK_OAK_WALL_SIGN = registerBlockNoItem("secret_dark_oak_sign_wall", key -> new net.geforcemods.securitycraft.blocks.SecretWallSignBlock(reinforcedCopy(Blocks.DARK_OAK_SIGN).overrideDescription("block.securitycraft.secret_dark_oak_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.DARK_OAK_SIGN)));
+		SECRET_DARK_OAK_HANGING_SIGN = registerBlockNoItem("secret_dark_oak_hanging_sign", key -> new net.geforcemods.securitycraft.blocks.SecretCeilingHangingSignBlock(reinforcedCopy(Blocks.DARK_OAK_HANGING_SIGN).overrideDescription("block.securitycraft.secret_dark_oak_hanging_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.DARK_OAK_HANGING_SIGN)));
+		SECRET_DARK_OAK_WALL_HANGING_SIGN = registerBlockNoItem("secret_dark_oak_wall_hanging_sign", key -> new net.geforcemods.securitycraft.blocks.SecretWallHangingSignBlock(reinforcedCopy(Blocks.DARK_OAK_HANGING_SIGN).overrideDescription("block.securitycraft.secret_dark_oak_hanging_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.DARK_OAK_HANGING_SIGN)));
+		SECRET_SIGN_ITEMS.add(registerItem("secret_dark_oak_sign_item", new net.minecraft.world.item.SignItem(SECRET_DARK_OAK_SIGN, SECRET_DARK_OAK_WALL_SIGN, new Item.Properties().stacksTo(16))));
 		SECRET_SIGN_ITEMS.add(registerItem("secret_dark_oak_hanging_sign", new net.minecraft.world.item.HangingSignItem(SECRET_DARK_OAK_HANGING_SIGN, SECRET_DARK_OAK_WALL_HANGING_SIGN, new Item.Properties().stacksTo(16))));
-		SECRET_MANGROVE_SIGN = registerBlockNoItem("secret_mangrove_sign_standing", new net.geforcemods.securitycraft.blocks.SecretStandingSignBlock(reinforcedCopy(Blocks.MANGROVE_SIGN), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.MANGROVE_SIGN)));
-		SECRET_MANGROVE_WALL_SIGN = registerBlockNoItem("secret_mangrove_sign_wall", new net.geforcemods.securitycraft.blocks.SecretWallSignBlock(reinforcedCopy(Blocks.MANGROVE_SIGN), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.MANGROVE_SIGN)));
-		SECRET_MANGROVE_HANGING_SIGN = registerBlockNoItem("secret_mangrove_hanging_sign", new net.geforcemods.securitycraft.blocks.SecretCeilingHangingSignBlock(reinforcedCopy(Blocks.MANGROVE_HANGING_SIGN), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.MANGROVE_HANGING_SIGN)));
-		SECRET_MANGROVE_WALL_HANGING_SIGN = registerBlockNoItem("secret_mangrove_wall_hanging_sign", new net.geforcemods.securitycraft.blocks.SecretWallHangingSignBlock(reinforcedCopy(Blocks.MANGROVE_HANGING_SIGN), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.MANGROVE_HANGING_SIGN)));
-		SECRET_SIGN_ITEMS.add(registerItem("secret_mangrove_sign_item", new net.minecraft.world.item.SignItem(new Item.Properties().stacksTo(16), SECRET_MANGROVE_SIGN, SECRET_MANGROVE_WALL_SIGN)));
+		SECRET_MANGROVE_SIGN = registerBlockNoItem("secret_mangrove_sign_standing", key -> new net.geforcemods.securitycraft.blocks.SecretStandingSignBlock(reinforcedCopy(Blocks.MANGROVE_SIGN).overrideDescription("block.securitycraft.secret_mangrove_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.MANGROVE_SIGN)));
+		SECRET_MANGROVE_WALL_SIGN = registerBlockNoItem("secret_mangrove_sign_wall", key -> new net.geforcemods.securitycraft.blocks.SecretWallSignBlock(reinforcedCopy(Blocks.MANGROVE_SIGN).overrideDescription("block.securitycraft.secret_mangrove_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.MANGROVE_SIGN)));
+		SECRET_MANGROVE_HANGING_SIGN = registerBlockNoItem("secret_mangrove_hanging_sign", key -> new net.geforcemods.securitycraft.blocks.SecretCeilingHangingSignBlock(reinforcedCopy(Blocks.MANGROVE_HANGING_SIGN).overrideDescription("block.securitycraft.secret_mangrove_hanging_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.MANGROVE_HANGING_SIGN)));
+		SECRET_MANGROVE_WALL_HANGING_SIGN = registerBlockNoItem("secret_mangrove_wall_hanging_sign", key -> new net.geforcemods.securitycraft.blocks.SecretWallHangingSignBlock(reinforcedCopy(Blocks.MANGROVE_HANGING_SIGN).overrideDescription("block.securitycraft.secret_mangrove_hanging_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.MANGROVE_HANGING_SIGN)));
+		SECRET_SIGN_ITEMS.add(registerItem("secret_mangrove_sign_item", new net.minecraft.world.item.SignItem(SECRET_MANGROVE_SIGN, SECRET_MANGROVE_WALL_SIGN, new Item.Properties().stacksTo(16))));
 		SECRET_SIGN_ITEMS.add(registerItem("secret_mangrove_hanging_sign", new net.minecraft.world.item.HangingSignItem(SECRET_MANGROVE_HANGING_SIGN, SECRET_MANGROVE_WALL_HANGING_SIGN, new Item.Properties().stacksTo(16))));
-		SECRET_CHERRY_SIGN = registerBlockNoItem("secret_cherry_sign_standing", new net.geforcemods.securitycraft.blocks.SecretStandingSignBlock(reinforcedCopy(Blocks.CHERRY_SIGN), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.CHERRY_SIGN)));
-		SECRET_CHERRY_WALL_SIGN = registerBlockNoItem("secret_cherry_sign_wall", new net.geforcemods.securitycraft.blocks.SecretWallSignBlock(reinforcedCopy(Blocks.CHERRY_SIGN), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.CHERRY_SIGN)));
-		SECRET_CHERRY_HANGING_SIGN = registerBlockNoItem("secret_cherry_hanging_sign", new net.geforcemods.securitycraft.blocks.SecretCeilingHangingSignBlock(reinforcedCopy(Blocks.CHERRY_HANGING_SIGN), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.CHERRY_HANGING_SIGN)));
-		SECRET_CHERRY_WALL_HANGING_SIGN = registerBlockNoItem("secret_cherry_wall_hanging_sign", new net.geforcemods.securitycraft.blocks.SecretWallHangingSignBlock(reinforcedCopy(Blocks.CHERRY_HANGING_SIGN), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.CHERRY_HANGING_SIGN)));
-		SECRET_SIGN_ITEMS.add(registerItem("secret_cherry_sign_item", new net.minecraft.world.item.SignItem(new Item.Properties().stacksTo(16), SECRET_CHERRY_SIGN, SECRET_CHERRY_WALL_SIGN)));
+		SECRET_CHERRY_SIGN = registerBlockNoItem("secret_cherry_sign_standing", key -> new net.geforcemods.securitycraft.blocks.SecretStandingSignBlock(reinforcedCopy(Blocks.CHERRY_SIGN).overrideDescription("block.securitycraft.secret_cherry_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.CHERRY_SIGN)));
+		SECRET_CHERRY_WALL_SIGN = registerBlockNoItem("secret_cherry_sign_wall", key -> new net.geforcemods.securitycraft.blocks.SecretWallSignBlock(reinforcedCopy(Blocks.CHERRY_SIGN).overrideDescription("block.securitycraft.secret_cherry_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.CHERRY_SIGN)));
+		SECRET_CHERRY_HANGING_SIGN = registerBlockNoItem("secret_cherry_hanging_sign", key -> new net.geforcemods.securitycraft.blocks.SecretCeilingHangingSignBlock(reinforcedCopy(Blocks.CHERRY_HANGING_SIGN).overrideDescription("block.securitycraft.secret_cherry_hanging_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.CHERRY_HANGING_SIGN)));
+		SECRET_CHERRY_WALL_HANGING_SIGN = registerBlockNoItem("secret_cherry_wall_hanging_sign", key -> new net.geforcemods.securitycraft.blocks.SecretWallHangingSignBlock(reinforcedCopy(Blocks.CHERRY_HANGING_SIGN).overrideDescription("block.securitycraft.secret_cherry_hanging_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.CHERRY_HANGING_SIGN)));
+		SECRET_SIGN_ITEMS.add(registerItem("secret_cherry_sign_item", new net.minecraft.world.item.SignItem(SECRET_CHERRY_SIGN, SECRET_CHERRY_WALL_SIGN, new Item.Properties().stacksTo(16))));
 		SECRET_SIGN_ITEMS.add(registerItem("secret_cherry_hanging_sign", new net.minecraft.world.item.HangingSignItem(SECRET_CHERRY_HANGING_SIGN, SECRET_CHERRY_WALL_HANGING_SIGN, new Item.Properties().stacksTo(16))));
-		SECRET_BAMBOO_SIGN = registerBlockNoItem("secret_bamboo_sign_standing", new net.geforcemods.securitycraft.blocks.SecretStandingSignBlock(reinforcedCopy(Blocks.BAMBOO_SIGN), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.BAMBOO_SIGN)));
-		SECRET_BAMBOO_WALL_SIGN = registerBlockNoItem("secret_bamboo_sign_wall", new net.geforcemods.securitycraft.blocks.SecretWallSignBlock(reinforcedCopy(Blocks.BAMBOO_SIGN), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.BAMBOO_SIGN)));
-		SECRET_BAMBOO_HANGING_SIGN = registerBlockNoItem("secret_bamboo_hanging_sign", new net.geforcemods.securitycraft.blocks.SecretCeilingHangingSignBlock(reinforcedCopy(Blocks.BAMBOO_HANGING_SIGN), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.BAMBOO_HANGING_SIGN)));
-		SECRET_BAMBOO_WALL_HANGING_SIGN = registerBlockNoItem("secret_bamboo_wall_hanging_sign", new net.geforcemods.securitycraft.blocks.SecretWallHangingSignBlock(reinforcedCopy(Blocks.BAMBOO_HANGING_SIGN), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.BAMBOO_HANGING_SIGN)));
-		SECRET_SIGN_ITEMS.add(registerItem("secret_bamboo_sign_item", new net.minecraft.world.item.SignItem(new Item.Properties().stacksTo(16), SECRET_BAMBOO_SIGN, SECRET_BAMBOO_WALL_SIGN)));
+		SECRET_BAMBOO_SIGN = registerBlockNoItem("secret_bamboo_sign_standing", key -> new net.geforcemods.securitycraft.blocks.SecretStandingSignBlock(reinforcedCopy(Blocks.BAMBOO_SIGN).overrideDescription("block.securitycraft.secret_bamboo_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.BAMBOO_SIGN)));
+		SECRET_BAMBOO_WALL_SIGN = registerBlockNoItem("secret_bamboo_sign_wall", key -> new net.geforcemods.securitycraft.blocks.SecretWallSignBlock(reinforcedCopy(Blocks.BAMBOO_SIGN).overrideDescription("block.securitycraft.secret_bamboo_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.BAMBOO_SIGN)));
+		SECRET_BAMBOO_HANGING_SIGN = registerBlockNoItem("secret_bamboo_hanging_sign", key -> new net.geforcemods.securitycraft.blocks.SecretCeilingHangingSignBlock(reinforcedCopy(Blocks.BAMBOO_HANGING_SIGN).overrideDescription("block.securitycraft.secret_bamboo_hanging_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.BAMBOO_HANGING_SIGN)));
+		SECRET_BAMBOO_WALL_HANGING_SIGN = registerBlockNoItem("secret_bamboo_wall_hanging_sign", key -> new net.geforcemods.securitycraft.blocks.SecretWallHangingSignBlock(reinforcedCopy(Blocks.BAMBOO_HANGING_SIGN).overrideDescription("block.securitycraft.secret_bamboo_hanging_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.BAMBOO_HANGING_SIGN)));
+		SECRET_SIGN_ITEMS.add(registerItem("secret_bamboo_sign_item", new net.minecraft.world.item.SignItem(SECRET_BAMBOO_SIGN, SECRET_BAMBOO_WALL_SIGN, new Item.Properties().stacksTo(16))));
 		SECRET_SIGN_ITEMS.add(registerItem("secret_bamboo_hanging_sign", new net.minecraft.world.item.HangingSignItem(SECRET_BAMBOO_HANGING_SIGN, SECRET_BAMBOO_WALL_HANGING_SIGN, new Item.Properties().stacksTo(16))));
-		SECRET_CRIMSON_SIGN = registerBlockNoItem("secret_crimson_sign_standing", new net.geforcemods.securitycraft.blocks.SecretStandingSignBlock(reinforcedCopy(Blocks.CRIMSON_SIGN), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.CRIMSON_SIGN)));
-		SECRET_CRIMSON_WALL_SIGN = registerBlockNoItem("secret_crimson_sign_wall", new net.geforcemods.securitycraft.blocks.SecretWallSignBlock(reinforcedCopy(Blocks.CRIMSON_SIGN), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.CRIMSON_SIGN)));
-		SECRET_CRIMSON_HANGING_SIGN = registerBlockNoItem("secret_crimson_hanging_sign", new net.geforcemods.securitycraft.blocks.SecretCeilingHangingSignBlock(reinforcedCopy(Blocks.CRIMSON_HANGING_SIGN), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.CRIMSON_HANGING_SIGN)));
-		SECRET_CRIMSON_WALL_HANGING_SIGN = registerBlockNoItem("secret_crimson_wall_hanging_sign", new net.geforcemods.securitycraft.blocks.SecretWallHangingSignBlock(reinforcedCopy(Blocks.CRIMSON_HANGING_SIGN), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.CRIMSON_HANGING_SIGN)));
-		SECRET_SIGN_ITEMS.add(registerItem("secret_crimson_sign_item", new net.minecraft.world.item.SignItem(new Item.Properties().stacksTo(16), SECRET_CRIMSON_SIGN, SECRET_CRIMSON_WALL_SIGN)));
+		SECRET_CRIMSON_SIGN = registerBlockNoItem("secret_crimson_sign_standing", key -> new net.geforcemods.securitycraft.blocks.SecretStandingSignBlock(reinforcedCopy(Blocks.CRIMSON_SIGN).overrideDescription("block.securitycraft.secret_crimson_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.CRIMSON_SIGN)));
+		SECRET_CRIMSON_WALL_SIGN = registerBlockNoItem("secret_crimson_sign_wall", key -> new net.geforcemods.securitycraft.blocks.SecretWallSignBlock(reinforcedCopy(Blocks.CRIMSON_SIGN).overrideDescription("block.securitycraft.secret_crimson_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.CRIMSON_SIGN)));
+		SECRET_CRIMSON_HANGING_SIGN = registerBlockNoItem("secret_crimson_hanging_sign", key -> new net.geforcemods.securitycraft.blocks.SecretCeilingHangingSignBlock(reinforcedCopy(Blocks.CRIMSON_HANGING_SIGN).overrideDescription("block.securitycraft.secret_crimson_hanging_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.CRIMSON_HANGING_SIGN)));
+		SECRET_CRIMSON_WALL_HANGING_SIGN = registerBlockNoItem("secret_crimson_wall_hanging_sign", key -> new net.geforcemods.securitycraft.blocks.SecretWallHangingSignBlock(reinforcedCopy(Blocks.CRIMSON_HANGING_SIGN).overrideDescription("block.securitycraft.secret_crimson_hanging_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.CRIMSON_HANGING_SIGN)));
+		SECRET_SIGN_ITEMS.add(registerItem("secret_crimson_sign_item", new net.minecraft.world.item.SignItem(SECRET_CRIMSON_SIGN, SECRET_CRIMSON_WALL_SIGN, new Item.Properties().stacksTo(16))));
 		SECRET_SIGN_ITEMS.add(registerItem("secret_crimson_hanging_sign", new net.minecraft.world.item.HangingSignItem(SECRET_CRIMSON_HANGING_SIGN, SECRET_CRIMSON_WALL_HANGING_SIGN, new Item.Properties().stacksTo(16))));
-		SECRET_WARPED_SIGN = registerBlockNoItem("secret_warped_sign_standing", new net.geforcemods.securitycraft.blocks.SecretStandingSignBlock(reinforcedCopy(Blocks.WARPED_SIGN), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.WARPED_SIGN)));
-		SECRET_WARPED_WALL_SIGN = registerBlockNoItem("secret_warped_sign_wall", new net.geforcemods.securitycraft.blocks.SecretWallSignBlock(reinforcedCopy(Blocks.WARPED_SIGN), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.WARPED_SIGN)));
-		SECRET_WARPED_HANGING_SIGN = registerBlockNoItem("secret_warped_hanging_sign", new net.geforcemods.securitycraft.blocks.SecretCeilingHangingSignBlock(reinforcedCopy(Blocks.WARPED_HANGING_SIGN), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.WARPED_HANGING_SIGN)));
-		SECRET_WARPED_WALL_HANGING_SIGN = registerBlockNoItem("secret_warped_wall_hanging_sign", new net.geforcemods.securitycraft.blocks.SecretWallHangingSignBlock(reinforcedCopy(Blocks.WARPED_HANGING_SIGN), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.WARPED_HANGING_SIGN)));
-		SECRET_SIGN_ITEMS.add(registerItem("secret_warped_sign_item", new net.minecraft.world.item.SignItem(new Item.Properties().stacksTo(16), SECRET_WARPED_SIGN, SECRET_WARPED_WALL_SIGN)));
+		SECRET_WARPED_SIGN = registerBlockNoItem("secret_warped_sign_standing", key -> new net.geforcemods.securitycraft.blocks.SecretStandingSignBlock(reinforcedCopy(Blocks.WARPED_SIGN).overrideDescription("block.securitycraft.secret_warped_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.WARPED_SIGN)));
+		SECRET_WARPED_WALL_SIGN = registerBlockNoItem("secret_warped_sign_wall", key -> new net.geforcemods.securitycraft.blocks.SecretWallSignBlock(reinforcedCopy(Blocks.WARPED_SIGN).overrideDescription("block.securitycraft.secret_warped_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.WARPED_SIGN)));
+		SECRET_WARPED_HANGING_SIGN = registerBlockNoItem("secret_warped_hanging_sign", key -> new net.geforcemods.securitycraft.blocks.SecretCeilingHangingSignBlock(reinforcedCopy(Blocks.WARPED_HANGING_SIGN).overrideDescription("block.securitycraft.secret_warped_hanging_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.WARPED_HANGING_SIGN)));
+		SECRET_WARPED_WALL_HANGING_SIGN = registerBlockNoItem("secret_warped_wall_hanging_sign", key -> new net.geforcemods.securitycraft.blocks.SecretWallHangingSignBlock(reinforcedCopy(Blocks.WARPED_HANGING_SIGN).overrideDescription("block.securitycraft.secret_warped_hanging_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.WARPED_HANGING_SIGN)));
+		SECRET_SIGN_ITEMS.add(registerItem("secret_warped_sign_item", new net.minecraft.world.item.SignItem(SECRET_WARPED_SIGN, SECRET_WARPED_WALL_SIGN, new Item.Properties().stacksTo(16))));
 		SECRET_SIGN_ITEMS.add(registerItem("secret_warped_hanging_sign", new net.minecraft.world.item.HangingSignItem(SECRET_WARPED_HANGING_SIGN, SECRET_WARPED_WALL_HANGING_SIGN, new Item.Properties().stacksTo(16))));
 
 		for (Object[] entry : CRYSTAL_QUARTZ_REINFORCED)
@@ -1023,7 +1024,7 @@ public class SCContent {
 		REINFORCED_CAULDRON_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("reinforced_cauldron"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.ReinforcedCauldronBlockEntity::new, REINFORCED_CAULDRON, REINFORCED_WATER_CAULDRON, REINFORCED_LAVA_CAULDRON, REINFORCED_POWDER_SNOW_CAULDRON).build());
 		REINFORCED_LECTERN_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("reinforced_lectern"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.ReinforcedLecternBlockEntity::new, REINFORCED_LECTERN).build());
 		REINFORCED_CHISELED_BOOKSHELF_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("reinforced_chiseled_bookshelf"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.ReinforcedChiseledBookshelfBlockEntity::new, REINFORCED_CHISELED_BOOKSHELF).build());
-		REINFORCED_LECTERN_MENU = Registry.register(BuiltInRegistries.MENU, id("reinforced_lectern"), new net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType<>((syncId, inv, buf) -> new net.geforcemods.securitycraft.inventory.ReinforcedLecternMenu(syncId, inv, buf)));
+		REINFORCED_LECTERN_MENU = Registry.register(BuiltInRegistries.MENU, id("reinforced_lectern"), new net.fabricmc.fabric.api.menu.v1.ExtendedMenuType<>((syncId, inv, pos) -> new net.geforcemods.securitycraft.inventory.ReinforcedLecternMenu(syncId, inv, pos), net.minecraft.core.BlockPos.STREAM_CODEC));
 		SECRET_SIGN_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("secret_sign"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.SecretSignBlockEntity::new, SECRET_OAK_SIGN, SECRET_OAK_WALL_SIGN, SECRET_SPRUCE_SIGN, SECRET_SPRUCE_WALL_SIGN, SECRET_BIRCH_SIGN, SECRET_BIRCH_WALL_SIGN, SECRET_JUNGLE_SIGN, SECRET_JUNGLE_WALL_SIGN, SECRET_ACACIA_SIGN, SECRET_ACACIA_WALL_SIGN, SECRET_DARK_OAK_SIGN, SECRET_DARK_OAK_WALL_SIGN, SECRET_MANGROVE_SIGN, SECRET_MANGROVE_WALL_SIGN, SECRET_CHERRY_SIGN, SECRET_CHERRY_WALL_SIGN, SECRET_BAMBOO_SIGN, SECRET_BAMBOO_WALL_SIGN, SECRET_CRIMSON_SIGN, SECRET_CRIMSON_WALL_SIGN, SECRET_WARPED_SIGN, SECRET_WARPED_WALL_SIGN).build());
 		SECRET_HANGING_SIGN_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("secret_hanging_sign"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.SecretHangingSignBlockEntity::new, SECRET_OAK_HANGING_SIGN, SECRET_OAK_WALL_HANGING_SIGN, SECRET_SPRUCE_HANGING_SIGN, SECRET_SPRUCE_WALL_HANGING_SIGN, SECRET_BIRCH_HANGING_SIGN, SECRET_BIRCH_WALL_HANGING_SIGN, SECRET_JUNGLE_HANGING_SIGN, SECRET_JUNGLE_WALL_HANGING_SIGN, SECRET_ACACIA_HANGING_SIGN, SECRET_ACACIA_WALL_HANGING_SIGN, SECRET_DARK_OAK_HANGING_SIGN, SECRET_DARK_OAK_WALL_HANGING_SIGN, SECRET_MANGROVE_HANGING_SIGN, SECRET_MANGROVE_WALL_HANGING_SIGN, SECRET_CHERRY_HANGING_SIGN, SECRET_CHERRY_WALL_HANGING_SIGN, SECRET_BAMBOO_HANGING_SIGN, SECRET_BAMBOO_WALL_HANGING_SIGN, SECRET_CRIMSON_HANGING_SIGN, SECRET_CRIMSON_WALL_HANGING_SIGN, SECRET_WARPED_HANGING_SIGN, SECRET_WARPED_WALL_HANGING_SIGN).build());
 		MINE_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("mine"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.MineBlockEntity::new, MINE).build());
@@ -1072,7 +1073,7 @@ public class SCContent {
 				case "slab" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedSlabBlock(props);
 				case "stairs" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedStairBlock(Blocks.STONE.defaultBlockState(), props);
 				case "button" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedButtonBlock(props, BlockSetType.STONE, 20, false);
-				case "pressure_plate" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedPressurePlateBlock(PressurePlateBlock.Sensitivity.EVERYTHING, props, BlockSetType.STONE);
+				case "pressure_plate" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedPressurePlateBlock(props, BlockSetType.STONE);
 				case "trapdoor" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedTrapdoorBlock(BlockSetType.IRON, props);
 				default -> new BaseReinforcedBlock(props);
 			};
@@ -1437,7 +1438,7 @@ public class SCContent {
 
 	/** The crystal quartz set is vanilla quartz in cyan, so each block copies the quartz block it is shaped after. */
 	private static BlockBehaviour.Properties crystalQuartzProps(Block quartzBlock) {
-		return alwaysDrop(BlockBehaviour.Properties.copy(quartzBlock).mapColor(net.minecraft.world.level.material.MapColor.COLOR_CYAN));
+		return alwaysDrop(BlockBehaviour.Properties.ofFullCopy(quartzBlock).mapColor(net.minecraft.world.level.material.MapColor.COLOR_CYAN));
 	}
 
 	private static BlockBehaviour.Properties shapeProps(String name) {

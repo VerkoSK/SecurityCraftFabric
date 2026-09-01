@@ -13,6 +13,9 @@ import net.geforcemods.securitycraft.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -29,7 +32,7 @@ import net.minecraft.world.level.block.state.BlockState;
  * {@code getStackInSlot}/{@code getItem} slot-100 aliasing that only existed to feed it - see
  * {@link ReinforcedHopperBlockEntity} for the same note.
  */
-public class ReinforcedDispenserBlockEntity extends DispenserBlockEntity implements IOwnable, IModuleInventory, net.fabricmc.fabric.api.blockview.v2.RenderDataBlockEntity {
+public class ReinforcedDispenserBlockEntity extends DispenserBlockEntity implements IOwnable, IModuleInventory, net.fabricmc.fabric.api.blockgetter.v2.RenderDataBlockEntity {
 	private NonNullList<ItemStack> modules = NonNullList.withSize(getMaxNumberOfModules(), ItemStack.EMPTY);
 	private Owner owner = new Owner();
 	private Map<ModuleType, Boolean> moduleStates = new EnumMap<>(ModuleType.class);
@@ -50,16 +53,16 @@ public class ReinforcedDispenserBlockEntity extends DispenserBlockEntity impleme
 	}
 
 	@Override
-	public void load(CompoundTag tag) {
-		super.load(tag);
+	public void loadAdditional(ValueInput tag) {
+		super.loadAdditional(tag);
 
-		owner.load(tag);
+		owner = Owner.load(tag);
 		modules = readModuleInventory(tag);
 		moduleStates = readModuleStates(tag);
 	}
 
 	@Override
-	public void saveAdditional(CompoundTag tag) {
+	public void saveAdditional(ValueOutput tag) {
 		super.saveAdditional(tag);
 
 		owner.save(tag, needsValidation());

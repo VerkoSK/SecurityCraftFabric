@@ -43,7 +43,7 @@ public class UniversalOwnerChangerItem extends Item {
 			if (!(stack.getItem() instanceof UniversalOwnerChangerItem changer))
 				return InteractionResult.PASS;
 
-			if (level.isClientSide)
+			if (level.isClientSide())
 				return level.getBlockEntity(hitResult.getBlockPos()) instanceof IOwnable ? InteractionResult.SUCCESS : InteractionResult.PASS;
 
 			return changer.changeOwner(stack, new UseOnContext(player, hand, hitResult));
@@ -70,7 +70,7 @@ public class UniversalOwnerChangerItem extends Item {
 			return InteractionResult.FAIL;
 		}
 
-		if (!stack.hasCustomHoverName() && !isDefault) {
+		if (!stack.has(net.minecraft.core.component.DataComponents.CUSTOM_NAME) && !isDefault) {
 			message(player, "messages.securitycraft:universalOwnerChanger.noName", ChatFormatting.RED);
 			return InteractionResult.FAIL;
 		}
@@ -81,7 +81,7 @@ public class UniversalOwnerChangerItem extends Item {
 				return InteractionResult.FAIL;
 			}
 
-			if (!stack.hasCustomHoverName())
+			if (!stack.has(net.minecraft.core.component.DataComponents.CUSTOM_NAME))
 				newOwner = player.getName().getString();
 		}
 

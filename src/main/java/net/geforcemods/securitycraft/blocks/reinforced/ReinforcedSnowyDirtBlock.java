@@ -10,13 +10,13 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.EntityBlock;
-import net.minecraft.world.level.block.SnowyDirtBlock;
+import net.minecraft.world.level.block.SnowyBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 
-/** The reinforced counterpart of a vanilla SnowyDirtBlock. Keeps all of vanilla's behaviour and adds ownership. */
-public class ReinforcedSnowyDirtBlock extends SnowyDirtBlock implements IReinforcedBlock, EntityBlock {
+/** The reinforced counterpart of a vanilla SnowyBlock. Keeps all of vanilla's behaviour and adds ownership. */
+public class ReinforcedSnowyDirtBlock extends SnowyBlock implements IReinforcedBlock, EntityBlock {
 	private final float destroyTimeForOwner;
 
 	public ReinforcedSnowyDirtBlock(BlockBehaviour.Properties properties) {

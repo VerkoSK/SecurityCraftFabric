@@ -22,9 +22,13 @@ import net.geforcemods.securitycraft.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Vec3i;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.ContainerUser;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.Identifier;
@@ -73,7 +77,7 @@ public class KeypadBarrelBlockEntity extends RandomizableContainerBlockEntity im
 		protected void openerCountChanged(Level level, BlockPos pos, BlockState state, int count, int openCount) {}
 
 		@Override
-		protected boolean isOwnContainer(Player player) {
+		public boolean isOwnContainer(Player player) {
 			if (player.containerMenu instanceof ChestMenu menu)
 				return menu.getContainer() == KeypadBarrelBlockEntity.this;
 
@@ -98,7 +102,7 @@ public class KeypadBarrelBlockEntity extends RandomizableContainerBlockEntity im
 	}
 
 	@Override
-	public void saveAdditional(CompoundTag tag) {
+	public void saveAdditional(ValueOutput tag) {
 		long cooldownLeft;
 
 		super.saveAdditional(tag);
@@ -123,8 +127,8 @@ public class KeypadBarrelBlockEntity extends RandomizableContainerBlockEntity im
 	}
 
 	@Override
-	public void load(CompoundTag tag) {
-		super.load(tag);
+	public void loadAdditional(ValueInput tag) {
+		super.loadAdditional(tag);
 
 		items = NonNullList.withSize(getContainerSize(), ItemStack.EMPTY);
 
@@ -134,29 +138,24 @@ public class KeypadBarrelBlockEntity extends RandomizableContainerBlockEntity im
 		modules = readModuleInventory(tag);
 		moduleStates = readModuleStates(tag);
 		readOptions(tag);
-		cooldownEnd = System.currentTimeMillis() + tag.getLong("cooldownLeft");
+		cooldownEnd = System.currentTimeMillis() + tag.getLongOr("cooldownLeft", 0L);
+		salt = tag.getStringOr("salt", salt);
+		passcodeHash = tag.getString("passcodeHash").orElse(null);
+		owner = Owner.load(tag);
 
-		if (tag.contains("salt"))
-			salt = tag.getString("salt");
+		String savedPreviousBarrel = tag.getStringOr("previous_barrel", "");
 
-		passcodeHash = tag.contains("passcodeHash") ? tag.getString("passcodeHash") : null;
-		owner.load(tag);
+		if (!savedPreviousBarrel.isBlank()) {
+			Identifier parsedPreviousBarrel = Identifier.parse(savedPreviousBarrel);
 
-		if (tag.contains("previous_barrel")) {
-			String savedPreviousBarrel = tag.getString("previous_barrel");
-
-			if (!savedPreviousBarrel.isBlank()) {
-				Identifier parsedPreviousBarrel = Identifier.parse(savedPreviousBarrel);
-
-				if (parsedPreviousBarrel.getPath() != null && !parsedPreviousBarrel.getPath().isBlank())
-					previousBarrel = parsedPreviousBarrel;
-			}
+			if (parsedPreviousBarrel.getPath() != null && !parsedPreviousBarrel.getPath().isBlank())
+				previousBarrel = parsedPreviousBarrel;
 		}
 	}
 
 	@Override
-	public CompoundTag getUpdateTag() {
-		CompoundTag tag = saveWithoutMetadata();
+	public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+		CompoundTag tag = saveWithoutMetadata(registries);
 
 		tag.remove("passcodeHash");
 		tag.remove("salt");
@@ -320,15 +319,15 @@ public class KeypadBarrelBlockEntity extends RandomizableContainerBlockEntity im
 	}
 
 	@Override
-	public void startOpen(Player player) {
-		if (!remove && !player.isSpectator())
-			openersCounter.incrementOpeners(player, getLevel(), getBlockPos(), getBlockState());
+	public void startOpen(ContainerUser player) {
+		if (!remove && !player.getLivingEntity().isSpectator())
+			openersCounter.incrementOpeners(player.getLivingEntity(), getLevel(), getBlockPos(), getBlockState(), player.getContainerInteractionRange());
 	}
 
 	@Override
-	public void stopOpen(Player player) {
-		if (!remove && !player.isSpectator())
-			openersCounter.decrementOpeners(player, getLevel(), getBlockPos(), getBlockState());
+	public void stopOpen(ContainerUser player) {
+		if (!remove && !player.getLivingEntity().isSpectator())
+			openersCounter.decrementOpeners(player.getLivingEntity(), getLevel(), getBlockPos(), getBlockState());
 	}
 
 	public void recheckOpen() {
@@ -346,12 +345,12 @@ public class KeypadBarrelBlockEntity extends RandomizableContainerBlockEntity im
 			case SIDEWAYS -> state.getValue(KeypadBarrelBlock.HORIZONTAL_FACING);
 			case DOWN -> Direction.DOWN;
 		};
-		Vec3i facingNormal = normalFacing.getNormal();
+		Vec3i facingNormal = normalFacing.getUnitVec3i();
 		double x = worldPosition.getX() + 0.5D + facingNormal.getX() / 2.0D;
 		double y = worldPosition.getY() + 0.5D + facingNormal.getY() / 2.0D;
 		double z = worldPosition.getZ() + 0.5D + facingNormal.getZ() / 2.0D;
 
-		level.playSound(null, x, y, z, sound, SoundSource.BLOCKS, 0.5F, level.random.nextFloat() * 0.1F + 0.9F);
+		level.playSound(null, x, y, z, sound, SoundSource.BLOCKS, 0.5F, level.getRandom().nextFloat() * 0.1F + 0.9F);
 	}
 
 	public void setPreviousBarrel(Block previousBarrel) {

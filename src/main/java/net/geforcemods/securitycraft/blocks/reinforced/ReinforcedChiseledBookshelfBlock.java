@@ -1,5 +1,6 @@
 package net.geforcemods.securitycraft.blocks.reinforced;
 
+import net.minecraft.server.level.ServerLevel;
 import net.geforcemods.securitycraft.api.IReinforcedBlock;
 import net.geforcemods.securitycraft.blockentities.ReinforcedChiseledBookshelfBlockEntity;
 import net.geforcemods.securitycraft.blocks.OwnableBlock;
@@ -36,19 +37,20 @@ public class ReinforcedChiseledBookshelfBlock extends ChiseledBookShelfBlock imp
 	}
 
 	@Override
-	public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+	public InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
 		if (level.getBlockEntity(pos) instanceof ReinforcedChiseledBookshelfBlockEntity be && (be.isOwnedBy(player) || be.isAllowed(player)))
-			return super.use(state, level, pos, player, hand, hit);
+			return super.useWithoutItem(state, level, pos, player, hit);
 
 		return InteractionResult.PASS;
 	}
 
 	@Override
-	public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
-		if (isMoving && level.getBlockEntity(pos) instanceof ChiseledBookShelfBlockEntity be)
+	protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel level, BlockPos pos, boolean movedByPiston) {
+		if (movedByPiston && level.getBlockEntity(pos) instanceof ChiseledBookShelfBlockEntity be)
 			be.clearContent(); //Clear the books from the block before it is moved by a piston to prevent book duplication
 
-		super.onRemove(state, level, pos, newState, isMoving);
+
+		super.affectNeighborsAfterRemoval(state, level, pos, movedByPiston);
 	}
 
 	@Override

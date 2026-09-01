@@ -3,7 +3,7 @@ package net.geforcemods.securitycraft.blockentities;
 import java.util.EnumMap;
 import java.util.Map;
 
-import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
+import net.fabricmc.fabric.api.menu.v1.ExtendedMenuProvider;
 import net.geforcemods.securitycraft.SCContent;
 import net.geforcemods.securitycraft.api.ICustomizable;
 import net.geforcemods.securitycraft.api.IModuleInventory;
@@ -15,10 +15,12 @@ import net.geforcemods.securitycraft.inventory.ReinforcedLecternMenu;
 import net.geforcemods.securitycraft.misc.ModuleType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -36,7 +38,7 @@ import net.minecraft.world.level.block.state.BlockState;
  * the block position to the client. On Fabric that's {@link ExtendedScreenHandlerFactory}, implemented
  * here the same way {@code LaserBlockBlockEntity} does it.
  */
-public class ReinforcedLecternBlockEntity extends LecternBlockEntity implements IOwnable, IModuleInventory, ICustomizable, ExtendedScreenHandlerFactory {
+public class ReinforcedLecternBlockEntity extends LecternBlockEntity implements IOwnable, IModuleInventory, ICustomizable, ExtendedMenuProvider<BlockPos> {
 	private Owner owner = new Owner();
 	private NonNullList<ItemStack> modules = NonNullList.withSize(getMaxNumberOfModules(), ItemStack.EMPTY);
 	private Map<ModuleType, Boolean> moduleStates = new EnumMap<>(ModuleType.class);
@@ -47,16 +49,16 @@ public class ReinforcedLecternBlockEntity extends LecternBlockEntity implements 
 	}
 
 	@Override
-	public void load(CompoundTag tag) {
-		super.load(tag);
-		owner.load(tag);
+	public void loadAdditional(ValueInput tag) {
+		super.loadAdditional(tag);
+		owner = Owner.load(tag);
 		modules = readModuleInventory(tag);
 		moduleStates = readModuleStates(tag);
 		readOptions(tag);
 	}
 
 	@Override
-	public void saveAdditional(CompoundTag tag) {
+	public void saveAdditional(ValueOutput tag) {
 		super.saveAdditional(tag);
 
 		if (owner != null)
@@ -68,8 +70,8 @@ public class ReinforcedLecternBlockEntity extends LecternBlockEntity implements 
 	}
 
 	@Override
-	public CompoundTag getUpdateTag() {
-		return saveWithoutMetadata();
+	public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+		return saveWithoutMetadata(registries);
 	}
 
 	@Override
@@ -132,8 +134,8 @@ public class ReinforcedLecternBlockEntity extends LecternBlockEntity implements 
 	}
 
 	@Override
-	public void writeScreenOpeningData(ServerPlayer player, FriendlyByteBuf buf) {
-		buf.writeBlockPos(worldPosition);
+	public BlockPos getScreenOpeningData(ServerPlayer player) {
+		return worldPosition;
 	}
 
 	@Override

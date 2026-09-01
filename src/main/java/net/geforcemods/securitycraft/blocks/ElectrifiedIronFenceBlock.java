@@ -5,7 +5,7 @@ import java.util.Map;
 import net.geforcemods.securitycraft.blockentities.ElectrifiedFenceAndGateBlockEntity;
 import net.geforcemods.securitycraft.misc.CustomDamageSources;
 import net.geforcemods.securitycraft.misc.SCSounds;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -14,7 +14,6 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.OwnableEntity;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -66,7 +65,7 @@ public class ElectrifiedIronFenceBlock extends OwnableBlock {
 	}
 
 	@Override
-	public VoxelShape getOcclusionShape(BlockState state, BlockGetter level, BlockPos pos) {
+	public VoxelShape getOcclusionShape(BlockState state) {
 		return renderShapes[getIndex(state)];
 	}
 
@@ -151,7 +150,7 @@ public class ElectrifiedIronFenceBlock extends OwnableBlock {
 	}
 
 	@Override
-	public boolean isPathfindable(BlockState state, BlockGetter level, BlockPos pos, PathComputationType type) {
+	public boolean isPathfindable(BlockState state, PathComputationType type) {
 		return false;
 	}
 
@@ -209,7 +208,7 @@ public class ElectrifiedIronFenceBlock extends OwnableBlock {
 
 	@Override
 	public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity, net.minecraft.world.entity.InsideBlockEffectApplier effectApplier, boolean stillInside) {
-		hurtOrConvertEntity(this, state, level, pos, entity);
+		hurtOrConvertEntity(this::getShape, state, level, pos, entity);
 	}
 
 	/**
@@ -219,10 +218,10 @@ public class ElectrifiedIronFenceBlock extends OwnableBlock {
 	 * <p>Upstream plays the shock sound from a {@code LivingHurtEvent} handler; Fabric has no such event, so the
 	 * sound is played right here instead, which is the same moment in the same place.
 	 */
-	public static void hurtOrConvertEntity(Block electrifiedBlock, BlockState state, Level level, BlockPos pos, Entity entity) {
+	public static void hurtOrConvertEntity(ShapeGetter shapeGetter, BlockState state, Level level, BlockPos pos, Entity entity) {
 		if (level.getGameTime() % 20 != 0)
 			return;
-		else if (entity.isRemoved() || !electrifiedBlock.getShape(state, level, pos, CollisionContext.of(entity)).bounds().move(pos).inflate(0.01D).intersects(entity.getBoundingBox()))
+		else if (entity.isRemoved() || !shapeGetter.getShape(state, level, pos, CollisionContext.of(entity)).bounds().move(pos).inflate(0.01D).intersects(entity.getBoundingBox()))
 			return;
 		else if (entity instanceof ItemEntity) //so dropped items don't get destroyed
 			return;
@@ -238,11 +237,9 @@ public class ElectrifiedIronFenceBlock extends OwnableBlock {
 			if (be.allowsOwnableEntity(ownableEntity))
 				return;
 		}
-		else if (!level.isClientSide) {
-			LightningBolt lightning = EntityType.LIGHTNING_BOLT.create(level);
+		else if (!level.isClientSide()) {
+			LightningBolt lightning = net.geforcemods.securitycraft.util.LevelUtils.createLightning(level, Vec3.atBottomCenterOf(pos), true);
 
-			lightning.moveTo(Vec3.atBottomCenterOf(pos));
-			lightning.setVisualOnly(true);
 			entity.thunderHit((ServerLevel) level, lightning);
 			entity.clearFire();
 			return;
@@ -255,5 +252,10 @@ public class ElectrifiedIronFenceBlock extends OwnableBlock {
 	@Override
 	public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
 		return new ElectrifiedFenceAndGateBlockEntity(pos, state);
+	}
+
+	@FunctionalInterface
+	public interface ShapeGetter {
+		VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext ctx);
 	}
 }

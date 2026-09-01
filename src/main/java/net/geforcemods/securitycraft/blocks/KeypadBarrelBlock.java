@@ -48,7 +48,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition.Builder;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
 
@@ -64,7 +63,7 @@ public class KeypadBarrelBlock extends Block implements EntityBlock {
 	//upstream's DisguisableBlock superclass also implements SimpleWaterloggedBlock and carries a WATERLOGGED
 	//property; since that class doesn't exist in this port, waterlogging is dropped along with it rather than
 	//half-ported without its updateShape/getFluidState plumbing
-	public static final DirectionProperty HORIZONTAL_FACING = BlockStateProperties.HORIZONTAL_FACING;
+	public static final EnumProperty<Direction> HORIZONTAL_FACING = BlockStateProperties.HORIZONTAL_FACING;
 	public static final EnumProperty<LidFacing> LID_FACING = EnumProperty.create("lid_facing", LidFacing.class);
 	public static final BooleanProperty OPEN = BlockStateProperties.OPEN;
 	public static final BooleanProperty FROG = BooleanProperty.create("frog");
@@ -88,25 +87,28 @@ public class KeypadBarrelBlock extends Block implements EntityBlock {
 
 	@Override
 	public void setPlacedBy(Level level, BlockPos pos, BlockState state, LivingEntity entity, ItemStack stack) {
-		if (stack.hasCustomHoverName() && level.getBlockEntity(pos) instanceof KeypadBarrelBlockEntity barrel)
-			barrel.setCustomName(stack.getHoverName());
 
 		OwnershipUtils.setPlacedBy(level, pos, entity);
 	}
 
 	@Override
-	public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-		if (!(level.getBlockEntity(pos) instanceof KeypadBarrelBlockEntity be))
-			return InteractionResult.PASS;
-
-		if (player.getItemInHand(hand).is(Items.FROG_SPAWN_EGG) && be.isOwnedBy(player)) {
-			if (!level.isClientSide)
+	protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+		if (level.getBlockEntity(pos) instanceof KeypadBarrelBlockEntity be && stack.is(Items.FROG_SPAWN_EGG) && be.isOwnedBy(player)) {
+			if (!level.isClientSide())
 				level.setBlockAndUpdate(pos, state.cycle(FROG));
 
 			return InteractionResult.SUCCESS;
 		}
 
-		if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
+		return InteractionResult.TRY_WITH_EMPTY_HAND;
+	}
+
+	@Override
+	public InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
+		if (!(level.getBlockEntity(pos) instanceof KeypadBarrelBlockEntity be))
+			return InteractionResult.PASS;
+
+		if (!level.isClientSide() && player instanceof ServerPlayer serverPlayer) {
 			if (be.isDenied(player)) {
 				if (be.sendsDenylistMessage())
 					PlayerUtils.sendMessageToPlayer(player, Utils.localize(getDescriptionId()), Utils.localize("messages.securitycraft:module.onDenylist"), ChatFormatting.RED);
@@ -136,7 +138,7 @@ public class KeypadBarrelBlock extends Block implements EntityBlock {
 	}
 
 	public void activate(BlockState state, Level level, BlockPos pos, Player player) {
-		if (!level.isClientSide) {
+		if (!level.isClientSide()) {
 			MenuProvider menuProvider = getMenuProvider(state, level, pos);
 
 			if (menuProvider != null) {
@@ -147,8 +149,7 @@ public class KeypadBarrelBlock extends Block implements EntityBlock {
 	}
 
 	@Override
-	public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
-		if (!state.is(newState.getBlock())) {
+	protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel level, BlockPos pos, boolean movedByPiston) {
 			BlockEntity be = level.getBlockEntity(pos);
 
 			if (be instanceof Container container) {
@@ -160,9 +161,8 @@ public class KeypadBarrelBlock extends Block implements EntityBlock {
 			//inline onRemove pattern this port already uses for KeypadBlock
 			if (be instanceof IModuleInventory inv)
 				inv.dropAllModules();
-		}
 
-		super.onRemove(state, level, pos, newState, isMoving);
+		super.affectNeighborsAfterRemoval(state, level, pos, movedByPiston);
 	}
 
 	@Override
@@ -187,7 +187,7 @@ public class KeypadBarrelBlock extends Block implements EntityBlock {
 	}
 
 	@Override
-	public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
+	public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos, Direction direction) {
 		return AbstractContainerMenu.getRedstoneSignalFromBlockEntity(level.getBlockEntity(pos));
 	}
 
@@ -229,7 +229,7 @@ public class KeypadBarrelBlock extends Block implements EntityBlock {
 			KeypadBarrelBlockEntity keypadBarrel;
 
 			barrel.unpackLootTable(player); //generate loot (if any), so items don't spill out when converting and no additional loot table is generated
-			tag = barrel.saveWithFullMetadata();
+			tag = net.geforcemods.securitycraft.util.BlockUtils.saveBlockEntity(barrel, level);
 			barrel.clearContent();
 			horizontalFacing = switch (generalFacing) {
 				case UP, DOWN -> player == null ? Direction.NORTH : player.getDirection().getOpposite();
@@ -237,7 +237,7 @@ public class KeypadBarrelBlock extends Block implements EntityBlock {
 			};
 			level.setBlockAndUpdate(pos, SCContent.KEYPAD_BARREL.defaultBlockState().setValue(HORIZONTAL_FACING, horizontalFacing).setValue(LID_FACING, generalFacing).setValue(OPEN, false));
 			keypadBarrel = (KeypadBarrelBlockEntity) level.getBlockEntity(pos);
-			keypadBarrel.load(tag);
+			net.geforcemods.securitycraft.util.BlockUtils.loadBlockEntity(keypadBarrel, tag, level);
 			keypadBarrel.setPreviousBarrel(state.getBlock());
 
 			if (player != null)
@@ -262,11 +262,11 @@ public class KeypadBarrelBlock extends Block implements EntityBlock {
 
 			keypadBarrel.dropAllModules();
 			keypadBarrel.unpackLootTable(player); //generate loot (if any), so items don't spill out when converting and no additional loot table is generated
-			tag = keypadBarrel.saveWithFullMetadata();
+			tag = net.geforcemods.securitycraft.util.BlockUtils.saveBlockEntity(keypadBarrel, level);
 			keypadBarrel.clearContent();
 			level.setBlockAndUpdate(pos, convertedBlock.defaultBlockState().setValue(BarrelBlock.FACING, direction).setValue(OPEN, false));
 			barrel = (BarrelBlockEntity) level.getBlockEntity(pos);
-			barrel.load(tag);
+			net.geforcemods.securitycraft.util.BlockUtils.loadBlockEntity(barrel, tag, level);
 			return true;
 		}
 	}

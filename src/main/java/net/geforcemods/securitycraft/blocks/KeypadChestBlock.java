@@ -1,5 +1,6 @@
 package net.geforcemods.securitycraft.blocks;
 
+import net.minecraft.server.level.ServerLevel;
 import java.util.Optional;
 
 import net.geforcemods.securitycraft.SCContent;
@@ -103,7 +104,7 @@ public class KeypadChestBlock extends ChestBlock {
 	private final float destroyTimeForOwner;
 
 	public KeypadChestBlock(BlockBehaviour.Properties properties) {
-		super(OwnableBlock.withReinforcedDestroyTime(properties), () -> SCContent.KEYPAD_CHEST_BLOCK_ENTITY);
+		super(() -> SCContent.KEYPAD_CHEST_BLOCK_ENTITY, net.minecraft.sounds.SoundEvents.CHEST_OPEN, net.minecraft.sounds.SoundEvents.CHEST_CLOSE, OwnableBlock.withReinforcedDestroyTime(properties));
 		destroyTimeForOwner = OwnableBlock.getStoredDestroyTime();
 	}
 
@@ -113,11 +114,11 @@ public class KeypadChestBlock extends ChestBlock {
 	}
 
 	@Override
-	public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+	public InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
 		if (!(level.getBlockEntity(pos) instanceof KeypadChestBlockEntity be))
 			return InteractionResult.PASS;
 
-		if (!level.isClientSide && !isBlocked(level, pos) && player instanceof ServerPlayer serverPlayer) {
+		if (!level.isClientSide() && !isBlocked(level, pos) && player instanceof ServerPlayer serverPlayer) {
 			if (be.isDenied(player)) {
 				if (be.sendsDenylistMessage())
 					PlayerUtils.sendMessageToPlayer(player, Utils.localize(getDescriptionId()), Utils.localize("messages.securitycraft:module.onDenylist"), ChatFormatting.RED);
@@ -147,9 +148,8 @@ public class KeypadChestBlock extends ChestBlock {
 	}
 
 	public void activate(BlockState state, Level level, BlockPos pos, Player player) {
-		if (!level.isClientSide) {
-			ChestBlock block = (ChestBlock) state.getBlock();
-			MenuProvider menuProvider = block.getMenuProvider(state, level, pos);
+		if (!level.isClientSide()) {
+			MenuProvider menuProvider = getMenuProvider(state, level, pos);
 
 			if (menuProvider != null) {
 				player.openMenu(menuProvider);
@@ -176,11 +176,38 @@ public class KeypadChestBlock extends ChestBlock {
 	}
 
 	@Override
-	public Direction candidatePartnerFacing(BlockPlaceContext ctx, Direction dir) {
-		Direction returnValue = super.candidatePartnerFacing(ctx, dir);
+	public BlockState getStateForPlacement(BlockPlaceContext ctx) {
+		net.minecraft.world.level.block.state.properties.ChestType type = net.minecraft.world.level.block.state.properties.ChestType.SINGLE;
+		Direction chestFacing = ctx.getHorizontalDirection().getOpposite();
+		Level level = ctx.getLevel();
+		BlockPos clickedPos = ctx.getClickedPos();
+		boolean isSneaking = ctx.isSecondaryUseActive();
+		Direction clickedFace = ctx.getClickedFace();
+
+		if (clickedFace.getAxis().isHorizontal() && isSneaking) {
+			Direction neighborChestFacing = candidatePartnerFacing(level, clickedPos, clickedFace.getOpposite(), ctx.getPlayer());
+
+			if (neighborChestFacing != null && neighborChestFacing.getAxis() != clickedFace.getAxis()) {
+				chestFacing = neighborChestFacing;
+				type = neighborChestFacing.getCounterClockWise() == clickedFace.getOpposite() ? net.minecraft.world.level.block.state.properties.ChestType.RIGHT : net.minecraft.world.level.block.state.properties.ChestType.LEFT;
+			}
+		}
+
+		if (type == net.minecraft.world.level.block.state.properties.ChestType.SINGLE && !isSneaking) {
+			if (chestFacing == candidatePartnerFacing(level, clickedPos, chestFacing.getClockWise(), ctx.getPlayer()))
+				type = net.minecraft.world.level.block.state.properties.ChestType.LEFT;
+			else
+				type = chestFacing == candidatePartnerFacing(level, clickedPos, chestFacing.getCounterClockWise(), ctx.getPlayer()) ? net.minecraft.world.level.block.state.properties.ChestType.RIGHT : net.minecraft.world.level.block.state.properties.ChestType.SINGLE;
+		}
+
+		return defaultBlockState().setValue(FACING, chestFacing).setValue(TYPE, type).setValue(WATERLOGGED, level.getFluidState(clickedPos).getType() == net.minecraft.world.level.material.Fluids.WATER);
+	}
+
+	public Direction candidatePartnerFacing(Level level, BlockPos pos, Direction dir, Player player) {
+		Direction returnValue = super.candidatePartnerFacing(level, pos, dir);
 
 		//only connect to chests which have the same owner
-		if (returnValue != null && ctx.getLevel().getBlockEntity(ctx.getClickedPos().relative(dir)) instanceof IOwnable ownable && ownable.isOwnedBy(ctx.getPlayer()))
+		if (returnValue != null && level.getBlockEntity(pos.relative(dir)) instanceof IOwnable ownable && ownable.isOwnedBy(player))
 			return returnValue;
 
 		return null;
@@ -208,13 +235,14 @@ public class KeypadChestBlock extends ChestBlock {
 	//such hook, and neighborChanged below already covers the case this port needs
 
 	@Override
-	public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
+	protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel level, BlockPos pos, boolean movedByPiston) {
 		//replaces upstream's un-ported SCEventHandler#onBlockEventBreak generic module-drop hook, matching the
 		//inline onRemove pattern this port already uses for KeypadBlock
-		if (!state.is(newState.getBlock()) && level.getBlockEntity(pos) instanceof IModuleInventory inv && inv.shouldDropModules())
+		if (level.getBlockEntity(pos) instanceof IModuleInventory inv && inv.shouldDropModules())
 			inv.dropAllModules();
 
-		super.onRemove(state, level, pos, newState, isMoving);
+
+		super.affectNeighborsAfterRemoval(state, level, pos, movedByPiston);
 	}
 
 	@Override
@@ -229,7 +257,7 @@ public class KeypadChestBlock extends ChestBlock {
 
 	@Override
 	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-		return level.isClientSide ? createTickerHelper(type, SCContent.KEYPAD_CHEST_BLOCK_ENTITY, KeypadChestBlockEntity::lidAnimateTick) : null;
+		return level.isClientSide() ? createTickerHelper(type, SCContent.KEYPAD_CHEST_BLOCK_ENTITY, KeypadChestBlockEntity::lidAnimateTick) : null;
 	}
 
 	public static boolean isBlocked(Level level, BlockPos pos) {
@@ -253,7 +281,7 @@ public class KeypadChestBlock extends ChestBlock {
 	@Override
 	public RenderShape getRenderShape(BlockState state) {
 		//like every chest, the block model is empty and the chest itself is drawn by its block entity renderer
-		return RenderShape.ENTITYBLOCK_ANIMATED;
+		return RenderShape.MODEL;
 	}
 
 	public static class Convertible implements IPasscodeConvertible {
@@ -316,11 +344,11 @@ public class KeypadChestBlock extends ChestBlock {
 			}
 
 			chest.unpackLootTable(player); //generate loot (if any), so items don't spill out when converting and no additional loot table is generated
-			tag = chest.saveWithFullMetadata();
+			tag = net.geforcemods.securitycraft.util.BlockUtils.saveBlockEntity(chest, level);
 			chest.clearContent();
 			level.setBlockAndUpdate(pos, convertedBlock.defaultBlockState().setValue(FACING, facing).setValue(TYPE, type));
 			chest = (ChestBlockEntity) level.getBlockEntity(pos);
-			chest.load(tag);
+			net.geforcemods.securitycraft.util.BlockUtils.loadBlockEntity(chest, tag, level);
 
 			if (protect) {
 				if (player != null)

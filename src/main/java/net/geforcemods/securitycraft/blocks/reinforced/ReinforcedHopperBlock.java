@@ -1,5 +1,6 @@
 package net.geforcemods.securitycraft.blocks.reinforced;
 
+import net.minecraft.server.level.ServerLevel;
 import net.geforcemods.securitycraft.SCContent;
 import net.geforcemods.securitycraft.api.IReinforcedBlock;
 import net.geforcemods.securitycraft.blockentities.ReinforcedHopperBlockEntity;
@@ -58,24 +59,25 @@ public class ReinforcedHopperBlock extends HopperBlock implements IReinforcedBlo
 	}
 
 	@Override
-	public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+	public InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
 		//only allow the owner or players on the allowlist to access a reinforced hopper
-		if (!level.isClientSide && level.getBlockEntity(pos) instanceof ReinforcedHopperBlockEntity be && (be.isOwnedBy(player) || be.isAllowed(player)))
+		if (!level.isClientSide() && level.getBlockEntity(pos) instanceof ReinforcedHopperBlockEntity be && (be.isOwnedBy(player) || be.isAllowed(player)))
 			player.openMenu(be);
 
 		return InteractionResult.SUCCESS;
 	}
 
 	@Override
-	public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
-		if (!state.is(newState.getBlock()) && level.getBlockEntity(pos) instanceof ReinforcedHopperBlockEntity be) {
-			if (isMoving)
+	protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel level, BlockPos pos, boolean movedByPiston) {
+		if (level.getBlockEntity(pos) instanceof ReinforcedHopperBlockEntity be) {
+			if (movedByPiston)
 				be.clearContent(); //clear the items from the block before it is moved by a piston to prevent duplication
 
 			level.updateNeighbourForOutputSignal(pos, this);
 		}
 
-		super.onRemove(state, level, pos, newState, isMoving);
+
+		super.affectNeighborsAfterRemoval(state, level, pos, movedByPiston);
 	}
 
 	@Override
@@ -85,7 +87,7 @@ public class ReinforcedHopperBlock extends HopperBlock implements IReinforcedBlo
 
 	@Override
 	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-		return level.isClientSide ? null : createTickerHelper(type, SCContent.REINFORCED_HOPPER_BLOCK_ENTITY, ReinforcedHopperBlockEntity::pushItemsTick);
+		return level.isClientSide() ? null : createTickerHelper(type, SCContent.REINFORCED_HOPPER_BLOCK_ENTITY, ReinforcedHopperBlockEntity::pushItemsTick);
 	}
 
 	@Override

@@ -30,7 +30,7 @@ public class ReinforcedDoorBlock extends DoorBlock implements IReinforcedBlock, 
 	private final float destroyTimeForOwner;
 
 	public ReinforcedDoorBlock(BlockSetType type, BlockBehaviour.Properties properties) {
-		super(OwnableBlock.withReinforcedDestroyTime(properties), type);
+		super(type, OwnableBlock.withReinforcedDestroyTime(properties));
 		destroyTimeForOwner = OwnableBlock.getStoredDestroyTime();
 	}
 

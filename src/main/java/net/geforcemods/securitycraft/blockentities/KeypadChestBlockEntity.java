@@ -71,7 +71,7 @@ public class KeypadChestBlockEntity extends ChestBlockEntity implements Passcode
 	}
 
 	@Override
-	public void saveAdditional(CompoundTag tag) {
+	public void saveAdditional(net.minecraft.world.level.storage.ValueOutput tag) {
 		long cooldownLeft;
 
 		super.saveAdditional(tag);
@@ -92,23 +92,20 @@ public class KeypadChestBlockEntity extends ChestBlockEntity implements Passcode
 	}
 
 	@Override
-	public void load(CompoundTag tag) {
-		super.load(tag);
+	public void loadAdditional(net.minecraft.world.level.storage.ValueInput tag) {
+		super.loadAdditional(tag);
 
 		modules = readModuleInventory(tag);
 		moduleStates = readModuleStates(tag);
 		readOptions(tag);
-		cooldownEnd = System.currentTimeMillis() + tag.getLong("cooldownLeft");
+		cooldownEnd = System.currentTimeMillis() + tag.getLongOr("cooldownLeft", 0L);
+		salt = tag.getStringOr("salt", salt);
+		passcodeHash = tag.getString("passcodeHash").orElse(null);
+		owner = Owner.load(tag);
 
-		if (tag.contains("salt"))
-			salt = tag.getString("salt");
+		String savedPreviousChest = tag.getStringOr("previous_chest", "");
 
-		passcodeHash = tag.contains("passcodeHash") ? tag.getString("passcodeHash") : null;
-		owner.load(tag);
-
-		if (tag.contains("previous_chest")) {
-			String savedPreviousChest = tag.getString("previous_chest");
-
+		{
 			if (!savedPreviousChest.isBlank()) {
 				Identifier parsedPreviousChest = Identifier.parse(savedPreviousChest);
 
@@ -119,8 +116,8 @@ public class KeypadChestBlockEntity extends ChestBlockEntity implements Passcode
 	}
 
 	@Override
-	public CompoundTag getUpdateTag() {
-		CompoundTag tag = saveWithoutMetadata();
+	public CompoundTag getUpdateTag(net.minecraft.core.HolderLookup.Provider registries) {
+		CompoundTag tag = saveWithoutMetadata(registries);
 
 		tag.remove("passcodeHash");
 		tag.remove("salt");
@@ -333,7 +330,13 @@ public class KeypadChestBlockEntity extends ChestBlockEntity implements Passcode
 			insertModule(other.getModule(type), false);
 		}
 
-		readOptions(other.writeOptions(new CompoundTag()));
+		try (net.minecraft.util.ProblemReporter.ScopedCollector reporter = new net.minecraft.util.ProblemReporter.ScopedCollector(other.problemPath(), net.geforcemods.securitycraft.SecurityCraft.LOGGER)) {
+			net.minecraft.world.level.storage.TagValueOutput out = net.minecraft.world.level.storage.TagValueOutput.createWithContext(reporter, other.level.registryAccess());
+
+			other.writeOptions(out);
+			readOptions(net.minecraft.world.level.storage.TagValueInput.create(reporter, other.level.registryAccess(), out.buildResult()));
+		}
+
 		copyPasscodeFrom(other);
 	}
 

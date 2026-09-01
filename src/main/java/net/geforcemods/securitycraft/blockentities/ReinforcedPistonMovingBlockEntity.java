@@ -10,12 +10,13 @@ import net.geforcemods.securitycraft.api.Owner;
 import net.geforcemods.securitycraft.blocks.reinforced.ReinforcedPistonBaseBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.HolderGetter;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.util.ProblemReporter;
+import net.minecraft.world.level.storage.TagValueInput;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.server.level.ServerPlayer;
@@ -71,13 +72,18 @@ public class ReinforcedPistonMovingBlockEntity extends BlockEntity implements IO
 	}
 
 	@Override
-	public CompoundTag getUpdateTag() {
-		return saveWithoutMetadata();
+	public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+		return saveCustomOnly(registries);
 	}
 
 	@Override
 	public Packet<ClientGamePacketListener> getUpdatePacket() {
 		return ClientboundBlockEntityDataPacket.create(this);
+	}
+
+	@Override
+	public void preRemoveSideEffects(BlockPos pos, BlockState state) {
+		finalTick();
 	}
 
 	public boolean isExtending() {
@@ -267,7 +273,7 @@ public class ReinforcedPistonMovingBlockEntity extends BlockEntity implements IO
 	 * Removes the piston's BlockEntity and stops any movement
 	 */
 	public void finalTick() {
-		if (level != null && (lastProgress < 1.0F || level.isClientSide)) {
+		if (level != null && (lastProgress < 1.0F || level.isClientSide())) {
 			progress = 1.0F;
 			lastProgress = progress;
 			level.removeBlockEntity(worldPosition);
@@ -285,7 +291,7 @@ public class ReinforcedPistonMovingBlockEntity extends BlockEntity implements IO
 					BlockEntity be = pushedState.hasBlockEntity() ? ((EntityBlock) pushedState.getBlock()).newBlockEntity(worldPosition, pushedState) : null;
 
 					if (be != null) {
-						be.load(movedBlockEntityTag);
+						be.loadWithComponents(TagValueInput.create(ProblemReporter.DISCARDING, level.registryAccess(), movedBlockEntityTag));
 						level.setBlockEntity(be);
 
 						if (be instanceof IModuleInventory moduleInv) {
@@ -300,7 +306,7 @@ public class ReinforcedPistonMovingBlockEntity extends BlockEntity implements IO
 				}
 
 				level.setBlock(worldPosition, pushedState, 3);
-				level.neighborChanged(worldPosition, pushedState.getBlock(), worldPosition);
+				level.neighborChanged(worldPosition, pushedState.getBlock(), null);
 			}
 		}
 	}
@@ -310,7 +316,7 @@ public class ReinforcedPistonMovingBlockEntity extends BlockEntity implements IO
 		be.lastProgress = be.progress;
 
 		if (be.lastProgress >= 1.0F) {
-			if (level.isClientSide && be.deathTicks < 5)
+			if (level.isClientSide() && be.deathTicks < 5)
 				++be.deathTicks;
 			else {
 				level.removeBlockEntity(pos);
@@ -331,7 +337,7 @@ public class ReinforcedPistonMovingBlockEntity extends BlockEntity implements IO
 							BlockEntity storedBe = pushedState.hasBlockEntity() ? ((EntityBlock) pushedState.getBlock()).newBlockEntity(be.worldPosition, pushedState) : null;
 
 							if (storedBe != null) {
-								storedBe.load(be.movedBlockEntityTag);
+								storedBe.loadWithComponents(TagValueInput.create(ProblemReporter.DISCARDING, level.registryAccess(), be.movedBlockEntityTag));
 								level.setBlockEntity(storedBe);
 
 								if (storedBe instanceof IModuleInventory moduleInv) {
@@ -346,7 +352,7 @@ public class ReinforcedPistonMovingBlockEntity extends BlockEntity implements IO
 						}
 
 						level.setBlock(pos, pushedState, 67);
-						level.neighborChanged(pos, pushedState.getBlock(), pos);
+						level.neighborChanged(pos, pushedState.getBlock(), null);
 					}
 				}
 			}
@@ -364,32 +370,29 @@ public class ReinforcedPistonMovingBlockEntity extends BlockEntity implements IO
 	}
 
 	@Override
-	public void load(CompoundTag tag) {
-		HolderGetter<Block> holderGetter;
-
-		super.load(tag);
-		holderGetter = level != null ? level.holderLookup(Registries.BLOCK) : BuiltInRegistries.BLOCK.asLookup();
-		movedState = NbtUtils.readBlockState(holderGetter, tag.getCompound("blockState"));
-		direction = Direction.from3DDataValue(tag.getInt("facing"));
-		progress = tag.getFloat("progress");
+	public void loadAdditional(ValueInput tag) {
+		super.loadAdditional(tag);
+		movedState = tag.read("blockState", BlockState.CODEC).orElse(Blocks.AIR.defaultBlockState());
+		direction = tag.read("facing", Direction.LEGACY_ID_CODEC).orElse(Direction.DOWN);
+		progress = tag.getFloatOr("progress", 0.0F);
 		lastProgress = progress;
-		extending = tag.getBoolean("extending");
-		isSourcePiston = tag.getBoolean("source");
-		movedBlockEntityTag = (CompoundTag) tag.get("movedBlockEntityTag");
-		owner.load(tag);
+		extending = tag.getBooleanOr("extending", false);
+		isSourcePiston = tag.getBooleanOr("source", false);
+		movedBlockEntityTag = tag.read("movedBlockEntityTag", CompoundTag.CODEC).orElse(null);
+		owner = Owner.load(tag);
 	}
 
 	@Override
-	public void saveAdditional(CompoundTag tag) {
+	public void saveAdditional(ValueOutput tag) {
 		super.saveAdditional(tag);
-		tag.put("blockState", NbtUtils.writeBlockState(movedState));
-		tag.putInt("facing", direction.get3DDataValue());
+		tag.store("blockState", BlockState.CODEC, movedState);
+		tag.store("facing", Direction.LEGACY_ID_CODEC, direction);
 		tag.putFloat("progress", lastProgress);
 		tag.putBoolean("extending", extending);
 		tag.putBoolean("source", isSourcePiston);
 
 		if (movedBlockEntityTag != null)
-			tag.put("movedBlockEntityTag", movedBlockEntityTag);
+			tag.store("movedBlockEntityTag", CompoundTag.CODEC, movedBlockEntityTag);
 
 		if (owner != null)
 			owner.save(tag, needsValidation());

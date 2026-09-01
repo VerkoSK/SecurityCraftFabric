@@ -34,7 +34,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition.Builder;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
@@ -55,7 +55,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
  * (owner-only breaking, owner set on placement) is kept by extending {@link OwnableBlock} directly instead.
  */
 public abstract class AbstractKeypadFurnaceBlock extends OwnableBlock implements SimpleWaterloggedBlock {
-	public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+	public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
 	public static final BooleanProperty OPEN = BlockStateProperties.OPEN;
 	public static final BooleanProperty LIT = BlockStateProperties.LIT;
 	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
@@ -81,8 +81,6 @@ public abstract class AbstractKeypadFurnaceBlock extends OwnableBlock implements
 	public void setPlacedBy(Level level, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
 		super.setPlacedBy(level, pos, state, placer, stack);
 
-		if (stack.hasCustomHoverName() && level.getBlockEntity(pos) instanceof AbstractKeypadFurnaceBlockEntity be)
-			be.setCustomName(stack.getHoverName());
 	}
 
 	@Override
@@ -108,8 +106,7 @@ public abstract class AbstractKeypadFurnaceBlock extends OwnableBlock implements
 	}
 
 	@Override
-	public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
-		if (!state.is(newState.getBlock())) {
+	protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel level, BlockPos pos, boolean movedByPiston) {
 			if (level.getBlockEntity(pos) instanceof Container container) {
 				Containers.dropContents(level, pos, container);
 				level.updateNeighbourForOutputSignal(pos, this);
@@ -119,19 +116,18 @@ public abstract class AbstractKeypadFurnaceBlock extends OwnableBlock implements
 			//KeypadBlock) this drops them itself
 			if (level.getBlockEntity(pos) instanceof AbstractKeypadFurnaceBlockEntity be)
 				be.dropAllModules();
-		}
 
-		super.onRemove(state, level, pos, newState, isMoving);
+		super.affectNeighborsAfterRemoval(state, level, pos, movedByPiston);
 	}
 
 	@Override
-	public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+	public InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
 		if (!(level.getBlockEntity(pos) instanceof AbstractKeypadFurnaceBlockEntity be))
 			return InteractionResult.PASS;
 
-		if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
+		if (!level.isClientSide() && player instanceof ServerPlayer serverPlayer) {
 			if (be.isDisabled())
-				player.displayClientMessage(Utils.localize("gui.securitycraft:scManual.disabled"), true);
+				serverPlayer.sendSystemMessage(Utils.localize("gui.securitycraft:scManual.disabled"), true);
 			else if (verifyPasscodeSet(pos, be, serverPlayer)) {
 				if (be.isDenied(player)) {
 					if (be.sendsDenylistMessage())
@@ -190,11 +186,11 @@ public abstract class AbstractKeypadFurnaceBlock extends OwnableBlock implements
 	}
 
 	@Override
-	public BlockState updateShape(BlockState state, Direction facing, BlockState facingState, LevelAccessor level, BlockPos pos, BlockPos facingPos) {
+	protected BlockState updateShape(BlockState state, net.minecraft.world.level.LevelReader level, net.minecraft.world.level.ScheduledTickAccess tickAccess, BlockPos pos, Direction direction, BlockPos neighborPos, BlockState neighborState, net.minecraft.util.RandomSource random) {
 		if (state.getValue(WATERLOGGED))
-			level.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
+			tickAccess.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
 
-		return super.updateShape(state, facing, facingState, level, pos, facingPos);
+		return super.updateShape(state, level, tickAccess, pos, direction, neighborPos, neighborState, random);
 	}
 
 	@Override
@@ -262,12 +258,12 @@ public abstract class AbstractKeypadFurnaceBlock extends OwnableBlock implements
 			else
 				((net.geforcemods.securitycraft.api.IModuleInventory) furnace).dropAllModules();
 
-			net.minecraft.nbt.CompoundTag tag = furnace.saveWithFullMetadata();
+			net.minecraft.nbt.CompoundTag tag = net.geforcemods.securitycraft.util.BlockUtils.saveBlockEntity(furnace, level);
 
 			furnace.clearContent();
 			level.setBlockAndUpdate(pos, convertedState);
 			furnace = (net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity) level.getBlockEntity(pos);
-			furnace.load(tag);
+			net.geforcemods.securitycraft.util.BlockUtils.loadBlockEntity(furnace, tag, level);
 
 			if (protect && player != null)
 				((net.geforcemods.securitycraft.api.IOwnable) furnace).setOwner(player.getName().getString(), player.getUUID().toString());

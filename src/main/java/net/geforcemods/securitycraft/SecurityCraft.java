@@ -22,6 +22,7 @@ public class SecurityCraft implements ModInitializer {
 	public void onInitialize() {
 		ConfigHandler.load();
 		SCContent.init();
+		net.geforcemods.securitycraft.blocks.reinforced.ReinforcedCauldronBlock.IReinforcedCauldronInteraction.bootStrap();
 		NetworkHandler.registerPayloads();
 		NetworkHandler.registerServerReceivers();
 		net.geforcemods.securitycraft.items.MineRemoteAccessToolItem.registerBindingCallback();

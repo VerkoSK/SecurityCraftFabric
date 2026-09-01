@@ -20,7 +20,7 @@ public class ReinforcedButtonBlock extends ButtonBlock implements IReinforcedBlo
 	private final float destroyTimeForOwner;
 
 	public ReinforcedButtonBlock(BlockBehaviour.Properties properties, BlockSetType setType, int ticksToStayPressed, boolean arrowsCanPress) {
-		super(OwnableBlock.withReinforcedDestroyTime(properties), setType, ticksToStayPressed, arrowsCanPress);
+		super(setType, ticksToStayPressed, OwnableBlock.withReinforcedDestroyTime(properties));
 		destroyTimeForOwner = OwnableBlock.getStoredDestroyTime();
 	}
 

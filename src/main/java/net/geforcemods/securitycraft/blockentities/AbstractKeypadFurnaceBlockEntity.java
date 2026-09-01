@@ -4,7 +4,7 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.UUID;
 
-import net.fabricmc.fabric.api.blockview.v2.RenderDataBlockEntity;
+import net.fabricmc.fabric.api.blockgetter.v2.RenderDataBlockEntity;
 import net.fabricmc.fabric.api.menu.v1.ExtendedMenuProvider;
 import net.geforcemods.securitycraft.api.ICustomizable;
 import net.geforcemods.securitycraft.api.IModuleInventory;
@@ -23,8 +23,12 @@ import net.geforcemods.securitycraft.items.ModuleItem;
 import net.geforcemods.securitycraft.misc.ModuleType;
 import net.geforcemods.securitycraft.util.PasscodeUtils;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.ContainerUser;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -70,7 +74,7 @@ public abstract class AbstractKeypadFurnaceBlockEntity extends AbstractFurnaceBl
 	private ContainerOpenersCounter openersCounter = new ContainerOpenersCounter() {
 		@Override
 		protected void onOpen(Level level, BlockPos pos, BlockState state) {
-			if (level.isClientSide)
+			if (level.isClientSide())
 				return;
 
 			level.playSound(null, pos, SoundEvents.IRON_DOOR_OPEN, SoundSource.BLOCKS, 1.0F, 1.0F);
@@ -79,7 +83,7 @@ public abstract class AbstractKeypadFurnaceBlockEntity extends AbstractFurnaceBl
 
 		@Override
 		protected void onClose(Level level, BlockPos pos, BlockState state) {
-			if (level.isClientSide)
+			if (level.isClientSide())
 				return;
 
 			level.playSound(null, pos, SoundEvents.IRON_DOOR_CLOSE, SoundSource.BLOCKS, 1.0F, 1.0F);
@@ -90,7 +94,7 @@ public abstract class AbstractKeypadFurnaceBlockEntity extends AbstractFurnaceBl
 		protected void openerCountChanged(Level level, BlockPos pos, BlockState state, int oldCount, int newCount) {}
 
 		@Override
-		protected boolean isOwnContainer(Player player) {
+		public boolean isOwnContainer(Player player) {
 			return player.containerMenu instanceof AbstractKeypadFurnaceMenu menu && menu.be == AbstractKeypadFurnaceBlockEntity.this;
 		}
 	};
@@ -101,17 +105,17 @@ public abstract class AbstractKeypadFurnaceBlockEntity extends AbstractFurnaceBl
 
 	public static void serverTick(Level level, BlockPos pos, BlockState state, AbstractKeypadFurnaceBlockEntity be) {
 		if (!be.isDisabled())
-			AbstractFurnaceBlockEntity.serverTick(level, pos, state, be);
+			AbstractFurnaceBlockEntity.serverTick((ServerLevel) level, pos, state, be);
 	}
 
-	public void startOpen(Player player) {
-		if (!isRemoved() && !player.isSpectator())
-			openersCounter.incrementOpeners(player, level, worldPosition, getBlockState());
+	public void startOpen(ContainerUser player) {
+		if (!isRemoved() && !player.getLivingEntity().isSpectator())
+			openersCounter.incrementOpeners(player.getLivingEntity(), level, worldPosition, getBlockState(), player.getContainerInteractionRange());
 	}
 
-	public void stopOpen(Player player) {
-		if (!isRemoved() && !player.isSpectator())
-			openersCounter.decrementOpeners(player, level, worldPosition, getBlockState());
+	public void stopOpen(ContainerUser player) {
+		if (!isRemoved() && !player.getLivingEntity().isSpectator())
+			openersCounter.decrementOpeners(player.getLivingEntity(), level, worldPosition, getBlockState());
 	}
 
 	public void recheckOpen() {
@@ -279,7 +283,7 @@ public abstract class AbstractKeypadFurnaceBlockEntity extends AbstractFurnaceBl
 	}
 
 	@Override
-	public void saveAdditional(CompoundTag tag) {
+	public void saveAdditional(ValueOutput tag) {
 		super.saveAdditional(tag);
 		writeModuleInventory(tag);
 		writeModuleStates(tag);
@@ -296,24 +300,21 @@ public abstract class AbstractKeypadFurnaceBlockEntity extends AbstractFurnaceBl
 	}
 
 	@Override
-	public void load(CompoundTag tag) {
-		super.load(tag);
+	public void loadAdditional(ValueInput tag) {
+		super.loadAdditional(tag);
 
 		modules = readModuleInventory(tag);
 		moduleStates = readModuleStates(tag);
 		readOptions(tag);
-		cooldownEnd = System.currentTimeMillis() + tag.getLong("cooldownLeft");
-		owner = Owner.fromCompound(tag);
-
-		if (tag.contains("salt"))
-			salt = tag.getString("salt");
-
-		passcodeHash = tag.contains("passcodeHash") ? tag.getString("passcodeHash") : null;
+		cooldownEnd = System.currentTimeMillis() + tag.getLongOr("cooldownLeft", 0L);
+		owner = Owner.load(tag);
+		salt = tag.getStringOr("salt", salt);
+		passcodeHash = tag.getString("passcodeHash").orElse(null);
 	}
 
 	@Override
-	public CompoundTag getUpdateTag() {
-		CompoundTag tag = saveWithoutMetadata();
+	public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+		CompoundTag tag = saveWithoutMetadata(registries);
 
 		tag.remove("passcodeHash");
 		tag.remove("salt");

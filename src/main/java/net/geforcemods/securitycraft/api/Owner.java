@@ -124,6 +124,19 @@ public class Owner {
 			output.putBoolean("ownerValidated", validated);
 	}
 
+	/** Reads an owner straight out of a raw {@link net.minecraft.nbt.CompoundTag} (used for the moved-block-entity blob the reinforced piston carries). */
+	public static Owner fromCompound(net.minecraft.nbt.CompoundTag tag) {
+		Owner owner = new Owner();
+
+		if (tag != null) {
+			owner.name = tag.getStringOr(DEFAULT_OWNER_NAME, DEFAULT_OWNER_NAME);
+			owner.uuid = tag.getStringOr(DEFAULT_OWNER_UUID, DEFAULT_OWNER_UUID);
+			owner.validated = tag.getBooleanOr("ownerValidated", true);
+		}
+
+		return owner;
+	}
+
 	// Since 1.21.6 block entities serialize through ValueInput/ValueOutput.
 	// Reads owner, ownerUUID and ownerValidated independently (each optional; absent keys keep defaults).
 	public static Owner load(ValueInput input) {

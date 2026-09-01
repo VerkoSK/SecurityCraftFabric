@@ -26,7 +26,7 @@ public class ReinforcedDropperBlock extends ReinforcedDispenserBlock {
 	}
 
 	@Override
-	public DispenseItemBehavior getDispenseMethod(ItemStack stack) {
+	public DispenseItemBehavior getDispenseMethod(net.minecraft.world.level.Level level, ItemStack stack) {
 		return DISPENSE_BEHAVIOUR;
 	}
 

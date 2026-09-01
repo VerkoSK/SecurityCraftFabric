@@ -21,6 +21,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.WoodType;
 import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.phys.BlockHitResult;
 
 /**
@@ -35,13 +36,13 @@ public class ElectrifiedIronFenceGateBlock extends FenceGateBlock implements Ent
 		//upstream passes the iron door sounds to Forge's (properties, openSound, closeSound) constructor, which
 		//vanilla does not have; the wood type given here is never heard, because the only two places that would
 		//play its sounds are use (blocked) and neighborChanged (overridden below with the iron door sounds)
-		super(OwnableBlock.withReinforcedDestroyTime(properties), WoodType.OAK);
+		super(WoodType.OAK, OwnableBlock.withReinforcedDestroyTime(properties));
 		destroyTimeForOwner = OwnableBlock.getStoredDestroyTime();
 	}
 
 	@Override
-	public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, BlockPos fromPos, boolean isMoving) {
-		if (!level.isClientSide) {
+	public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, Orientation orientation, boolean isMoving) {
+		if (!level.isClientSide()) {
 			boolean powered = level.hasNeighborSignal(pos);
 
 			if (state.getValue(POWERED) != powered) {
@@ -76,7 +77,7 @@ public class ElectrifiedIronFenceGateBlock extends FenceGateBlock implements Ent
 		if (state.getValue(OPEN))
 			return;
 
-		ElectrifiedIronFenceBlock.hurtOrConvertEntity(this, state, level, pos, entity);
+		ElectrifiedIronFenceBlock.hurtOrConvertEntity(this::getShape, state, level, pos, entity);
 	}
 
 	@Override

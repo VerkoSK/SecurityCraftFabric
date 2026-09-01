@@ -22,7 +22,7 @@ public class ReinforcedObserverBlockEntity extends OwnableBlockEntity {
 	//observer doesn't keep pulsing for whatever the previous owner last validated
 	@Override
 	public void setOwner(String name, String uuid) {
-		if (level != null && !level.isClientSide) {
+		if (level != null && !level.isClientSide()) {
 			BlockState state = getBlockState();
 
 			if (state.hasProperty(ReinforcedObserverBlock.POWERED))

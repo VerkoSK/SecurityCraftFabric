@@ -1,7 +1,5 @@
 package net.geforcemods.securitycraft.blocks.reinforced;
 
-import java.util.Map;
-import java.util.function.Predicate;
 
 import net.geforcemods.securitycraft.SCContent;
 import net.geforcemods.securitycraft.api.IReinforcedBlock;
@@ -14,9 +12,9 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome.Precipitation;
 import net.minecraft.world.level.block.Block;
@@ -42,8 +40,8 @@ public class ReinforcedLayeredCauldronBlock extends LayeredCauldronBlock impleme
 	private final Block vanillaBlock;
 	private final float destroyTimeForOwner;
 
-	public ReinforcedLayeredCauldronBlock(BlockBehaviour.Properties properties, Predicate<Precipitation> fillPredicate, Map<Item, CauldronInteraction> interactions, Block vanillaBlock) {
-		super(OwnableBlock.withReinforcedDestroyTime(properties), fillPredicate, interactions);
+	public ReinforcedLayeredCauldronBlock(BlockBehaviour.Properties properties, Precipitation precipitation, CauldronInteraction.Dispatcher interactions, Block vanillaBlock) {
+		super(precipitation, interactions, OwnableBlock.withReinforcedDestroyTime(properties));
 		this.vanillaBlock = vanillaBlock;
 		destroyTimeForOwner = OwnableBlock.getStoredDestroyTime();
 	}
@@ -70,9 +68,9 @@ public class ReinforcedLayeredCauldronBlock extends LayeredCauldronBlock impleme
 	}
 
 	@Override
-	public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+	public InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
 		if (level.getBlockEntity(pos) instanceof ReinforcedCauldronBlockEntity be && be.isAllowedToInteract(player))
-			return super.use(state, level, pos, player, hand, hit);
+			return super.useWithoutItem(state, level, pos, player, hit);
 
 		return InteractionResult.PASS;
 	}
@@ -86,8 +84,16 @@ public class ReinforcedLayeredCauldronBlock extends LayeredCauldronBlock impleme
 	}
 
 	@Override
-	protected void handleEntityOnFireInside(BlockState state, Level level, BlockPos pos) {
-		lowerFillLevel(state, level, pos);
+	protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity, net.minecraft.world.entity.InsideBlockEffectApplier effectApplier, boolean stillInside) {
+		//vanilla's LayeredCauldronBlock folds the "burning entity falls into a water cauldron" handling into entityInside; mirror it, but drop the reinforced cauldron's fill level rather than vanilla's
+		if (!level.isClientSide() && this == SCContent.REINFORCED_WATER_CAULDRON && entity.isOnFire() && isEntityInsideContent(state, pos, entity)) {
+			entity.clearFire();
+			lowerFillLevel(state, level, pos);
+		}
+	}
+
+	private boolean isEntityInsideContent(BlockState state, BlockPos pos, Entity entity) {
+		return entity.getY() < pos.getY() + getContentHeight(state) && entity.getBoundingBox().maxY > pos.getY() + 0.25;
 	}
 
 	@Override
@@ -101,7 +107,7 @@ public class ReinforcedLayeredCauldronBlock extends LayeredCauldronBlock impleme
 	}
 
 	@Override
-	public ItemStack getCloneItemStack(BlockGetter level, BlockPos pos, BlockState state) {
+	protected ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state, boolean includeData) {
 		return new ItemStack(SCContent.REINFORCED_CAULDRON);
 	}
 }
