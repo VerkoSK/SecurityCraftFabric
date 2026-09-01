@@ -762,7 +762,29 @@ public class SCContent {
 			{"reinforced_yellow_stained_glass", "glass"},
 			{"reinforced_yellow_stained_glass_pane", "pane"},
 			{"reinforced_yellow_terracotta", "cube"},
-			{"reinforced_yellow_wool", "cube"}
+			{"reinforced_yellow_wool", "cube"},
+			//restored to match the 1.21.11 V0.5 set after the V0.5-propagation regression dropped them on this branch
+			{"reinforced_chiseled_resin_bricks", "cube"},
+			{"reinforced_pale_moss_block", "cube"},
+			{"reinforced_pale_oak_button", "button"},
+			{"reinforced_pale_oak_fence", "fence"},
+			{"reinforced_pale_oak_fence_gate", "fence_gate"},
+			{"reinforced_pale_oak_log", "pillar"},
+			{"reinforced_pale_oak_planks", "cube"},
+			{"reinforced_pale_oak_pressure_plate", "pressure_plate"},
+			{"reinforced_pale_oak_slab", "slab"},
+			{"reinforced_pale_oak_stairs", "stairs"},
+			{"reinforced_pale_oak_wood", "pillar"},
+			{"reinforced_resin_block", "cube"},
+			{"reinforced_resin_brick_slab", "slab"},
+			{"reinforced_resin_brick_stairs", "stairs"},
+			{"reinforced_resin_brick_wall", "wall"},
+			{"reinforced_resin_bricks", "cube"},
+			{"reinforced_stripped_pale_oak_log", "pillar"},
+			{"reinforced_stripped_pale_oak_wood", "pillar"},
+			{"reinforced_tuff_slab", "slab"},
+			{"reinforced_tuff_stairs", "stairs"},
+			{"reinforced_tuff_wall", "wall"}
 	};
 
 	public static Identifier id(String name) {
