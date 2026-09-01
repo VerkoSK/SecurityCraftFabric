@@ -48,7 +48,7 @@ public class SecretSignBlockEntity extends SignBlockEntity implements IOwnable, 
 	private Map<ModuleType, Boolean> moduleStates = new EnumMap<>(ModuleType.class);
 
 	public SecretSignBlockEntity(BlockPos pos, BlockState state) {
-		super(pos, state);
+		super(SCContent.SECRET_SIGN_BLOCK_ENTITY, pos, state);
 	}
 
 	@Override

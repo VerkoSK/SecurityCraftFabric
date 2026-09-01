@@ -49,3 +49,10 @@ extendable	method	net/minecraft/client/gui/screens/inventory/BookViewScreen	upda
 # Fabric has no such hook, so the flag has to be cleared on the properties instead, and vanilla only offers a
 # setter that turns it on.
 accessible	field	net/minecraft/world/level/block/state/BlockBehaviour$Properties	requiresCorrectToolForDrops	Z
+
+# The reinforced hopper / lectern and secret (hanging) sign block entities subclass their vanilla counterpart, whose
+# 2-arg constructor hard-codes the vanilla BlockEntityType. Since MC 1.21.2 the BlockEntity constructor throws if
+# the placed state is not in that type's validBlocks, so the SC blocks have to be added to it - which needs the
+# private final field opened and made mutable.
+accessible	field	net/minecraft/world/level/block/entity/BlockEntityType	validBlocks	Ljava/util/Set;
+mutable	field	net/minecraft/world/level/block/entity/BlockEntityType	validBlocks	Ljava/util/Set;
