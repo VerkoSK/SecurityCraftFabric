@@ -2,17 +2,15 @@
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "key": {
-    "B": {
-      "item": "securitycraft:reinforced_crystal_quartz_block"
-    }
+    "B": "securitycraft:reinforced_crystal_quartz_block"
   },
   "pattern": [
     "BB",
     "BB"
   ],
   "result": {
-    "count": 4,
-    "item": "securitycraft:reinforced_crystal_quartz_bricks"
+    "id": "securitycraft:reinforced_crystal_quartz_bricks",
+    "count": 4
   },
   "show_notification": true
 }

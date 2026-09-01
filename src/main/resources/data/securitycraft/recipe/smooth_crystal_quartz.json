@@ -3,8 +3,6 @@
   "category": "blocks",
   "cookingtime": 200,
   "experience": 0.1,
-  "ingredient": {
-    "item": "securitycraft:crystal_quartz"
-  },
+  "ingredient": "securitycraft:crystal_quartz",
   "result": "securitycraft:smooth_crystal_quartz"
 }

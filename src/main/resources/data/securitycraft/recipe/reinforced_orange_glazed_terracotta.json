@@ -3,8 +3,6 @@
   "category": "blocks",
   "cookingtime": 200,
   "experience": 0.1,
-  "ingredient": {
-    "item": "securitycraft:reinforced_orange_terracotta"
-  },
+  "ingredient": "securitycraft:reinforced_orange_terracotta",
   "result": "securitycraft:reinforced_orange_glazed_terracotta"
 }
