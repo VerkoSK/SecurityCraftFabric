@@ -1000,9 +1000,9 @@ public class SCContent {
 		STORAGE_MODULE = registerModule("storage_module", net.geforcemods.securitycraft.misc.ModuleType.STORAGE, false, false, false);
 		DISGUISE_MODULE = registerModule("disguise_module", net.geforcemods.securitycraft.misc.ModuleType.DISGUISE, false, true, false);
 		SPEED_MODULE = registerModule("speed_module", net.geforcemods.securitycraft.misc.ModuleType.SPEED, false, false, false);
-		UNIVERSAL_BLOCK_MODIFIER = registerItem("universal_block_modifier", new net.geforcemods.securitycraft.items.UniversalBlockModifierItem(new Item.Properties().stacksTo(1)));
-		UNIVERSAL_OWNER_CHANGER = registerItem("universal_owner_changer", new net.geforcemods.securitycraft.items.UniversalOwnerChangerItem(new Item.Properties().stacksTo(1)));
-		SC_MANUAL = registerItem("sc_manual", new net.geforcemods.securitycraft.items.SCManualItem(new Item.Properties().stacksTo(1)));
+		UNIVERSAL_BLOCK_MODIFIER = registerItem("universal_block_modifier", new net.geforcemods.securitycraft.items.UniversalBlockModifierItem(new Item.Properties().stacksTo(1).setId(ResourceKey.create(Registries.ITEM, id("universal_block_modifier")))));
+		UNIVERSAL_OWNER_CHANGER = registerItem("universal_owner_changer", new net.geforcemods.securitycraft.items.UniversalOwnerChangerItem(new Item.Properties().stacksTo(1).setId(ResourceKey.create(Registries.ITEM, id("universal_owner_changer")))));
+		SC_MANUAL = registerItem("sc_manual", new net.geforcemods.securitycraft.items.SCManualItem(new Item.Properties().stacksTo(1).setId(ResourceKey.create(Registries.ITEM, id("sc_manual")))));
 		LENS = registerItem("lens", new Item(new Item.Properties().setId(ResourceKey.create(Registries.ITEM, id("lens")))));
 		//the fluids have to exist before their blocks, and the blocks before the buckets, since each refers back
 		FLOWING_FAKE_WATER = Registry.register(BuiltInRegistries.FLUID, id("flowing_fake_water"), new net.geforcemods.securitycraft.fluids.FakeWaterFluid.Flowing());
@@ -1011,8 +1011,8 @@ public class SCContent {
 		FAKE_LAVA = Registry.register(BuiltInRegistries.FLUID, id("fake_lava"), new net.geforcemods.securitycraft.fluids.FakeLavaFluid.Source());
 		FAKE_WATER_BLOCK = registerBlockNoItem("fake_water_block", key -> new net.geforcemods.securitycraft.blocks.FakeWaterBlock(reinforcedCopy(Blocks.WATER).setId(key), () -> FAKE_WATER));
 		FAKE_LAVA_BLOCK = registerBlockNoItem("fake_lava_block", key -> new net.geforcemods.securitycraft.blocks.FakeLavaBlock(reinforcedCopy(Blocks.LAVA).setId(key), () -> FAKE_LAVA));
-		FAKE_WATER_BUCKET = registerItem("bucket_f_water", new net.geforcemods.securitycraft.items.FakeLiquidBucketItem(() -> FAKE_WATER, new Item.Properties().stacksTo(1)));
-		FAKE_LAVA_BUCKET = registerItem("bucket_f_lava", new net.geforcemods.securitycraft.items.FakeLiquidBucketItem(() -> FAKE_LAVA, new Item.Properties().stacksTo(1)));
+		FAKE_WATER_BUCKET = registerItem("bucket_f_water", new net.geforcemods.securitycraft.items.FakeLiquidBucketItem(() -> FAKE_WATER, new Item.Properties().stacksTo(1).setId(ResourceKey.create(Registries.ITEM, id("bucket_f_water")))));
+		FAKE_LAVA_BUCKET = registerItem("bucket_f_lava", new net.geforcemods.securitycraft.items.FakeLiquidBucketItem(() -> FAKE_LAVA, new Item.Properties().stacksTo(1).setId(ResourceKey.create(Registries.ITEM, id("bucket_f_lava")))));
 
 		UNIVERSAL_BLOCK_REINFORCER_LVL1 = registerConverterItem("universal_block_reinforcer_lvl1", 300, true);
 		UNIVERSAL_BLOCK_REINFORCER_LVL2 = registerConverterItem("universal_block_reinforcer_lvl2", 2700, true);
@@ -1134,7 +1134,8 @@ public class SCContent {
 
 	/** Registers one of the {@link #REINFORCED_COPIES}: same shape class as vanilla, properties copied off it. */
 	private static void registerReinforcedCopy(String name, Block vanilla, String category) {
-		BlockBehaviour.Properties props = reinforcedCopy(vanilla);
+		ResourceKey<Block> blockKey = ResourceKey.create(Registries.BLOCK, id(name));
+		BlockBehaviour.Properties props = reinforcedCopy(vanilla).setId(blockKey);
 
 		if (name.contains("crystal_quartz"))
 			props.mapColor(MapColor.COLOR_CYAN);
