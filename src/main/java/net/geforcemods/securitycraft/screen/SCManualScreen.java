@@ -167,10 +167,10 @@ public class SCManualScreen extends Screen implements StillValid {
 				extractor.text(font, (currentSubpage + 1) + "/" + subpages.size(), startX + 205, 100, 0xFF8E8270, false);
 
 			if (designedBy != null)
-				extractor.textWithWordWrap(font, designedBy, startX + 18, 150, 75, 0xFF000000);
+				extractor.textWithWordWrap(font, designedBy, startX + 18, 150, 75, 0xFF000000, false);
 
 			extractor.text(font, pageTitle, startX + 39, 27, 0xFF000000, false);
-			extractor.textWithWordWrap(font, subpages.get(currentSubpage), startX + 18, 45, 225, 0xFF000000);
+			extractor.textWithWordWrap(font, subpages.get(currentSubpage), startX + 18, 45, 225, 0xFF000000, false);
 			extractor.text(font, pageNumberText, startX + 240 - font.width(pageNumberText), 182, 0xFF8E8270, false);
 
 			if (ownable)
