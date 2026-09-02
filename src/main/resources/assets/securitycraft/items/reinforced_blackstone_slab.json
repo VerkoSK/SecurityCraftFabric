@@ -3,7 +3,7 @@
     "type": "minecraft:model",
     "model": "securitycraft:item/reinforced_blackstone_slab",
     "tints": [
-      { "type": "minecraft:constant", "value": 10066329 }
+      { "type": "minecraft:constant", "value": -6710887 }
     ]
   }
 }
