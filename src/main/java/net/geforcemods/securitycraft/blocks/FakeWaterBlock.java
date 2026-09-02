@@ -22,6 +22,12 @@ public class FakeWaterBlock extends LiquidBlock {
 	}
 
 	@Override
+	public net.minecraft.network.chat.MutableComponent getName() {
+		//the whole point is that it cannot be told apart from real water, so it borrows water's name everywhere it shows (JEI, tooltips)
+		return net.minecraft.world.level.block.Blocks.WATER.getName();
+	}
+
+	@Override
 	public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity, InsideBlockEffectApplier effectApplier) {
 		if (!level.isClientSide && !(entity instanceof ItemEntity) && !(entity instanceof Boat) && (!(entity instanceof Player player) || (!player.isCreative() && !(player.getVehicle() instanceof Boat))))
 			entity.hurt(CustomDamageSources.fakeWater(level.registryAccess()), 4F);
