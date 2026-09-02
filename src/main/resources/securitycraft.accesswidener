@@ -53,3 +53,10 @@ accessible	field	net/minecraft/world/level/block/state/BlockBehaviour$Properties
 # The secret signs draw their text only for the players allowed to read it. Vanilla's SignRenderer no longer
 # exposes a text-drawing hook to override in this version, so SecretSignRenderer/SecretHangingSignRenderer
 # instead swap SignBlockEntity's frontText/backText fields directly through reflection for the render call.
+
+# The secret signs, reinforced hopper/lectern/chiseled bookshelf, the brushable mines and the creaking heart
+# mine subclass a vanilla block entity whose 2-arg constructor hard-codes the vanilla BlockEntityType. MC 1.21.2+
+# validates the block state against that type in the BlockEntity constructor, so SecurityCraft merges its blocks
+# into the vanilla type's valid-block set at registration - which needs that set writable.
+accessible	field	net/minecraft/world/level/block/entity/BlockEntityType	validBlocks	Ljava/util/Set;
+mutable	field	net/minecraft/world/level/block/entity/BlockEntityType	validBlocks	Ljava/util/Set;
