@@ -114,6 +114,9 @@ public class ManualPage {
 	}
 
 	private static void addGroupItems(PageGroup group, List<Item> items) {
+		//1.21.2+ forbids air in an Ingredient; a block registered without its item would otherwise crash the manual
+		items = items.stream().filter(item -> item != net.minecraft.world.item.Items.AIR).toList();
+
 		if (items.isEmpty())
 			return;
 

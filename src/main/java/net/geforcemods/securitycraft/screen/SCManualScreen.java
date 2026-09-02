@@ -95,7 +95,8 @@ public class SCManualScreen extends Screen implements StillValid {
 	private double scrolledSinceLastPage;
 	private List<HoverChecker> hoverCheckers = new ArrayList<>();
 	private int currentPage = lastPage;
-	private NonNullList<Ingredient> recipe;
+	//1.21.2+ removed the empty Ingredient, so a null entry here means "no ingredient in this slot"
+	private List<Ingredient> recipe;
 	private IngredientDisplay[] displays = new IngredientDisplay[9];
 	private int startX = -1;
 	private List<FormattedText> subpages = new ArrayList<>();
@@ -345,10 +346,10 @@ public class SCManualScreen extends Screen implements StillValid {
 
 		if (currentPage < 0) {
 			for (IngredientDisplay display : displays) {
-				display.setIngredient(Ingredient.of());
+				display.setIngredient(null);
 			}
 
-			pageIcon.setIngredient(Ingredient.of());
+			pageIcon.setIngredient(null);
 			recipe = null;
 			nextSubpage.visible = false;
 			previousSubpage.visible = false;
@@ -389,7 +390,7 @@ public class SCManualScreen extends Screen implements StillValid {
 
 					if (display instanceof net.minecraft.world.item.crafting.display.ShapedCraftingRecipeDisplay shaped) {
 						List<net.minecraft.world.item.crafting.display.SlotDisplay> ingredients = shaped.ingredients();
-						NonNullList<Ingredient> recipeItems = NonNullList.<Ingredient>withSize(9, Ingredient.of());
+						List<Ingredient> recipeItems = new java.util.ArrayList<>(java.util.Collections.nCopies(9, (Ingredient) null));
 
 						for (int i = 0; i < ingredients.size(); i++) {
 							List<ItemStack> stacks = ingredients.get(i).resolveForStacks(contextMap);
@@ -403,7 +404,7 @@ public class SCManualScreen extends Screen implements StillValid {
 					}
 					else if (display instanceof net.minecraft.world.item.crafting.display.ShapelessCraftingRecipeDisplay shapeless) {
 						List<net.minecraft.world.item.crafting.display.SlotDisplay> ingredients = shapeless.ingredients();
-						NonNullList<Ingredient> recipeItems = NonNullList.<Ingredient>withSize(ingredients.size(), Ingredient.of());
+						List<Ingredient> recipeItems = new java.util.ArrayList<>(java.util.Collections.nCopies(ingredients.size(), (Ingredient) null));
 
 						for (int i = 0; i < ingredients.size(); i++) {
 							List<ItemStack> stacks = ingredients.get(i).resolveForStacks(contextMap);
@@ -422,7 +423,7 @@ public class SCManualScreen extends Screen implements StillValid {
 			Level level = Minecraft.getInstance().level;
 			net.minecraft.util.context.ContextMap contextMap = net.minecraft.world.item.crafting.display.SlotDisplayContext.fromLevel(level);
 			java.util.Map<Integer, ItemStack[]> recipeStacks = new java.util.HashMap<>();
-			List<Item> pageItems = pageGroup.getItems().items().map(net.minecraft.core.Holder::value).toList();
+			List<Item> pageItems = pageGroup.getItems() == null ? List.of() : pageGroup.getItems().items().map(net.minecraft.core.Holder::value).toList();
 			int stacksLeft = pageItems.size();
 
 			for (int i = 0; i < 9; i++) {
@@ -476,8 +477,8 @@ public class SCManualScreen extends Screen implements StillValid {
 				}
 			}
 
-			recipe = NonNullList.withSize(9, Ingredient.of());
-			recipeStacks.forEach((i, stackArray) -> recipe.set(i, Ingredient.of(java.util.Arrays.stream(stackArray).filter(s -> s != null && !s.isEmpty()).map(ItemStack::getItem))));
+			recipe = new java.util.ArrayList<>(java.util.Collections.nCopies(9, (Ingredient) null));
+			recipeStacks.forEach((i, stackArray) -> recipe.set(i, ingredientOrNull(java.util.Arrays.stream(stackArray).filter(s -> s != null && !s.isEmpty()).map(ItemStack::getItem))));
 		}
 
 		if (page.hasRecipeDescription()) {
@@ -575,7 +576,7 @@ public class SCManualScreen extends Screen implements StillValid {
 					int index = (i * 3) + j;
 
 					if (index >= recipe.size())
-						displays[index].setIngredient(Ingredient.of());
+						displays[index].setIngredient(null);
 					else
 						displays[index].setIngredient(recipe.get(index));
 				}
@@ -583,7 +584,7 @@ public class SCManualScreen extends Screen implements StillValid {
 		}
 		else {
 			for (IngredientDisplay display : displays) {
-				display.setIngredient(Ingredient.of());
+				display.setIngredient(null);
 			}
 		}
 
@@ -766,6 +767,13 @@ public class SCManualScreen extends Screen implements StillValid {
 	}
 
 	//from JEI
+	/** 1.21.2+ forbids an empty Ingredient, so an empty item stream becomes null ("no ingredient") instead. */
+	private static Ingredient ingredientOrNull(java.util.stream.Stream<Item> items) {
+		List<Item> list = items.toList();
+
+		return list.isEmpty() ? null : Ingredient.of(list.stream());
+	}
+
 	private int getCraftMatrixPosition(int i, int width, int height) {
 		int index;
 
