@@ -1076,8 +1076,26 @@ public class SCContent {
 		FRAME_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("keypad_frame"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.FrameBlockEntity::new, FRAME).build());
 		LASER_BLOCK_MENU = Registry.register(BuiltInRegistries.MENU, id("laser_block"), new net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType<>((syncId, inv, data) -> new net.geforcemods.securitycraft.inventory.LaserBlockMenu(syncId, inv.player.level(), data.pos(), data.sideConfig(), inv), net.geforcemods.securitycraft.inventory.LaserBlockData.STREAM_CODEC));
 		DISGUISE_MODULE_MENU = Registry.register(BuiltInRegistries.MENU, id("disguise_module"), new net.minecraft.world.inventory.MenuType<>(net.geforcemods.securitycraft.inventory.DisguiseModuleMenu::new, net.minecraft.world.flag.FeatureFlags.VANILLA_SET));
+		//These block entities subclass a vanilla one whose (BlockPos, BlockState) constructor hard-codes the vanilla
+		//BlockEntityType, so MC's BlockEntity#validateBlockState rejects the SecurityCraft block before the subclass
+		//constructor can run. Register the SecurityCraft blocks into the vanilla type's valid-block set too.
+		allowVanillaBlockEntityOn(net.minecraft.world.level.block.entity.BlockEntityType.HOPPER, REINFORCED_HOPPER_BLOCK_ENTITY);
+		allowVanillaBlockEntityOn(net.minecraft.world.level.block.entity.BlockEntityType.LECTERN, REINFORCED_LECTERN_BLOCK_ENTITY);
+		allowVanillaBlockEntityOn(net.minecraft.world.level.block.entity.BlockEntityType.CHISELED_BOOKSHELF, REINFORCED_CHISELED_BOOKSHELF_BLOCK_ENTITY);
+		allowVanillaBlockEntityOn(net.minecraft.world.level.block.entity.BlockEntityType.SIGN, SECRET_SIGN_BLOCK_ENTITY);
+		allowVanillaBlockEntityOn(net.minecraft.world.level.block.entity.BlockEntityType.HANGING_SIGN, SECRET_HANGING_SIGN_BLOCK_ENTITY);
+		allowVanillaBlockEntityOn(net.minecraft.world.level.block.entity.BlockEntityType.BRUSHABLE_BLOCK, BRUSHABLE_MINE_BLOCK_ENTITY);
+		allowVanillaBlockEntityOn(net.minecraft.world.level.block.entity.BlockEntityType.CREAKING_HEART, CREAKING_HEART_MINE_BLOCK_ENTITY);
 		net.geforcemods.securitycraft.misc.SCSounds.register();
 		registerCreativeTab();
+	}
+
+	/** Adds every block from {@code from}'s valid-block set to {@code vanilla}'s, so vanilla block-entity construction accepts them. */
+	private static void allowVanillaBlockEntityOn(net.minecraft.world.level.block.entity.BlockEntityType<?> vanilla, net.minecraft.world.level.block.entity.BlockEntityType<?> from) {
+		java.util.Set<Block> merged = new java.util.HashSet<>(vanilla.validBlocks);
+
+		merged.addAll(from.validBlocks);
+		vanilla.validBlocks = merged;
 	}
 
 	private static boolean isGlass(String name, String category) {
