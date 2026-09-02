@@ -2,9 +2,7 @@
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "key": {
-    "B": {
-      "item": "securitycraft:smooth_crystal_quartz"
-    }
+    "B": "securitycraft:smooth_crystal_quartz"
   },
   "pattern": [
     "B  ",
@@ -12,8 +10,8 @@
     "BBB"
   ],
   "result": {
-    "count": 4,
-    "item": "securitycraft:smooth_crystal_quartz_stairs"
+    "id": "securitycraft:smooth_crystal_quartz_stairs",
+    "count": 4
   },
   "show_notification": true
 }

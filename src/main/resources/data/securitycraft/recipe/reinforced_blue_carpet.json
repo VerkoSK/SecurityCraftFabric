@@ -3,16 +3,14 @@
   "category": "misc",
   "group": "securitycraft:reinforced_carpets",
   "key": {
-    "M": {
-      "item": "securitycraft:reinforced_blue_wool"
-    }
+    "M": "securitycraft:reinforced_blue_wool"
   },
   "pattern": [
     "MM"
   ],
   "result": {
-    "count": 3,
-    "item": "securitycraft:reinforced_blue_carpet"
+    "id": "securitycraft:reinforced_blue_carpet",
+    "count": 3
   },
   "show_notification": true
 }

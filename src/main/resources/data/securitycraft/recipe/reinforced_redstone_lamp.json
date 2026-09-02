@@ -2,12 +2,8 @@
   "type": "minecraft:crafting_shaped",
   "category": "redstone",
   "key": {
-    "G": {
-      "item": "securitycraft:reinforced_glowstone"
-    },
-    "R": {
-      "item": "minecraft:redstone"
-    }
+    "G": "securitycraft:reinforced_glowstone",
+    "R": "minecraft:redstone"
   },
   "pattern": [
     " R ",
@@ -15,7 +11,7 @@
     " R "
   ],
   "result": {
-    "item": "securitycraft:reinforced_redstone_lamp"
+    "id": "securitycraft:reinforced_redstone_lamp"
   },
   "show_notification": true
 }

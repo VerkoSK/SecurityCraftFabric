@@ -3,15 +3,9 @@
   "category": "building",
   "key": {
     "B": [
-      {
-        "item": "securitycraft:reinforced_crystal_quartz_block"
-      },
-      {
-        "item": "securitycraft:reinforced_crystal_quartz_pillar"
-      },
-      {
-        "item": "securitycraft:reinforced_chiseled_crystal_quartz_block"
-      }
+      "securitycraft:reinforced_crystal_quartz_block",
+      "securitycraft:reinforced_crystal_quartz_pillar",
+      "securitycraft:reinforced_chiseled_crystal_quartz_block"
     ]
   },
   "pattern": [
@@ -20,8 +14,8 @@
     "BBB"
   ],
   "result": {
-    "count": 4,
-    "item": "securitycraft:reinforced_crystal_quartz_stairs"
+    "id": "securitycraft:reinforced_crystal_quartz_stairs",
+    "count": 4
   },
   "show_notification": true
 }
