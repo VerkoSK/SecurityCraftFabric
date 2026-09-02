@@ -2,15 +2,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "redstone",
   "key": {
-    "C": {
-      "item": "securitycraft:reinforced_cobblestone"
-    },
-    "Q": {
-      "item": "minecraft:quartz"
-    },
-    "R": {
-      "item": "minecraft:redstone"
-    }
+    "C": "securitycraft:reinforced_cobblestone",
+    "Q": "minecraft:quartz",
+    "R": "minecraft:redstone"
   },
   "pattern": [
     "CCC",
@@ -18,7 +12,7 @@
     "CCC"
   ],
   "result": {
-    "item": "securitycraft:reinforced_observer"
+    "id": "securitycraft:reinforced_observer"
   },
   "show_notification": true
 }

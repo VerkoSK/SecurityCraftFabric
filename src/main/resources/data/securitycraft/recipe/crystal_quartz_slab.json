@@ -3,23 +3,17 @@
   "category": "building",
   "key": {
     "B": [
-      {
-        "item": "securitycraft:crystal_quartz"
-      },
-      {
-        "item": "securitycraft:crystal_quartz_pillar"
-      },
-      {
-        "item": "securitycraft:chiseled_crystal_quartz"
-      }
+      "securitycraft:crystal_quartz",
+      "securitycraft:crystal_quartz_pillar",
+      "securitycraft:chiseled_crystal_quartz"
     ]
   },
   "pattern": [
     "BBB"
   ],
   "result": {
-    "count": 6,
-    "item": "securitycraft:crystal_quartz_slab"
+    "id": "securitycraft:crystal_quartz_slab",
+    "count": 6
   },
   "show_notification": true
 }

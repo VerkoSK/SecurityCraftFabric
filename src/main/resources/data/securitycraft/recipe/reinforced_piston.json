@@ -2,18 +2,10 @@
   "type": "minecraft:crafting_shaped",
   "category": "redstone",
   "key": {
-    "C": {
-      "item": "securitycraft:reinforced_cobblestone"
-    },
-    "I": {
-      "item": "minecraft:iron_ingot"
-    },
-    "P": {
-      "tag": "securitycraft:reinforced/planks"
-    },
-    "R": {
-      "item": "minecraft:redstone"
-    }
+    "C": "securitycraft:reinforced_cobblestone",
+    "I": "minecraft:iron_ingot",
+    "P": "#securitycraft:reinforced/planks",
+    "R": "minecraft:redstone"
   },
   "pattern": [
     "PPP",
@@ -21,7 +13,7 @@
     "CRC"
   ],
   "result": {
-    "item": "securitycraft:reinforced_piston"
+    "id": "securitycraft:reinforced_piston"
   },
   "show_notification": true
 }

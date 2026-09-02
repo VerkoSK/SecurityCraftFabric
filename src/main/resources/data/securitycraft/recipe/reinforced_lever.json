@@ -2,19 +2,15 @@
   "type": "minecraft:crafting_shaped",
   "category": "redstone",
   "key": {
-    "C": {
-      "tag": "securitycraft:reinforced/cobblestone"
-    },
-    "S": {
-      "item": "minecraft:stick"
-    }
+    "C": "#securitycraft:reinforced/cobblestone",
+    "S": "minecraft:stick"
   },
   "pattern": [
     "S",
     "C"
   ],
   "result": {
-    "item": "securitycraft:reinforced_lever"
+    "id": "securitycraft:reinforced_lever"
   },
   "show_notification": true
 }
