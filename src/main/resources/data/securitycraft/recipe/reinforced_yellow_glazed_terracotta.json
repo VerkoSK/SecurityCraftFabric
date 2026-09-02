@@ -3,8 +3,8 @@
   "category": "blocks",
   "cookingtime": 200,
   "experience": 0.1,
-  "ingredient": {
-    "item": "securitycraft:reinforced_yellow_terracotta"
-  },
-  "result": "securitycraft:reinforced_yellow_glazed_terracotta"
+  "ingredient": "securitycraft:reinforced_yellow_terracotta",
+  "result": {
+    "id": "securitycraft:reinforced_yellow_glazed_terracotta"
+  }
 }
