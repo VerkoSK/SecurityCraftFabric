@@ -3,7 +3,7 @@
     "type": "minecraft:model",
     "model": "securitycraft:item/lens",
     "tints": [
-      { "type": "minecraft:dye", "default": 16777215 }
+      { "type": "minecraft:dye", "default": -1 }
     ]
   }
 }
