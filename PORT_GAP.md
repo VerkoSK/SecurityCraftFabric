@@ -41,6 +41,45 @@ can't. These were **not** added and should be a follow-up:
 Method: same as the restore above — `C:/u262` generated resources or 1.21.11 for
 assets, one `REINFORCED`/`REINFORCED_COPIES` row + loot table + tags + lang each.
 
+## V0.5 client-render fixes back-ported from 1.21.4 (2026-09)
+The 1.21.4 line found six client-render bugs after 26.2 was first ported to V0.5.
+Applied to 26.2 in place:
+- `93e585a` — keypad barrel `getMenuProvider` override (barrel would never open);
+  `FakeWater/LavaBlock#getName()` borrow water/lava's name; restore
+  `reinforced_fence_gate.png` from `C:/u262` (26.2's copy had regressed, md5
+  `329985dd…` vs upstream `95498cdd…`); `SCManualScreen.ChangePageButton` now
+  `blitSprite`s the `widget/page_forward|backward[_highlighted]` sprites instead of
+  the long-gone `book.png` arrow uv. Also added the `fake_*` block/fluid lang keys
+  (folds in `9acb8ea` — the keypad-barrel `useItemOn` half was already correct on
+  26.2, and the JEI liquid names were the same lang keys).
+- `f198c95` — 43 `items/<name>.json` model definitions generated for the crystal
+  quartz set, keypad containers, secret signs, manual, fake buckets, universal
+  tools, etc. (skips: `block_mine_overlay`, `remote_access_mine_{idle,linked,not_linked}`).
+- `1f2cc53` — tint alpha: 516 `items/*.json` had `"value": 10066329` /
+  `"default": 16777215` (alpha-0 → invisible reinforced-item icons + lens); now
+  `-6710887` / `-1`. `models/block/keypad_chest.json` was `builtin/entity`
+  (checkerboard placed chest) → particle-only model. Restored the missing
+  `textures/gui/info_book_icons.png` from 1.21.3.
+- `7230faf` — `SCManualScreen` body text: `extractor.textWithWordWrap(…)` now
+  passes `dropShadow=false` (the 6-arg overload defaults to true → smeared text).
+- `f6ebcde` — **not one of the six.** 80 recipe JSONs (crystal quartz set,
+  reinforced smelting/stonecutting, mines, manual, universal tools) were still in
+  the pre-1.21.2 `{"item": …}` / `result.item` shape — they would have thrown
+  `Couldn't parse data file` on world load. Replaced with the byte-identical
+  converted files from `1.21.4`.
+- `eff9bae` (block-item naming) was **not** applied: 26.2 already solves it with
+  ~512 `item.securitycraft.*` lang aliases + `overrideDescription` on the secret
+  sign blocks. `useBlockDescriptionPrefix()` was not introduced.
+- `831492d` part (e) (`awardRecipes` on JOIN) and part (f) (`Item.BY_BLOCK` link
+  before block register) were **not** applied: the manual's recipe grid is already
+  dropped on 26.2 (see below), and `Item#registerBlocks` does not exist on 26.2;
+  the decoration-tab `asItem()==AIR` guard logged nothing in `runClient`.
+
+`./gradlew clean build` green; `runClient` brings the game fully up (title /
+first-run onboarding). Only securitycraft log noise is the 12 known
+`reinforced_chiseled_bookshelf_*_slot_*` `: particle` warnings. No
+`builtin/entity` missing-model warning any more.
+
 ## Known cosmetic gaps (compile/run clean, noted not chased)
 - **Keypad chest** renders with the **vanilla chest texture**, not its own
   active/inactive artwork. 1.21.6+ moved chest texture selection into
