@@ -1225,17 +1225,25 @@ public class SCContent {
 
 	private static Block register(String name, java.util.function.Function<ResourceKey<Block>, Block> factory) {
 		ResourceKey<Block> blockKey = ResourceKey.create(Registries.BLOCK, id(name));
-		Block block = Registry.register(BuiltInRegistries.BLOCK, blockKey, factory.apply(blockKey));
+		Block block = factory.apply(blockKey);
 		ResourceKey<Item> itemKey = ResourceKey.create(Registries.ITEM, id(name));
-		BlockItem item = Registry.register(BuiltInRegistries.ITEM, itemKey, new BlockItem(block, new Item.Properties().useBlockDescriptionPrefix().setId(itemKey)));
+		BlockItem item = new BlockItem(block, new Item.Properties().useBlockDescriptionPrefix().setId(itemKey));
+		//link block -> item before the block is registered: Fabric's shape-cache warm-up calls Block#asItem the
+		//moment a block registers and Block caches that result forever, so a BlockItem registered afterwards is
+		//never seen (asItem stays air) - which drops the block from the manual's recipe grid and item lookups
+		item.registerBlocks(Item.BY_BLOCK, item);
+		Registry.register(BuiltInRegistries.BLOCK, blockKey, block);
+		Registry.register(BuiltInRegistries.ITEM, itemKey, item);
 		TAB_ITEMS.add(item);
 		return block;
 	}
 
 	private static Block register(String name, Block block) {
-		Registry.register(BuiltInRegistries.BLOCK, id(name), block);
 		ResourceKey<Item> itemKey = ResourceKey.create(Registries.ITEM, id(name));
 		BlockItem item = new BlockItem(block, new Item.Properties().useBlockDescriptionPrefix().setId(itemKey));
+		//see the note in register(String, Function): the block -> item link must exist before the block registers
+		item.registerBlocks(Item.BY_BLOCK, item);
+		Registry.register(BuiltInRegistries.BLOCK, id(name), block);
 		Registry.register(BuiltInRegistries.ITEM, itemKey, item);
 		TAB_ITEMS.add(item);
 		return block;

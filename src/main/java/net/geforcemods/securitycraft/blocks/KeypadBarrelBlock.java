@@ -176,6 +176,12 @@ public class KeypadBarrelBlock extends Block implements EntityBlock {
 	}
 
 	@Override
+	public MenuProvider getMenuProvider(BlockState state, Level level, BlockPos pos) {
+		//this port extends plain Block, not BaseEntityBlock, so the block entity is not wired up as the menu provider by default
+		return level.getBlockEntity(pos) instanceof MenuProvider menuProvider ? menuProvider : null;
+	}
+
+	@Override
 	public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
 		return new KeypadBarrelBlockEntity(pos, state);
 	}
