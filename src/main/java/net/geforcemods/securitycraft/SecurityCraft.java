@@ -25,6 +25,14 @@ public class SecurityCraft implements ModInitializer {
 		NetworkHandler.registerPayloads();
 		NetworkHandler.registerServerReceivers();
 		net.geforcemods.securitycraft.items.MineRemoteAccessToolItem.registerBindingCallback();
+		//1.21.2+ only syncs unlocked recipes to the client, and the manual's recipe grid reads the client recipe book,
+		//so unlock every SecurityCraft recipe on join - the manual would otherwise show empty grids on every page
+		net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
+			java.util.List<net.minecraft.world.item.crafting.RecipeHolder<?>> scRecipes = server.getRecipeManager().getRecipes().stream().filter(recipe -> recipe.id().location().getNamespace().equals(MODID)).toList();
+
+			if (!scRecipes.isEmpty())
+				handler.player.awardRecipes(scRecipes);
+		});
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> SCCommand.register(dispatcher));
 		net.geforcemods.securitycraft.items.UniversalOwnerChangerItem.registerUseCallback();
 		net.geforcemods.securitycraft.items.UniversalBlockModifierItem.registerUseCallback();

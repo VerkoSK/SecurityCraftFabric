@@ -23,6 +23,12 @@ public class FakeLavaBlock extends LiquidBlock {
 	}
 
 	@Override
+	public net.minecraft.network.chat.MutableComponent getName() {
+		//the whole point is that it cannot be told apart from real lava, so it borrows lava's name everywhere it shows (JEI, tooltips)
+		return net.minecraft.world.level.block.Blocks.LAVA.getName();
+	}
+
+	@Override
 	public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity, InsideBlockEffectApplier effectApplier, boolean stillInside) {
 		super.entityInside(state, level, pos, entity, effectApplier, stillInside);
 
