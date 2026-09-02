@@ -1,11 +1,17 @@
 {
 	"type": "minecraft:crafting_shaped",
 	"category": "equipment",
-	"pattern": [" RE", " IR", "I  "],
+	"pattern": [
+		" RE",
+		" IR",
+		"I  "
+	],
 	"key": {
-		"E": { "item": "minecraft:emerald" },
-		"I": { "item": "minecraft:iron_ingot" },
-		"R": { "item": "minecraft:redstone" }
+		"E": "minecraft:emerald",
+		"I": "minecraft:iron_ingot",
+		"R": "minecraft:redstone"
 	},
-	"result": { "item": "securitycraft:universal_block_modifier" }
+	"result": {
+		"id": "securitycraft:universal_block_modifier"
+	}
 }
