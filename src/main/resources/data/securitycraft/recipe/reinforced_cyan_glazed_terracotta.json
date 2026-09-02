@@ -4,5 +4,7 @@
   "cookingtime": 200,
   "experience": 0.1,
   "ingredient": "securitycraft:reinforced_cyan_terracotta",
-  "result": "securitycraft:reinforced_cyan_glazed_terracotta"
+  "result": {
+    "id": "securitycraft:reinforced_cyan_glazed_terracotta"
+  }
 }
