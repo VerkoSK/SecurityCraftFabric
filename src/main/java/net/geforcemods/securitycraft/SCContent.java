@@ -1154,9 +1154,15 @@ public class SCContent {
 
 		//the scaffolding needs vanilla's own block item, which is what lets it be stacked downwards while held
 		if (category.equals("scaffolding")) {
-			registerBlockNoItem(name, key -> block);
 			ResourceKey<Item> itemKey = ResourceKey.create(Registries.ITEM, id(name));
-			Registry.register(BuiltInRegistries.ITEM, itemKey, new net.minecraft.world.item.ScaffoldingBlockItem(block, new Item.Properties().setId(itemKey)));
+			net.minecraft.world.item.ScaffoldingBlockItem scaffoldingItem = new net.minecraft.world.item.ScaffoldingBlockItem(block, new Item.Properties().setId(itemKey));
+
+			//ScaffoldingBlock#getCollisionShape calls Block#asItem, which the Fabric shape-cache warm-up runs the
+			//moment the block is registered - and Block caches that first result forever. So the block -> item link
+			//has to be in place before the block is registered, or the scaffolding ends up with no item (asItem == air).
+			scaffoldingItem.registerBlocks(Item.BY_BLOCK, scaffoldingItem);
+			registerBlockNoItem(name, key -> block);
+			Registry.register(BuiltInRegistries.ITEM, itemKey, scaffoldingItem);
 		}
 		else
 			register(name, key -> block);
