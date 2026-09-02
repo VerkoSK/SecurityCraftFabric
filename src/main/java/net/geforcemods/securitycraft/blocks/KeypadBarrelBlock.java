@@ -93,8 +93,9 @@ public class KeypadBarrelBlock extends Block implements EntityBlock {
 
 	@Override
 	public InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+		//return TRY_WITH_EMPTY_HAND, not PASS: 1.21.2+ only falls through to useWithoutItem (which opens the barrel) on the former
 		if (!(level.getBlockEntity(pos) instanceof KeypadBarrelBlockEntity be))
-			return InteractionResult.PASS;
+			return InteractionResult.TRY_WITH_EMPTY_HAND;
 
 		if (stack.is(Items.FROG_SPAWN_EGG) && be.isOwnedBy(player)) {
 			if (!level.isClientSide)
@@ -103,7 +104,7 @@ public class KeypadBarrelBlock extends Block implements EntityBlock {
 			return InteractionResult.SUCCESS;
 		}
 
-		return InteractionResult.PASS;
+		return InteractionResult.TRY_WITH_EMPTY_HAND;
 	}
 
 	@Override
