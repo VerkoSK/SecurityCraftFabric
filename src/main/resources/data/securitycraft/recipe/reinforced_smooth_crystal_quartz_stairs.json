@@ -2,9 +2,7 @@
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "key": {
-    "B": {
-      "item": "securitycraft:reinforced_smooth_crystal_quartz"
-    }
+    "B": "securitycraft:reinforced_smooth_crystal_quartz"
   },
   "pattern": [
     "B  ",
@@ -13,7 +11,7 @@
   ],
   "result": {
     "count": 4,
-    "item": "securitycraft:reinforced_smooth_crystal_quartz_stairs"
+    "id": "securitycraft:reinforced_smooth_crystal_quartz_stairs"
   },
   "show_notification": true
 }
