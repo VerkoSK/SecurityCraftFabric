@@ -1077,6 +1077,16 @@ public class SCContent {
 		SINGLE_LENS_MENU = Registry.register(BuiltInRegistries.MENU, id("single_lens"), new net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType<>((syncId, inv, pos) -> new net.geforcemods.securitycraft.inventory.SingleLensMenu(syncId, inv.player.level(), pos, inv), net.minecraft.core.BlockPos.STREAM_CODEC));
 		COPY_MINE_REMOTE_ACCESS_TOOL_RECIPE_SERIALIZER = Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, id("copy_mine_remote_access_tool_recipe"), new net.minecraft.world.item.crafting.CustomRecipe.Serializer<>(net.geforcemods.securitycraft.recipe.CopyPositionComponentItemRecipe::mineRemoteAccessTool));
 		net.geforcemods.securitycraft.misc.SCSounds.register();
+		//These block entities subclass a vanilla one whose (BlockPos, BlockState) constructor hard-codes the vanilla
+		//BlockEntityType, so MC's BlockEntity#validateBlockState rejects the SecurityCraft block before the subclass
+		//constructor can run. Register the SecurityCraft blocks into the vanilla type's valid-block set too.
+		allowVanillaBlockEntityOn(net.minecraft.world.level.block.entity.BlockEntityType.HOPPER, REINFORCED_HOPPER_BLOCK_ENTITY);
+		allowVanillaBlockEntityOn(net.minecraft.world.level.block.entity.BlockEntityType.LECTERN, REINFORCED_LECTERN_BLOCK_ENTITY);
+		allowVanillaBlockEntityOn(net.minecraft.world.level.block.entity.BlockEntityType.CHISELED_BOOKSHELF, REINFORCED_CHISELED_BOOKSHELF_BLOCK_ENTITY);
+		allowVanillaBlockEntityOn(net.minecraft.world.level.block.entity.BlockEntityType.SIGN, SECRET_SIGN_BLOCK_ENTITY);
+		allowVanillaBlockEntityOn(net.minecraft.world.level.block.entity.BlockEntityType.HANGING_SIGN, SECRET_HANGING_SIGN_BLOCK_ENTITY);
+		allowVanillaBlockEntityOn(net.minecraft.world.level.block.entity.BlockEntityType.BRUSHABLE_BLOCK, BRUSHABLE_MINE_BLOCK_ENTITY);
+		allowVanillaBlockEntityOn(net.minecraft.world.level.block.entity.BlockEntityType.CREAKING_HEART, CREAKING_HEART_MINE_BLOCK_ENTITY);
 		registerCreativeTab();
 	}
 
@@ -1427,6 +1437,14 @@ public class SCContent {
 	private static Item registerItem(String name, Item item) {
 		Registry.register(BuiltInRegistries.ITEM, id(name), item);
 		return item;
+	}
+
+	/** Adds every block from {@code from}'s valid-block set to {@code vanilla}'s, so vanilla block-entity construction accepts them. */
+	private static void allowVanillaBlockEntityOn(net.minecraft.world.level.block.entity.BlockEntityType<?> vanilla, net.minecraft.world.level.block.entity.BlockEntityType<?> from) {
+		java.util.Set<Block> merged = new java.util.HashSet<>(vanilla.validBlocks);
+
+		merged.addAll(from.validBlocks);
+		vanilla.validBlocks = merged;
 	}
 
 	private static net.geforcemods.securitycraft.items.ModuleItem registerModule(String name, net.geforcemods.securitycraft.misc.ModuleType type, boolean containsCustomData, boolean canBeCustomized, boolean hasListData) {
