@@ -30,6 +30,14 @@ public class SecurityCraft implements ModInitializer {
 		net.geforcemods.securitycraft.items.UniversalBlockModifierItem.registerUseCallback();
 		ServerLifecycleEvents.SERVER_STARTED.register(server -> SERVER = server);
 		ServerLifecycleEvents.SERVER_STOPPED.register(server -> SERVER = null);
+		//1.21.2+ only syncs unlocked recipes to the client, and the manual's recipe grid reads the client recipe book,
+		//so unlock every SecurityCraft recipe on join - the manual would otherwise show empty grids on every page
+		net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
+			java.util.List<net.minecraft.world.item.crafting.RecipeHolder<?>> scRecipes = server.getRecipeManager().getRecipes().stream().filter(recipe -> recipe.id().location().getNamespace().equals(MODID)).toList();
+
+			if (!scRecipes.isEmpty())
+				handler.player.awardRecipes(scRecipes);
+		});
 		LOGGER.info("SecurityCraft (Fabric port) v{} initialized", VERSION);
 	}
 }
