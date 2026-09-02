@@ -1128,7 +1128,8 @@ public class SCContent {
 
 	/** Registers one of the {@link #REINFORCED_COPIES}: same shape class as vanilla, properties copied off it. */
 	private static void registerReinforcedCopy(String name, Block vanilla, String category) {
-		BlockBehaviour.Properties props = reinforcedCopy(vanilla);
+		ResourceKey<Block> blockKey = ResourceKey.create(Registries.BLOCK, id(name));
+		BlockBehaviour.Properties props = reinforcedCopy(vanilla).setId(blockKey);
 
 		if (name.contains("crystal_quartz"))
 			props.mapColor(MapColor.COLOR_CYAN);
