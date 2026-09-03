@@ -22,7 +22,7 @@ public class IngredientDisplay implements Renderable {
 
 	@Override
 	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-		if (stacks == null || stacks.length == 0)
+		if (stacks == null || stacks.length == 0 || currentRenderingStack < 0 || currentRenderingStack >= stacks.length)
 			return;
 
 		guiGraphics.renderItem(stacks[currentRenderingStack], x, y);
@@ -36,16 +36,20 @@ public class IngredientDisplay implements Renderable {
 	}
 
 	public void setIngredient(Ingredient ingredient) {
-		stacks = ingredient.items().map(ItemStack::new).toArray(ItemStack[]::new);
+		//1.21.2+ dropped the empty Ingredient, so the manual passes null to mean "nothing here"
+		stacks = ingredient == null ? new ItemStack[0] : ingredient.items().map(ItemStack::new).toArray(ItemStack[]::new);
 		currentRenderingStack = 0;
 		ticksToChange = DISPLAY_LENGTH;
 	}
 
 	public ItemStack getCurrentStack() {
-		return currentRenderingStack >= 0 && currentRenderingStack < stacks.length && stacks.length != 0 ? stacks[currentRenderingStack] : ItemStack.EMPTY;
+		return stacks != null && currentRenderingStack >= 0 && currentRenderingStack < stacks.length && stacks.length != 0 ? stacks[currentRenderingStack] : ItemStack.EMPTY;
 	}
 
 	public void changeRenderingStack(double direction) {
+		if (stacks == null || stacks.length == 0)
+			return;
+
 		currentRenderingStack += Math.signum(direction);
 
 		if (currentRenderingStack < 0)

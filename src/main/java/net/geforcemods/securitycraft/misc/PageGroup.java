@@ -21,7 +21,8 @@ public enum PageGroup {
 	private final boolean hasRecipeGrid;
 	private final String title;
 	private final String specialInfoKey;
-	private Ingredient items = Ingredient.of();
+	//1.21.2+ removed the empty Ingredient, so null means "this group has no items"
+	private Ingredient items = null;
 
 	PageGroup(boolean hasRecipeGrid, String title, String specialInfoKey) {
 		this.hasRecipeGrid = hasRecipeGrid;
