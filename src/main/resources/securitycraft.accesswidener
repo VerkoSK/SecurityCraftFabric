@@ -60,3 +60,9 @@ accessible	field	net/minecraft/world/level/block/state/BlockBehaviour$Properties
 # into the vanilla type's valid-block set at registration - which needs that set writable.
 accessible	field	net/minecraft/world/level/block/entity/BlockEntityType	validBlocks	Ljava/util/Set;
 mutable	field	net/minecraft/world/level/block/entity/BlockEntityType	validBlocks	Ljava/util/Set;
+
+# MC 1.21.6 dropped Fabric's BlockRenderLayerMap and vanilla's model "render_type" field. The reinforced doors,
+# trapdoors, furnace windows, electrified fences, reinforced glass, laser fields and fake water set their terrain
+# render layer straight on these two maps instead.
+accessible	field	net/minecraft/client/renderer/ItemBlockRenderTypes	TYPE_BY_BLOCK	Ljava/util/Map;
+accessible	field	net/minecraft/client/renderer/ItemBlockRenderTypes	LAYER_BY_FLUID	Ljava/util/Map;
