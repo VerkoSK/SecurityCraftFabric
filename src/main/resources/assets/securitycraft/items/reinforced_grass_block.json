@@ -3,7 +3,8 @@
     "type": "minecraft:model",
     "model": "securitycraft:item/reinforced_grass_block",
     "tints": [
-      { "type": "minecraft:constant", "value": -6710887 }
+      { "type": "minecraft:constant", "value": -6710887 },
+      { "type": "minecraft:constant", "value": -11898560 }
     ]
   }
 }
