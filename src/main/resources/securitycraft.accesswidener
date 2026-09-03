@@ -56,3 +56,8 @@ accessible	field	net/minecraft/world/level/block/state/BlockBehaviour$Properties
 # private final field opened and made mutable.
 accessible	field	net/minecraft/world/level/block/entity/BlockEntityType	validBlocks	Ljava/util/Set;
 mutable	field	net/minecraft/world/level/block/entity/BlockEntityType	validBlocks	Ljava/util/Set;
+
+# The keypad chest reuses vanilla's ChestRenderer but has to swap in its own atlas sprite, which means
+# reaching the renderer's baked models and sprite getter. Upstream gets these from a Forge access transformer.
+accessible	field	net/minecraft/client/renderer/blockentity/ChestRenderer	models	Lnet/minecraft/client/renderer/MultiblockChestResources;
+accessible	field	net/minecraft/client/renderer/blockentity/ChestRenderer	sprites	Lnet/minecraft/client/resources/model/sprite/SpriteGetter;
