@@ -118,14 +118,34 @@ public class SecurityCraftClient implements ClientModInitializer {
 		java.util.List<Block> tinted = new java.util.ArrayList<>(SCContent.REINFORCED_BLOCKS);
 
 		tinted.remove(SCContent.REINFORCED_BY_NAME.get("reinforced_iron_trapdoor"));
+		//the grass block gets its own providers below so the grass overlay stays biome-green
+		tinted.remove(SCContent.REINFORCED_BY_NAME.get("reinforced_grass_block"));
 
 		Block[] reinforced = tinted.toArray(new Block[0]);
 		ColorProviderRegistry.BLOCK.register((state, view, pos, tintIndex) -> tintIndex == 0 ? reinforcedTint() : -1, reinforced);
+
+		//reinforced grass block: tint the grass overlay (tintindex 1) with the biome grass colour x the reinforced tint
+		ColorProviderRegistry.BLOCK.register((state, view, pos, tintIndex) -> {
+			if (tintIndex == 1 && !state.getValue(net.minecraft.world.level.block.SnowyDirtBlock.SNOWY)) {
+				int grass = view != null && pos != null ? net.minecraft.client.renderer.BiomeColors.getAverageGrassColor(view, pos) : net.minecraft.world.level.GrassColor.get(0.5D, 1.0D);
+				return net.minecraft.util.FastColor.ARGB32.multiply(0xFF000000 | grass, reinforcedTint());
+			}
+
+			return tintIndex == 0 ? reinforcedTint() : -1;
+		}, SCContent.REINFORCED_BY_NAME.get("reinforced_grass_block"));
 
 		// Glass panes use a flat (item/generated) icon; the grey tint on a translucent texture makes it near-invisible, so skip it for their items.
 		java.util.List<Block> itemTinted = new java.util.ArrayList<>(tinted);
 		itemTinted.removeAll(SCContent.GLASS_PANE_BLOCKS);
 		ColorProviderRegistry.ITEM.register((stack, tintIndex) -> tintIndex == 0 ? reinforcedTint() : -1, itemTinted.toArray(new Block[0]));
+
+		//reinforced grass block item: same grass-overlay tint, using the default grass colour
+		ColorProviderRegistry.ITEM.register((stack, tintIndex) -> {
+			if (tintIndex == 1)
+				return net.minecraft.util.FastColor.ARGB32.multiply(0xFF000000 | net.minecraft.world.level.GrassColor.get(0.5D, 1.0D), reinforcedTint());
+
+			return tintIndex == 0 ? reinforcedTint() : -1;
+		}, SCContent.REINFORCED_BY_NAME.get("reinforced_grass_block"));
 
 		for (Block glass : SCContent.GLASS_BLOCKS)
 			BlockRenderLayerMap.INSTANCE.putBlock(glass, RenderType.translucent());
