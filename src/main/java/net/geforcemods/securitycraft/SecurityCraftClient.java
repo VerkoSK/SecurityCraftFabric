@@ -112,6 +112,8 @@ public class SecurityCraftClient implements ClientModInitializer {
 		java.util.List<Block> tinted = new java.util.ArrayList<>(SCContent.REINFORCED_BLOCKS);
 
 		tinted.remove(SCContent.REINFORCED_BY_NAME.get("reinforced_iron_trapdoor"));
+		//the grass block gets its own sources below so the grass overlay stays biome-green
+		tinted.remove(SCContent.REINFORCED_BY_NAME.get("reinforced_grass_block"));
 
 		Block[] reinforced = tinted.toArray(new Block[0]);
 		// 26.x replaced Fabric's ColorProviderRegistry (BlockColor lambda) with BlockColorRegistry + a List<BlockTintSource> indexed by tintindex.
@@ -127,6 +129,20 @@ public class SecurityCraftClient implements ClientModInitializer {
 			}
 		};
 		BlockColorRegistry.register(List.of(reinforcedTintSource), reinforced);
+
+		//reinforced grass block: tintindex 0 keeps the reinforced tint, tintindex 1 (grass overlay) gets the biome grass colour x the reinforced tint
+		BlockTintSource grassOverlayTintSource = new BlockTintSource() {
+			@Override
+			public int color(net.minecraft.world.level.block.state.BlockState state) {
+				return state.getValue(net.minecraft.world.level.block.SnowyBlock.SNOWY) ? reinforcedTint() : net.minecraft.util.ARGB.multiply(0xFF000000 | net.minecraft.world.level.GrassColor.get(0.5D, 1.0D), reinforcedTint());
+			}
+
+			@Override
+			public int colorInWorld(net.minecraft.world.level.block.state.BlockState state, BlockAndTintGetter view, net.minecraft.core.BlockPos pos) {
+				return state.getValue(net.minecraft.world.level.block.SnowyBlock.SNOWY) ? reinforcedTint() : net.minecraft.util.ARGB.multiply(0xFF000000 | net.minecraft.client.renderer.BiomeColors.getAverageGrassColor(view, pos), reinforcedTint());
+			}
+		};
+		BlockColorRegistry.register(List.of(reinforcedTintSource, grassOverlayTintSource), SCContent.REINFORCED_BY_NAME.get("reinforced_grass_block"));
 		// Reinforced item tints are baked into their items/ model definitions (minecraft:constant tint) in 1.21.5, since Fabric's ColorProviderRegistry.ITEM was removed.
 		// Render layers (translucent glass / cutout) are declared per-block via the "render_type" field in each block model JSON,
 		// since Fabric's BlockRenderLayerMap (blockrenderlayer-v1) was dropped for MC 1.21.6.
