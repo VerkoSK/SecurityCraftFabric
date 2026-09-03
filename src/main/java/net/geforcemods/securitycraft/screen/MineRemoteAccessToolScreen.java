@@ -33,6 +33,7 @@ import net.minecraft.world.level.block.Block;
  */
 public class MineRemoteAccessToolScreen extends Screen implements StillValid {
 	private static final Identifier TEXTURE = SCContent.id("textures/gui/container/mrat.png");
+	private static final Identifier EXPLOSIVE_SPRITE = SCContent.id("sc_manual/explosive_highlighted"); //the explosion icon on the detonate button
 	private static final int DEFUSE = 0, ACTIVATE = 1, DETONATE = 2, UNBIND = 3;
 	private ItemStack mrat;
 	private Button[][] guiButtons = new Button[6][4]; //6 mines, 4 actions (defuse, prime, detonate, unbind)
@@ -77,7 +78,7 @@ public class MineRemoteAccessToolScreen extends Screen implements StillValid {
 						guiButtons[i][j] = new PictureButton(btnX, btnY, 20, 20, new ItemStack(Items.FLINT_AND_STEEL), b -> buttonClicked(mine, action));
 						break;
 					case DETONATE:
-						guiButtons[i][j] = new PictureButton(btnX, btnY, 20, 20, new ItemStack(Items.TNT), b -> buttonClicked(mine, action));
+						guiButtons[i][j] = new PictureButton(btnX, btnY, 20, 20, EXPLOSIVE_SPRITE, 0, 1, 18, 18, b -> buttonClicked(mine, action));
 						break;
 					case UNBIND:
 						guiButtons[i][j] = Button.builder(Component.literal("X"), b -> buttonClicked(mine, action)).bounds(btnX, btnY, 20, 20).build();
