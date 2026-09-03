@@ -66,3 +66,10 @@ mutable	field	net/minecraft/world/level/block/entity/BlockEntityType	validBlocks
 # render layer straight on these two maps instead.
 accessible	field	net/minecraft/client/renderer/ItemBlockRenderTypes	TYPE_BY_BLOCK	Ljava/util/Map;
 accessible	field	net/minecraft/client/renderer/ItemBlockRenderTypes	LAYER_BY_FLUID	Ljava/util/Map;
+
+# The keypad chest reuses vanilla's ChestRenderer but has to swap in its own atlas material, which means
+# reaching the renderer's baked models and material set. Upstream gets these from a Forge access transformer.
+accessible	field	net/minecraft/client/renderer/blockentity/ChestRenderer	singleModel	Lnet/minecraft/client/model/ChestModel;
+accessible	field	net/minecraft/client/renderer/blockentity/ChestRenderer	doubleLeftModel	Lnet/minecraft/client/model/ChestModel;
+accessible	field	net/minecraft/client/renderer/blockentity/ChestRenderer	doubleRightModel	Lnet/minecraft/client/model/ChestModel;
+accessible	field	net/minecraft/client/renderer/blockentity/ChestRenderer	materials	Lnet/minecraft/client/resources/model/MaterialSet;
