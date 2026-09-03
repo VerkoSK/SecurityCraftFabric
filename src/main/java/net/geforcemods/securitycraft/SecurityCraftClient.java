@@ -120,9 +120,21 @@ public class SecurityCraftClient implements ClientModInitializer {
 		java.util.List<Block> tinted = new java.util.ArrayList<>(SCContent.REINFORCED_BLOCKS);
 
 		tinted.remove(SCContent.REINFORCED_BY_NAME.get("reinforced_iron_trapdoor"));
+		//the grass block gets its own providers below so the grass overlay stays biome-green
+		tinted.remove(SCContent.REINFORCED_BY_NAME.get("reinforced_grass_block"));
 
 		Block[] reinforced = tinted.toArray(new Block[0]);
 		ColorProviderRegistry.BLOCK.register((state, view, pos, tintIndex) -> tintIndex == 0 ? reinforcedTint() : -1, reinforced);
+
+		//reinforced grass block: tint the grass overlay (tintindex 1) with the biome grass colour x the reinforced tint
+		ColorProviderRegistry.BLOCK.register((state, view, pos, tintIndex) -> {
+			if (tintIndex == 1 && !state.getValue(net.minecraft.world.level.block.SnowyDirtBlock.SNOWY)) {
+				int grass = view != null && pos != null ? net.minecraft.client.renderer.BiomeColors.getAverageGrassColor(view, pos) : net.minecraft.world.level.GrassColor.get(0.5D, 1.0D);
+				return net.minecraft.util.ARGB.multiply(0xFF000000 | grass, reinforcedTint());
+			}
+
+			return tintIndex == 0 ? reinforcedTint() : -1;
+		}, SCContent.REINFORCED_BY_NAME.get("reinforced_grass_block"));
 
 		// Reinforced-block item tints are baked into the assets/securitycraft/items/<id>.json models (1.21.4 item-model tint sources);
 		// there is no runtime ColorProviderRegistry.ITEM in 1.21.4.
