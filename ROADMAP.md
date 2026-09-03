@@ -125,6 +125,9 @@ These are places where the port already has the content but not all of the origi
 They get folded into whichever release touches the same area.
 
 - **Lens colouring on 1.20.6** — the recipe does not apply the dye there.
+- **Passcode-protecting modded chests** — the original converts any block in the `c:chests/wooden` tag
+  with the Key Panel, so wooden chests from other mods can be locked too. The port only recognises the
+  vanilla chest for now; wiring the tag back in is a small V0.6 job.
 - **Module automation** — the original lets hoppers insert modules through a Forge capability. Fabric's
   equivalent is the Transfer API; nothing in the port exposes one yet.
 - **Door activators** — the original has an `IDoorActivator` registry so any SecurityCraft block can
