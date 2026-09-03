@@ -115,9 +115,22 @@ public class SecurityCraftClient implements ClientModInitializer {
 		java.util.List<Block> tinted = new java.util.ArrayList<>(SCContent.REINFORCED_BLOCKS);
 
 		tinted.remove(SCContent.REINFORCED_BY_NAME.get("reinforced_iron_trapdoor"));
+		//the grass block gets its own provider below so the grass overlay can stay biome-green
+		tinted.remove(SCContent.REINFORCED_BY_NAME.get("reinforced_grass_block"));
 
 		Block[] reinforced = tinted.toArray(new Block[0]);
 		ColorProviderRegistry.BLOCK.register((state, view, pos, tintIndex) -> tintIndex == 0 ? reinforcedTint() : -1, reinforced);
+
+		//reinforced grass block: vanilla tints the grass overlay (tintindex 1) with the biome grass colour. Keep that,
+		//still multiplied by the reinforced tint; the dirt base (tintindex 0) stays on the plain reinforced tint.
+		ColorProviderRegistry.BLOCK.register((state, view, pos, tintIndex) -> {
+			if (tintIndex == 1 && !state.getValue(net.minecraft.world.level.block.SnowyDirtBlock.SNOWY)) {
+				int grass = view != null && pos != null ? net.minecraft.client.renderer.BiomeColors.getAverageGrassColor(view, pos) : net.minecraft.world.level.GrassColor.get(0.5D, 1.0D);
+				return net.minecraft.util.ARGB.multiply(0xFF000000 | grass, reinforcedTint());
+			}
+
+			return tintIndex == 0 ? reinforcedTint() : -1;
+		}, SCContent.REINFORCED_BY_NAME.get("reinforced_grass_block"));
 		// Reinforced item tints are baked into their items/ model definitions (minecraft:constant tint) in 1.21.5, since Fabric's ColorProviderRegistry.ITEM was removed.
 
 		for (Block glass : SCContent.GLASS_BLOCKS)
