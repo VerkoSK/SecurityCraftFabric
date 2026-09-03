@@ -137,7 +137,7 @@ public class MineRemoteAccessToolScreen extends Screen implements StillValid {
 		int startX = (width - xSize) / 2;
 		int startY = (height - ySize) / 2;
 
-		renderBackground(guiGraphics, mouseX, mouseY, partialTicks);
+		//1.21.6 moved the renderBackground call into Screen#renderWithTooltip; calling it again here blurs twice and crashes
 		guiGraphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, startX, startY, 0, 0, xSize, ySize, 256, 256);
 		super.render(guiGraphics, mouseX, mouseY, partialTicks);
 		guiGraphics.drawString(font, title, startX + xSize / 2 - font.width(title) / 2, startY + 6, 0xFF404040, false);

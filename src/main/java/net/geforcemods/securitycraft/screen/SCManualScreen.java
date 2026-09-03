@@ -149,7 +149,7 @@ public class SCManualScreen extends Screen implements StillValid {
 
 	@Override
 	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
-		renderBackground(guiGraphics, mouseX, mouseY, partialTicks);
+		//1.21.6 moved the renderBackground call into Screen#renderWithTooltip; calling it again here blurs twice and crashes
 		guiGraphics.blit(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, currentPage < 0 ? TITLE_PAGE : (recipe != null && !recipe.isEmpty() ? PAGE : PAGE_WITH_SCROLL), startX, 5, 0, 0, 256, 250, 256, 256);
 
 		for (Renderable renderable : renderables) {
