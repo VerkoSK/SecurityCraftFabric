@@ -79,7 +79,7 @@ public class EditModuleScreen extends Screen {
 		addRenderableWidget(new CallbackCheckbox(cx, topPos + 112, 20, 20, local("affect_everyone"), affectEveryone, newValue -> {
 			affectEveryone = newValue;
 			save();
-		}, 0xFFFFFF));
+		}, 0xFFFFFFFF));
 	}
 
 	private Component local(String key) {
@@ -121,7 +121,7 @@ public class EditModuleScreen extends Screen {
 	public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
 		super.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
 		guiGraphics.fill(leftPos, topPos, leftPos + X_SIZE, topPos + Y_SIZE, 0xF01A1A1A);
-		guiGraphics.drawCenteredString(font, title, leftPos + X_SIZE / 2, topPos + 6, 0xFFFFFF);
+		guiGraphics.drawCenteredString(font, title, leftPos + X_SIZE / 2, topPos + 6, 0xFFFFFFFF);
 
 		int lx = leftPos + LIST_X;
 		int ly = topPos + LIST_Y;
@@ -135,7 +135,7 @@ public class EditModuleScreen extends Screen {
 			if (idx == selectedIndex)
 				guiGraphics.fill(lx, ry, lx + LIST_W, ry + ROW_H, 0xFF335588);
 
-			guiGraphics.drawString(font, players.get(idx), lx + 2, ry + 2, 0xFFFFFF, false);
+			guiGraphics.drawString(font, players.get(idx), lx + 2, ry + 2, 0xFFFFFFFF, false);
 		}
 	}
 
