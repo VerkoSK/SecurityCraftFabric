@@ -4,9 +4,9 @@
 	"version": "${version}",
 	"name": "SecurityCraft",
 	"accessWidener": "securitycraft.accesswidener",
-	"description": "Adds a load of things to keep your house safe with and defend yourself from attackers. Fabric port by VerkoSK, based on the original NeoForge/Forge mod by the SecurityCraft team.",
+	"description": "Adds a load of things to keep your house safe with and defend yourself from attackers. Fabric port by Verkos, based on the original NeoForge/Forge mod by the SecurityCraft team.",
 	"authors": [
-		"VerkoSK"
+		"Verkos"
 	],
 	"contributors": [
 		"Geforce",
