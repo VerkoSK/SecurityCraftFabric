@@ -1171,7 +1171,8 @@ public class SCContent {
 		REINFORCED_BLOCKS.add(block);
 		REINFORCED_BY_NAME.put(name, block);
 
-		if (NON_SOLID_CATEGORIES.contains(category))
+		//the grass block's side overlay texture is part-transparent, so it needs the cutout layer like the door
+		if (NON_SOLID_CATEGORIES.contains(category) || category.equals("grass_block"))
 			CUTOUT_BLOCKS.add(block);
 	}
 
