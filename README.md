@@ -7,6 +7,10 @@ Redstone_Dubstep, ChainmailPickaxe).
 > The original mod is licensed MIT. This port keeps that license and preserves the original
 > copyright and attribution. It is **not** affiliated with or endorsed by the original authors.
 
+[![image](https://media.forgecdn.net/attachments/description/1615498/description_366d7ee0-3830-4ded-b411-0bf089a21dca.png)](https://billing.kinetichosting.com/aff.php?aff=1031)
+
+Want a Minecraft server for this mod? [Kinetic Hosting](https://billing.kinetichosting.com/aff.php?aff=1031) has you covered.
+
 ---
 
 ## Status — V0.5
