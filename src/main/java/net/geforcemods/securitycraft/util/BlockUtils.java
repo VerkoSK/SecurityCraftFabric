@@ -37,6 +37,20 @@ public class BlockUtils {
 		return ConfigHandler.mineExplosionsBreakBlocks ? ExplosionInteraction.BLOCK : ExplosionInteraction.NONE;
 	}
 
+	/**
+	 * Copies a block entity's stored data onto another block entity, the way the pre-1.21.6 {@code saveWithFullMetadata}
+	 * / {@code load} pair did when converting a vanilla block into its keypad-protected counterpart and back.
+	 */
+	public static net.minecraft.nbt.CompoundTag saveBlockEntity(net.minecraft.world.level.block.entity.BlockEntity be, Level level) {
+		return be.saveCustomOnly(level.registryAccess());
+	}
+
+	public static void loadBlockEntity(net.minecraft.world.level.block.entity.BlockEntity be, net.minecraft.nbt.CompoundTag tag, Level level) {
+		try (net.minecraft.util.ProblemReporter.ScopedCollector reporter = new net.minecraft.util.ProblemReporter.ScopedCollector(be.problemPath(), net.geforcemods.securitycraft.SecurityCraft.LOGGER)) {
+			be.loadCustomOnly(net.minecraft.world.level.storage.TagValueInput.create(reporter, level.registryAccess(), tag));
+		}
+	}
+
 	public static void updateIndirectNeighbors(Level level, BlockPos pos, Block block) {
 		updateIndirectNeighbors(level, pos, block, Direction.values());
 	}

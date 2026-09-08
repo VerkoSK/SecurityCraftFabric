@@ -11,6 +11,7 @@ import net.minecraft.sounds.SoundEvent;
  * {@link #register()} has to be called from the mod initializer to put the events into the sound registry.
  */
 public enum SCSounds {
+	ELECTRIFIED("electrified"),
 	LOCK("lock");
 
 	public final String path;

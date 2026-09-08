@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": "minecraft:prismarine_shard",
+    "Q": "minecraft:quartz"
+  },
+  "pattern": [
+    "CQC",
+    "QCQ",
+    "CQC"
+  ],
+  "result": {
+    "id": "securitycraft:crystal_quartz_item",
+    "count": 9
+  },
+  "show_notification": true
+}
