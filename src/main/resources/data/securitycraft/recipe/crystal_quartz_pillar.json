@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "B": "securitycraft:crystal_quartz"
+  },
+  "pattern": [
+    "B",
+    "B"
+  ],
+  "result": {
+    "id": "securitycraft:crystal_quartz_pillar",
+    "count": 2
+  },
+  "show_notification": true
+}

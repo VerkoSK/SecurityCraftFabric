@@ -22,9 +22,12 @@ public class SecurityCraft implements ModInitializer {
 	public void onInitialize() {
 		ConfigHandler.load();
 		SCContent.init();
+		net.geforcemods.securitycraft.blocks.reinforced.ReinforcedCauldronBlock.IReinforcedCauldronInteraction.bootStrap();
 		NetworkHandler.registerPayloads();
 		NetworkHandler.registerServerReceivers();
 		net.geforcemods.securitycraft.items.MineRemoteAccessToolItem.registerBindingCallback();
+		net.geforcemods.securitycraft.items.UniversalOwnerChangerItem.registerUseCallback();
+		net.geforcemods.securitycraft.items.UniversalBlockModifierItem.registerUseCallback();
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> SCCommand.register(dispatcher));
 		ServerLifecycleEvents.SERVER_STARTED.register(server -> SERVER = server);
 		ServerLifecycleEvents.SERVER_STOPPED.register(server -> SERVER = null);

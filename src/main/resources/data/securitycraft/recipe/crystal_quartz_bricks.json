@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "B": "securitycraft:crystal_quartz"
+  },
+  "pattern": [
+    "BB",
+    "BB"
+  ],
+  "result": {
+    "id": "securitycraft:crystal_quartz_bricks",
+    "count": 4
+  },
+  "show_notification": true
+}

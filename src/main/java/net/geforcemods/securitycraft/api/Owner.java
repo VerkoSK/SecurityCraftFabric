@@ -87,7 +87,12 @@ public class Owner {
 		if (otherUUID != null && otherUUID.equals(selfUUID))
 			return true;
 
-		return otherName != null && (selfUUID.equals(DEFAULT_OWNER_UUID) || otherUUID.equals(DEFAULT_OWNER_UUID)) && otherName.equals(getName());
+		if (otherName != null && (selfUUID.equals(DEFAULT_OWNER_UUID) || otherUUID.equals(DEFAULT_OWNER_UUID)) && otherName.equals(getName()))
+			return true;
+
+		//two different players still count as the same owner while they share a scoreboard team, if the server
+		//turned that on; TeamUtils returns false outright when the option is off, so this costs nothing otherwise
+		return net.geforcemods.securitycraft.util.TeamUtils.areOnSameTeam(this, otherOwner);
 	}
 
 	public Owner copy() {
@@ -117,6 +122,19 @@ public class Owner {
 
 		if (saveValidationStatus)
 			output.putBoolean("ownerValidated", validated);
+	}
+
+	/** Reads an owner straight out of a raw {@link net.minecraft.nbt.CompoundTag} (used for the moved-block-entity blob the reinforced piston carries). */
+	public static Owner fromCompound(net.minecraft.nbt.CompoundTag tag) {
+		Owner owner = new Owner();
+
+		if (tag != null) {
+			owner.name = tag.getStringOr(DEFAULT_OWNER_NAME, DEFAULT_OWNER_NAME);
+			owner.uuid = tag.getStringOr(DEFAULT_OWNER_UUID, DEFAULT_OWNER_UUID);
+			owner.validated = tag.getBooleanOr("ownerValidated", true);
+		}
+
+		return owner;
 	}
 
 	// Since 1.21.6 block entities serialize through ValueInput/ValueOutput.
