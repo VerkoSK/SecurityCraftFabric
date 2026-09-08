@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "minecraft:book",
+    "minecraft:iron_bars"
+  ],
+  "result": {
+    "id": "securitycraft:sc_manual"
+  }
+}

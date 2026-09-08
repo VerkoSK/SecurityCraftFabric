@@ -17,6 +17,9 @@ import net.minecraft.world.scores.PlayerTeam;
  * has no FTB Teams compat module. {@code ServerLifecycleHooks.getCurrentServer()} becomes {@link SecurityCraft#SERVER}.
  */
 public class TeamUtils {
+	/** Fallback colour for a team that has none set, matching the grey the other versions fall back to. */
+	private static final int GRAY_RGB = 0xAAAAAA;
+
 	private TeamUtils() {}
 
 	public static boolean areOnSameTeam(Owner owner1, Owner owner2) {
@@ -51,9 +54,9 @@ public class TeamUtils {
 			PlayerTeam team = getVanillaTeamFromPlayer(owner.getName());
 
 			if (team != null && team.getPlayers().size() > 1) {
-				Integer color = team.getColor().getColor();
-
-				return new TeamRepresentation(team.getDisplayName().getString(), color == null ? ChatFormatting.GRAY.getColor() : color);
+				//getColor() is a ChatFormatting here; its .getColor() is the nullable rgb.
+				Integer rgb = team.getColor().getColor();
+				return new TeamRepresentation(team.getDisplayName().getString(), rgb != null ? rgb : GRAY_RGB);
 			}
 		}
 

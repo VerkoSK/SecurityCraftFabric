@@ -4,15 +4,15 @@
 	"version": "${version}",
 	"name": "SecurityCraft",
 	"accessWidener": "securitycraft.accesswidener",
-	"description": "Adds a load of things to keep your house safe with and defend yourself from attackers. Fabric port of the original NeoForge/Forge mod by the SecurityCraft team.",
+	"description": "Adds a load of things to keep your house safe with and defend yourself from attackers. Fabric port by Verkos, based on the original NeoForge/Forge mod by the SecurityCraft team.",
 	"authors": [
+		"Verkos"
+	],
+	"contributors": [
 		"Geforce",
 		"bl4ckscor3",
 		"Redstone_Dubstep",
 		"ChainmailPickaxe"
-	],
-	"contributors": [
-		"Fabric port maintainer"
 	],
 	"contact": {
 		"homepage": "https://github.com/VerkoSK/SecurityCraftFabric",
@@ -31,6 +31,9 @@
 		],
 		"jei_mod_plugin": [
 			"net.geforcemods.securitycraft.compat.jei.SCJEIPlugin"
+		],
+		"jade": [
+			"net.geforcemods.securitycraft.compat.jade.SCJadePlugin"
 		]
 	},
 	"depends": {
@@ -40,6 +43,7 @@
 		"java": ">=21"
 	},
 	"suggests": {
-		"jei": "*"
+		"jei": "*",
+		"jade": "*"
 	}
 }

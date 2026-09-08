@@ -31,6 +31,16 @@ public final class ConfigHandler {
 	public static boolean mineExplosionsBreakBlocks = true;
 	/** Set this to true to enable every player on a scoreboard team to own the blocks of every other player on the same team. (upstream default false) */
 	public static boolean enableTeamOwnership = false;
+	/** Should players be able to break blocks owned by somebody else? (upstream default false) */
+	/** 1:1 with upstream's always_drop: SecurityCraft's blocks drop themselves no matter which tool was used. */
+	public static boolean alwaysDrop = true;
+	public static boolean allowBreakingNonOwnedBlocks = false;
+	/** How much slower the owner breaks their own reinforced blocks compared to the vanilla block. (upstream default 1.0) */
+	public static double ownedBreakingSlowdown = 1.0;
+	/** How much slower a non-owner breaks reinforced blocks, when breaking them is allowed at all. (upstream default 1.0) */
+	public static double nonOwnedBreakingSlowdown = 1.0;
+	/** Should players be able to claim blocks that have no owner yet, using the Universal Owner Changer? (upstream default true) */
+	public static boolean allowBlockClaim = true;
 
 	private ConfigHandler() {}
 
@@ -62,6 +72,22 @@ public final class ConfigHandler {
 
 				if (json.has("enable_team_ownership"))
 					enableTeamOwnership = json.get("enable_team_ownership").getAsBoolean();
+
+				if (json.has("allow_breaking_non_owned_blocks"))
+					allowBreakingNonOwnedBlocks = json.get("allow_breaking_non_owned_blocks").getAsBoolean();
+
+				if (json.has("always_drop"))
+					alwaysDrop = json.get("always_drop").getAsBoolean();
+
+				if (json.has("owned_breaking_slowdown"))
+					ownedBreakingSlowdown = Math.max(0.0, json.get("owned_breaking_slowdown").getAsDouble());
+
+				if (json.has("non_owned_breaking_slowdown"))
+					nonOwnedBreakingSlowdown = Math.max(0.0, json.get("non_owned_breaking_slowdown").getAsDouble());
+
+				if (json.has("allow_block_claim"))
+					allowBlockClaim = json.get("allow_block_claim").getAsBoolean();
+
 			}
 			else
 				save();
@@ -82,6 +108,11 @@ public final class ConfigHandler {
 		json.addProperty("mineExplodesWhenInCreative", mineExplodesWhenInCreative);
 		json.addProperty("mineExplosionsBreakBlocks", mineExplosionsBreakBlocks);
 		json.addProperty("enable_team_ownership", enableTeamOwnership);
+		json.addProperty("allow_breaking_non_owned_blocks", allowBreakingNonOwnedBlocks);
+		json.addProperty("always_drop", alwaysDrop);
+		json.addProperty("owned_breaking_slowdown", ownedBreakingSlowdown);
+		json.addProperty("non_owned_breaking_slowdown", nonOwnedBreakingSlowdown);
+		json.addProperty("allow_block_claim", allowBlockClaim);
 
 		try {
 			Files.writeString(FILE, new GsonBuilder().setPrettyPrinting().create().toJson(json));

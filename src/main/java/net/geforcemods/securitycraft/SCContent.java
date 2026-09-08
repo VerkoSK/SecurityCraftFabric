@@ -11,6 +11,7 @@ import net.geforcemods.securitycraft.blockentities.KeypadBlockEntity;
 import net.geforcemods.securitycraft.blocks.KeypadBlock;
 import net.geforcemods.securitycraft.blocks.reinforced.BaseReinforcedBlock;
 import net.geforcemods.securitycraft.items.BlockReinforcerItem;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -57,6 +58,80 @@ public class SCContent {
 	public static net.geforcemods.securitycraft.blocks.LaserFieldBlock LASER_FIELD;
 	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.LaserBlockBlockEntity> LASER_BLOCK_BLOCK_ENTITY;
 	public static BlockEntityType<net.geforcemods.securitycraft.api.OwnableBlockEntity> ABSTRACT_BLOCK_ENTITY;
+	public static Block REINFORCED_DOOR;
+	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.ReinforcedDoorBlockEntity> REINFORCED_DOOR_BLOCK_ENTITY;
+	public static net.geforcemods.securitycraft.blocks.ElectrifiedIronFenceBlock ELECTRIFIED_IRON_FENCE;
+	public static net.geforcemods.securitycraft.blocks.ElectrifiedIronFenceGateBlock ELECTRIFIED_IRON_FENCE_GATE;
+	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.ElectrifiedFenceAndGateBlockEntity> ELECTRIFIED_FENCE_AND_GATE_BLOCK_ENTITY;
+	public static Item UNIVERSAL_OWNER_CHANGER;
+	public static Item SC_MANUAL;
+	/** The secret sign items, in registration order, for the creative tab. */
+	public static final List<ItemLike> SECRET_SIGN_ITEMS = new ArrayList<>();
+	public static Block SECRET_OAK_SIGN;
+	public static Block SECRET_OAK_WALL_SIGN;
+	public static Block SECRET_OAK_HANGING_SIGN;
+	public static Block SECRET_OAK_WALL_HANGING_SIGN;
+	public static Block SECRET_SPRUCE_SIGN;
+	public static Block SECRET_SPRUCE_WALL_SIGN;
+	public static Block SECRET_SPRUCE_HANGING_SIGN;
+	public static Block SECRET_SPRUCE_WALL_HANGING_SIGN;
+	public static Block SECRET_BIRCH_SIGN;
+	public static Block SECRET_BIRCH_WALL_SIGN;
+	public static Block SECRET_BIRCH_HANGING_SIGN;
+	public static Block SECRET_BIRCH_WALL_HANGING_SIGN;
+	public static Block SECRET_JUNGLE_SIGN;
+	public static Block SECRET_JUNGLE_WALL_SIGN;
+	public static Block SECRET_JUNGLE_HANGING_SIGN;
+	public static Block SECRET_JUNGLE_WALL_HANGING_SIGN;
+	public static Block SECRET_ACACIA_SIGN;
+	public static Block SECRET_ACACIA_WALL_SIGN;
+	public static Block SECRET_ACACIA_HANGING_SIGN;
+	public static Block SECRET_ACACIA_WALL_HANGING_SIGN;
+	public static Block SECRET_DARK_OAK_SIGN;
+	public static Block SECRET_DARK_OAK_WALL_SIGN;
+	public static Block SECRET_DARK_OAK_HANGING_SIGN;
+	public static Block SECRET_DARK_OAK_WALL_HANGING_SIGN;
+	public static Block SECRET_MANGROVE_SIGN;
+	public static Block SECRET_MANGROVE_WALL_SIGN;
+	public static Block SECRET_MANGROVE_HANGING_SIGN;
+	public static Block SECRET_MANGROVE_WALL_HANGING_SIGN;
+	public static Block SECRET_CHERRY_SIGN;
+	public static Block SECRET_CHERRY_WALL_SIGN;
+	public static Block SECRET_CHERRY_HANGING_SIGN;
+	public static Block SECRET_CHERRY_WALL_HANGING_SIGN;
+	public static Block SECRET_BAMBOO_SIGN;
+	public static Block SECRET_BAMBOO_WALL_SIGN;
+	public static Block SECRET_BAMBOO_HANGING_SIGN;
+	public static Block SECRET_BAMBOO_WALL_HANGING_SIGN;
+	public static Block SECRET_CRIMSON_SIGN;
+	public static Block SECRET_CRIMSON_WALL_SIGN;
+	public static Block SECRET_CRIMSON_HANGING_SIGN;
+	public static Block SECRET_CRIMSON_WALL_HANGING_SIGN;
+	public static Block SECRET_WARPED_SIGN;
+	public static Block SECRET_WARPED_WALL_SIGN;
+	public static Block SECRET_WARPED_HANGING_SIGN;
+	public static Block SECRET_WARPED_WALL_HANGING_SIGN;
+	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.SecretSignBlockEntity> SECRET_SIGN_BLOCK_ENTITY;
+	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.SecretHangingSignBlockEntity> SECRET_HANGING_SIGN_BLOCK_ENTITY;
+	public static Item CRYSTAL_QUARTZ_ITEM;
+	public static Block CRYSTAL_QUARTZ;
+	public static Block SMOOTH_CRYSTAL_QUARTZ;
+	public static Block CHISELED_CRYSTAL_QUARTZ;
+	public static Block CRYSTAL_QUARTZ_BRICKS;
+	public static Block CRYSTAL_QUARTZ_PILLAR;
+	public static Block CRYSTAL_QUARTZ_STAIRS;
+	public static Block CRYSTAL_QUARTZ_SLAB;
+	public static Block SMOOTH_CRYSTAL_QUARTZ_STAIRS;
+	public static Block SMOOTH_CRYSTAL_QUARTZ_SLAB;
+	public static net.minecraft.world.level.material.FlowingFluid FAKE_WATER;
+	public static net.minecraft.world.level.material.FlowingFluid FLOWING_FAKE_WATER;
+	public static net.minecraft.world.level.material.FlowingFluid FAKE_LAVA;
+	public static net.minecraft.world.level.material.FlowingFluid FLOWING_FAKE_LAVA;
+	public static Block FAKE_WATER_BLOCK;
+	public static Block FAKE_LAVA_BLOCK;
+	public static Item FAKE_WATER_BUCKET;
+	public static Item FAKE_LAVA_BUCKET;
+	public static Item UNIVERSAL_BLOCK_MODIFIER;
 	public static net.geforcemods.securitycraft.blocks.KeyPanelBlock KEY_PANEL;
 	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.KeyPanelBlockEntity> KEY_PANEL_BLOCK_ENTITY;
 	public static Item KEY_PANEL_ITEM;
@@ -77,6 +152,38 @@ public class SCContent {
 	public static Item UNIVERSAL_BLOCK_REINFORCER_LVL3;
 	public static Item UNIVERSAL_BLOCK_REMOVER;
 	public static BlockEntityType<KeypadBlockEntity> KEYPAD_BLOCK_ENTITY;
+	public static Block REINFORCED_PISTON;
+	public static Block REINFORCED_STICKY_PISTON;
+	public static Block REINFORCED_PISTON_HEAD;
+	public static Block REINFORCED_MOVING_PISTON;
+	public static Block REINFORCED_CAULDRON;
+	public static Block REINFORCED_WATER_CAULDRON;
+	public static Block REINFORCED_LAVA_CAULDRON;
+	public static Block REINFORCED_POWDER_SNOW_CAULDRON;
+	public static Block REINFORCED_LECTERN;
+	public static Block REINFORCED_CHISELED_BOOKSHELF;
+	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.ReinforcedPistonMovingBlockEntity> REINFORCED_MOVING_PISTON_BLOCK_ENTITY;
+	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.ReinforcedCauldronBlockEntity> REINFORCED_CAULDRON_BLOCK_ENTITY;
+	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.ReinforcedLecternBlockEntity> REINFORCED_LECTERN_BLOCK_ENTITY;
+	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.ReinforcedChiseledBookshelfBlockEntity> REINFORCED_CHISELED_BOOKSHELF_BLOCK_ENTITY;
+	public static net.minecraft.world.inventory.MenuType<net.geforcemods.securitycraft.inventory.ReinforcedLecternMenu> REINFORCED_LECTERN_MENU;
+	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.ReinforcedHopperBlockEntity> REINFORCED_HOPPER_BLOCK_ENTITY;
+	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.ReinforcedDispenserBlockEntity> REINFORCED_DISPENSER_BLOCK_ENTITY;
+	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.ReinforcedDropperBlockEntity> REINFORCED_DROPPER_BLOCK_ENTITY;
+	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.ReinforcedObserverBlockEntity> REINFORCED_OBSERVER_BLOCK_ENTITY;
+	public static Block KEYPAD_CHEST;
+	public static Block KEYPAD_BARREL;
+	public static Block KEYPAD_FURNACE;
+	public static Block KEYPAD_SMOKER;
+	public static Block KEYPAD_BLAST_FURNACE;
+	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.KeypadChestBlockEntity> KEYPAD_CHEST_BLOCK_ENTITY;
+	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.KeypadBarrelBlockEntity> KEYPAD_BARREL_BLOCK_ENTITY;
+	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.KeypadFurnaceBlockEntity> KEYPAD_FURNACE_BLOCK_ENTITY;
+	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.KeypadSmokerBlockEntity> KEYPAD_SMOKER_BLOCK_ENTITY;
+	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.KeypadBlastFurnaceBlockEntity> KEYPAD_BLAST_FURNACE_BLOCK_ENTITY;
+	public static net.minecraft.world.inventory.MenuType<net.geforcemods.securitycraft.inventory.KeypadFurnaceMenu> KEYPAD_FURNACE_MENU;
+	public static net.minecraft.world.inventory.MenuType<net.geforcemods.securitycraft.inventory.KeypadSmokerMenu> KEYPAD_SMOKER_MENU;
+	public static net.minecraft.world.inventory.MenuType<net.geforcemods.securitycraft.inventory.KeypadBlastFurnaceMenu> KEYPAD_BLAST_FURNACE_MENU;
 
 	//explosives
 	public static Block MINE;
@@ -134,6 +241,7 @@ public class SCContent {
 	public static net.minecraft.world.entity.EntityType<net.geforcemods.securitycraft.entity.BouncingBetty> BOUNCING_BETTY_ENTITY;
 	public static net.minecraft.world.entity.EntityType<net.geforcemods.securitycraft.entity.IMSBomb> IMS_BOMB_ENTITY;
 	public static net.minecraft.world.inventory.MenuType<net.geforcemods.securitycraft.inventory.SingleLensMenu> SINGLE_LENS_MENU;
+	public static net.minecraft.world.inventory.MenuType<net.geforcemods.securitycraft.inventory.CustomizeBlockMenu> CUSTOMIZE_BLOCK_MENU;
 	public static RecipeSerializer<? extends net.minecraft.world.item.crafting.CustomRecipe> COPY_MINE_REMOTE_ACCESS_TOOL_RECIPE_SERIALIZER;
 	public static net.minecraft.core.component.DataComponentType<net.geforcemods.securitycraft.components.BoundMines> BOUND_MINES;
 
@@ -146,6 +254,77 @@ public class SCContent {
 	public static net.minecraft.world.inventory.MenuType<net.geforcemods.securitycraft.inventory.LaserBlockMenu> LASER_BLOCK_MENU;
 	public static net.minecraft.world.inventory.MenuType<net.geforcemods.securitycraft.inventory.DisguiseModuleMenu> DISGUISE_MODULE_MENU;
 
+
+	/**
+	 * The reinforced blocks whose properties are copied straight off their vanilla counterpart, the way upstream's
+	 * {@code reinforcedBlock(name, vanillaBlock, ...)} does it, instead of being spelled out by shape the way the
+	 * {@link #REINFORCED} table above does.
+	 */
+	private static final Object[][] REINFORCED_COPIES = {
+			{"reinforced_white_carpet", Blocks.WHITE_CARPET, "carpet"},
+			{"reinforced_orange_carpet", Blocks.ORANGE_CARPET, "carpet"},
+			{"reinforced_magenta_carpet", Blocks.MAGENTA_CARPET, "carpet"},
+			{"reinforced_light_blue_carpet", Blocks.LIGHT_BLUE_CARPET, "carpet"},
+			{"reinforced_yellow_carpet", Blocks.YELLOW_CARPET, "carpet"},
+			{"reinforced_lime_carpet", Blocks.LIME_CARPET, "carpet"},
+			{"reinforced_pink_carpet", Blocks.PINK_CARPET, "carpet"},
+			{"reinforced_gray_carpet", Blocks.GRAY_CARPET, "carpet"},
+			{"reinforced_light_gray_carpet", Blocks.LIGHT_GRAY_CARPET, "carpet"},
+			{"reinforced_cyan_carpet", Blocks.CYAN_CARPET, "carpet"},
+			{"reinforced_purple_carpet", Blocks.PURPLE_CARPET, "carpet"},
+			{"reinforced_blue_carpet", Blocks.BLUE_CARPET, "carpet"},
+			{"reinforced_brown_carpet", Blocks.BROWN_CARPET, "carpet"},
+			{"reinforced_green_carpet", Blocks.GREEN_CARPET, "carpet"},
+			{"reinforced_red_carpet", Blocks.RED_CARPET, "carpet"},
+			{"reinforced_black_carpet", Blocks.BLACK_CARPET, "carpet"},
+			{"reinforced_moss_carpet", Blocks.MOSS_CARPET, "carpet"},
+			{"reinforced_white_glazed_terracotta", Blocks.WHITE_GLAZED_TERRACOTTA, "glazed_terracotta"},
+			{"reinforced_orange_glazed_terracotta", Blocks.ORANGE_GLAZED_TERRACOTTA, "glazed_terracotta"},
+			{"reinforced_magenta_glazed_terracotta", Blocks.MAGENTA_GLAZED_TERRACOTTA, "glazed_terracotta"},
+			{"reinforced_light_blue_glazed_terracotta", Blocks.LIGHT_BLUE_GLAZED_TERRACOTTA, "glazed_terracotta"},
+			{"reinforced_yellow_glazed_terracotta", Blocks.YELLOW_GLAZED_TERRACOTTA, "glazed_terracotta"},
+			{"reinforced_lime_glazed_terracotta", Blocks.LIME_GLAZED_TERRACOTTA, "glazed_terracotta"},
+			{"reinforced_pink_glazed_terracotta", Blocks.PINK_GLAZED_TERRACOTTA, "glazed_terracotta"},
+			{"reinforced_gray_glazed_terracotta", Blocks.GRAY_GLAZED_TERRACOTTA, "glazed_terracotta"},
+			{"reinforced_light_gray_glazed_terracotta", Blocks.LIGHT_GRAY_GLAZED_TERRACOTTA, "glazed_terracotta"},
+			{"reinforced_cyan_glazed_terracotta", Blocks.CYAN_GLAZED_TERRACOTTA, "glazed_terracotta"},
+			{"reinforced_purple_glazed_terracotta", Blocks.PURPLE_GLAZED_TERRACOTTA, "glazed_terracotta"},
+			{"reinforced_blue_glazed_terracotta", Blocks.BLUE_GLAZED_TERRACOTTA, "glazed_terracotta"},
+			{"reinforced_brown_glazed_terracotta", Blocks.BROWN_GLAZED_TERRACOTTA, "glazed_terracotta"},
+			{"reinforced_green_glazed_terracotta", Blocks.GREEN_GLAZED_TERRACOTTA, "glazed_terracotta"},
+			{"reinforced_red_glazed_terracotta", Blocks.RED_GLAZED_TERRACOTTA, "glazed_terracotta"},
+			{"reinforced_black_glazed_terracotta", Blocks.BLACK_GLAZED_TERRACOTTA, "glazed_terracotta"},
+			{"reinforced_bookshelf", Blocks.BOOKSHELF, "cube"},
+			{"reinforced_sea_lantern", Blocks.SEA_LANTERN, "cube"},
+			{"reinforced_redstone_lamp", Blocks.REDSTONE_LAMP, "redstone_lamp"},
+			{"reinforced_grass_block", Blocks.GRASS_BLOCK, "grass_block"},
+			{"reinforced_podzol", Blocks.PODZOL, "snowy_dirt"},
+			{"reinforced_mycelium", Blocks.MYCELIUM, "snowy_dirt"},
+			{"reinforced_cobweb", Blocks.COBWEB, "cobweb"},
+			{"reinforced_chain", Blocks.IRON_CHAIN, "chain"},
+			{"reinforced_end_rod", Blocks.END_ROD, "end_rod"},
+			{"reinforced_lantern", Blocks.LANTERN, "lantern"},
+			{"reinforced_soul_lantern", Blocks.SOUL_LANTERN, "lantern"},
+			{"reinforced_ladder", Blocks.LADDER, "ladder"},
+			{"reinforced_scaffolding", Blocks.SCAFFOLDING, "scaffolding"},
+			{"reinforced_lever", Blocks.LEVER, "lever"},
+	};
+
+	/**
+	 * The reinforced half of the crystal quartz set. It goes through the same path as {@link #REINFORCED_COPIES},
+	 * copying the vanilla quartz block each one is shaped after; the cyan tint comes from {@link #crystalQuartzProps}.
+	 */
+	private static final Object[][] CRYSTAL_QUARTZ_REINFORCED = {
+			{"reinforced_crystal_quartz_block", Blocks.QUARTZ_BLOCK, "cube"},
+			{"reinforced_smooth_crystal_quartz", Blocks.SMOOTH_QUARTZ, "cube"},
+			{"reinforced_chiseled_crystal_quartz_block", Blocks.CHISELED_QUARTZ_BLOCK, "cube"},
+			{"reinforced_crystal_quartz_bricks", Blocks.QUARTZ_BRICKS, "cube"},
+			{"reinforced_crystal_quartz_pillar", Blocks.QUARTZ_PILLAR, "pillar"},
+			{"reinforced_crystal_quartz_stairs", Blocks.QUARTZ_STAIRS, "stairs"},
+			{"reinforced_crystal_quartz_slab", Blocks.QUARTZ_SLAB, "slab"},
+			{"reinforced_smooth_crystal_quartz_stairs", Blocks.SMOOTH_QUARTZ_STAIRS, "stairs"},
+			{"reinforced_smooth_crystal_quartz_slab", Blocks.SMOOTH_QUARTZ_SLAB, "slab"}
+	};
 
 	private static final String[][] REINFORCED = {
 			{"reinforced_acacia_button", "button"},
@@ -256,8 +435,6 @@ public class SCContent {
 			{"reinforced_crimson_stairs", "stairs"},
 			{"reinforced_crimson_stem", "pillar"},
 			{"reinforced_crying_obsidian", "cube"},
-			{"reinforced_crystal_quartz_slab", "slab"},
-			{"reinforced_crystal_quartz_stairs", "stairs"},
 			{"reinforced_cut_copper", "cube"},
 			{"reinforced_cut_copper_slab", "slab"},
 			{"reinforced_cut_copper_stairs", "stairs"},
@@ -309,7 +486,6 @@ public class SCContent {
 			{"reinforced_exposed_cut_copper", "cube"},
 			{"reinforced_exposed_cut_copper_slab", "slab"},
 			{"reinforced_exposed_cut_copper_stairs", "stairs"},
-			{"reinforced_fence_gate", "fence_gate"},
 			{"reinforced_glass", "glass"},
 			{"reinforced_glass_pane", "pane"},
 			{"reinforced_glowstone", "cube"},
@@ -502,8 +678,6 @@ public class SCContent {
 			{"reinforced_sandstone_wall", "wall"},
 			{"reinforced_shroomlight", "cube"},
 			{"reinforced_smooth_basalt", "cube"},
-			{"reinforced_smooth_crystal_quartz_slab", "slab"},
-			{"reinforced_smooth_crystal_quartz_stairs", "stairs"},
 			{"reinforced_smooth_quartz", "cube"},
 			{"reinforced_smooth_quartz_slab", "slab"},
 			{"reinforced_smooth_quartz_stairs", "stairs"},
@@ -562,9 +736,6 @@ public class SCContent {
 			{"reinforced_tuff_brick_stairs", "stairs"},
 			{"reinforced_tuff_brick_wall", "wall"},
 			{"reinforced_tuff_bricks", "cube"},
-			{"reinforced_tuff_slab", "slab"},
-			{"reinforced_tuff_stairs", "stairs"},
-			{"reinforced_tuff_wall", "wall"},
 			{"reinforced_verdant_froglight", "pillar"},
 			{"reinforced_warped_button", "button"},
 			{"reinforced_warped_fence", "fence"},
@@ -591,7 +762,29 @@ public class SCContent {
 			{"reinforced_yellow_stained_glass", "glass"},
 			{"reinforced_yellow_stained_glass_pane", "pane"},
 			{"reinforced_yellow_terracotta", "cube"},
-			{"reinforced_yellow_wool", "cube"}
+			{"reinforced_yellow_wool", "cube"},
+			//restored to match the 1.21.11 V0.5 set after the V0.5-propagation regression dropped them on this branch
+			{"reinforced_chiseled_resin_bricks", "cube"},
+			{"reinforced_pale_moss_block", "cube"},
+			{"reinforced_pale_oak_button", "button"},
+			{"reinforced_pale_oak_fence", "fence"},
+			{"reinforced_pale_oak_fence_gate", "fence_gate"},
+			{"reinforced_pale_oak_log", "pillar"},
+			{"reinforced_pale_oak_planks", "cube"},
+			{"reinforced_pale_oak_pressure_plate", "pressure_plate"},
+			{"reinforced_pale_oak_slab", "slab"},
+			{"reinforced_pale_oak_stairs", "stairs"},
+			{"reinforced_pale_oak_wood", "pillar"},
+			{"reinforced_resin_block", "cube"},
+			{"reinforced_resin_brick_slab", "slab"},
+			{"reinforced_resin_brick_stairs", "stairs"},
+			{"reinforced_resin_brick_wall", "wall"},
+			{"reinforced_resin_bricks", "cube"},
+			{"reinforced_stripped_pale_oak_log", "pillar"},
+			{"reinforced_stripped_pale_oak_wood", "pillar"},
+			{"reinforced_tuff_slab", "slab"},
+			{"reinforced_tuff_stairs", "stairs"},
+			{"reinforced_tuff_wall", "wall"}
 	};
 
 	public static Identifier id(String name) {
@@ -599,17 +792,149 @@ public class SCContent {
 	}
 
 	public static void init() {
-		KEYPAD = register("keypad", key -> new KeypadBlock(BlockBehaviour.Properties.of().strength(2.0F, 12000.0F).requiresCorrectToolForDrops().setId(key)));
-		LASER_BLOCK = (net.geforcemods.securitycraft.blocks.LaserBlock) register("laser_block", key -> new net.geforcemods.securitycraft.blocks.LaserBlock(BlockBehaviour.Properties.of().strength(3.5F).requiresCorrectToolForDrops().sound(SoundType.METAL).setId(key)));
-		LASER_FIELD = (net.geforcemods.securitycraft.blocks.LaserFieldBlock) registerBlockNoItem("laser", key -> new net.geforcemods.securitycraft.blocks.LaserFieldBlock(BlockBehaviour.Properties.of().mapColor(net.minecraft.world.level.material.MapColor.NONE).strength(-1.0F).noLootTable().noOcclusion().setId(key)));
-		KEY_PANEL = (net.geforcemods.securitycraft.blocks.KeyPanelBlock) registerBlockNoItem("key_panel", key -> new net.geforcemods.securitycraft.blocks.KeyPanelBlock(BlockBehaviour.Properties.of().strength(3.5F).sound(SoundType.METAL).noOcclusion().setId(key)));
+		KEYPAD = register("keypad", key -> new KeypadBlock(alwaysDrop(BlockBehaviour.Properties.of().strength(2.0F, 12000.0F)).setId(key)));
+		LASER_BLOCK = (net.geforcemods.securitycraft.blocks.LaserBlock) register("laser_block", key -> new net.geforcemods.securitycraft.blocks.LaserBlock(alwaysDrop(BlockBehaviour.Properties.of().strength(3.5F).sound(SoundType.METAL)).setId(key)));
+		LASER_FIELD = (net.geforcemods.securitycraft.blocks.LaserFieldBlock) registerBlockNoItem("laser", key -> new net.geforcemods.securitycraft.blocks.LaserFieldBlock(alwaysDrop(BlockBehaviour.Properties.of().mapColor(net.minecraft.world.level.material.MapColor.NONE).strength(-1.0F).noLootTable().noOcclusion()).setId(key)));
+		PORTABLE_RADAR = (net.geforcemods.securitycraft.blocks.PortableRadarBlock) register("portable_radar", key -> new net.geforcemods.securitycraft.blocks.PortableRadarBlock(alwaysDrop(BlockBehaviour.Properties.of().mapColor(net.minecraft.world.level.material.MapColor.COLOR_BLACK).strength(5.0F, Float.MAX_VALUE)).setId(key)));
+		KEY_PANEL = (net.geforcemods.securitycraft.blocks.KeyPanelBlock) registerBlockNoItem("key_panel", key -> new net.geforcemods.securitycraft.blocks.KeyPanelBlock(alwaysDrop(BlockBehaviour.Properties.of().strength(3.5F).sound(SoundType.METAL).noOcclusion()).setId(key)));
 		KEY_PANEL_ITEM = registerItem("keypad_item", new net.geforcemods.securitycraft.items.KeyPanelItem(new Item.Properties().setId(ResourceKey.create(Registries.ITEM, id("keypad_item")))));
-		FRAME = (net.geforcemods.securitycraft.blocks.FrameBlock) register("keypad_frame", key -> new net.geforcemods.securitycraft.blocks.FrameBlock(BlockBehaviour.Properties.of().mapColor(net.minecraft.world.level.material.MapColor.METAL).strength(5.0F).sound(SoundType.METAL).noOcclusion().setId(key)));
-		PORTABLE_RADAR = register("portable_radar", key -> new net.geforcemods.securitycraft.blocks.PortableRadarBlock(BlockBehaviour.Properties.of().mapColor(net.minecraft.world.level.material.MapColor.COLOR_BLACK).strength(5.0F, Float.MAX_VALUE).requiresCorrectToolForDrops().setId(key)));
+		FRAME = (net.geforcemods.securitycraft.blocks.FrameBlock) register("keypad_frame", key -> new net.geforcemods.securitycraft.blocks.FrameBlock(alwaysDrop(BlockBehaviour.Properties.of().mapColor(net.minecraft.world.level.material.MapColor.METAL).strength(5.0F).sound(SoundType.METAL).noOcclusion()).setId(key)));
+		REINFORCED_DOOR = register("reinforced_iron_door", key -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedDoorBlock(BlockSetType.IRON, alwaysDrop(BlockBehaviour.Properties.of().mapColor(net.minecraft.world.level.material.MapColor.METAL).strength(5.0F, 12000.0F).sound(SoundType.METAL).noOcclusion()).setId(key)));
+		//listing the door here is what lets the Universal Block Reinforcer turn a vanilla iron door into it, and
+		//the Remover turn it back; both look the counterpart up by the reinforced_<vanilla> name
+		//deliberately NOT added to REINFORCED_BLOCKS: that list drives the grey tint, and the door has its own
+		//artwork, so tinting it would grey out an item the original leaves alone
+		REINFORCED_BY_NAME.put("reinforced_iron_door", REINFORCED_DOOR);
+		CUTOUT_BLOCKS.add(REINFORCED_DOOR);
+		//upstream registers the electrified iron fence gate under the legacy name "reinforced_fence_gate"
+		ELECTRIFIED_IRON_FENCE = (net.geforcemods.securitycraft.blocks.ElectrifiedIronFenceBlock) register("electrified_iron_fence", key -> new net.geforcemods.securitycraft.blocks.ElectrifiedIronFenceBlock(alwaysDrop(BlockBehaviour.Properties.of().mapColor(net.minecraft.world.level.material.MapColor.METAL).strength(5.0F, Float.MAX_VALUE).sound(SoundType.METAL)).setId(key)));
+		ELECTRIFIED_IRON_FENCE_GATE = (net.geforcemods.securitycraft.blocks.ElectrifiedIronFenceGateBlock) register("reinforced_fence_gate", key -> new net.geforcemods.securitycraft.blocks.ElectrifiedIronFenceGateBlock(alwaysDrop(BlockBehaviour.Properties.of().mapColor(net.minecraft.world.level.material.MapColor.METAL).strength(5.0F, Float.MAX_VALUE).sound(SoundType.METAL)).setId(key)));
+		//both textures have transparent pixels; Fabric has no equivalent of the "render_type" model field upstream relies on
+		CUTOUT_BLOCKS.add(ELECTRIFIED_IRON_FENCE);
+		CUTOUT_BLOCKS.add(ELECTRIFIED_IRON_FENCE_GATE);
+		//the passcode-protected containers; the furnace family's light level reads the LIT property the way vanilla's does
+		KEYPAD_CHEST = register("keypad_chest", key -> new net.geforcemods.securitycraft.blocks.KeypadChestBlock(alwaysDrop(BlockBehaviour.Properties.of().mapColor(net.minecraft.world.level.material.MapColor.METAL).strength(5.0F, Float.MAX_VALUE).sound(SoundType.METAL)).setId(key)));
+		KEYPAD_BARREL = register("keypad_barrel", key -> new net.geforcemods.securitycraft.blocks.KeypadBarrelBlock(alwaysDrop(BlockBehaviour.Properties.of().mapColor(net.minecraft.world.level.material.MapColor.METAL).strength(5.0F, Float.MAX_VALUE).sound(SoundType.METAL)).setId(key)));
+		KEYPAD_FURNACE = register("keypad_furnace", key -> new net.geforcemods.securitycraft.blocks.KeypadFurnaceBlock(keypadFurnaceProps().setId(key)));
+		KEYPAD_SMOKER = register("keypad_smoker", key -> new net.geforcemods.securitycraft.blocks.KeypadSmokerBlock(keypadFurnaceProps().setId(key)));
+		KEYPAD_BLAST_FURNACE = register("keypad_blast_furnace", key -> new net.geforcemods.securitycraft.blocks.KeypadBlastFurnaceBlock(keypadFurnaceProps().setId(key)));
+		//the furnace family's front window is a see-through texture, same situation as the reinforced door
+		CUTOUT_BLOCKS.add(KEYPAD_FURNACE);
+		CUTOUT_BLOCKS.add(KEYPAD_SMOKER);
+		CUTOUT_BLOCKS.add(KEYPAD_BLAST_FURNACE);
 		net.geforcemods.securitycraft.api.SecurityCraftAPI.registerPasscodeConvertible(new net.geforcemods.securitycraft.blocks.KeypadBlock.Convertible());
+		net.geforcemods.securitycraft.api.SecurityCraftAPI.registerPasscodeConvertible(new net.geforcemods.securitycraft.blocks.KeypadChestBlock.Convertible());
+		net.geforcemods.securitycraft.api.SecurityCraftAPI.registerPasscodeConvertible(new net.geforcemods.securitycraft.blocks.KeypadBarrelBlock.Convertible());
+		net.geforcemods.securitycraft.api.SecurityCraftAPI.registerPasscodeConvertible(new net.geforcemods.securitycraft.blocks.AbstractKeypadFurnaceBlock.Convertible(Blocks.FURNACE, KEYPAD_FURNACE));
+		net.geforcemods.securitycraft.api.SecurityCraftAPI.registerPasscodeConvertible(new net.geforcemods.securitycraft.blocks.AbstractKeypadFurnaceBlock.Convertible(Blocks.SMOKER, KEYPAD_SMOKER));
+		net.geforcemods.securitycraft.api.SecurityCraftAPI.registerPasscodeConvertible(new net.geforcemods.securitycraft.blocks.AbstractKeypadFurnaceBlock.Convertible(Blocks.BLAST_FURNACE, KEYPAD_BLAST_FURNACE));
 
 		for (String[] entry : REINFORCED)
 			registerReinforced(entry[0], entry[1]);
+
+		//the reinforced blocks that keep a vanilla block entity of their own, so they cannot go through either table
+		REINFORCED_PISTON = registerFunctionalReinforced("reinforced_piston", key -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedPistonBaseBlock(false, reinforcedCopy(Blocks.PISTON).setId(key)));
+		REINFORCED_STICKY_PISTON = registerFunctionalReinforced("reinforced_sticky_piston", key -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedPistonBaseBlock(true, reinforcedCopy(Blocks.STICKY_PISTON).setId(key)));
+		//the head and the moving piston are placed by the piston itself, never by a player, so they get no item
+		REINFORCED_PISTON_HEAD = registerBlockNoItem("reinforced_piston_head", key -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedPistonHeadBlock(reinforcedCopy(Blocks.PISTON_HEAD).setId(key)));
+		REINFORCED_MOVING_PISTON = registerBlockNoItem("reinforced_moving_piston", key -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedMovingPistonBlock(reinforcedCopy(Blocks.MOVING_PISTON).setId(key)));
+		REINFORCED_CAULDRON = registerFunctionalReinforced("reinforced_cauldron", key -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedCauldronBlock(reinforcedCopy(Blocks.CAULDRON).setId(key), net.geforcemods.securitycraft.blocks.reinforced.ReinforcedCauldronBlock.IReinforcedCauldronInteraction.EMPTY));
+		//the filled cauldrons are states of the empty one, so like vanilla they have no item of their own
+		REINFORCED_WATER_CAULDRON = registerBlockNoItem("reinforced_water_cauldron", key -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedLayeredCauldronBlock(reinforcedCopy(Blocks.WATER_CAULDRON).setId(key), net.minecraft.world.level.biome.Biome.Precipitation.RAIN, net.geforcemods.securitycraft.blocks.reinforced.ReinforcedCauldronBlock.IReinforcedCauldronInteraction.WATER, Blocks.WATER_CAULDRON));
+		REINFORCED_LAVA_CAULDRON = registerBlockNoItem("reinforced_lava_cauldron", key -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedLavaCauldronBlock(reinforcedCopy(Blocks.LAVA_CAULDRON).setId(key)));
+		REINFORCED_POWDER_SNOW_CAULDRON = registerBlockNoItem("reinforced_powder_snow_cauldron", key -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedLayeredCauldronBlock(reinforcedCopy(Blocks.POWDER_SNOW_CAULDRON).setId(key), net.minecraft.world.level.biome.Biome.Precipitation.SNOW, net.geforcemods.securitycraft.blocks.reinforced.ReinforcedCauldronBlock.IReinforcedCauldronInteraction.POWDER_SNOW, Blocks.POWDER_SNOW_CAULDRON));
+		REINFORCED_LECTERN = registerFunctionalReinforced("reinforced_lectern", key -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedLecternBlock(reinforcedCopy(Blocks.LECTERN).setId(key)));
+		REINFORCED_CHISELED_BOOKSHELF = registerFunctionalReinforced("reinforced_chiseled_bookshelf", key -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedChiseledBookshelfBlock(reinforcedCopy(Blocks.CHISELED_BOOKSHELF).setId(key)));
+		registerFunctionalReinforced("reinforced_hopper", key -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedHopperBlock(reinforcedCopy(Blocks.HOPPER).setId(key)));
+		registerFunctionalReinforced("reinforced_dispenser", key -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedDispenserBlock(reinforcedCopy(Blocks.DISPENSER).setId(key)));
+		registerFunctionalReinforced("reinforced_dropper", key -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedDropperBlock(reinforcedCopy(Blocks.DROPPER).setId(key)));
+		registerFunctionalReinforced("reinforced_observer", key -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedObserverBlock(reinforcedCopy(Blocks.OBSERVER).setId(key)));
+
+		//the crystal quartz set: the mod's own decorative stone, plus its reinforced counterparts
+		CRYSTAL_QUARTZ = register("crystal_quartz", key -> new Block(crystalQuartzProps(Blocks.QUARTZ_BLOCK).setId(key)));
+		SMOOTH_CRYSTAL_QUARTZ = register("smooth_crystal_quartz", key -> new Block(crystalQuartzProps(Blocks.SMOOTH_QUARTZ).setId(key)));
+		CHISELED_CRYSTAL_QUARTZ = register("chiseled_crystal_quartz", key -> new Block(crystalQuartzProps(Blocks.CHISELED_QUARTZ_BLOCK).setId(key)));
+		CRYSTAL_QUARTZ_BRICKS = register("crystal_quartz_bricks", key -> new Block(crystalQuartzProps(Blocks.QUARTZ_BRICKS).setId(key)));
+		CRYSTAL_QUARTZ_PILLAR = register("crystal_quartz_pillar", key -> new RotatedPillarBlock(crystalQuartzProps(Blocks.QUARTZ_PILLAR).setId(key)));
+		CRYSTAL_QUARTZ_STAIRS = register("crystal_quartz_stairs", key -> new StairBlock(CRYSTAL_QUARTZ.defaultBlockState(), crystalQuartzProps(Blocks.QUARTZ_STAIRS).setId(key)));
+		CRYSTAL_QUARTZ_SLAB = register("crystal_quartz_slab", key -> new SlabBlock(crystalQuartzProps(Blocks.QUARTZ_SLAB).setId(key)));
+		SMOOTH_CRYSTAL_QUARTZ_STAIRS = register("smooth_crystal_quartz_stairs", key -> new StairBlock(SMOOTH_CRYSTAL_QUARTZ.defaultBlockState(), crystalQuartzProps(Blocks.SMOOTH_QUARTZ_STAIRS).setId(key)));
+		SMOOTH_CRYSTAL_QUARTZ_SLAB = register("smooth_crystal_quartz_slab", key -> new SlabBlock(crystalQuartzProps(Blocks.SMOOTH_QUARTZ_SLAB).setId(key)));
+		CRYSTAL_QUARTZ_ITEM = registerItem("crystal_quartz_item", new Item(new Item.Properties().setId(ResourceKey.create(Registries.ITEM, id("crystal_quartz_item")))));
+
+		//the secret signs: only their owner and the players on their allowlist can read what is written on them
+		SECRET_OAK_SIGN = registerBlockNoItem("secret_sign_standing", key -> new net.geforcemods.securitycraft.blocks.SecretStandingSignBlock(reinforcedCopy(Blocks.OAK_SIGN).overrideDescription("block.securitycraft.secret_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.OAK_SIGN)));
+		SECRET_OAK_WALL_SIGN = registerBlockNoItem("secret_sign_wall", key -> new net.geforcemods.securitycraft.blocks.SecretWallSignBlock(reinforcedCopy(Blocks.OAK_SIGN).overrideDescription("block.securitycraft.secret_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.OAK_SIGN)));
+		SECRET_OAK_HANGING_SIGN = registerBlockNoItem("secret_oak_hanging_sign", key -> new net.geforcemods.securitycraft.blocks.SecretCeilingHangingSignBlock(reinforcedCopy(Blocks.OAK_HANGING_SIGN).overrideDescription("block.securitycraft.secret_oak_hanging_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.OAK_HANGING_SIGN)));
+		SECRET_OAK_WALL_HANGING_SIGN = registerBlockNoItem("secret_oak_wall_hanging_sign", key -> new net.geforcemods.securitycraft.blocks.SecretWallHangingSignBlock(reinforcedCopy(Blocks.OAK_HANGING_SIGN).overrideDescription("block.securitycraft.secret_oak_hanging_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.OAK_HANGING_SIGN)));
+		SECRET_SIGN_ITEMS.add(registerItem("secret_sign_item", new net.minecraft.world.item.SignItem(SECRET_OAK_SIGN, SECRET_OAK_WALL_SIGN, new Item.Properties().stacksTo(16).setId(ResourceKey.create(Registries.ITEM, id("secret_sign_item"))))));
+		SECRET_SIGN_ITEMS.add(registerItem("secret_oak_hanging_sign", new net.minecraft.world.item.HangingSignItem(SECRET_OAK_HANGING_SIGN, SECRET_OAK_WALL_HANGING_SIGN, new Item.Properties().stacksTo(16).setId(ResourceKey.create(Registries.ITEM, id("secret_oak_hanging_sign"))))));
+		SECRET_SPRUCE_SIGN = registerBlockNoItem("secret_spruce_sign_standing", key -> new net.geforcemods.securitycraft.blocks.SecretStandingSignBlock(reinforcedCopy(Blocks.SPRUCE_SIGN).overrideDescription("block.securitycraft.secret_spruce_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.SPRUCE_SIGN)));
+		SECRET_SPRUCE_WALL_SIGN = registerBlockNoItem("secret_spruce_sign_wall", key -> new net.geforcemods.securitycraft.blocks.SecretWallSignBlock(reinforcedCopy(Blocks.SPRUCE_SIGN).overrideDescription("block.securitycraft.secret_spruce_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.SPRUCE_SIGN)));
+		SECRET_SPRUCE_HANGING_SIGN = registerBlockNoItem("secret_spruce_hanging_sign", key -> new net.geforcemods.securitycraft.blocks.SecretCeilingHangingSignBlock(reinforcedCopy(Blocks.SPRUCE_HANGING_SIGN).overrideDescription("block.securitycraft.secret_spruce_hanging_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.SPRUCE_HANGING_SIGN)));
+		SECRET_SPRUCE_WALL_HANGING_SIGN = registerBlockNoItem("secret_spruce_wall_hanging_sign", key -> new net.geforcemods.securitycraft.blocks.SecretWallHangingSignBlock(reinforcedCopy(Blocks.SPRUCE_HANGING_SIGN).overrideDescription("block.securitycraft.secret_spruce_hanging_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.SPRUCE_HANGING_SIGN)));
+		SECRET_SIGN_ITEMS.add(registerItem("secret_spruce_sign_item", new net.minecraft.world.item.SignItem(SECRET_SPRUCE_SIGN, SECRET_SPRUCE_WALL_SIGN, new Item.Properties().stacksTo(16).setId(ResourceKey.create(Registries.ITEM, id("secret_spruce_sign_item"))))));
+		SECRET_SIGN_ITEMS.add(registerItem("secret_spruce_hanging_sign", new net.minecraft.world.item.HangingSignItem(SECRET_SPRUCE_HANGING_SIGN, SECRET_SPRUCE_WALL_HANGING_SIGN, new Item.Properties().stacksTo(16).setId(ResourceKey.create(Registries.ITEM, id("secret_spruce_hanging_sign"))))));
+		SECRET_BIRCH_SIGN = registerBlockNoItem("secret_birch_sign_standing", key -> new net.geforcemods.securitycraft.blocks.SecretStandingSignBlock(reinforcedCopy(Blocks.BIRCH_SIGN).overrideDescription("block.securitycraft.secret_birch_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.BIRCH_SIGN)));
+		SECRET_BIRCH_WALL_SIGN = registerBlockNoItem("secret_birch_sign_wall", key -> new net.geforcemods.securitycraft.blocks.SecretWallSignBlock(reinforcedCopy(Blocks.BIRCH_SIGN).overrideDescription("block.securitycraft.secret_birch_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.BIRCH_SIGN)));
+		SECRET_BIRCH_HANGING_SIGN = registerBlockNoItem("secret_birch_hanging_sign", key -> new net.geforcemods.securitycraft.blocks.SecretCeilingHangingSignBlock(reinforcedCopy(Blocks.BIRCH_HANGING_SIGN).overrideDescription("block.securitycraft.secret_birch_hanging_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.BIRCH_HANGING_SIGN)));
+		SECRET_BIRCH_WALL_HANGING_SIGN = registerBlockNoItem("secret_birch_wall_hanging_sign", key -> new net.geforcemods.securitycraft.blocks.SecretWallHangingSignBlock(reinforcedCopy(Blocks.BIRCH_HANGING_SIGN).overrideDescription("block.securitycraft.secret_birch_hanging_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.BIRCH_HANGING_SIGN)));
+		SECRET_SIGN_ITEMS.add(registerItem("secret_birch_sign_item", new net.minecraft.world.item.SignItem(SECRET_BIRCH_SIGN, SECRET_BIRCH_WALL_SIGN, new Item.Properties().stacksTo(16).setId(ResourceKey.create(Registries.ITEM, id("secret_birch_sign_item"))))));
+		SECRET_SIGN_ITEMS.add(registerItem("secret_birch_hanging_sign", new net.minecraft.world.item.HangingSignItem(SECRET_BIRCH_HANGING_SIGN, SECRET_BIRCH_WALL_HANGING_SIGN, new Item.Properties().stacksTo(16).setId(ResourceKey.create(Registries.ITEM, id("secret_birch_hanging_sign"))))));
+		SECRET_JUNGLE_SIGN = registerBlockNoItem("secret_jungle_sign_standing", key -> new net.geforcemods.securitycraft.blocks.SecretStandingSignBlock(reinforcedCopy(Blocks.JUNGLE_SIGN).overrideDescription("block.securitycraft.secret_jungle_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.JUNGLE_SIGN)));
+		SECRET_JUNGLE_WALL_SIGN = registerBlockNoItem("secret_jungle_sign_wall", key -> new net.geforcemods.securitycraft.blocks.SecretWallSignBlock(reinforcedCopy(Blocks.JUNGLE_SIGN).overrideDescription("block.securitycraft.secret_jungle_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.JUNGLE_SIGN)));
+		SECRET_JUNGLE_HANGING_SIGN = registerBlockNoItem("secret_jungle_hanging_sign", key -> new net.geforcemods.securitycraft.blocks.SecretCeilingHangingSignBlock(reinforcedCopy(Blocks.JUNGLE_HANGING_SIGN).overrideDescription("block.securitycraft.secret_jungle_hanging_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.JUNGLE_HANGING_SIGN)));
+		SECRET_JUNGLE_WALL_HANGING_SIGN = registerBlockNoItem("secret_jungle_wall_hanging_sign", key -> new net.geforcemods.securitycraft.blocks.SecretWallHangingSignBlock(reinforcedCopy(Blocks.JUNGLE_HANGING_SIGN).overrideDescription("block.securitycraft.secret_jungle_hanging_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.JUNGLE_HANGING_SIGN)));
+		SECRET_SIGN_ITEMS.add(registerItem("secret_jungle_sign_item", new net.minecraft.world.item.SignItem(SECRET_JUNGLE_SIGN, SECRET_JUNGLE_WALL_SIGN, new Item.Properties().stacksTo(16).setId(ResourceKey.create(Registries.ITEM, id("secret_jungle_sign_item"))))));
+		SECRET_SIGN_ITEMS.add(registerItem("secret_jungle_hanging_sign", new net.minecraft.world.item.HangingSignItem(SECRET_JUNGLE_HANGING_SIGN, SECRET_JUNGLE_WALL_HANGING_SIGN, new Item.Properties().stacksTo(16).setId(ResourceKey.create(Registries.ITEM, id("secret_jungle_hanging_sign"))))));
+		SECRET_ACACIA_SIGN = registerBlockNoItem("secret_acacia_sign_standing", key -> new net.geforcemods.securitycraft.blocks.SecretStandingSignBlock(reinforcedCopy(Blocks.ACACIA_SIGN).overrideDescription("block.securitycraft.secret_acacia_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.ACACIA_SIGN)));
+		SECRET_ACACIA_WALL_SIGN = registerBlockNoItem("secret_acacia_sign_wall", key -> new net.geforcemods.securitycraft.blocks.SecretWallSignBlock(reinforcedCopy(Blocks.ACACIA_SIGN).overrideDescription("block.securitycraft.secret_acacia_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.ACACIA_SIGN)));
+		SECRET_ACACIA_HANGING_SIGN = registerBlockNoItem("secret_acacia_hanging_sign", key -> new net.geforcemods.securitycraft.blocks.SecretCeilingHangingSignBlock(reinforcedCopy(Blocks.ACACIA_HANGING_SIGN).overrideDescription("block.securitycraft.secret_acacia_hanging_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.ACACIA_HANGING_SIGN)));
+		SECRET_ACACIA_WALL_HANGING_SIGN = registerBlockNoItem("secret_acacia_wall_hanging_sign", key -> new net.geforcemods.securitycraft.blocks.SecretWallHangingSignBlock(reinforcedCopy(Blocks.ACACIA_HANGING_SIGN).overrideDescription("block.securitycraft.secret_acacia_hanging_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.ACACIA_HANGING_SIGN)));
+		SECRET_SIGN_ITEMS.add(registerItem("secret_acacia_sign_item", new net.minecraft.world.item.SignItem(SECRET_ACACIA_SIGN, SECRET_ACACIA_WALL_SIGN, new Item.Properties().stacksTo(16).setId(ResourceKey.create(Registries.ITEM, id("secret_acacia_sign_item"))))));
+		SECRET_SIGN_ITEMS.add(registerItem("secret_acacia_hanging_sign", new net.minecraft.world.item.HangingSignItem(SECRET_ACACIA_HANGING_SIGN, SECRET_ACACIA_WALL_HANGING_SIGN, new Item.Properties().stacksTo(16).setId(ResourceKey.create(Registries.ITEM, id("secret_acacia_hanging_sign"))))));
+		SECRET_DARK_OAK_SIGN = registerBlockNoItem("secret_dark_oak_sign_standing", key -> new net.geforcemods.securitycraft.blocks.SecretStandingSignBlock(reinforcedCopy(Blocks.DARK_OAK_SIGN).overrideDescription("block.securitycraft.secret_dark_oak_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.DARK_OAK_SIGN)));
+		SECRET_DARK_OAK_WALL_SIGN = registerBlockNoItem("secret_dark_oak_sign_wall", key -> new net.geforcemods.securitycraft.blocks.SecretWallSignBlock(reinforcedCopy(Blocks.DARK_OAK_SIGN).overrideDescription("block.securitycraft.secret_dark_oak_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.DARK_OAK_SIGN)));
+		SECRET_DARK_OAK_HANGING_SIGN = registerBlockNoItem("secret_dark_oak_hanging_sign", key -> new net.geforcemods.securitycraft.blocks.SecretCeilingHangingSignBlock(reinforcedCopy(Blocks.DARK_OAK_HANGING_SIGN).overrideDescription("block.securitycraft.secret_dark_oak_hanging_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.DARK_OAK_HANGING_SIGN)));
+		SECRET_DARK_OAK_WALL_HANGING_SIGN = registerBlockNoItem("secret_dark_oak_wall_hanging_sign", key -> new net.geforcemods.securitycraft.blocks.SecretWallHangingSignBlock(reinforcedCopy(Blocks.DARK_OAK_HANGING_SIGN).overrideDescription("block.securitycraft.secret_dark_oak_hanging_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.DARK_OAK_HANGING_SIGN)));
+		SECRET_SIGN_ITEMS.add(registerItem("secret_dark_oak_sign_item", new net.minecraft.world.item.SignItem(SECRET_DARK_OAK_SIGN, SECRET_DARK_OAK_WALL_SIGN, new Item.Properties().stacksTo(16).setId(ResourceKey.create(Registries.ITEM, id("secret_dark_oak_sign_item"))))));
+		SECRET_SIGN_ITEMS.add(registerItem("secret_dark_oak_hanging_sign", new net.minecraft.world.item.HangingSignItem(SECRET_DARK_OAK_HANGING_SIGN, SECRET_DARK_OAK_WALL_HANGING_SIGN, new Item.Properties().stacksTo(16).setId(ResourceKey.create(Registries.ITEM, id("secret_dark_oak_hanging_sign"))))));
+		SECRET_MANGROVE_SIGN = registerBlockNoItem("secret_mangrove_sign_standing", key -> new net.geforcemods.securitycraft.blocks.SecretStandingSignBlock(reinforcedCopy(Blocks.MANGROVE_SIGN).overrideDescription("block.securitycraft.secret_mangrove_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.MANGROVE_SIGN)));
+		SECRET_MANGROVE_WALL_SIGN = registerBlockNoItem("secret_mangrove_sign_wall", key -> new net.geforcemods.securitycraft.blocks.SecretWallSignBlock(reinforcedCopy(Blocks.MANGROVE_SIGN).overrideDescription("block.securitycraft.secret_mangrove_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.MANGROVE_SIGN)));
+		SECRET_MANGROVE_HANGING_SIGN = registerBlockNoItem("secret_mangrove_hanging_sign", key -> new net.geforcemods.securitycraft.blocks.SecretCeilingHangingSignBlock(reinforcedCopy(Blocks.MANGROVE_HANGING_SIGN).overrideDescription("block.securitycraft.secret_mangrove_hanging_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.MANGROVE_HANGING_SIGN)));
+		SECRET_MANGROVE_WALL_HANGING_SIGN = registerBlockNoItem("secret_mangrove_wall_hanging_sign", key -> new net.geforcemods.securitycraft.blocks.SecretWallHangingSignBlock(reinforcedCopy(Blocks.MANGROVE_HANGING_SIGN).overrideDescription("block.securitycraft.secret_mangrove_hanging_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.MANGROVE_HANGING_SIGN)));
+		SECRET_SIGN_ITEMS.add(registerItem("secret_mangrove_sign_item", new net.minecraft.world.item.SignItem(SECRET_MANGROVE_SIGN, SECRET_MANGROVE_WALL_SIGN, new Item.Properties().stacksTo(16).setId(ResourceKey.create(Registries.ITEM, id("secret_mangrove_sign_item"))))));
+		SECRET_SIGN_ITEMS.add(registerItem("secret_mangrove_hanging_sign", new net.minecraft.world.item.HangingSignItem(SECRET_MANGROVE_HANGING_SIGN, SECRET_MANGROVE_WALL_HANGING_SIGN, new Item.Properties().stacksTo(16).setId(ResourceKey.create(Registries.ITEM, id("secret_mangrove_hanging_sign"))))));
+		SECRET_CHERRY_SIGN = registerBlockNoItem("secret_cherry_sign_standing", key -> new net.geforcemods.securitycraft.blocks.SecretStandingSignBlock(reinforcedCopy(Blocks.CHERRY_SIGN).overrideDescription("block.securitycraft.secret_cherry_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.CHERRY_SIGN)));
+		SECRET_CHERRY_WALL_SIGN = registerBlockNoItem("secret_cherry_sign_wall", key -> new net.geforcemods.securitycraft.blocks.SecretWallSignBlock(reinforcedCopy(Blocks.CHERRY_SIGN).overrideDescription("block.securitycraft.secret_cherry_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.CHERRY_SIGN)));
+		SECRET_CHERRY_HANGING_SIGN = registerBlockNoItem("secret_cherry_hanging_sign", key -> new net.geforcemods.securitycraft.blocks.SecretCeilingHangingSignBlock(reinforcedCopy(Blocks.CHERRY_HANGING_SIGN).overrideDescription("block.securitycraft.secret_cherry_hanging_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.CHERRY_HANGING_SIGN)));
+		SECRET_CHERRY_WALL_HANGING_SIGN = registerBlockNoItem("secret_cherry_wall_hanging_sign", key -> new net.geforcemods.securitycraft.blocks.SecretWallHangingSignBlock(reinforcedCopy(Blocks.CHERRY_HANGING_SIGN).overrideDescription("block.securitycraft.secret_cherry_hanging_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.CHERRY_HANGING_SIGN)));
+		SECRET_SIGN_ITEMS.add(registerItem("secret_cherry_sign_item", new net.minecraft.world.item.SignItem(SECRET_CHERRY_SIGN, SECRET_CHERRY_WALL_SIGN, new Item.Properties().stacksTo(16).setId(ResourceKey.create(Registries.ITEM, id("secret_cherry_sign_item"))))));
+		SECRET_SIGN_ITEMS.add(registerItem("secret_cherry_hanging_sign", new net.minecraft.world.item.HangingSignItem(SECRET_CHERRY_HANGING_SIGN, SECRET_CHERRY_WALL_HANGING_SIGN, new Item.Properties().stacksTo(16).setId(ResourceKey.create(Registries.ITEM, id("secret_cherry_hanging_sign"))))));
+		SECRET_BAMBOO_SIGN = registerBlockNoItem("secret_bamboo_sign_standing", key -> new net.geforcemods.securitycraft.blocks.SecretStandingSignBlock(reinforcedCopy(Blocks.BAMBOO_SIGN).overrideDescription("block.securitycraft.secret_bamboo_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.BAMBOO_SIGN)));
+		SECRET_BAMBOO_WALL_SIGN = registerBlockNoItem("secret_bamboo_sign_wall", key -> new net.geforcemods.securitycraft.blocks.SecretWallSignBlock(reinforcedCopy(Blocks.BAMBOO_SIGN).overrideDescription("block.securitycraft.secret_bamboo_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.BAMBOO_SIGN)));
+		SECRET_BAMBOO_HANGING_SIGN = registerBlockNoItem("secret_bamboo_hanging_sign", key -> new net.geforcemods.securitycraft.blocks.SecretCeilingHangingSignBlock(reinforcedCopy(Blocks.BAMBOO_HANGING_SIGN).overrideDescription("block.securitycraft.secret_bamboo_hanging_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.BAMBOO_HANGING_SIGN)));
+		SECRET_BAMBOO_WALL_HANGING_SIGN = registerBlockNoItem("secret_bamboo_wall_hanging_sign", key -> new net.geforcemods.securitycraft.blocks.SecretWallHangingSignBlock(reinforcedCopy(Blocks.BAMBOO_HANGING_SIGN).overrideDescription("block.securitycraft.secret_bamboo_hanging_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.BAMBOO_HANGING_SIGN)));
+		SECRET_SIGN_ITEMS.add(registerItem("secret_bamboo_sign_item", new net.minecraft.world.item.SignItem(SECRET_BAMBOO_SIGN, SECRET_BAMBOO_WALL_SIGN, new Item.Properties().stacksTo(16).setId(ResourceKey.create(Registries.ITEM, id("secret_bamboo_sign_item"))))));
+		SECRET_SIGN_ITEMS.add(registerItem("secret_bamboo_hanging_sign", new net.minecraft.world.item.HangingSignItem(SECRET_BAMBOO_HANGING_SIGN, SECRET_BAMBOO_WALL_HANGING_SIGN, new Item.Properties().stacksTo(16).setId(ResourceKey.create(Registries.ITEM, id("secret_bamboo_hanging_sign"))))));
+		SECRET_CRIMSON_SIGN = registerBlockNoItem("secret_crimson_sign_standing", key -> new net.geforcemods.securitycraft.blocks.SecretStandingSignBlock(reinforcedCopy(Blocks.CRIMSON_SIGN).overrideDescription("block.securitycraft.secret_crimson_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.CRIMSON_SIGN)));
+		SECRET_CRIMSON_WALL_SIGN = registerBlockNoItem("secret_crimson_sign_wall", key -> new net.geforcemods.securitycraft.blocks.SecretWallSignBlock(reinforcedCopy(Blocks.CRIMSON_SIGN).overrideDescription("block.securitycraft.secret_crimson_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.CRIMSON_SIGN)));
+		SECRET_CRIMSON_HANGING_SIGN = registerBlockNoItem("secret_crimson_hanging_sign", key -> new net.geforcemods.securitycraft.blocks.SecretCeilingHangingSignBlock(reinforcedCopy(Blocks.CRIMSON_HANGING_SIGN).overrideDescription("block.securitycraft.secret_crimson_hanging_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.CRIMSON_HANGING_SIGN)));
+		SECRET_CRIMSON_WALL_HANGING_SIGN = registerBlockNoItem("secret_crimson_wall_hanging_sign", key -> new net.geforcemods.securitycraft.blocks.SecretWallHangingSignBlock(reinforcedCopy(Blocks.CRIMSON_HANGING_SIGN).overrideDescription("block.securitycraft.secret_crimson_hanging_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.CRIMSON_HANGING_SIGN)));
+		SECRET_SIGN_ITEMS.add(registerItem("secret_crimson_sign_item", new net.minecraft.world.item.SignItem(SECRET_CRIMSON_SIGN, SECRET_CRIMSON_WALL_SIGN, new Item.Properties().stacksTo(16).setId(ResourceKey.create(Registries.ITEM, id("secret_crimson_sign_item"))))));
+		SECRET_SIGN_ITEMS.add(registerItem("secret_crimson_hanging_sign", new net.minecraft.world.item.HangingSignItem(SECRET_CRIMSON_HANGING_SIGN, SECRET_CRIMSON_WALL_HANGING_SIGN, new Item.Properties().stacksTo(16).setId(ResourceKey.create(Registries.ITEM, id("secret_crimson_hanging_sign"))))));
+		SECRET_WARPED_SIGN = registerBlockNoItem("secret_warped_sign_standing", key -> new net.geforcemods.securitycraft.blocks.SecretStandingSignBlock(reinforcedCopy(Blocks.WARPED_SIGN).overrideDescription("block.securitycraft.secret_warped_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.WARPED_SIGN)));
+		SECRET_WARPED_WALL_SIGN = registerBlockNoItem("secret_warped_sign_wall", key -> new net.geforcemods.securitycraft.blocks.SecretWallSignBlock(reinforcedCopy(Blocks.WARPED_SIGN).overrideDescription("block.securitycraft.secret_warped_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.WARPED_SIGN)));
+		SECRET_WARPED_HANGING_SIGN = registerBlockNoItem("secret_warped_hanging_sign", key -> new net.geforcemods.securitycraft.blocks.SecretCeilingHangingSignBlock(reinforcedCopy(Blocks.WARPED_HANGING_SIGN).overrideDescription("block.securitycraft.secret_warped_hanging_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.WARPED_HANGING_SIGN)));
+		SECRET_WARPED_WALL_HANGING_SIGN = registerBlockNoItem("secret_warped_wall_hanging_sign", key -> new net.geforcemods.securitycraft.blocks.SecretWallHangingSignBlock(reinforcedCopy(Blocks.WARPED_HANGING_SIGN).overrideDescription("block.securitycraft.secret_warped_hanging_sign").setId(key), net.minecraft.world.level.block.SignBlock.getWoodType(Blocks.WARPED_HANGING_SIGN)));
+		SECRET_SIGN_ITEMS.add(registerItem("secret_warped_sign_item", new net.minecraft.world.item.SignItem(SECRET_WARPED_SIGN, SECRET_WARPED_WALL_SIGN, new Item.Properties().stacksTo(16).setId(ResourceKey.create(Registries.ITEM, id("secret_warped_sign_item"))))));
+		SECRET_SIGN_ITEMS.add(registerItem("secret_warped_hanging_sign", new net.minecraft.world.item.HangingSignItem(SECRET_WARPED_HANGING_SIGN, SECRET_WARPED_WALL_HANGING_SIGN, new Item.Properties().stacksTo(16).setId(ResourceKey.create(Registries.ITEM, id("secret_warped_hanging_sign"))))));
+
+		for (Object[] entry : CRYSTAL_QUARTZ_REINFORCED)
+			registerReinforcedCopy((String) entry[0], (Block) entry[1], (String) entry[2]);
+
+		for (Object[] entry : REINFORCED_COPIES)
+			registerReinforcedCopy((String) entry[0], (Block) entry[1], (String) entry[2]);
 
 		MINE = register("mine", key -> new net.geforcemods.securitycraft.blocks.mines.MineBlock(mineProp(net.minecraft.world.level.material.MapColor.METAL, 3.5F).sound(SoundType.METAL).forceSolidOn().pushReaction(net.minecraft.world.level.material.PushReaction.NORMAL).setId(key)));
 		BOUNCING_BETTY = register("bouncing_betty", key -> new net.geforcemods.securitycraft.blocks.mines.BouncingBettyBlock(mineProp(net.minecraft.world.level.material.MapColor.METAL, 3.5F).sound(SoundType.METAL).forceSolidOn().pushReaction(net.minecraft.world.level.material.PushReaction.NORMAL).setId(key)));
@@ -666,7 +991,19 @@ public class SCContent {
 		STORAGE_MODULE = registerModule("storage_module", net.geforcemods.securitycraft.misc.ModuleType.STORAGE, false, false, false);
 		DISGUISE_MODULE = registerModule("disguise_module", net.geforcemods.securitycraft.misc.ModuleType.DISGUISE, false, true, false);
 		SPEED_MODULE = registerModule("speed_module", net.geforcemods.securitycraft.misc.ModuleType.SPEED, false, false, false);
+		UNIVERSAL_BLOCK_MODIFIER = registerItem("universal_block_modifier", new net.geforcemods.securitycraft.items.UniversalBlockModifierItem(new Item.Properties().stacksTo(1).setId(ResourceKey.create(Registries.ITEM, id("universal_block_modifier")))));
+		UNIVERSAL_OWNER_CHANGER = registerItem("universal_owner_changer", new net.geforcemods.securitycraft.items.UniversalOwnerChangerItem(new Item.Properties().stacksTo(1).setId(ResourceKey.create(Registries.ITEM, id("universal_owner_changer")))));
+		SC_MANUAL = registerItem("sc_manual", new net.geforcemods.securitycraft.items.SCManualItem(new Item.Properties().stacksTo(1).setId(ResourceKey.create(Registries.ITEM, id("sc_manual")))));
 		LENS = registerItem("lens", new Item(new Item.Properties().setId(ResourceKey.create(Registries.ITEM, id("lens")))));
+		//the fluids have to exist before their blocks, and the blocks before the buckets, since each refers back
+		FLOWING_FAKE_WATER = Registry.register(BuiltInRegistries.FLUID, id("flowing_fake_water"), new net.geforcemods.securitycraft.fluids.FakeWaterFluid.Flowing());
+		FAKE_WATER = Registry.register(BuiltInRegistries.FLUID, id("fake_water"), new net.geforcemods.securitycraft.fluids.FakeWaterFluid.Source());
+		FLOWING_FAKE_LAVA = Registry.register(BuiltInRegistries.FLUID, id("flowing_fake_lava"), new net.geforcemods.securitycraft.fluids.FakeLavaFluid.Flowing());
+		FAKE_LAVA = Registry.register(BuiltInRegistries.FLUID, id("fake_lava"), new net.geforcemods.securitycraft.fluids.FakeLavaFluid.Source());
+		FAKE_WATER_BLOCK = registerBlockNoItem("fake_water_block", key -> new net.geforcemods.securitycraft.blocks.FakeWaterBlock(reinforcedCopy(Blocks.WATER).setId(key), () -> FAKE_WATER));
+		FAKE_LAVA_BLOCK = registerBlockNoItem("fake_lava_block", key -> new net.geforcemods.securitycraft.blocks.FakeLavaBlock(reinforcedCopy(Blocks.LAVA).setId(key), () -> FAKE_LAVA));
+		FAKE_WATER_BUCKET = registerItem("bucket_f_water", new net.geforcemods.securitycraft.items.FakeLiquidBucketItem(() -> FAKE_WATER, new Item.Properties().stacksTo(1).setId(ResourceKey.create(Registries.ITEM, id("bucket_f_water")))));
+		FAKE_LAVA_BUCKET = registerItem("bucket_f_lava", new net.geforcemods.securitycraft.items.FakeLiquidBucketItem(() -> FAKE_LAVA, new Item.Properties().stacksTo(1).setId(ResourceKey.create(Registries.ITEM, id("bucket_f_lava")))));
 
 		UNIVERSAL_BLOCK_REINFORCER_LVL1 = registerConverterItem("universal_block_reinforcer_lvl1", 300, true);
 		UNIVERSAL_BLOCK_REINFORCER_LVL2 = registerConverterItem("universal_block_reinforcer_lvl2", 2700, true);
@@ -682,7 +1019,36 @@ public class SCContent {
 
 		KEYPAD_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("keypad"), FabricBlockEntityTypeBuilder.create(KeypadBlockEntity::new, KEYPAD).build());
 		LASER_BLOCK_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("laser_block"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.LaserBlockBlockEntity::new, LASER_BLOCK).build());
-		ABSTRACT_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("abstract"), FabricBlockEntityTypeBuilder.create((pos, state) -> new net.geforcemods.securitycraft.api.OwnableBlockEntity(ABSTRACT_BLOCK_ENTITY, pos, state), LASER_FIELD, STONE_MINE, DEEPSLATE_MINE, COBBLED_DEEPSLATE_MINE, DIRT_MINE, COBBLESTONE_MINE, SAND_MINE, GRAVEL_MINE, NETHERRACK_MINE, END_STONE_MINE, COAL_MINE, DEEPSLATE_COAL_MINE, IRON_MINE, DEEPSLATE_IRON_MINE, GOLD_MINE, DEEPSLATE_GOLD_MINE, COPPER_MINE, DEEPSLATE_COPPER_MINE, REDSTONE_MINE, DEEPSLATE_REDSTONE_MINE, EMERALD_MINE, DEEPSLATE_EMERALD_MINE, LAPIS_MINE, DEEPSLATE_LAPIS_MINE, DIAMOND_MINE, DEEPSLATE_DIAMOND_MINE, NETHER_GOLD_MINE, QUARTZ_MINE, ANCIENT_DEBRIS_MINE, GILDED_BLACKSTONE_MINE, FURNACE_MINE, SMOKER_MINE, BLAST_FURNACE_MINE).build());
+		//every reinforced block carries this block entity purely to remember its owner, so they all have to be
+		//listed as valid for the type; REINFORCED_BLOCKS is already fully populated by this point in init()
+		java.util.List<Block> abstractBeBlocks = new ArrayList<>(java.util.List.of(LASER_FIELD, STONE_MINE, DEEPSLATE_MINE, COBBLED_DEEPSLATE_MINE, DIRT_MINE, COBBLESTONE_MINE, SAND_MINE, GRAVEL_MINE, NETHERRACK_MINE, END_STONE_MINE, COAL_MINE, DEEPSLATE_COAL_MINE, IRON_MINE, DEEPSLATE_IRON_MINE, GOLD_MINE, DEEPSLATE_GOLD_MINE, COPPER_MINE, DEEPSLATE_COPPER_MINE, REDSTONE_MINE, DEEPSLATE_REDSTONE_MINE, EMERALD_MINE, DEEPSLATE_EMERALD_MINE, LAPIS_MINE, DEEPSLATE_LAPIS_MINE, DIAMOND_MINE, DEEPSLATE_DIAMOND_MINE, NETHER_GOLD_MINE, QUARTZ_MINE, ANCIENT_DEBRIS_MINE, GILDED_BLACKSTONE_MINE, FURNACE_MINE, SMOKER_MINE, BLAST_FURNACE_MINE));
+
+		abstractBeBlocks.addAll(REINFORCED_BLOCKS);
+		//the door has its own block entity type now; it stays listed here so doors placed by an older build,
+		//whose saved block entity still says "abstract", keep loading with their owner intact
+		abstractBeBlocks.add(REINFORCED_DOOR);
+		ABSTRACT_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("abstract"), FabricBlockEntityTypeBuilder.create((pos, state) -> new net.geforcemods.securitycraft.api.OwnableBlockEntity(ABSTRACT_BLOCK_ENTITY, pos, state), abstractBeBlocks.toArray(new Block[0])).build());
+		ELECTRIFIED_FENCE_AND_GATE_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("electrified_fence_and_gate"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.ElectrifiedFenceAndGateBlockEntity::new, ELECTRIFIED_IRON_FENCE, ELECTRIFIED_IRON_FENCE_GATE).build());
+		REINFORCED_DOOR_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("reinforced_door"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.ReinforcedDoorBlockEntity::new, REINFORCED_DOOR).build());
+		KEYPAD_CHEST_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("keypad_chest"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.KeypadChestBlockEntity::new, KEYPAD_CHEST).build());
+		KEYPAD_BARREL_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("keypad_barrel"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.KeypadBarrelBlockEntity::new, KEYPAD_BARREL).build());
+		KEYPAD_FURNACE_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("keypad_furnace"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.KeypadFurnaceBlockEntity::new, KEYPAD_FURNACE).build());
+		KEYPAD_SMOKER_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("keypad_smoker"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.KeypadSmokerBlockEntity::new, KEYPAD_SMOKER).build());
+		KEYPAD_BLAST_FURNACE_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("keypad_blast_furnace"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.KeypadBlastFurnaceBlockEntity::new, KEYPAD_BLAST_FURNACE).build());
+		KEYPAD_FURNACE_MENU = Registry.register(BuiltInRegistries.MENU, id("keypad_furnace"), new net.fabricmc.fabric.api.menu.v1.ExtendedMenuType<>((syncId, inv, pos) -> new net.geforcemods.securitycraft.inventory.KeypadFurnaceMenu(syncId, inv.player.level(), pos, inv), net.minecraft.core.BlockPos.STREAM_CODEC));
+		KEYPAD_SMOKER_MENU = Registry.register(BuiltInRegistries.MENU, id("keypad_smoker"), new net.fabricmc.fabric.api.menu.v1.ExtendedMenuType<>((syncId, inv, pos) -> new net.geforcemods.securitycraft.inventory.KeypadSmokerMenu(syncId, inv.player.level(), pos, inv), net.minecraft.core.BlockPos.STREAM_CODEC));
+		KEYPAD_BLAST_FURNACE_MENU = Registry.register(BuiltInRegistries.MENU, id("keypad_blast_furnace"), new net.fabricmc.fabric.api.menu.v1.ExtendedMenuType<>((syncId, inv, pos) -> new net.geforcemods.securitycraft.inventory.KeypadBlastFurnaceMenu(syncId, inv.player.level(), pos, inv), net.minecraft.core.BlockPos.STREAM_CODEC));
+		REINFORCED_HOPPER_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("reinforced_hopper"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.ReinforcedHopperBlockEntity::new, REINFORCED_BY_NAME.get("reinforced_hopper")).build());
+		REINFORCED_DISPENSER_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("reinforced_dispenser"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.ReinforcedDispenserBlockEntity::new, REINFORCED_BY_NAME.get("reinforced_dispenser")).build());
+		REINFORCED_DROPPER_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("reinforced_dropper"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.ReinforcedDropperBlockEntity::new, REINFORCED_BY_NAME.get("reinforced_dropper")).build());
+		REINFORCED_OBSERVER_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("reinforced_observer"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.ReinforcedObserverBlockEntity::new, REINFORCED_BY_NAME.get("reinforced_observer")).build());
+		REINFORCED_MOVING_PISTON_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("reinforced_moving_piston"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.ReinforcedPistonMovingBlockEntity::new, REINFORCED_MOVING_PISTON).build());
+		REINFORCED_CAULDRON_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("reinforced_cauldron"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.ReinforcedCauldronBlockEntity::new, REINFORCED_CAULDRON, REINFORCED_WATER_CAULDRON, REINFORCED_LAVA_CAULDRON, REINFORCED_POWDER_SNOW_CAULDRON).build());
+		REINFORCED_LECTERN_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("reinforced_lectern"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.ReinforcedLecternBlockEntity::new, REINFORCED_LECTERN).build());
+		REINFORCED_CHISELED_BOOKSHELF_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("reinforced_chiseled_bookshelf"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.ReinforcedChiseledBookshelfBlockEntity::new, REINFORCED_CHISELED_BOOKSHELF).build());
+		REINFORCED_LECTERN_MENU = Registry.register(BuiltInRegistries.MENU, id("reinforced_lectern"), new net.fabricmc.fabric.api.menu.v1.ExtendedMenuType<>((syncId, inv, pos) -> new net.geforcemods.securitycraft.inventory.ReinforcedLecternMenu(syncId, inv, pos), net.minecraft.core.BlockPos.STREAM_CODEC));
+		SECRET_SIGN_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("secret_sign"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.SecretSignBlockEntity::new, SECRET_OAK_SIGN, SECRET_OAK_WALL_SIGN, SECRET_SPRUCE_SIGN, SECRET_SPRUCE_WALL_SIGN, SECRET_BIRCH_SIGN, SECRET_BIRCH_WALL_SIGN, SECRET_JUNGLE_SIGN, SECRET_JUNGLE_WALL_SIGN, SECRET_ACACIA_SIGN, SECRET_ACACIA_WALL_SIGN, SECRET_DARK_OAK_SIGN, SECRET_DARK_OAK_WALL_SIGN, SECRET_MANGROVE_SIGN, SECRET_MANGROVE_WALL_SIGN, SECRET_CHERRY_SIGN, SECRET_CHERRY_WALL_SIGN, SECRET_BAMBOO_SIGN, SECRET_BAMBOO_WALL_SIGN, SECRET_CRIMSON_SIGN, SECRET_CRIMSON_WALL_SIGN, SECRET_WARPED_SIGN, SECRET_WARPED_WALL_SIGN).build());
+		SECRET_HANGING_SIGN_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("secret_hanging_sign"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.SecretHangingSignBlockEntity::new, SECRET_OAK_HANGING_SIGN, SECRET_OAK_WALL_HANGING_SIGN, SECRET_SPRUCE_HANGING_SIGN, SECRET_SPRUCE_WALL_HANGING_SIGN, SECRET_BIRCH_HANGING_SIGN, SECRET_BIRCH_WALL_HANGING_SIGN, SECRET_JUNGLE_HANGING_SIGN, SECRET_JUNGLE_WALL_HANGING_SIGN, SECRET_ACACIA_HANGING_SIGN, SECRET_ACACIA_WALL_HANGING_SIGN, SECRET_DARK_OAK_HANGING_SIGN, SECRET_DARK_OAK_WALL_HANGING_SIGN, SECRET_MANGROVE_HANGING_SIGN, SECRET_MANGROVE_WALL_HANGING_SIGN, SECRET_CHERRY_HANGING_SIGN, SECRET_CHERRY_WALL_HANGING_SIGN, SECRET_BAMBOO_HANGING_SIGN, SECRET_BAMBOO_WALL_HANGING_SIGN, SECRET_CRIMSON_HANGING_SIGN, SECRET_CRIMSON_WALL_HANGING_SIGN, SECRET_WARPED_HANGING_SIGN, SECRET_WARPED_WALL_HANGING_SIGN).build());
 		MINE_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("mine"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.MineBlockEntity::new, MINE).build());
 		BOUNCING_BETTY_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("bouncing_betty"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.BouncingBettyBlockEntity::new, BOUNCING_BETTY).build());
 		CLAYMORE_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("claymore"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.ClaymoreBlockEntity::new, CLAYMORE).build());
@@ -690,11 +1056,21 @@ public class SCContent {
 		TRACK_MINE_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("track_mine"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.TrackMineBlockEntity::new, TRACK_MINE).build());
 		BRUSHABLE_MINE_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("brushable_mine"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.BrushableMineBlockEntity::new, SUSPICIOUS_SAND_MINE, SUSPICIOUS_GRAVEL_MINE).build());
 		CREAKING_HEART_MINE_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("creaking_heart_mine"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.CreakingHeartMineBlockEntity::new, CREAKING_HEART_MINE).build());
+		//the reinforced hopper/lectern/chiseled-bookshelf and the two mine block entities subclass a vanilla block entity whose
+		//2-arg constructor pins the vanilla BlockEntityType; MC 1.21.2+ rejects the SC state in that type's constructor unless
+		//the SC blocks are added to the vanilla type's valid-block set (SecretSignBlockEntity instead uses the 3-arg super)
+		allowVanillaBlockEntityOn(net.minecraft.world.level.block.entity.BlockEntityType.HOPPER, REINFORCED_HOPPER_BLOCK_ENTITY);
+		allowVanillaBlockEntityOn(net.minecraft.world.level.block.entity.BlockEntityType.LECTERN, REINFORCED_LECTERN_BLOCK_ENTITY);
+		allowVanillaBlockEntityOn(net.minecraft.world.level.block.entity.BlockEntityType.CHISELED_BOOKSHELF, REINFORCED_CHISELED_BOOKSHELF_BLOCK_ENTITY);
+		allowVanillaBlockEntityOn(net.minecraft.world.level.block.entity.BlockEntityType.HANGING_SIGN, SECRET_HANGING_SIGN_BLOCK_ENTITY);
+		allowVanillaBlockEntityOn(net.minecraft.world.level.block.entity.BlockEntityType.BRUSHABLE_BLOCK, BRUSHABLE_MINE_BLOCK_ENTITY);
+		allowVanillaBlockEntityOn(net.minecraft.world.level.block.entity.BlockEntityType.CREAKING_HEART, CREAKING_HEART_MINE_BLOCK_ENTITY);
 		PORTABLE_RADAR_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("portable_radar"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.PortableRadarBlockEntity::new, PORTABLE_RADAR).build());
-		BOUNCING_BETTY_ENTITY = net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder.<net.geforcemods.securitycraft.entity.BouncingBetty>create(net.minecraft.world.entity.MobCategory.MISC, net.geforcemods.securitycraft.entity.BouncingBetty::new).dimensions(net.minecraft.world.entity.EntityDimensions.fixed(0.5F, 0.2F)).trackRangeBlocks(128).trackedUpdateRate(1).forceTrackedVelocityUpdates(true).build(ResourceKey.create(Registries.ENTITY_TYPE, id("bouncingbetty")));
+		BOUNCING_BETTY_ENTITY = net.minecraft.world.entity.EntityType.Builder.<net.geforcemods.securitycraft.entity.BouncingBetty>of(net.geforcemods.securitycraft.entity.BouncingBetty::new, net.minecraft.world.entity.MobCategory.MISC).sized(0.5F, 0.2F).clientTrackingRange(8).updateInterval(1).build(ResourceKey.create(Registries.ENTITY_TYPE, id("bouncingbetty")));
 		Registry.register(BuiltInRegistries.ENTITY_TYPE, id("bouncingbetty"), BOUNCING_BETTY_ENTITY);
-		IMS_BOMB_ENTITY = net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder.<net.geforcemods.securitycraft.entity.IMSBomb>create(net.minecraft.world.entity.MobCategory.MISC, net.geforcemods.securitycraft.entity.IMSBomb::new).dimensions(net.minecraft.world.entity.EntityDimensions.fixed(0.25F, 0.3F)).trackRangeBlocks(256).trackedUpdateRate(1).forceTrackedVelocityUpdates(true).build(ResourceKey.create(Registries.ENTITY_TYPE, id("imsbomb")));
+		IMS_BOMB_ENTITY = net.minecraft.world.entity.EntityType.Builder.<net.geforcemods.securitycraft.entity.IMSBomb>of(net.geforcemods.securitycraft.entity.IMSBomb::new, net.minecraft.world.entity.MobCategory.MISC).sized(0.25F, 0.3F).clientTrackingRange(16).updateInterval(1).build(ResourceKey.create(Registries.ENTITY_TYPE, id("imsbomb")));
 		Registry.register(BuiltInRegistries.ENTITY_TYPE, id("imsbomb"), IMS_BOMB_ENTITY);
+		CUSTOMIZE_BLOCK_MENU = Registry.register(BuiltInRegistries.MENU, id("customize_block"), new net.fabricmc.fabric.api.menu.v1.ExtendedMenuType<>((syncId, inv, pos) -> new net.geforcemods.securitycraft.inventory.CustomizeBlockMenu(syncId, inv.player.level(), pos, inv), net.minecraft.core.BlockPos.STREAM_CODEC));
 		SINGLE_LENS_MENU = Registry.register(BuiltInRegistries.MENU, id("single_lens"), new net.fabricmc.fabric.api.menu.v1.ExtendedMenuType<>((syncId, inv, pos) -> new net.geforcemods.securitycraft.inventory.SingleLensMenu(syncId, inv.player.level(), pos, inv), net.minecraft.core.BlockPos.STREAM_CODEC));
 		KEY_PANEL_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("key_panel"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.KeyPanelBlockEntity::new, KEY_PANEL).build());
 		FRAME_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("keypad_frame"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.FrameBlockEntity::new, FRAME).build());
@@ -713,19 +1089,25 @@ public class SCContent {
 	}
 
 	private static void registerReinforced(String name, String category) {
-		Block block = register(name, key -> switch (category) {
-			case "pillar" -> new RotatedPillarBlock(shapeProps(name).setId(key));
-			case "glass" -> new BaseReinforcedBlock(glassProps().setId(key));
-			case "pane" -> new IronBarsBlock((name.contains("glass") ? glassProps() : paneProps()).setId(key));
-			case "fence" -> new FenceBlock(shapeProps(name).setId(key));
-			case "fence_gate" -> new FenceGateBlock(WoodType.OAK, shapeProps(name).setId(key));
-			case "wall" -> new WallBlock(shapeProps(name).setId(key));
-			case "slab" -> new SlabBlock(shapeProps(name).setId(key));
-			case "stairs" -> new StairBlock(Blocks.STONE.defaultBlockState(), shapeProps(name).setId(key));
-			case "button" -> new ButtonBlock(BlockSetType.STONE, 20, shapeProps(name).setId(key));
-			case "pressure_plate" -> new PressurePlateBlock(BlockSetType.STONE, shapeProps(name).setId(key));
-			case "trapdoor" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedTrapdoorBlock(BlockSetType.IRON, shapeProps(name).setId(key));
-			default -> new BaseReinforcedBlock(shapeProps(name).setId(key));
+		//every shape uses its own reinforced subclass so the block carries an owner; see OwnershipUtils for why
+		//this port keeps the vanilla class as the superclass instead of reimplementing it the way upstream does
+		Block block = register(name, key -> {
+			BlockBehaviour.Properties props = reinforcedProps(name, category).setId(key);
+
+			return switch (category) {
+				case "pillar" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedPillarBlock(props);
+				case "glass" -> new BaseReinforcedBlock(props);
+				case "pane" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedPaneBlock(props);
+				case "fence" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedFenceBlock(props);
+				case "fence_gate" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedFenceGateBlock(props, WoodType.OAK);
+				case "wall" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedWallBlock(props);
+				case "slab" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedSlabBlock(props);
+				case "stairs" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedStairBlock(Blocks.STONE.defaultBlockState(), props);
+				case "button" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedButtonBlock(props, BlockSetType.STONE, 20, false);
+				case "pressure_plate" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedPressurePlateBlock(props, BlockSetType.STONE);
+				case "trapdoor" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedTrapdoorBlock(BlockSetType.IRON, props);
+				default -> new BaseReinforcedBlock(props);
+			};
 		});
 		REINFORCED_BLOCKS.add(block);
 		REINFORCED_BY_NAME.put(name, block);
@@ -738,6 +1120,94 @@ public class SCContent {
 
 		if (category.equals("pane") && name.contains("glass"))
 			GLASS_PANE_BLOCKS.add(block);
+	}
+
+	private static final java.util.Set<String> NON_SOLID_CATEGORIES = java.util.Set.of("cobweb", "chain", "end_rod", "lantern", "ladder", "scaffolding", "lever");
+
+	/** Registers one of the {@link #REINFORCED_COPIES}: same shape class as vanilla, properties copied off it. */
+	private static void registerReinforcedCopy(String name, Block vanilla, String category) {
+		java.util.function.Function<ResourceKey<Block>, Block> factory = key -> {
+			BlockBehaviour.Properties props = reinforcedCopy(vanilla).setId(key);
+
+			if (name.contains("crystal_quartz"))
+				props.mapColor(net.minecraft.world.level.material.MapColor.COLOR_CYAN);
+
+			return switch (category) {
+				case "pillar" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedPillarBlock(props);
+				case "stairs" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedStairBlock(Blocks.STONE.defaultBlockState(), props);
+				case "slab" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedSlabBlock(props);
+				case "carpet" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedCarpetBlock(props.forceSolidOn());
+				case "glazed_terracotta" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedGlazedTerracottaBlock(props);
+				case "redstone_lamp" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedRedstoneLampBlock(props);
+				case "grass_block" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedGrassBlock(props);
+				case "snowy_dirt" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedSnowyDirtBlock(props);
+				case "cobweb" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedCobwebBlock(props);
+				case "chain" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedChainBlock(props);
+				case "end_rod" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedEndRodBlock(props);
+				case "lantern" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedLanternBlock(props.pushReaction(net.minecraft.world.level.material.PushReaction.BLOCK));
+				case "ladder" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedLadderBlock(props.pushReaction(net.minecraft.world.level.material.PushReaction.BLOCK));
+				case "scaffolding" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedScaffoldingBlock(props.pushReaction(net.minecraft.world.level.material.PushReaction.NORMAL));
+				case "lever" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedLeverBlock(props.pushReaction(net.minecraft.world.level.material.PushReaction.BLOCK).forceSolidOn());
+				default -> new BaseReinforcedBlock(props);
+			};
+		};
+		Block block;
+
+		//the scaffolding needs vanilla's own block item, which is what lets it be stacked downwards while held
+		if (category.equals("scaffolding")) {
+			block = registerBlockNoItem(name, factory);
+			Registry.register(BuiltInRegistries.ITEM, id(name), new net.minecraft.world.item.ScaffoldingBlockItem(block, new Item.Properties().setId(ResourceKey.create(Registries.ITEM, id(name)))));
+		}
+		else
+			block = register(name, factory);
+
+		REINFORCED_BLOCKS.add(block);
+		REINFORCED_BY_NAME.put(name, block);
+
+		//the grass block's side-overlay texture is part-transparent, so it needs the cutout layer
+		if (NON_SOLID_CATEGORIES.contains(category) || category.equals("grass_block"))
+			CUTOUT_BLOCKS.add(block);
+	}
+
+	/** A reinforced block that brings its own block entity, so it is not covered by either reinforced table. */
+	private static Block registerFunctionalReinforced(String name, java.util.function.Function<ResourceKey<Block>, Block> factory) {
+		Block block = register(name, factory);
+
+		REINFORCED_BLOCKS.add(block);
+		REINFORCED_BY_NAME.put(name, block);
+		return block;
+	}
+
+	/**
+	 * The properties a reinforced block is registered with: copied straight off the vanilla block it reinforces,
+	 * the way upstream's {@code reinforcedCopy} does it, so hardness, tool requirement, sound and light all match.
+	 * Only when there is no vanilla counterpart does this fall back to the by-shape guess.
+	 *
+	 * <p>Upstream copies through Forge's {@code ofFullCopy}, which also carries the four state predicates vanilla's
+	 * own {@code Properties#copy} leaves behind; those matter for glass, so they are re-applied here.
+	 */
+	private static BlockBehaviour.Properties reinforcedProps(String name, String category) {
+		Block vanilla = BuiltInRegistries.BLOCK.get(Identifier.fromNamespaceAndPath("minecraft", name.substring("reinforced_".length()))).map(net.minecraft.core.Holder.Reference::value).orElse(Blocks.AIR);
+
+		if (vanilla == Blocks.AIR)
+			return isGlass(name, category) ? glassProps() : category.equals("pane") ? paneProps() : shapeProps(name);
+
+		BlockBehaviour.Properties props = reinforcedCopy(vanilla);
+
+		if (isGlass(name, category))
+			props.isValidSpawn((state, level, pos, type) -> false).isRedstoneConductor((state, level, pos) -> false).isSuffocating((state, level, pos) -> false).isViewBlocking((state, level, pos) -> false);
+
+		return props;
+	}
+
+	/**
+	 * Adds every block {@code scType} is registered for to {@code vanillaType}'s valid-block set, so a block entity that
+	 * subclasses a vanilla one (and whose vanilla parent's 2-arg constructor pins {@code vanillaType}) survives the
+	 * {@code BlockEntity} constructor's state validation on placement.
+	 */
+	private static void allowVanillaBlockEntityOn(BlockEntityType<?> vanillaType, BlockEntityType<?> scType) {
+		vanillaType.validBlocks = new java.util.HashSet<>(vanillaType.validBlocks);
+		vanillaType.validBlocks.addAll(scType.validBlocks);
 	}
 
 	private static Block register(String name, java.util.function.Function<ResourceKey<Block>, Block> factory) {
@@ -759,9 +1229,30 @@ public class SCContent {
 				.icon(() -> new ItemStack(KEYPAD))
 				.title(Component.translatable("itemGroup.securitycraft.technical"))
 				.displayItems((params, output) -> {
+					output.accept(SC_MANUAL);
 					output.accept(KEYPAD);
 					output.accept(KEY_PANEL_ITEM);
 					output.accept(FRAME);
+					output.accept(KEYPAD_CHEST);
+					output.accept(KEYPAD_BARREL);
+					output.accept(KEYPAD_FURNACE);
+					output.accept(KEYPAD_SMOKER);
+					output.accept(KEYPAD_BLAST_FURNACE);
+					output.accept(ELECTRIFIED_IRON_FENCE);
+					output.accept(ELECTRIFIED_IRON_FENCE_GATE);
+					output.accept(REINFORCED_BY_NAME.get("reinforced_iron_trapdoor"));
+					output.accept(REINFORCED_DOOR);
+					output.accept(REINFORCED_PISTON);
+					output.accept(REINFORCED_STICKY_PISTON);
+					output.accept(REINFORCED_BY_NAME.get("reinforced_dispenser"));
+					output.accept(REINFORCED_BY_NAME.get("reinforced_dropper"));
+					output.accept(REINFORCED_BY_NAME.get("reinforced_observer"));
+					output.accept(REINFORCED_CAULDRON);
+					output.accept(REINFORCED_BY_NAME.get("reinforced_ladder"));
+					output.accept(REINFORCED_BY_NAME.get("reinforced_hopper"));
+					output.accept(LENS);
+					output.accept(UNIVERSAL_BLOCK_MODIFIER);
+					output.accept(UNIVERSAL_OWNER_CHANGER);
 					output.accept(LASER_BLOCK);
 					output.accept(PORTABLE_RADAR);
 					output.accept(REDSTONE_MODULE);
@@ -836,9 +1327,32 @@ public class SCContent {
 					output.accept(UNIVERSAL_BLOCK_REINFORCER_LVL2);
 					output.accept(UNIVERSAL_BLOCK_REINFORCER_LVL3);
 					output.accept(UNIVERSAL_BLOCK_REMOVER);
+					output.accept(FAKE_WATER_BUCKET);
+					output.accept(FAKE_LAVA_BUCKET);
 
-					for (Block block : sortByVanillaOrder(REINFORCED_BLOCKS))
-						output.accept(block);
+					//upstream keeps the iron trapdoor out of the sorted run (its item group is MANUAL) and appends
+					//it, the door and the two electrified blocks at the end of the tab instead
+					for (Block block : sortByVanillaOrder(REINFORCED_BLOCKS)) {
+						if (block.asItem() == Items.AIR) {
+							SecurityCraft.LOGGER.warn("Skipping reinforced block {} in the creative tab: it has no item", BuiltInRegistries.BLOCK.getKey(block));
+							continue;
+						}
+
+						if (block != REINFORCED_BY_NAME.get("reinforced_iron_trapdoor"))
+							output.accept(block);
+
+						//the original slots the secret signs in right behind the reinforced lectern, which is what puts
+						//them ahead of everything that sorts by the vanilla redstone tab - the pistons, lever and so on
+						if (block == REINFORCED_LECTERN) {
+							for (ItemLike sign : SECRET_SIGN_ITEMS)
+								output.accept(sign);
+						}
+					}
+
+					output.accept(ELECTRIFIED_IRON_FENCE);
+					output.accept(ELECTRIFIED_IRON_FENCE_GATE);
+					output.accept(REINFORCED_BY_NAME.get("reinforced_iron_trapdoor"));
+					output.accept(REINFORCED_DOOR);
 				})
 				.build();
 		Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, id("3_decoration"), decoration);
@@ -870,23 +1384,45 @@ public class SCContent {
 		return sorted;
 	}
 
+	/**
+	 * The handful of reinforced blocks whose plain counterpart is not simply their own name minus the prefix. The
+	 * crystal quartz set is the mod's own, so upstream hands the counterpart to the constructor; this port derives
+	 * it from the name everywhere else, which needs these two spelled out.
+	 */
+	private static final Map<String, String> COUNTERPART_EXCEPTIONS = Map.of(
+			"reinforced_crystal_quartz_block", "crystal_quartz",
+			"reinforced_chiseled_crystal_quartz_block", "chiseled_crystal_quartz",
+			"reinforced_grass_path", "dirt_path",
+			"reinforced_hardened_clay", "terracotta",
+			"reinforced_normal_stone_slab", "stone_slab",
+			"reinforced_stone_slab", "smooth_stone_slab");
+
 	public static Block vanillaCounterpart(Block reinforced) {
-		net.minecraft.resources.Identifier loc = BuiltInRegistries.BLOCK.getKey(reinforced);
+		Identifier loc = BuiltInRegistries.BLOCK.getKey(reinforced);
 
 		if (!loc.getNamespace().equals(SecurityCraft.MODID) || !loc.getPath().startsWith("reinforced_"))
 			return null;
 
-		String path = loc.getPath();
-		Block vanilla = BuiltInRegistries.BLOCK.getValue(Identifier.fromNamespaceAndPath("minecraft", path.substring("reinforced_".length())));
+		String path = COUNTERPART_EXCEPTIONS.getOrDefault(loc.getPath(), loc.getPath().substring("reinforced_".length()));
+		//the crystal quartz set is this mod's own, so its plain form lives in this namespace rather than vanilla's
+		Block counterpart = BuiltInRegistries.BLOCK.getValue(id(path));
 
-		return vanilla == Blocks.AIR ? null : vanilla;
+		if (counterpart == null || counterpart == Blocks.AIR)
+			counterpart = BuiltInRegistries.BLOCK.getValue(Identifier.fromNamespaceAndPath("minecraft", path));
+
+		return counterpart == null || counterpart == Blocks.AIR ? null : counterpart;
 	}
 
-	public static Block reinforcedCounterpart(Block vanilla) {
-		net.minecraft.resources.Identifier loc = BuiltInRegistries.BLOCK.getKey(vanilla);
+	public static Block reinforcedCounterpart(Block plain) {
+		Identifier loc = BuiltInRegistries.BLOCK.getKey(plain);
 
-		if (!loc.getNamespace().equals("minecraft"))
+		if (!loc.getNamespace().equals("minecraft") && !loc.getNamespace().equals(SecurityCraft.MODID))
 			return null;
+
+		for (Map.Entry<String, String> exception : COUNTERPART_EXCEPTIONS.entrySet()) {
+			if (exception.getValue().equals(loc.getPath()))
+				return REINFORCED_BY_NAME.get(exception.getKey());
+		}
 
 		return REINFORCED_BY_NAME.get("reinforced_" + loc.getPath());
 	}
@@ -929,31 +1465,52 @@ public class SCContent {
 		return name.matches(".*(oak|spruce|birch|jungle|acacia|mangrove|cherry|bamboo|crimson|warped|planks|mosaic).*");
 	}
 
+	/** 1:1 with upstream: the furnace family lights up at level 13 while it is smelting. */
+	private static BlockBehaviour.Properties keypadFurnaceProps() {
+		return alwaysDrop(BlockBehaviour.Properties.of().mapColor(net.minecraft.world.level.material.MapColor.METAL).strength(5.0F, Float.MAX_VALUE).sound(SoundType.METAL)).lightLevel(state -> state.getValue(net.geforcemods.securitycraft.blocks.AbstractKeypadFurnaceBlock.LIT) ? 13 : 0);
+	}
+
+	/**
+	 * Clears the "needs the right tool to drop" flag. Upstream's {@code always_drop} config defaults to true and is
+	 * honoured by overriding Forge's {@code canHarvestBlock}, so every SecurityCraft block drops itself no matter
+	 * what it was mined with - and, because vanilla reads the same flag to pick the mining-speed penalty, breaks at
+	 * the same speed as if the right tool were held. Fabric has no such hook, so the flag is cleared here instead.
+	 */
+	private static BlockBehaviour.Properties alwaysDrop(BlockBehaviour.Properties props) {
+		if (ConfigHandler.alwaysDrop)
+			props.requiresCorrectToolForDrops = false;
+
+		return props;
+	}
+
+	/** The crystal quartz set is vanilla quartz in cyan, so each block copies the quartz block it is shaped after. */
+	private static BlockBehaviour.Properties crystalQuartzProps(Block quartzBlock) {
+		return alwaysDrop(BlockBehaviour.Properties.ofFullCopy(quartzBlock).mapColor(net.minecraft.world.level.material.MapColor.COLOR_CYAN));
+	}
+
 	private static BlockBehaviour.Properties shapeProps(String name) {
 		boolean wood = isWood(name);
 		boolean wool = name.contains("wool");
 		BlockBehaviour.Properties p = BlockBehaviour.Properties.of().strength(wood || wool ? 2.0F : 5.0F, 12000.0F).sound(wood ? SoundType.WOOD : wool ? SoundType.WOOL : SoundType.STONE);
 
-		if (!wood && !wool)
-			p.requiresCorrectToolForDrops();
-
-		return p;
+		return alwaysDrop(p);
 	}
 
+	/** 1:1 with upstream's {@code SCContent#prop(MapColor, float)}: the shared base for the standalone explosives. */
 	private static BlockBehaviour.Properties mineProp(net.minecraft.world.level.material.MapColor color, float hardness) {
-		return BlockBehaviour.Properties.of().mapColor(color).strength(hardness, Float.MAX_VALUE).requiresCorrectToolForDrops();
+		return alwaysDrop(BlockBehaviour.Properties.of().mapColor(color).strength(hardness, Float.MAX_VALUE));
 	}
 
 	/** 1:1 with upstream's {@code SCContent#reinforcedCopy(Block)}. */
 	private static BlockBehaviour.Properties reinforcedCopy(Block block) {
-		return BlockBehaviour.Properties.ofFullCopy(block).explosionResistance(Float.MAX_VALUE);
+		return alwaysDrop(BlockBehaviour.Properties.ofFullCopy(block).explosionResistance(Float.MAX_VALUE));
 	}
 
 	private static BlockBehaviour.Properties glassProps() {
-		return BlockBehaviour.Properties.of().strength(1.5F, 12000.0F).sound(SoundType.GLASS).noOcclusion().isValidSpawn((state, level, pos, type) -> false).isRedstoneConductor((state, level, pos) -> false).isSuffocating((state, level, pos) -> false).isViewBlocking((state, level, pos) -> false);
+		return alwaysDrop(BlockBehaviour.Properties.of().strength(1.5F, 12000.0F).sound(SoundType.GLASS).noOcclusion().isValidSpawn((state, level, pos, type) -> false).isRedstoneConductor((state, level, pos) -> false).isSuffocating((state, level, pos) -> false).isViewBlocking((state, level, pos) -> false));
 	}
 
 	private static BlockBehaviour.Properties paneProps() {
-		return BlockBehaviour.Properties.of().strength(5.0F, 12000.0F).requiresCorrectToolForDrops().sound(SoundType.METAL).noOcclusion();
+		return alwaysDrop(BlockBehaviour.Properties.of().strength(5.0F, 12000.0F).sound(SoundType.METAL).noOcclusion());
 	}
 }

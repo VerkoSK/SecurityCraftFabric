@@ -1,0 +1,9 @@
+{
+	"values": [
+		"securitycraft:reinforced_mycelium",
+		"securitycraft:reinforced_podzol",
+		"securitycraft:reinforced_crimson_nylium",
+		"securitycraft:reinforced_warped_nylium"
+	],
+	"replace": false
+}
