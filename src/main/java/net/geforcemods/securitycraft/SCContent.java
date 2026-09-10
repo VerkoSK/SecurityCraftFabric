@@ -84,6 +84,7 @@ public class SCContent {
 	public static net.geforcemods.securitycraft.blocks.ElectrifiedIronFenceGateBlock ELECTRIFIED_IRON_FENCE_GATE;
 	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.ElectrifiedFenceAndGateBlockEntity> ELECTRIFIED_FENCE_AND_GATE_BLOCK_ENTITY;
 	public static Item UNIVERSAL_OWNER_CHANGER;
+	public static Item UNIVERSAL_KEY_CHANGER;
 	public static Item SC_MANUAL;
 	/** The secret sign items, in registration order, for the creative tab. */
 	public static final List<ItemLike> SECRET_SIGN_ITEMS = new ArrayList<>();
@@ -929,6 +930,7 @@ public class SCContent {
 		SPEED_MODULE = registerModule("speed_module", net.geforcemods.securitycraft.misc.ModuleType.SPEED, false, false, false);
 		UNIVERSAL_BLOCK_MODIFIER = registerItem("universal_block_modifier", new net.geforcemods.securitycraft.items.UniversalBlockModifierItem(new Item.Properties().stacksTo(1)));
 		UNIVERSAL_OWNER_CHANGER = registerItem("universal_owner_changer", new net.geforcemods.securitycraft.items.UniversalOwnerChangerItem(new Item.Properties().stacksTo(1)));
+		UNIVERSAL_KEY_CHANGER = registerItem("universal_key_changer", new net.geforcemods.securitycraft.items.UniversalKeyChangerItem(new Item.Properties().stacksTo(1)));
 		SC_MANUAL = registerItem("sc_manual", new net.geforcemods.securitycraft.items.SCManualItem(new Item.Properties().stacksTo(1)));
 		LENS = registerItem("lens", new Item(new Item.Properties()));
 		//the fluids have to exist before their blocks, and the blocks before the buckets, since each refers back
@@ -1221,6 +1223,7 @@ public class SCContent {
 					output.accept(HARMING_MODULE);
 					output.accept(UNIVERSAL_BLOCK_MODIFIER);
 					output.accept(UNIVERSAL_OWNER_CHANGER);
+					output.accept(UNIVERSAL_KEY_CHANGER);
 					output.accept(UNIVERSAL_BLOCK_REINFORCER_LVL1);
 					output.accept(UNIVERSAL_BLOCK_REINFORCER_LVL2);
 					output.accept(UNIVERSAL_BLOCK_REINFORCER_LVL3);
