@@ -27,7 +27,7 @@ import net.minecraft.world.level.block.Block;
  * field, keycard lock/reader, keypad barrel/door/trapdoor/chest/furnace/smoker/blast furnace, motion activated
  * light, panic button, projector, scanner door, secure redstone interface, secure trading station, security camera,
  * trophy system, username logger, reinforced hopper, reinforced chiseled bookshelf, briefcase, camera monitor,
- * codebreaker, incognito mask, keycard holder, limited use keycard, portable tune player,
+ * incognito mask, keycard holder, limited use keycard, portable tune player,
  * reinforced door item, rift stabilizer, scanner door item, sentry (+ remote access tool), taser,
  * admin tool). {@code LASER_FIELD} is also dropped: this port registers it with {@code registerBlockNoItem},
  * so it has no {@link Item} to build a page around.
@@ -68,6 +68,7 @@ public class ManualPage {
 		add(SCContent.UNIVERSAL_BLOCK_REMOVER);
 		add(SCContent.UNIVERSAL_OWNER_CHANGER);
 		add(SCContent.UNIVERSAL_KEY_CHANGER);
+		add(SCContent.CODEBREAKER);
 		add(SCContent.WIRE_CUTTERS);
 		add(SCContent.DENYLIST_MODULE);
 		add(SCContent.DISGUISE_MODULE);
