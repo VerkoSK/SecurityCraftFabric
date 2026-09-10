@@ -1230,14 +1230,18 @@ public class SCContent {
 				.title(Component.translatable("itemGroup.securitycraft.technical"))
 				.displayItems((params, output) -> {
 					output.accept(SC_MANUAL);
-					output.accept(KEYPAD);
-					output.accept(KEY_PANEL_ITEM);
 					output.accept(FRAME);
+					output.accept(KEY_PANEL_ITEM);
+					output.accept(KEYPAD);
 					output.accept(KEYPAD_CHEST);
 					output.accept(KEYPAD_BARREL);
 					output.accept(KEYPAD_FURNACE);
 					output.accept(KEYPAD_SMOKER);
 					output.accept(KEYPAD_BLAST_FURNACE);
+					output.accept(LASER_BLOCK);
+					output.accept(PORTABLE_RADAR);
+					output.accept(MINE_REMOTE_ACCESS_TOOL);
+					output.accept(WIRE_CUTTERS);
 					output.accept(ELECTRIFIED_IRON_FENCE);
 					output.accept(ELECTRIFIED_IRON_FENCE_GATE);
 					output.accept(REINFORCED_BY_NAME.get("reinforced_iron_trapdoor"));
@@ -1251,20 +1255,22 @@ public class SCContent {
 					output.accept(REINFORCED_BY_NAME.get("reinforced_ladder"));
 					output.accept(REINFORCED_BY_NAME.get("reinforced_hopper"));
 					output.accept(LENS);
-					output.accept(FAKE_WATER_BUCKET);
-					output.accept(FAKE_LAVA_BUCKET);
-					output.accept(UNIVERSAL_BLOCK_MODIFIER);
-					output.accept(UNIVERSAL_OWNER_CHANGER);
-					output.accept(LASER_BLOCK);
-					output.accept(PORTABLE_RADAR);
-					output.accept(REDSTONE_MODULE);
 					output.accept(ALLOWLIST_MODULE);
 					output.accept(DENYLIST_MODULE);
-					output.accept(HARMING_MODULE);
+					output.accept(DISGUISE_MODULE);
+					output.accept(REDSTONE_MODULE);
+					output.accept(SPEED_MODULE);
 					output.accept(SMART_MODULE);
 					output.accept(STORAGE_MODULE);
-					output.accept(DISGUISE_MODULE);
-					output.accept(SPEED_MODULE);
+					output.accept(HARMING_MODULE);
+					output.accept(UNIVERSAL_BLOCK_MODIFIER);
+					output.accept(UNIVERSAL_OWNER_CHANGER);
+					output.accept(UNIVERSAL_BLOCK_REINFORCER_LVL1);
+					output.accept(UNIVERSAL_BLOCK_REINFORCER_LVL2);
+					output.accept(UNIVERSAL_BLOCK_REINFORCER_LVL3);
+					output.accept(UNIVERSAL_BLOCK_REMOVER);
+					output.accept(FAKE_WATER_BUCKET);
+					output.accept(FAKE_LAVA_BUCKET);
 				})
 				.build();
 		Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, id("1_technical"), technical);
