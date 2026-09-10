@@ -83,6 +83,11 @@ public class SecurityCraftClient implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
 		SCClientConfig.load();
+		net.geforcemods.securitycraft.misc.UpdateChecker.run();
+		net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> client.execute(() -> net.geforcemods.securitycraft.misc.UpdateChecker.notify(message -> {
+			if (client.player != null)
+				client.player.displayClientMessage(message, false);
+		})));
 		ClientPlayNetworking.registerGlobalReceiver(OpenKeypadScreenPayload.CHANNEL, (client, handler, buf, responseSender) -> {
 			OpenKeypadScreenPayload payload = OpenKeypadScreenPayload.read(buf);
 

@@ -1,0 +1,21 @@
+{
+	"_comment": "Read by the in-game update checker. 'promos' maps a Minecraft version to the latest SecurityCraft-fabric mod_version released for it. Bump an entry when a new build ships.",
+	"homepage": "https://www.curseforge.com/minecraft/mc-mods/securitycraft",
+	"promos": {
+		"1.20.1": "0.5",
+		"1.20.6": "0.5",
+		"1.21.1": "0.5",
+		"1.21.3": "0.5",
+		"1.21.4": "0.5",
+		"1.21.5": "0.5",
+		"1.21.6": "0.5",
+		"1.21.7": "0.5",
+		"1.21.8": "0.5",
+		"1.21.10": "0.5",
+		"1.21.11": "0.5",
+		"26.1": "0.5",
+		"26.1.1": "0.5",
+		"26.1.2": "0.5",
+		"26.2": "0.5"
+	}
+}
