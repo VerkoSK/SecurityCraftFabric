@@ -4,7 +4,7 @@
     "base": "minecraft:item/chest",
     "model": {
       "type": "minecraft:chest",
-      "texture": "minecraft:normal"
+      "texture": "securitycraft:inactive"
     }
   }
 }

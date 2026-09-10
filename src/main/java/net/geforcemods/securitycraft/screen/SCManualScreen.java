@@ -92,6 +92,8 @@ public class SCManualScreen extends Screen implements StillValid {
 	private List<HoverChecker> hoverCheckers = new ArrayList<>();
 	private int currentPage = lastPage;
 	private IngredientDisplay[] displays = new IngredientDisplay[9];
+	//9 grid slots, each a list of stacks the slot cycles through; null = no recipe on this page
+	private java.util.List<java.util.List<ItemStack>> recipe;
 	private int startX = -1;
 	private List<FormattedText> subpages = new ArrayList<>();
 	private List<FormattedCharSequence> author = new ArrayList<>();
@@ -353,6 +355,7 @@ public class SCManualScreen extends Screen implements StillValid {
 			}
 
 			pageIcon.setStacks(List.of());
+			recipe = null;
 			nextSubpage.visible = false;
 			previousSubpage.visible = false;
 
@@ -370,6 +373,17 @@ public class SCManualScreen extends Screen implements StillValid {
 		String designerName = page.designedBy();
 		Item item = page.item();
 		PageGroup pageGroup = page.group();
+
+		recipe = null;
+
+		if (currentPage >= 0 && Minecraft.getInstance().level != null && Minecraft.getInstance().player != null) {
+			net.minecraft.util.context.ContextMap contextMap = net.minecraft.world.item.crafting.display.SlotDisplayContext.fromLevel(Minecraft.getInstance().level);
+
+			if (pageGroup == PageGroup.NONE)
+				recipe = singleRecipeGrid(item, contextMap);
+			else if (pageGroup.hasRecipeGrid())
+				recipe = groupRecipeGrid(pageGroup.getItems().stream().map(ItemStack::getItem).toList(), contextMap);
+		}
 
 		if (designerName != null && !designerName.isEmpty())
 			this.designedBy = Utils.localize("gui.securitycraft:scManual.designedBy", designerName);
@@ -456,8 +470,14 @@ public class SCManualScreen extends Screen implements StillValid {
 				hoverCheckers.add(new TextHoverChecker(118, 118 + 16, startX + 213, (startX + 213) + 16, Utils.localize("gui.securitycraft:scManual.customizableBlock")));
 		}
 
-		for (IngredientDisplay display : displays) {
-			display.setStacks(List.of());
+		for (int i = 0; i < displays.length; i++)
+			displays[i].setStacks(recipe == null ? List.of() : recipe.get(i));
+
+		if (recipe != null) {
+			for (int row = 0; row < 3; row++) {
+				for (int column = 0; column < 3; column++)
+					hoverCheckers.add(new HoverChecker(144 + (row * 19), 144 + (row * 19) + 16, (startX + 101) + (column * 19), (startX + 101) + (column * 19) + 16));
+			}
 		}
 
 		//set up subpages
@@ -638,6 +658,148 @@ public class SCManualScreen extends Screen implements StillValid {
 		protected void extractContents(GuiGraphicsExtractor extractor, int mouseX, int mouseY, float partialTick) {
 			extractor.blit(RenderPipelines.GUI_TEXTURED, ICONS, getX(), getY(), isHoveredOrFocused() ? 138.0F : 122.0F, 1.0F, 16, 16, 256, 256);
 		}
+	}
+
+	private java.util.List<java.util.List<ItemStack>> singleRecipeGrid(Item result, net.minecraft.util.context.ContextMap contextMap) {
+		for (net.minecraft.client.gui.screens.recipebook.RecipeCollection collection : Minecraft.getInstance().player.getRecipeBook().getCollections()) {
+			for (net.minecraft.world.item.crafting.display.RecipeDisplayEntry entry : collection.getRecipes()) {
+				net.minecraft.world.item.crafting.display.RecipeDisplay display = entry.display();
+
+				if (display.result().resolveForStacks(contextMap).stream().noneMatch(stack -> stack.is(result)))
+					continue;
+
+				java.util.List<java.util.List<ItemStack>> grid = emptyGrid();
+
+				if (display instanceof net.minecraft.world.item.crafting.display.ShapedCraftingRecipeDisplay shaped) {
+					java.util.List<net.minecraft.world.item.crafting.display.SlotDisplay> ingredients = shaped.ingredients();
+
+					for (int i = 0; i < ingredients.size(); i++) {
+						java.util.List<ItemStack> stacks = ingredients.get(i).resolveForStacks(contextMap);
+
+						if (!stacks.isEmpty())
+							grid.set(getCraftMatrixPosition(i, shaped.width(), shaped.height()), stacks);
+					}
+
+					return grid;
+				}
+				else if (display instanceof net.minecraft.world.item.crafting.display.ShapelessCraftingRecipeDisplay shapeless) {
+					java.util.List<net.minecraft.world.item.crafting.display.SlotDisplay> ingredients = shapeless.ingredients();
+
+					for (int i = 0; i < ingredients.size() && i < 9; i++) {
+						java.util.List<ItemStack> stacks = ingredients.get(i).resolveForStacks(contextMap);
+
+						if (!stacks.isEmpty())
+							grid.set(i, stacks);
+					}
+
+					return grid;
+				}
+			}
+		}
+
+		return null;
+	}
+
+	private java.util.List<java.util.List<ItemStack>> groupRecipeGrid(java.util.List<Item> pageItems, net.minecraft.util.context.ContextMap contextMap) {
+		if (pageItems.isEmpty())
+			return null;
+
+		ItemStack[][] perSlot = new ItemStack[9][pageItems.size()];
+		int filled = 0;
+
+		for (net.minecraft.client.gui.screens.recipebook.RecipeCollection collection : Minecraft.getInstance().player.getRecipeBook().getCollections()) {
+			for (net.minecraft.world.item.crafting.display.RecipeDisplayEntry entry : collection.getRecipes()) {
+				net.minecraft.world.item.crafting.display.RecipeDisplay display = entry.display();
+				java.util.List<ItemStack> resultStacks = display.result().resolveForStacks(contextMap);
+				ItemStack resultItem = resultStacks.isEmpty() ? ItemStack.EMPTY : resultStacks.get(0);
+
+				if (resultItem.isEmpty() || !pageItems.contains(resultItem.getItem()))
+					continue;
+
+				int col = pageItems.indexOf(resultItem.getItem());
+
+				if (display instanceof net.minecraft.world.item.crafting.display.ShapedCraftingRecipeDisplay shaped) {
+					java.util.List<net.minecraft.world.item.crafting.display.SlotDisplay> ingredients = shaped.ingredients();
+
+					for (int i = 0; i < ingredients.size(); i++) {
+						java.util.List<ItemStack> stacks = ingredients.get(i).resolveForStacks(contextMap);
+
+						if (!stacks.isEmpty())
+							perSlot[getCraftMatrixPosition(i, shaped.width(), shaped.height())][col] = stacks.get(0);
+					}
+
+					filled++;
+				}
+				else if (display instanceof net.minecraft.world.item.crafting.display.ShapelessCraftingRecipeDisplay shapeless) {
+					java.util.List<net.minecraft.world.item.crafting.display.SlotDisplay> ingredients = shapeless.ingredients();
+
+					for (int i = 0; i < ingredients.size() && i < 9; i++) {
+						java.util.List<ItemStack> stacks = ingredients.get(i).resolveForStacks(contextMap);
+
+						if (!stacks.isEmpty())
+							perSlot[i][col] = stacks.get(0);
+					}
+
+					filled++;
+				}
+			}
+		}
+
+		if (filled == 0)
+			return null;
+
+		java.util.List<java.util.List<ItemStack>> grid = emptyGrid();
+
+		for (int slot = 0; slot < 9; slot++) {
+			java.util.List<ItemStack> cycling = new java.util.ArrayList<>();
+
+			for (ItemStack stack : perSlot[slot]) {
+				if (stack != null && !stack.isEmpty())
+					cycling.add(stack);
+			}
+
+			grid.set(slot, cycling);
+		}
+
+		return grid;
+	}
+
+	private static java.util.List<java.util.List<ItemStack>> emptyGrid() {
+		java.util.List<java.util.List<ItemStack>> grid = new java.util.ArrayList<>(9);
+
+		for (int i = 0; i < 9; i++)
+			grid.add(List.of());
+
+		return grid;
+	}
+
+	private int getCraftMatrixPosition(int i, int width, int height) {
+		int index;
+
+		if (width == 1) {
+			if (height == 3 || height == 2)
+				index = (i * 3) + 1;
+			else
+				index = 4;
+		}
+		else if (height == 1)
+			index = i + 3;
+		else if (width == 2) {
+			index = i;
+
+			if (i > 1) {
+				index++;
+
+				if (i > 3)
+					index++;
+			}
+		}
+		else if (height == 2)
+			index = i + 3;
+		else
+			index = i;
+
+		return index;
 	}
 
 	@Override
