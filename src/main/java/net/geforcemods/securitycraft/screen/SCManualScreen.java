@@ -74,7 +74,8 @@ import net.minecraft.world.level.block.Block;
  * </ul>
  */
 public class SCManualScreen extends Screen implements StillValid {
-	private static final Identifier PAGE_WITH_SCROLL = SCContent.id("textures/gui/info_book_texture_special.png");
+	private static final Identifier PAGE = SCContent.id("textures/gui/info_book_texture.png");
+	private static final Identifier PAGE_WITH_SCROLL = SCContent.id("textures/gui/info_book_texture_special.png"); //for items without a recipe
 	private static final Identifier TITLE_PAGE = SCContent.id("textures/gui/info_book_title_page.png");
 	private static final Identifier ICONS = SCContent.id("textures/gui/info_book_icons.png");
 	private static final int SUBPAGE_LENGTH = 1285;
@@ -155,7 +156,7 @@ public class SCManualScreen extends Screen implements StillValid {
 	@Override
 	public void extractBackground(GuiGraphicsExtractor extractor, int mouseX, int mouseY, float partialTick) {
 		super.extractBackground(extractor, mouseX, mouseY, partialTick);
-		extractor.blit(RenderPipelines.GUI_TEXTURED, currentPage < 0 ? TITLE_PAGE : PAGE_WITH_SCROLL, startX, 5, 0.0F, 0.0F, 256, 250, 256, 256);
+		extractor.blit(RenderPipelines.GUI_TEXTURED, currentPage < 0 ? TITLE_PAGE : (recipe != null ? PAGE : PAGE_WITH_SCROLL), startX, 5, 0.0F, 0.0F, 256, 250, 256, 256);
 	}
 
 	@Override
@@ -397,7 +398,7 @@ public class SCManualScreen extends Screen implements StillValid {
 		}
 		else if (pageGroup == PageGroup.REINFORCED)
 			hoverCheckers.add(new TextHoverChecker(144, 144 + (2 * 20) + 16, startX + 100, (startX + 100) + (2 * 20) + 16, Utils.localize("gui.securitycraft:scManual.recipe.reinforced")));
-		else
+		else if (recipe == null)
 			hoverCheckers.add(new TextHoverChecker(144, 144 + (2 * 20) + 16, startX + 100, (startX + 100) + (2 * 20) + 16, Utils.localize("gui.securitycraft:scManual.disabled")));
 
 		pageTitle = page.title();
