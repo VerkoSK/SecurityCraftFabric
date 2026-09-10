@@ -970,7 +970,7 @@ public class SCContent {
 		QUARTZ_MINE = register("quartz_mine", key -> new net.geforcemods.securitycraft.blocks.mines.BaseFullMineBlock(reinforcedCopy(Blocks.NETHER_QUARTZ_ORE).setId(key), Blocks.NETHER_QUARTZ_ORE));
 		//the only block mine whose item is fire resistant, so it is registered separately from its block
 		ANCIENT_DEBRIS_MINE = registerBlockNoItem("ancient_debris_mine", key -> new net.geforcemods.securitycraft.blocks.mines.BaseFullMineBlock(reinforcedCopy(Blocks.ANCIENT_DEBRIS).setId(key), Blocks.ANCIENT_DEBRIS));
-		ANCIENT_DEBRIS_MINE_ITEM = registerItem("ancient_debris_mine", new BlockItem(ANCIENT_DEBRIS_MINE, new Item.Properties().fireResistant().setId(ResourceKey.create(Registries.ITEM, id("ancient_debris_mine")))));
+		ANCIENT_DEBRIS_MINE_ITEM = registerItem("ancient_debris_mine", new BlockItem(ANCIENT_DEBRIS_MINE, new Item.Properties().fireResistant().useBlockDescriptionPrefix().setId(ResourceKey.create(Registries.ITEM, id("ancient_debris_mine")))));
 		GILDED_BLACKSTONE_MINE = register("gilded_blackstone_mine", key -> new net.geforcemods.securitycraft.blocks.mines.BaseFullMineBlock(reinforcedCopy(Blocks.GILDED_BLACKSTONE).setId(key), Blocks.GILDED_BLACKSTONE));
 		//the light level override is mandatory: Properties.copy carries vanilla's litBlockEmission lambda, which reads a LIT property FurnaceMineBlock does not have
 		FURNACE_MINE = register("furnace_mine", key -> new net.geforcemods.securitycraft.blocks.mines.FurnaceMineBlock(reinforcedCopy(Blocks.FURNACE).lightLevel(state -> 0).setId(key), Blocks.FURNACE));
@@ -1156,7 +1156,7 @@ public class SCContent {
 		//the scaffolding needs vanilla's own block item, which is what lets it be stacked downwards while held
 		if (category.equals("scaffolding")) {
 			block = registerBlockNoItem(name, factory);
-			Registry.register(BuiltInRegistries.ITEM, id(name), new net.minecraft.world.item.ScaffoldingBlockItem(block, new Item.Properties().setId(ResourceKey.create(Registries.ITEM, id(name)))));
+			Registry.register(BuiltInRegistries.ITEM, id(name), new net.minecraft.world.item.ScaffoldingBlockItem(block, new Item.Properties().useBlockDescriptionPrefix().setId(ResourceKey.create(Registries.ITEM, id(name)))));
 		}
 		else
 			block = register(name, factory);
@@ -1214,7 +1214,7 @@ public class SCContent {
 		ResourceKey<Block> blockKey = ResourceKey.create(Registries.BLOCK, id(name));
 		Block block = Registry.register(BuiltInRegistries.BLOCK, blockKey, factory.apply(blockKey));
 		ResourceKey<Item> itemKey = ResourceKey.create(Registries.ITEM, id(name));
-		BlockItem item = Registry.register(BuiltInRegistries.ITEM, itemKey, new BlockItem(block, new Item.Properties().setId(itemKey)));
+		BlockItem item = Registry.register(BuiltInRegistries.ITEM, itemKey, new BlockItem(block, new Item.Properties().useBlockDescriptionPrefix().setId(itemKey)));
 		TAB_ITEMS.add(item);
 		return block;
 	}
