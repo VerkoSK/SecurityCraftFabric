@@ -1,0 +1,12 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"category": "redstone",
+	"pattern": ["SSS", "RH_", "SSS"],
+	"key": {
+		"S": { "item": "securitycraft:reinforced_stone" },
+		"R": { "item": "minecraft:redstone" },
+		"H": { "item": "securitycraft:reinforced_hopper" },
+		"_": { "item": "securitycraft:reinforced_cobblestone_slab" }
+	},
+	"result": { "item": "securitycraft:keycard_reader", "count": 1 }
+}

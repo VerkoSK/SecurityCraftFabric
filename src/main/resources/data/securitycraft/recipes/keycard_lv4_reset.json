@@ -1,0 +1,6 @@
+{
+	"type": "minecraft:crafting_shapeless",
+	"category": "misc",
+	"ingredients": [ { "item": "securitycraft:keycard_lv4" } ],
+	"result": { "item": "securitycraft:keycard_lv4", "count": 1 }
+}

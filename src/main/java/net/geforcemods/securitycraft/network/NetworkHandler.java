@@ -68,6 +68,38 @@ public final class NetworkHandler {
 
 			server.execute(() -> handleRemoveMineFromMRAT(player, payload));
 		});
+		ServerPlayNetworking.registerGlobalReceiver(SyncKeycardSettingsPayload.CHANNEL, (server, player, handler, buf, sender) -> {
+			SyncKeycardSettingsPayload payload = SyncKeycardSettingsPayload.read(buf);
+
+			server.execute(() -> handleSyncKeycardSettings(player, payload));
+		});
+		ServerPlayNetworking.registerGlobalReceiver(SetKeycardUsesPayload.CHANNEL, (server, player, handler, buf, sender) -> {
+			SetKeycardUsesPayload payload = SetKeycardUsesPayload.read(buf);
+
+			server.execute(() -> handleSetKeycardUses(player, payload));
+		});
+	}
+
+	private static void handleSyncKeycardSettings(ServerPlayer player, SyncKeycardSettingsPayload payload) {
+		ServerLevel level = player.serverLevel();
+
+		if (player.isSpectator() || !inReach(player, payload.pos()) || !(level.getBlockEntity(payload.pos()) instanceof net.geforcemods.securitycraft.blockentities.KeycardReaderBlockEntity be) || !be.isOwnedBy(player))
+			return;
+
+		be.setAcceptedLevels(payload.acceptedLevels());
+		be.setSignature(payload.signature());
+
+		if (payload.link() && player.containerMenu instanceof net.geforcemods.securitycraft.inventory.KeycardReaderMenu openMenu && openMenu.be == be)
+			openMenu.link(payload.usableBy());
+	}
+
+	private static void handleSetKeycardUses(ServerPlayer player, SetKeycardUsesPayload payload) {
+		ServerLevel level = player.serverLevel();
+
+		if (player.isSpectator() || !inReach(player, payload.pos()) || !(level.getBlockEntity(payload.pos()) instanceof net.geforcemods.securitycraft.blockentities.KeycardReaderBlockEntity) || !(player.containerMenu instanceof net.geforcemods.securitycraft.inventory.KeycardReaderMenu menu))
+			return;
+
+		menu.setKeycardUsesLeft(payload.usesLeft());
 	}
 
 	private static void handleRemoteControlMine(ServerPlayer player, RemoteControlMinePayload payload) {
