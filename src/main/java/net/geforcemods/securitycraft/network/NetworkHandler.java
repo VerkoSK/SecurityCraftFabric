@@ -96,10 +96,10 @@ public final class NetworkHandler {
 	private static void handleSetKeycardUses(ServerPlayer player, SetKeycardUsesPayload payload) {
 		ServerLevel level = player.serverLevel();
 
-		if (player.isSpectator() || !inReach(player, payload.pos()) || !(level.getBlockEntity(payload.pos()) instanceof net.geforcemods.securitycraft.blockentities.KeycardReaderBlockEntity) || !(player.containerMenu instanceof net.geforcemods.securitycraft.inventory.KeycardReaderMenu menu))
+		if (player.isSpectator() || !inReach(player, payload.pos()) || !(level.getBlockEntity(payload.pos()) instanceof net.geforcemods.securitycraft.blockentities.KeycardReaderBlockEntity be) || !be.isOwnedBy(player) || !(player.containerMenu instanceof net.geforcemods.securitycraft.inventory.KeycardReaderMenu menu) || menu.be != be)
 			return;
 
-		menu.setKeycardUsesLeft(payload.usesLeft());
+		menu.setKeycardUsesLeft(Math.max(0, payload.usesLeft()));
 	}
 
 	private static void handleRemoteControlMine(ServerPlayer player, RemoteControlMinePayload payload) {
