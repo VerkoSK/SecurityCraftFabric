@@ -57,7 +57,7 @@ public class ScannerDoorBlockEntity extends CustomizableBlockEntity implements I
 		if (!(state.getBlock() instanceof ScannerDoorBlock block))
 			return false;
 
-		if (hitResult.getDirection().getAxis() != state.getValue(DoorBlock.FACING).getAxis())
+		if (hitResult.getDirection().getAxis() != ScannerDoorBlock.getFacingAxis(state))
 			return false;
 
 		if (!(entity instanceof Player player))

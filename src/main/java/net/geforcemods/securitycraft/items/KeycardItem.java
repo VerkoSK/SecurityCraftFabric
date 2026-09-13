@@ -3,7 +3,10 @@ package net.geforcemods.securitycraft.items;
 import java.util.List;
 import java.util.Optional;
 
-import net.minecraft.ChatFormatting;
+import org.apache.commons.lang3.StringUtils;
+
+import net.geforcemods.securitycraft.SCContent;
+import net.geforcemods.securitycraft.util.Utils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
@@ -11,108 +14,101 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 
-/**
- * A keycard: linked to one Keycard Reader (or Keycard Lock) network by matching signature + owner, then usable by
- * anyone the reader allows (everyone, unless a specific player name was set when linking). All keycard data lives in
- * the stack's NBT - the port has no data components on 1.20.1.
- * <p>
- * Simplified versus upstream: there the "limited" flag is set onto any keycard by crafting it together with a
- * Limited Use Keycard. Here the Limited Use Keycard is instead its own always-limited, level-1 item, to avoid an
- * NBT-copying custom recipe serializer.
- */
 public class KeycardItem extends Item {
-	private static final String TAG = "securitycraft:keycard";
-	private final int level;
-	private final boolean limited;
+	private static final Component LINK_INFO = Component.translatable("tooltip.securitycraft:keycard.link_info").setStyle(Utils.GRAY_STYLE);
+	public static final Component LIMITED_INFO = Component.translatable("tooltip.securitycraft:keycard.limited_info").setStyle(Utils.GRAY_STYLE);
+	private final int level; //0-indexed
 
-	public KeycardItem(Properties properties, int level) {
-		this(properties, level, false);
-	}
-
-	public KeycardItem(Properties properties, int level, boolean limited) {
+	public KeycardItem(Item.Properties properties, int level) {
 		super(properties);
 		this.level = level;
-		this.limited = limited;
 	}
 
-	/** 0-indexed: the level 1 keycard returns 0, the level 5 keycard returns 4. */
+	/**
+	 * @return 0-indexed level of this keycard. Example: The level 1 keycard will return 0, and the level 5 keycard will return 4
+	 */
 	public int getLevel() {
 		return level;
 	}
 
-	public boolean isLimited() {
-		return limited;
-	}
-
 	public static boolean isLinked(ItemStack stack) {
-		return stack.hasTag() && stack.getTag().contains(TAG);
+		return stack.hasTag() && stack.getTag().getBoolean("linked");
 	}
 
-	private static CompoundTag data(ItemStack stack) {
-		return stack.getTagElement(TAG);
+	public static boolean isLimited(ItemStack stack) {
+		return stack.hasTag() && stack.getTag().getBoolean("limited");
 	}
 
 	public static int getSignature(ItemStack stack) {
-		CompoundTag tag = data(stack);
-
-		return tag == null ? 0 : tag.getInt("signature");
-	}
-
-	public static Optional<String> getUsableBy(ItemStack stack) {
-		CompoundTag tag = data(stack);
-		String usableBy = tag == null ? "" : tag.getString("usableBy");
-
-		return usableBy.isEmpty() ? Optional.empty() : Optional.of(usableBy);
-	}
-
-	public static int getUsesLeft(ItemStack stack) {
-		CompoundTag tag = data(stack);
-
-		return tag == null ? 0 : tag.getInt("usesLeft");
-	}
-
-	public static void setUsesLeft(ItemStack stack, int usesLeft) {
-		CompoundTag tag = stack.getOrCreateTagElement(TAG);
-
-		tag.putInt("usesLeft", Math.max(0, usesLeft));
+		return stack.hasTag() ? stack.getTag().getInt("signature") : 0;
 	}
 
 	public static String getOwnerName(ItemStack stack) {
-		CompoundTag tag = data(stack);
-
-		return tag == null ? "" : tag.getString("ownerName");
+		return stack.hasTag() ? stack.getTag().getString("ownerName") : "";
 	}
 
 	public static String getOwnerUUID(ItemStack stack) {
-		CompoundTag tag = data(stack);
-
-		return tag == null ? "" : tag.getString("ownerUUID");
+		return stack.hasTag() ? stack.getTag().getString("ownerUUID") : "";
 	}
 
-	/** Links this keycard to a reader: its owner, signature and (optionally) the one player name allowed to use it. */
-	public static void link(ItemStack stack, int signature, Optional<String> usableBy, String ownerName, String ownerUUID) {
-		CompoundTag tag = stack.getOrCreateTagElement(TAG);
+	public static Optional<String> getUsableBy(ItemStack stack) {
+		if (!stack.hasTag() || !stack.getTag().contains("usable_by"))
+			return Optional.empty();
 
+		String usableBy = stack.getTag().getString("usable_by");
+
+		return usableBy.isBlank() ? Optional.empty() : Optional.of(usableBy);
+	}
+
+	public static int getUsesLeft(ItemStack stack) {
+		return stack.hasTag() ? stack.getTag().getInt("uses") : 0;
+	}
+
+	public static void setUsesLeft(ItemStack stack, int usesLeft) {
+		CompoundTag tag = stack.getOrCreateTag();
+
+		if (tag.getBoolean("limited"))
+			tag.putInt("uses", Math.max(0, usesLeft));
+	}
+
+	public static void link(ItemStack stack, int signature, Optional<String> usableBy, String ownerName, String ownerUUID) {
+		CompoundTag tag = stack.getOrCreateTag();
+
+		tag.putBoolean("linked", true);
 		tag.putInt("signature", signature);
-		tag.putString("usableBy", usableBy.orElse(""));
 		tag.putString("ownerName", ownerName);
 		tag.putString("ownerUUID", ownerUUID);
 
-		if (stack.getItem() instanceof KeycardItem keycard && keycard.limited && !tag.contains("usesLeft"))
-			tag.putInt("usesLeft", 10);
+		if (usableBy.isPresent() && !usableBy.get().isBlank())
+			tag.putString("usable_by", usableBy.get());
+		else
+			tag.remove("usable_by");
 	}
 
 	@Override
 	public void appendHoverText(ItemStack stack, Level level, List<Component> list, TooltipFlag flag) {
-		if (!isLinked(stack)) {
-			list.add(Component.translatable("tooltip.securitycraft:keycard.link_info").withStyle(ChatFormatting.GRAY));
+		if (this == SCContent.LIMITED_USE_KEYCARD)
 			return;
+
+		CompoundTag tag = stack.getOrCreateTag();
+
+		if (tag.getBoolean("linked")) {
+			String usableBy = tag.getString("usable_by");
+
+			list.add(Component.translatable("tooltip.securitycraft:keycard.signature", StringUtils.leftPad("" + tag.getInt("signature"), 5, "0")).setStyle(Utils.GRAY_STYLE));
+			list.add(Component.translatable("tooltip.securitycraft:keycard.reader_owner", tag.getString("ownerName")).setStyle(Utils.GRAY_STYLE));
+
+			if (!usableBy.isBlank())
+				list.add(Component.translatable("tooltip.securitycraft:keycard.usable_by", Component.literal(usableBy)).setStyle(Utils.GRAY_STYLE));
+			else
+				list.add(Component.translatable("tooltip.securitycraft:keycard.usable_by", Component.translatable("tooltip.securitycraft:keycard.everyone")).setStyle(Utils.GRAY_STYLE));
 		}
+		else
+			list.add(LINK_INFO);
 
-		list.add(Component.translatable("tooltip.securitycraft:keycard.signature", String.format("%05d", getSignature(stack))).withStyle(ChatFormatting.GRAY));
-		list.add(Component.translatable("tooltip.securitycraft:keycard.usable_by", getUsableBy(stack).<Component>map(Component::literal).orElse(Component.translatable("tooltip.securitycraft:keycard.everyone"))).withStyle(ChatFormatting.GRAY));
-
-		if (limited)
-			list.add(Component.translatable("tooltip.securitycraft:keycard.uses", getUsesLeft(stack)).withStyle(ChatFormatting.GRAY));
+		if (tag.getBoolean("limited"))
+			list.add(Component.translatable("tooltip.securitycraft:keycard.uses", tag.getInt("uses")).setStyle(Utils.GRAY_STYLE));
+		else
+			list.add(LIMITED_INFO);
 	}
 }

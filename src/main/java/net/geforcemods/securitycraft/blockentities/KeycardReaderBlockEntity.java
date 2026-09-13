@@ -137,7 +137,7 @@ public class KeycardReaderBlockEntity extends CustomizableBlockEntity implements
 		boolean powered = getBlockState().getValue(BlockStateProperties.POWERED) && getSignalLength() > 0;
 
 		if (!powered) {
-			if (((KeycardItem) stack.getItem()).isLimited()) {
+			if (KeycardItem.isLimited(stack)) {
 				int usesLeft = KeycardItem.getUsesLeft(stack);
 
 				if (usesLeft <= 0)

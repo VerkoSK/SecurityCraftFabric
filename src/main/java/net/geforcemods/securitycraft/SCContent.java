@@ -286,6 +286,7 @@ public class SCContent {
 	public static RecipeSerializer<?> BLOCK_UNREINFORCING_SERIALIZER;
 	public static RecipeSerializer<?> LENS_COLORING_SERIALIZER;
 	public static RecipeSerializer<net.geforcemods.securitycraft.recipe.CopyPositionComponentItemRecipe> COPY_MINE_REMOTE_ACCESS_TOOL_RECIPE_SERIALIZER;
+	public static RecipeSerializer<net.geforcemods.securitycraft.recipe.LimitedUseKeycardRecipe> LIMITED_USE_KEYCARD_RECIPE_SERIALIZER;
 	public static net.minecraft.world.inventory.MenuType<net.geforcemods.securitycraft.inventory.BlockReinforcerMenu> BLOCK_REINFORCER_MENU;
 	public static net.minecraft.world.inventory.MenuType<net.geforcemods.securitycraft.inventory.LaserBlockMenu> LASER_BLOCK_MENU;
 	public static net.minecraft.world.inventory.MenuType<net.geforcemods.securitycraft.inventory.DisguiseModuleMenu> DISGUISE_MODULE_MENU;
@@ -970,7 +971,7 @@ public class SCContent {
 		KEYCARD_LV3 = registerItem("keycard_lv3", new net.geforcemods.securitycraft.items.KeycardItem(new Item.Properties(), 2));
 		KEYCARD_LV4 = registerItem("keycard_lv4", new net.geforcemods.securitycraft.items.KeycardItem(new Item.Properties(), 3));
 		KEYCARD_LV5 = registerItem("keycard_lv5", new net.geforcemods.securitycraft.items.KeycardItem(new Item.Properties(), 4));
-		LIMITED_USE_KEYCARD = registerItem("limited_use_keycard", new net.geforcemods.securitycraft.items.KeycardItem(new Item.Properties(), 0, true));
+		LIMITED_USE_KEYCARD = registerItem("limited_use_keycard", new net.geforcemods.securitycraft.items.KeycardItem(new Item.Properties(), -1));
 		KEYCARD_HOLDER = registerItem("keycard_holder", new net.geforcemods.securitycraft.items.KeycardHolderItem(new Item.Properties().stacksTo(1)));
 		SC_MANUAL = registerItem("sc_manual", new net.geforcemods.securitycraft.items.SCManualItem(new Item.Properties().stacksTo(1)));
 		LENS = registerItem("lens", new Item(new Item.Properties()));
@@ -1038,6 +1039,7 @@ public class SCContent {
 		BLOCK_UNREINFORCING_SERIALIZER = Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, id("block_unreinforcing"), new net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer<>(net.geforcemods.securitycraft.recipe.ReinforcerRecipe.Unreinforcing::new));
 		LENS_COLORING_SERIALIZER = Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, id("lens_coloring"), new net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer<>(net.geforcemods.securitycraft.recipe.LensColoringRecipe::new));
 		COPY_MINE_REMOTE_ACCESS_TOOL_RECIPE_SERIALIZER = Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, id("copy_mine_remote_access_tool_recipe"), new net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer<>(net.geforcemods.securitycraft.recipe.CopyPositionComponentItemRecipe::mineRemoteAccessTool));
+		LIMITED_USE_KEYCARD_RECIPE_SERIALIZER = Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, id("limited_use_keycard_recipe"), new net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer<>(net.geforcemods.securitycraft.recipe.LimitedUseKeycardRecipe::new));
 		BLOCK_REINFORCER_MENU = Registry.register(BuiltInRegistries.MENU, id("block_reinforcer"), new net.minecraft.world.inventory.MenuType<>(net.geforcemods.securitycraft.inventory.BlockReinforcerMenu::new, net.minecraft.world.flag.FeatureFlags.VANILLA_SET));
 
 		KEYPAD_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("keypad"), FabricBlockEntityTypeBuilder.create(KeypadBlockEntity::new, KEYPAD).build());
@@ -1242,19 +1244,6 @@ public class SCContent {
 					output.accept(KEYPAD_FURNACE);
 					output.accept(KEYPAD_SMOKER);
 					output.accept(KEYPAD_BLAST_FURNACE);
-					output.accept(LASER_BLOCK);
-					output.accept(PORTABLE_RADAR);
-					output.accept(MINE_REMOTE_ACCESS_TOOL);
-					output.accept(WIRE_CUTTERS);
-					output.accept(ELECTRIFIED_IRON_FENCE);
-					output.accept(ELECTRIFIED_IRON_FENCE_GATE);
-					output.accept(REINFORCED_BY_NAME.get("reinforced_iron_trapdoor"));
-					output.accept(REINFORCED_DOOR);
-					output.accept(KEYPAD_DOOR_ITEM);
-					output.accept(KEYPAD_TRAPDOOR);
-					output.accept(SCANNER_DOOR_ITEM);
-					output.accept(SCANNER_TRAPDOOR);
-					output.accept(RETINAL_SCANNER);
 					output.accept(KEYCARD_READER);
 					output.accept(KEYCARD_LOCK);
 					output.accept(KEYCARD_LV1);
@@ -1262,8 +1251,23 @@ public class SCContent {
 					output.accept(KEYCARD_LV3);
 					output.accept(KEYCARD_LV4);
 					output.accept(KEYCARD_LV5);
-					output.accept(LIMITED_USE_KEYCARD);
 					output.accept(KEYCARD_HOLDER);
+					output.accept(LIMITED_USE_KEYCARD);
+					output.accept(CODEBREAKER);
+					output.accept(UNIVERSAL_KEY_CHANGER);
+					output.accept(RETINAL_SCANNER);
+					output.accept(LASER_BLOCK);
+					output.accept(PORTABLE_RADAR);
+					output.accept(MINE_REMOTE_ACCESS_TOOL);
+					output.accept(WIRE_CUTTERS);
+					output.accept(ELECTRIFIED_IRON_FENCE);
+					output.accept(ELECTRIFIED_IRON_FENCE_GATE);
+					output.accept(REINFORCED_BY_NAME.get("reinforced_iron_trapdoor"));
+					output.accept(KEYPAD_TRAPDOOR);
+					output.accept(SCANNER_TRAPDOOR);
+					output.accept(REINFORCED_DOOR);
+					output.accept(KEYPAD_DOOR_ITEM);
+					output.accept(SCANNER_DOOR_ITEM);
 					output.accept(REINFORCED_PISTON);
 					output.accept(REINFORCED_STICKY_PISTON);
 					output.accept(REINFORCED_BY_NAME.get("reinforced_dispenser"));
@@ -1283,8 +1287,6 @@ public class SCContent {
 					output.accept(HARMING_MODULE);
 					output.accept(UNIVERSAL_BLOCK_MODIFIER);
 					output.accept(UNIVERSAL_OWNER_CHANGER);
-					output.accept(UNIVERSAL_KEY_CHANGER);
-					output.accept(CODEBREAKER);
 					output.accept(UNIVERSAL_BLOCK_REINFORCER_LVL1);
 					output.accept(UNIVERSAL_BLOCK_REINFORCER_LVL2);
 					output.accept(UNIVERSAL_BLOCK_REINFORCER_LVL3);

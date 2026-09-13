@@ -49,7 +49,7 @@ public class KeycardReaderMenu extends AbstractContainerMenu {
 		keycardSlot = addSlot(new Slot(itemInventory, 0, 35, 86) {
 			@Override
 			public boolean mayPlace(ItemStack stack) {
-				if (!(stack.getItem() instanceof KeycardItem))
+				if (!(stack.getItem() instanceof KeycardItem) || stack.getItem() == SCContent.LIMITED_USE_KEYCARD)
 					return false;
 
 				if (!KeycardItem.isLinked(stack))
@@ -75,7 +75,7 @@ public class KeycardReaderMenu extends AbstractContainerMenu {
 	public void setKeycardUsesLeft(int usesLeft) {
 		ItemStack keycard = keycardSlot.getItem();
 
-		if (!keycard.isEmpty() && keycard.getItem() instanceof KeycardItem keycardItem && keycardItem.isLimited())
+		if (!keycard.isEmpty() && KeycardItem.isLimited(keycard))
 			KeycardItem.setUsesLeft(keycard, usesLeft);
 	}
 

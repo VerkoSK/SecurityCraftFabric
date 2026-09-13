@@ -5,6 +5,7 @@ import net.geforcemods.securitycraft.blockentities.ScannerDoorBlockEntity;
 import net.geforcemods.securitycraft.util.LevelUtils;
 import net.geforcemods.securitycraft.util.OwnershipUtils;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -37,6 +38,12 @@ public class ScannerDoorBlock extends DoorBlock implements EntityBlock {
 	public ScannerDoorBlock(BlockSetType type, BlockBehaviour.Properties properties) {
 		super(OwnableBlock.withReinforcedDestroyTime(properties), type);
 		destroyTimeForOwner = OwnableBlock.getStoredDestroyTime();
+	}
+
+	public static Direction.Axis getFacingAxis(BlockState state) {
+		Direction facing = state.getValue(DoorBlock.FACING);
+
+		return state.getValue(DoorBlock.OPEN) ? facing.getClockWise().getAxis() : facing.getAxis();
 	}
 
 	/** The scanner door reacts to being looked at, not to being right-clicked. */

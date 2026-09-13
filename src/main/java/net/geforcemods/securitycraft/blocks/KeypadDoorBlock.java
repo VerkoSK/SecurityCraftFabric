@@ -65,7 +65,7 @@ public class KeypadDoorBlock extends DoorBlock implements EntityBlock {
 					if (be.sendsAllowlistMessage())
 						PlayerUtils.sendMessageToPlayer(player, Utils.localize(getDescriptionId()), Utils.localize("messages.securitycraft:module.onAllowlist"), ChatFormatting.GREEN);
 
-					activate(level, codePos);
+					activate(level, codePos, be.getSignalLength());
 				}
 				else
 					NetworkHandler.openKeypadScreen(serverPlayer, codePos, false, be.getOwner().getName());
@@ -90,7 +90,7 @@ public class KeypadDoorBlock extends DoorBlock implements EntityBlock {
 	}
 
 	/** Toggles both halves of the door at {@code lowerPos} and plays the door sound, bypassing redstone. */
-	public void activate(Level level, BlockPos lowerPos) {
+	public void activate(Level level, BlockPos lowerPos, int signalLength) {
 		BlockState lower = level.getBlockState(lowerPos);
 
 		if (!(lower.getBlock() instanceof KeypadDoorBlock))
@@ -108,6 +108,18 @@ public class KeypadDoorBlock extends DoorBlock implements EntityBlock {
 		level.playSound(null, lowerPos, open ? type().doorOpen() : type().doorClose(), SoundSource.BLOCKS, 1.0F, 1.0F);
 		level.gameEvent(null, open ? GameEvent.BLOCK_OPEN : GameEvent.BLOCK_CLOSE, lowerPos);
 		level.updateNeighborsAt(lowerPos, this);
+
+		if (open && signalLength > 0)
+			level.scheduleTick(lowerPos, this, signalLength);
+	}
+
+	@Override
+	public void tick(BlockState state, net.minecraft.server.level.ServerLevel level, BlockPos pos, net.minecraft.util.RandomSource random) {
+		BlockPos lowerPos = state.getValue(HALF) == DoubleBlockHalf.LOWER ? pos : pos.below();
+		BlockState lower = level.getBlockState(lowerPos);
+
+		if (lower.getBlock() instanceof KeypadDoorBlock && lower.getValue(OPEN))
+			activate(level, lowerPos, 0);
 	}
 
 	/** The keypad door only opens on a correct code; a redstone signal must not open it the way a vanilla door would. */
