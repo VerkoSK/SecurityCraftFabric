@@ -178,6 +178,12 @@ public class KeypadChestBlockEntity extends ChestBlockEntity implements Passcode
 	}
 
 	@Override
+	public void useCodebreaker(Player player) {
+		if (player instanceof ServerPlayer serverPlayer && getBlockState().getBlock() instanceof KeypadChestBlock block)
+			block.activate(getBlockState(), (ServerLevel) level, worldPosition, serverPlayer);
+	}
+
+	@Override
 	public boolean hasPasscode() {
 		return passcodeHash != null;
 	}

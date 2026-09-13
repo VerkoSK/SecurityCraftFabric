@@ -1,5 +1,7 @@
 package net.geforcemods.securitycraft.blockentities;
 
+import java.util.List;
+
 import net.geforcemods.securitycraft.SCContent;
 import net.geforcemods.securitycraft.api.CustomizableBlockEntity;
 import net.geforcemods.securitycraft.api.IViewActivated;
@@ -19,15 +21,18 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.DoorBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 
 /** Lower-half block entity for the {@link ScannerDoorBlock}: owner, allowlist module and the view-scan logic. */
 public class ScannerDoorBlockEntity extends CustomizableBlockEntity implements IViewActivated, ITickingBlockEntity {
 	private BooleanOption sendMessage = new BooleanOption("sendMessage", true);
-	private SignalLengthOption signalLength = new SignalLengthOption(0);
+	private SignalLengthOption signalLength = new SignalLengthOption(60);
 	private DoubleOption maximumDistance = new DoubleOption("maximumDistance", 5.0D, 0.1D, 25.0D, 0.1D) {
 		@Override
 		public String getKey(String denotation) {
@@ -45,6 +50,28 @@ public class ScannerDoorBlockEntity extends CustomizableBlockEntity implements I
 	@Override
 	public void tick(Level level, BlockPos pos, BlockState state) {
 		checkView(level, pos);
+	}
+
+	@Override
+	public void checkView(Level level, BlockPos pos) {
+		if (getViewCooldown() > 0) {
+			setViewCooldown(getViewCooldown() - 1);
+			return;
+		}
+
+		double maximumDistance = getMaximumDistance();
+		List<LivingEntity> entities = level.getEntitiesOfClass(LivingEntity.class, new AABB(pos).inflate(maximumDistance), e -> !e.isSpectator() && !isConsideredInvisible(e) && (!activatedOnlyByPlayer() || e instanceof Player));
+
+		for (LivingEntity entity : entities) {
+			double eyeHeight = entity.getEyeHeight();
+			Vec3 lookVec = new Vec3(entity.getX() + (entity.getLookAngle().x * maximumDistance), (eyeHeight + entity.getY()) + (entity.getLookAngle().y * maximumDistance), entity.getZ() + (entity.getLookAngle().z * maximumDistance));
+			BlockHitResult hitResult = level.clip(new ClipContext(new Vec3(entity.getX(), entity.getY() + entity.getEyeHeight(), entity.getZ()), lookVec, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, entity));
+
+			if (hitResult != null && hitResult.getBlockPos().getX() == pos.getX() && hitResult.getBlockPos().getZ() == pos.getZ() && (hitResult.getBlockPos().getY() == pos.getY() || hitResult.getBlockPos().getY() == pos.getY() + 1) && onEntityViewed(entity, hitResult)) {
+				setViewCooldown(getDefaultViewCooldown());
+				break;
+			}
+		}
 	}
 
 	@Override

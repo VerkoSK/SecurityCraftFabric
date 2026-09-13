@@ -17,6 +17,8 @@ import net.minecraft.world.level.Level;
 public class KeycardItem extends Item {
 	private static final Component LINK_INFO = Component.translatable("tooltip.securitycraft:keycard.link_info").setStyle(Utils.GRAY_STYLE);
 	public static final Component LIMITED_INFO = Component.translatable("tooltip.securitycraft:keycard.limited_info").setStyle(Utils.GRAY_STYLE);
+	public static final Component LIMITED_INFO_1 = Component.translatable("tooltip.securitycraft:keycard.limited_info_1").setStyle(Utils.GRAY_STYLE);
+	public static final Component LIMITED_INFO_2 = Component.translatable("tooltip.securitycraft:keycard.limited_info_2").setStyle(Utils.GRAY_STYLE);
 	private final int level; //0-indexed
 
 	public KeycardItem(Item.Properties properties, int level) {
@@ -103,12 +105,16 @@ public class KeycardItem extends Item {
 			else
 				list.add(Component.translatable("tooltip.securitycraft:keycard.usable_by", Component.translatable("tooltip.securitycraft:keycard.everyone")).setStyle(Utils.GRAY_STYLE));
 		}
-		else
+		else {
+			list.add(Component.translatable("tooltip.securitycraft:keycard.reader_owner", tag.getString("ownerName")).setStyle(Utils.GRAY_STYLE));
 			list.add(LINK_INFO);
+		}
 
 		if (tag.getBoolean("limited"))
 			list.add(Component.translatable("tooltip.securitycraft:keycard.uses", tag.getInt("uses")).setStyle(Utils.GRAY_STYLE));
-		else
-			list.add(LIMITED_INFO);
+		else {
+			list.add(LIMITED_INFO_1);
+			list.add(LIMITED_INFO_2);
+		}
 	}
 }

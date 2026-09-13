@@ -231,6 +231,7 @@ public final class NetworkHandler {
 
 		if (player.level().getBlockEntity(payload.pos()) instanceof net.geforcemods.securitycraft.api.PasscodeProtected keypad && keypad.hasPasscode() && !keypad.isOnCooldown()) {
 			if (keypad.checkPasscode(payload.passcode())) {
+				player.closeContainer();
 				keypad.activate((ServerLevel) player.level());
 				player.displayClientMessage(Component.translatable("messages.securitycraft:passcode.correct"), true);
 			}

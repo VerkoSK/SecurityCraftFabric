@@ -217,6 +217,12 @@ public class KeypadBarrelBlockEntity extends RandomizableContainerBlockEntity im
 	}
 
 	@Override
+	public void useCodebreaker(Player player) {
+		if (player instanceof ServerPlayer serverPlayer && getBlockState().getBlock() instanceof KeypadBarrelBlock block)
+			block.activate(getBlockState(), (ServerLevel) level, worldPosition, serverPlayer);
+	}
+
+	@Override
 	protected AbstractContainerMenu createMenu(int id, Inventory playerInventory) {
 		return ChestMenu.threeRows(id, playerInventory, this);
 	}

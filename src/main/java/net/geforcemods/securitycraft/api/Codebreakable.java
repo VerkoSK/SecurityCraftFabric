@@ -53,7 +53,7 @@ public interface Codebreakable {
 		if (!canBypass && CodebreakerItem.wasRecentlyUsed(codebreaker))
 			return false;
 
-		boolean isSuccessful = canBypass || player.getRandom().nextDouble() < ConfigHandler.codebreakerChance;
+		boolean isSuccessful = player.getRandom().nextDouble() < ConfigHandler.codebreakerChance;
 
 		if (!canBypass) {
 			codebreaker.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(hand));

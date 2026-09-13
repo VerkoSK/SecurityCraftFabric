@@ -14,6 +14,9 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.DoorBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 
 /**
  * Attacker-side tool: right-click a passcode-protected block to try to break into it. Each attempt has a fixed success
@@ -35,6 +38,10 @@ public class CodebreakerItem extends Item {
 				return InteractionResult.PASS;
 
 			BlockPos pos = hitResult.getBlockPos();
+			BlockState state = level.getBlockState(pos);
+
+			if (state.getBlock() instanceof DoorBlock && state.getValue(DoorBlock.HALF) == DoubleBlockHalf.UPPER)
+				pos = pos.below();
 
 			if (!(level.getBlockEntity(pos) instanceof Codebreakable codebreakable))
 				return InteractionResult.PASS;
