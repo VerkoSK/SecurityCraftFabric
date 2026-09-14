@@ -6,9 +6,6 @@ import net.geforcemods.securitycraft.ConfigHandler;
 import net.geforcemods.securitycraft.SCContent;
 import net.geforcemods.securitycraft.api.IOwnable;
 import net.geforcemods.securitycraft.api.Owner;
-import net.geforcemods.securitycraft.util.PlayerUtils;
-import net.geforcemods.securitycraft.util.Utils;
-import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionResult;
@@ -102,16 +99,13 @@ public class BlockReinforcerItem extends Item {
 			return InteractionResult.PASS;
 
 		//removing reinforcement strips the block's protection entirely, so this must respect ownership just like
-		//breaking the block would - otherwise anyone could un-reinforce (and thus bypass) somebody else's blocks
+		//breaking the block would (OwnershipUtils#getDestroyProgress) - otherwise anyone could un-reinforce (and
+		//thus bypass) somebody else's blocks. Silent like that gate too: upstream doesn't message here either
 		if (!isReinforcing(stack) && level.getBlockEntity(pos) instanceof IOwnable ownable) {
 			Owner owner = ownable.getOwner();
 
-			if (owner.owns() && !ownable.isOwnedBy(player) && !ConfigHandler.allowBreakingNonOwnedBlocks) {
-				if (!level.isClientSide)
-					PlayerUtils.sendMessageToPlayer(player, Utils.localize(getDescriptionId()), Utils.localize("messages.securitycraft:notOwned", owner.getName()), ChatFormatting.RED);
-
+			if (owner.owns() && !ownable.isOwnedBy(player) && !ConfigHandler.allowBreakingNonOwnedBlocks)
 				return InteractionResult.FAIL;
-			}
 		}
 
 		if (level instanceof ServerLevel) {
