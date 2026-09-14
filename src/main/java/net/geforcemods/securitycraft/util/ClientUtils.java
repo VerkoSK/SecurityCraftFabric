@@ -29,8 +29,9 @@ public class ClientUtils {
 		guiGraphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
 		com.mojang.blaze3d.systems.RenderSystem.disableBlend();
 
+		//a single long Component doesn't wrap on its own - split it into lines first, or it renders edge to edge
 		if (tooltip != null && mouseX >= x && mouseX < x + 16 && mouseY >= y && mouseY <= y + 16)
-			guiGraphics.renderComponentTooltip(font, java.util.List.of(tooltip), mouseX, mouseY);
+			guiGraphics.renderTooltip(font, font.split(tooltip, 200), mouseX, mouseY);
 	}
 
 	private static net.minecraft.resources.ResourceLocation moduleTexture(ModuleType module) {
