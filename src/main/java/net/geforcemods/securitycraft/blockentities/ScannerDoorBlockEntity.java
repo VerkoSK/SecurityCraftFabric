@@ -42,6 +42,8 @@ public class ScannerDoorBlockEntity extends CustomizableBlockEntity implements I
 	private DisabledOption disabled = new DisabledOption(false);
 	private RespectInvisibilityOption respectInvisibility = new RespectInvisibilityOption();
 	private int viewCooldown = 0;
+	/** Ticks left until the door closes again; driven by this block entity's own tick, not a scheduled block tick. */
+	private int closeTicksLeft = 0;
 
 	public ScannerDoorBlockEntity(BlockPos pos, BlockState state) {
 		super(SCContent.SCANNER_DOOR_BLOCK_ENTITY, pos, state);
@@ -50,6 +52,9 @@ public class ScannerDoorBlockEntity extends CustomizableBlockEntity implements I
 	@Override
 	public void tick(Level level, BlockPos pos, BlockState state) {
 		checkView(level, pos);
+
+		if (closeTicksLeft > 0 && --closeTicksLeft == 0 && state.getBlock() instanceof ScannerDoorBlock block && state.getValue(DoorBlock.OPEN))
+			block.activate(level, worldPosition);
 	}
 
 	@Override
@@ -107,8 +112,7 @@ public class ScannerDoorBlockEntity extends CustomizableBlockEntity implements I
 			if (sendMessage.get())
 				PlayerUtils.sendMessageToPlayer(player, Utils.localize(SCContent.SCANNER_DOOR_ITEM.getDescriptionId()), Utils.localize("messages.securitycraft:retinalScanner.hello", viewer.getName()), ChatFormatting.GREEN);
 
-			if (signalLength.get() > 0)
-				level.scheduleTick(worldPosition, block, signalLength.get());
+			closeTicksLeft = signalLength.get();
 		}
 
 		return true;
@@ -126,8 +130,8 @@ public class ScannerDoorBlockEntity extends CustomizableBlockEntity implements I
 
 	@Override
 	public void setViewCooldown(int viewCooldown) {
+		//not persisted, so this must not call setChanged() every tick during the countdown (see RetinalScannerBlockEntity)
 		this.viewCooldown = viewCooldown;
-		setChanged();
 	}
 
 	public boolean isDisabled() {

@@ -39,6 +39,8 @@ public class ScannerTrapdoorBlockEntity extends CustomizableBlockEntity implemen
 	private DisabledOption disabled = new DisabledOption(false);
 	private RespectInvisibilityOption respectInvisibility = new RespectInvisibilityOption();
 	private int viewCooldown = 0;
+	/** Ticks left until the trapdoor closes again; driven by this block entity's own tick, not a scheduled block tick. */
+	private int closeTicksLeft = 0;
 
 	public ScannerTrapdoorBlockEntity(BlockPos pos, BlockState state) {
 		super(SCContent.SCANNER_TRAPDOOR_BLOCK_ENTITY, pos, state);
@@ -47,6 +49,9 @@ public class ScannerTrapdoorBlockEntity extends CustomizableBlockEntity implemen
 	@Override
 	public void tick(Level level, BlockPos pos, BlockState state) {
 		checkView(level, pos);
+
+		if (closeTicksLeft > 0 && --closeTicksLeft == 0 && state.getBlock() instanceof ScannerTrapdoorBlock block && state.getValue(TrapDoorBlock.OPEN))
+			block.activate(level, worldPosition);
 	}
 
 	@Override
@@ -81,8 +86,7 @@ public class ScannerTrapdoorBlockEntity extends CustomizableBlockEntity implemen
 			if (sendMessage.get())
 				PlayerUtils.sendMessageToPlayer(player, Utils.localize(SCContent.SCANNER_TRAPDOOR.getDescriptionId()), Utils.localize("messages.securitycraft:retinalScanner.hello", viewer.getName()), ChatFormatting.GREEN);
 
-			if (signalLength.get() > 0)
-				level.scheduleTick(worldPosition, block, signalLength.get());
+			closeTicksLeft = signalLength.get();
 		}
 
 		return true;
@@ -100,8 +104,8 @@ public class ScannerTrapdoorBlockEntity extends CustomizableBlockEntity implemen
 
 	@Override
 	public void setViewCooldown(int viewCooldown) {
+		//not persisted, so this must not call setChanged() every tick during the countdown (see RetinalScannerBlockEntity)
 		this.viewCooldown = viewCooldown;
-		setChanged();
 	}
 
 	public boolean isDisabled() {

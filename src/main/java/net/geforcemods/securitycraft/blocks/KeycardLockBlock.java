@@ -138,4 +138,9 @@ public class KeycardLockBlock extends AbstractPanelBlock {
 	public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
 		return new KeycardLockBlockEntity(pos, state);
 	}
+
+	@Override
+	public <T extends BlockEntity> net.minecraft.world.level.block.entity.BlockEntityTicker<T> getTicker(Level level, BlockState state, net.minecraft.world.level.block.entity.BlockEntityType<T> type) {
+		return level.isClientSide ? null : net.geforcemods.securitycraft.util.LevelUtils.createTickerHelper(type, net.geforcemods.securitycraft.SCContent.KEYCARD_LOCK_BLOCK_ENTITY, net.geforcemods.securitycraft.util.LevelUtils::blockEntityTicker);
+	}
 }

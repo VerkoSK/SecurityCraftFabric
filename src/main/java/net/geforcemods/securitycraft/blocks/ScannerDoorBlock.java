@@ -73,15 +73,6 @@ public class ScannerDoorBlock extends DoorBlock implements EntityBlock {
 		level.updateNeighborsAt(lowerPos, this);
 	}
 
-	/** Scheduled by the block entity when a signal length is configured: closes the door again. */
-	@Override
-	public void tick(BlockState state, net.minecraft.server.level.ServerLevel level, BlockPos pos, net.minecraft.util.RandomSource random) {
-		BlockPos lowerPos = state.getValue(HALF) == DoubleBlockHalf.LOWER ? pos : pos.below();
-
-		if (level.getBlockState(lowerPos).getBlock() instanceof ScannerDoorBlock && level.getBlockState(lowerPos).getValue(OPEN))
-			activate(level, lowerPos);
-	}
-
 	/** A redstone signal must not open the scanner door the way it opens a vanilla one. */
 	@Override
 	public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, BlockPos fromPos, boolean movedByPiston) {}

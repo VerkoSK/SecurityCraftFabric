@@ -14,6 +14,7 @@ import net.geforcemods.securitycraft.api.Owner;
 import net.geforcemods.securitycraft.items.KeycardItem;
 import net.geforcemods.securitycraft.misc.ModuleType;
 import net.geforcemods.securitycraft.util.BlockUtils;
+import net.geforcemods.securitycraft.util.ITickingBlockEntity;
 import net.geforcemods.securitycraft.util.TeamUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -35,7 +36,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
  * it. A correct card/hack pulses redstone. Ported from upstream's {@code KeycardReaderBlockEntity}, minus the
  * disguise module and the Sonic Security System lock (not ported).
  */
-public class KeycardReaderBlockEntity extends CustomizableBlockEntity implements MenuProvider, ExtendedScreenHandlerFactory, Codebreakable {
+public class KeycardReaderBlockEntity extends CustomizableBlockEntity implements MenuProvider, ExtendedScreenHandlerFactory, Codebreakable, ITickingBlockEntity {
 	protected boolean[] acceptedLevels = {
 			true, false, false, false, false
 	};
@@ -43,6 +44,8 @@ public class KeycardReaderBlockEntity extends CustomizableBlockEntity implements
 	protected SendDenylistMessageOption sendDenylistMessage = new SendDenylistMessageOption(true);
 	protected SignalLengthOption signalLength = new SignalLengthOption(60);
 	protected DisabledOption disabled = new DisabledOption(false);
+	/** Ticks left until the signal is turned back off; driven by this block entity's own tick, not a scheduled block tick. */
+	private int powerTicksLeft = 0;
 
 	public KeycardReaderBlockEntity(BlockPos pos, BlockState state) {
 		this(SCContent.KEYCARD_READER_BLOCK_ENTITY, pos, state);
@@ -154,13 +157,17 @@ public class KeycardReaderBlockEntity extends CustomizableBlockEntity implements
 	}
 
 	public void activate() {
-		int length = getSignalLength();
-
 		level.setBlockAndUpdate(worldPosition, getBlockState().cycle(BlockStateProperties.POWERED));
 		BlockUtils.updateIndirectNeighbors(level, worldPosition, getBlockState().getBlock());
+		powerTicksLeft = getSignalLength();
+	}
 
-		if (length > 0)
-			level.scheduleTick(worldPosition, getBlockState().getBlock(), length);
+	@Override
+	public void tick(net.minecraft.world.level.Level level, BlockPos pos, BlockState state) {
+		if (powerTicksLeft > 0 && --powerTicksLeft == 0 && state.getValue(BlockStateProperties.POWERED)) {
+			level.setBlockAndUpdate(pos, state.setValue(BlockStateProperties.POWERED, false));
+			BlockUtils.updateIndirectNeighbors(level, pos, state.getBlock());
+		}
 	}
 
 	@Override
@@ -171,6 +178,7 @@ public class KeycardReaderBlockEntity extends CustomizableBlockEntity implements
 	@Override
 	public <T> void onOptionChanged(Option<T> option) {
 		if (option == signalLength && level != null) {
+			powerTicksLeft = 0;
 			level.setBlockAndUpdate(worldPosition, getBlockState().setValue(BlockStateProperties.POWERED, false));
 			BlockUtils.updateIndirectNeighbors(level, worldPosition, getBlockState().getBlock());
 		}

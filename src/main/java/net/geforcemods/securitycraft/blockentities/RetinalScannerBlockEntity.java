@@ -37,6 +37,8 @@ public class RetinalScannerBlockEntity extends CustomizableBlockEntity implement
 	private DisabledOption disabled = new DisabledOption(false);
 	private RespectInvisibilityOption respectInvisibility = new RespectInvisibilityOption();
 	private int viewCooldown = 0;
+	/** Ticks left until the signal is turned back off; driven by this block entity's own tick, not a scheduled block tick. */
+	private int powerTicksLeft = 0;
 
 	public RetinalScannerBlockEntity(BlockPos pos, BlockState state) {
 		super(SCContent.RETINAL_SCANNER_BLOCK_ENTITY, pos, state);
@@ -45,6 +47,11 @@ public class RetinalScannerBlockEntity extends CustomizableBlockEntity implement
 	@Override
 	public void tick(Level level, BlockPos pos, BlockState state) {
 		checkView(level, pos);
+
+		if (powerTicksLeft > 0 && --powerTicksLeft == 0 && state.getValue(RetinalScannerBlock.POWERED)) {
+			level.setBlockAndUpdate(pos, state.setValue(RetinalScannerBlock.POWERED, false));
+			BlockUtils.updateIndirectNeighbors(level, pos, state.getBlock());
+		}
 	}
 
 	@Override
@@ -80,9 +87,7 @@ public class RetinalScannerBlockEntity extends CustomizableBlockEntity implement
 
 		level.setBlockAndUpdate(worldPosition, state.setValue(RetinalScannerBlock.POWERED, true));
 		BlockUtils.updateIndirectNeighbors(level, worldPosition, SCContent.RETINAL_SCANNER);
-
-		if (length > 0)
-			level.scheduleTick(worldPosition, SCContent.RETINAL_SCANNER, length);
+		powerTicksLeft = length;
 
 		return true;
 	}
@@ -90,6 +95,7 @@ public class RetinalScannerBlockEntity extends CustomizableBlockEntity implement
 	@Override
 	public <T> void onOptionChanged(Option<T> option) {
 		if (option == signalLength && level != null) {
+			powerTicksLeft = 0;
 			level.setBlockAndUpdate(worldPosition, getBlockState().setValue(RetinalScannerBlock.POWERED, false));
 			BlockUtils.updateIndirectNeighbors(level, worldPosition, getBlockState().getBlock());
 		}
@@ -109,8 +115,9 @@ public class RetinalScannerBlockEntity extends CustomizableBlockEntity implement
 
 	@Override
 	public void setViewCooldown(int viewCooldown) {
+		//not persisted (see load/saveAdditional), so this must not call setChanged() - doing so every tick while the
+		//cooldown counts down needlessly marks the chunk dirty and re-fires the neighbour signal update every tick
 		this.viewCooldown = viewCooldown;
-		setChanged();
 	}
 
 	@Override
