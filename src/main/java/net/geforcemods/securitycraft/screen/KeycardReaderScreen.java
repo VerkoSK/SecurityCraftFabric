@@ -111,7 +111,7 @@ public class KeycardReaderScreen extends AbstractContainerScreen<KeycardReaderMe
 			int index = i;
 			int y = topPos + 50 + (i + 1) * 17;
 
-			levelBoxes[i] = addRenderableWidget(new TogglePictureButton(leftPos + 100, y, 15, 15, 0, 0, 15, 15, LEVEL_CANCEL_SPRITE, LEVEL_CONFIRM_SPRITE, acceptedLevels[i], selected -> onLevelToggled(index, selected)));
+			levelBoxes[i] = addRenderableWidget(new TogglePictureButton(leftPos + 100, y, 15, 15, 2, 2, 11, 11, LEVEL_CANCEL_SPRITE, LEVEL_CONFIRM_SPRITE, acceptedLevels[i], selected -> onLevelToggled(index, selected)));
 			levelBoxes[i].active = isOwner;
 		}
 
