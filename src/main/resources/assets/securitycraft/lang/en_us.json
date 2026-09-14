@@ -1060,5 +1060,6 @@
 	"tooltip.securitycraft:module.notModifiable": "Module is not modifiable!",
 	"waila.securitycraft:customName": "Custom name: %s",
 	"waila.securitycraft:equipped": "Equipped with:",
-	"waila.securitycraft:owner": "Owner: %s"
+	"waila.securitycraft:owner": "Owner: %s",
+	"waila.securitycraft:passcodeProtected": "Passcode-Protected"
 }
