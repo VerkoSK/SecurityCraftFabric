@@ -219,7 +219,9 @@ public final class NetworkHandler {
 		if (!validPasscode(payload.passcode()) || !inReach(player, payload.pos()))
 			return;
 
-		if (player.level().getBlockEntity(payload.pos()) instanceof net.geforcemods.securitycraft.api.PasscodeProtected keypad && keypad.getOwner().isOwner(player)) {
+		net.geforcemods.securitycraft.api.PasscodeProtected keypad = resolvePasscodeProtected(player, payload.pos());
+
+		if (keypad != null && keypad.getOwner().isOwner(player)) {
 			keypad.setPasscode(payload.passcode());
 			player.displayClientMessage(Component.translatable("messages.securitycraft:passcode.set"), true);
 		}
@@ -229,7 +231,9 @@ public final class NetworkHandler {
 		if (!validPasscode(payload.passcode()) || !inReach(player, payload.pos()))
 			return;
 
-		if (player.level().getBlockEntity(payload.pos()) instanceof net.geforcemods.securitycraft.api.PasscodeProtected keypad && keypad.hasPasscode() && !keypad.isOnCooldown()) {
+		net.geforcemods.securitycraft.api.PasscodeProtected keypad = resolvePasscodeProtected(player, payload.pos());
+
+		if (keypad != null && keypad.hasPasscode() && !keypad.isOnCooldown()) {
 			if (keypad.checkPasscode(payload.passcode())) {
 				player.closeContainer();
 				keypad.activate((ServerLevel) player.level());
@@ -240,6 +244,17 @@ public final class NetworkHandler {
 				player.displayClientMessage(Component.translatable("messages.securitycraft:passcode.incorrect"), true);
 			}
 		}
+	}
+
+	/** A real {@link net.geforcemods.securitycraft.api.PasscodeProtected} block entity, or a generic {@link net.geforcemods.securitycraft.misc.ContainerLockData} lock at that position - see {@link net.geforcemods.securitycraft.misc.ContainerLockEnforcement}. */
+	private static net.geforcemods.securitycraft.api.PasscodeProtected resolvePasscodeProtected(ServerPlayer player, BlockPos pos) {
+		if (player.level().getBlockEntity(pos) instanceof net.geforcemods.securitycraft.api.PasscodeProtected keypad)
+			return keypad;
+
+		if (player.level() instanceof ServerLevel serverLevel)
+			return net.geforcemods.securitycraft.misc.ContainerLockData.get(serverLevel).get(pos);
+
+		return null;
 	}
 
 	private static boolean validPasscode(String passcode) {

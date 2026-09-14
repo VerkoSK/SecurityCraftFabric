@@ -861,8 +861,6 @@
 	"messages.securitycraft:mrat.unbound": "Unbound the mine at %s from the remote access tool.",
 	"messages.securitycraft:notEnoughKeyPanels": "You need %s key panels to convert this block!",
 	"messages.securitycraft:notOwned": "Sorry, you cannot do that. This is owned by %s.",
-	"messages.securitycraft:keyPanel.locked": "This container is now locked to you. Only you (and your team) can open or break it.",
-	"messages.securitycraft:keyPanel.unlocked": "This container has been unlocked.",
 	"messages.securitycraft:codebreaker.failed": "Code breaking attempt failed, please try again.",
 	"messages.securitycraft:codebreaker.owned": "You are trying to break the code of something you own. If you forgot the passcode, use the Universal Key Changer instead.",
 	"messages.securitycraft:codebreakerDisabled": "The codebreaker has been disabled through the config file.",
