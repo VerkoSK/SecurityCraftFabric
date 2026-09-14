@@ -91,6 +91,19 @@ public class BlockReinforcerItem extends Item {
 		if (target == null || player == null || player.isCreative() || !level.mayInteract(player, pos))
 			return InteractionResult.PASS;
 
+		//removing reinforcement strips the block's protection entirely, so this must respect ownership just like
+		//breaking the block would - otherwise anyone could un-reinforce (and thus bypass) somebody else's blocks
+		if (!isReinforcing(stack) && level.getBlockEntity(pos) instanceof net.geforcemods.securitycraft.api.IOwnable ownable) {
+			net.geforcemods.securitycraft.api.Owner owner = ownable.getOwner();
+
+			if (owner.owns() && !ownable.isOwnedBy(player) && !net.geforcemods.securitycraft.ConfigHandler.allowBreakingNonOwnedBlocks) {
+				if (!level.isClientSide)
+					net.geforcemods.securitycraft.util.PlayerUtils.sendMessageToPlayer(player, net.geforcemods.securitycraft.util.Utils.localize(getDescriptionId()), net.geforcemods.securitycraft.util.Utils.localize("messages.securitycraft:notOwned", owner.getName()), net.minecraft.ChatFormatting.RED);
+
+				return InteractionResult.FAIL;
+			}
+		}
+
 		if (level instanceof ServerLevel) {
 			level.setBlockAndUpdate(pos, target.withPropertiesOf(state));
 			stack.hurtAndBreak(1, player, net.minecraft.world.entity.LivingEntity.getSlotForHand(ctx.getHand()));
