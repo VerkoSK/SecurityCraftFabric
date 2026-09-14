@@ -33,7 +33,7 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
  * A wall-mounted eye scanner: when its owner (or an allowlisted player) looks at its front from close range, it emits a
  * redstone pulse. Like every reinforced block it can only be mined by whoever placed it.
  */
-public class RetinalScannerBlock extends Block implements EntityBlock {
+public class RetinalScannerBlock extends Block implements EntityBlock, net.geforcemods.securitycraft.api.IDoorActivator {
 	public static final DirectionProperty FACING = BlockStateProperties.FACING;
 	public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
 	private final float destroyTimeForOwner;

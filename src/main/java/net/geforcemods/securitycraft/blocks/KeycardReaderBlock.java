@@ -42,7 +42,7 @@ import net.minecraft.world.phys.BlockHitResult;
  * redstone. A Codebreaker can hack it directly; a Keycard Holder tries every card inside it. Like every reinforced
  * block it can only be mined by whoever placed it.
  */
-public class KeycardReaderBlock extends Block implements EntityBlock {
+public class KeycardReaderBlock extends Block implements EntityBlock, net.geforcemods.securitycraft.api.IDoorActivator {
 	public static final DirectionProperty FACING = BlockStateProperties.FACING;
 	public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
 	private final float destroyTimeForOwner;

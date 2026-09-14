@@ -142,8 +142,5 @@ They get folded into whichever release touches the same area.
 - **Lens colouring on 1.20.6** — the recipe does not apply the dye there.
 - **Module automation** — the original lets hoppers insert modules through a Forge capability. Fabric's
   equivalent is the Transfer API; nothing in the port exposes one yet.
-- **Door activators** — the original has an `IDoorActivator` registry so any SecurityCraft block can
-  open a door or fence gate. The port hardcodes the keypad instead; the registry arrives with V0.6,
-  when there is more than one thing that can open a door.
 - **Disguise module** — works on the keypad and laser block. Every further disguisable block added
   from V0.6 onwards has to be wired into the same baked-model wrapper.

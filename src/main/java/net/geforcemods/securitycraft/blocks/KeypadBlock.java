@@ -46,7 +46,7 @@ import net.minecraft.world.phys.BlockHitResult;
  * gating, configurable signal length), minus the NeoForge-only {@code shouldCheckWeakPower} hook and the
  * Frame-conversion / Codebreaker subsystems (separate blocks/items not present in this port).
  */
-public class KeypadBlock extends Block implements EntityBlock, SimpleWaterloggedBlock {
+public class KeypadBlock extends Block implements EntityBlock, SimpleWaterloggedBlock, net.geforcemods.securitycraft.api.IDoorActivator {
 	public static final DirectionProperty FACING = BlockStateProperties.FACING;
 	public static final DirectionProperty ROTATION = DirectionProperty.create("rotation", Direction.Plane.HORIZONTAL);
 	public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
