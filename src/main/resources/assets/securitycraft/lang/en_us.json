@@ -868,6 +868,8 @@
 	"messages.securitycraft:codebreakerDisabled": "The codebreaker has been disabled through the config file.",
 	"messages.securitycraft:updateChecker.updateAvailable": "SecurityCraft %s is available (you have %s).",
 	"messages.securitycraft:updateChecker.download": "Download: %s",
+	"messages.securitycraft:thanks": "Thanks for using SecurityCraft (Fabric port) %s!",
+	"messages.securitycraft:bugReport": "Found a bug or have feedback? Report it on %s.",
 	"messages.securitycraft:passcode.correct": "Correct passcode!",
 	"messages.securitycraft:passcode.incorrect": "Incorrect passcode.",
 	"messages.securitycraft:passcode.notSetUp": "This keypad has not been set up by its owner yet.",
