@@ -6,6 +6,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
@@ -13,6 +14,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 
 /** Holds up to {@link #SLOTS} keycards; right-click to open its inventory. Contents live in the stack's NBT. */
@@ -63,8 +65,21 @@ public class KeycardHolderItem extends Item {
 
 	@Override
 	public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
-		ItemStack stack = player.getItemInHand(hand);
+		openMenu(level, player, player.getItemInHand(hand));
+		return InteractionResultHolder.consume(player.getItemInHand(hand));
+	}
 
+	/**
+	 * Right-clicking a block (rather than air) never reaches {@link #use}: vanilla only calls it when the player's
+	 * raycast hits nothing, so a block-only item that skips this override would silently never open its menu.
+	 */
+	@Override
+	public InteractionResult useOn(UseOnContext ctx) {
+		openMenu(ctx.getLevel(), ctx.getPlayer(), ctx.getItemInHand());
+		return InteractionResult.CONSUME;
+	}
+
+	private void openMenu(Level level, Player player, ItemStack stack) {
 		if (!level.isClientSide) {
 			player.openMenu(new MenuProvider() {
 				@Override
@@ -78,7 +93,5 @@ public class KeycardHolderItem extends Item {
 				}
 			});
 		}
-
-		return InteractionResultHolder.consume(stack);
 	}
 }
