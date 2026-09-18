@@ -32,25 +32,11 @@ passcode-protected chest, barrel, furnace, smoker and blast furnace, and the rei
 hopper, dispenser, dropper, observer, pistons, cauldrons, lectern and chiseled bookshelf, the
 crystal quartz set and the secret signs.
 
----
-
-## V0.6 — Access control
-
-The largest single gap: everything that decides *who may open what*. The passcode blocks already
-exist, so this release is about the other two keys the original offers — keycards and eye scans —
-and about the doors they open.
-
-| Content | Notes |
-| --- | --- |
-| Keycard Reader, Keycard Lock | the block half of the keycard system |
-| Keycard levels 1–5, Limited Use Keycard, Keycard Holder | the items, including the per-owner link |
-| Universal Key Changer | resets a block's passcode or keycard link |
-| Codebreaker | the attacker's side of the same system, with its cooldown and failure chance |
-| Keypad Door, Keypad Trapdoor | passcode-locked doors, on top of V0.5's reinforced door work |
-| Retinal Scanner, Scanner Door, Scanner Trapdoor | opens for whoever the owner allows, by name |
-| Version checker + update notification | asked for since V0.5; small, and useful from here on |
-
-**Depends on:** V0.5's passcode and ownership work. Nothing else blocks it.
+**V0.6** [RELEASING 18.9.2026] — access control: the keycard system (Keycard Reader, Keycard Lock,
+keycard levels 1–5, the Limited Use Keycard and Keycard Holder, all with per-owner linking), the
+Universal Key Changer, the Codebreaker, Keypad Door and Keypad Trapdoor on top of V0.5's reinforced
+door work, the Retinal Scanner with the Scanner Door and Scanner Trapdoor, and the version checker
+with its update notification.
 
 ---
 
