@@ -32,7 +32,9 @@ import net.minecraft.world.phys.Vec3;
 /** Lower-half block entity for the {@link ScannerDoorBlock}: owner, allowlist module and the view-scan logic. */
 public class ScannerDoorBlockEntity extends CustomizableBlockEntity implements IViewActivated, ITickingBlockEntity {
 	private BooleanOption sendMessage = new BooleanOption("sendMessage", true);
-	private SignalLengthOption signalLength = new SignalLengthOption(60);
+	//upstream defaults this to 0 (no auto-close, pure toggle-on-view) unlike RetinalScannerBlockEntity's redstone
+	//signal, which does default to 60; SignalLengthOption's 0-400 range still lets the owner opt into a timed close
+	private SignalLengthOption signalLength = new SignalLengthOption(0);
 	private DoubleOption maximumDistance = new DoubleOption("maximumDistance", 5.0D, 0.1D, 25.0D, 0.1D) {
 		@Override
 		public String getKey(String denotation) {
@@ -112,7 +114,9 @@ public class ScannerDoorBlockEntity extends CustomizableBlockEntity implements I
 			if (sendMessage.get())
 				PlayerUtils.sendMessageToPlayer(player, Utils.localize(SCContent.SCANNER_DOOR_ITEM.getDescriptionId()), Utils.localize("messages.securitycraft:retinalScanner.hello", viewer.getName()), ChatFormatting.GREEN);
 
-			closeTicksLeft = signalLength.get();
+			//matches upstream: a signal length of 0 means no scheduled auto-close at all, only another look toggles it
+			if (signalLength.get() > 0)
+				closeTicksLeft = signalLength.get();
 		}
 
 		return true;
