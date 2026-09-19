@@ -19,7 +19,7 @@ import net.minecraft.world.level.Level;
 
 /** Holds up to {@link #SLOTS} keycards; right-click to open its inventory. Contents live in the stack's NBT. */
 public class KeycardHolderItem extends Item {
-	public static final int SLOTS = 6;
+	public static final int SLOTS = 5;
 	private static final String TAG = "securitycraft:keycards";
 
 	public KeycardHolderItem(Properties properties) {

@@ -10,7 +10,7 @@ import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
-/** 6 keycard slots backed by a Keycard Holder's NBT, plus the player's inventory. */
+/** 5 keycard slots backed by a Keycard Holder's NBT, plus the player's inventory. Matches upstream's layout. */
 public class KeycardHolderMenu extends AbstractContainerMenu {
 	private final KeycardHolderContainer inventory;
 
@@ -24,17 +24,17 @@ public class KeycardHolderMenu extends AbstractContainerMenu {
 		inventory.setMenu(this);
 
 		for (int i = 0; i < KeycardHolderItem.SLOTS; i++) {
-			addSlot(new Slot(inventory, i, 26 + (i % 3) * 18, 20 + (i / 3) * 18));
+			addSlot(new Slot(inventory, i, 44 + i * 18, 20));
 		}
 
 		for (int i = 0; i < 3; i++) {
 			for (int j = 0; j < 9; j++) {
-				addSlot(new Slot(playerInventory, 9 + j + i * 9, 8 + j * 18, 84 + i * 18));
+				addSlot(new Slot(playerInventory, 9 + j + i * 9, 8 + j * 18, 51 + i * 18));
 			}
 		}
 
 		for (int i = 0; i < 9; i++) {
-			addSlot(new Slot(playerInventory, i, 8 + i * 18, 142));
+			addSlot(new Slot(playerInventory, i, 8 + i * 18, 109));
 		}
 	}
 
@@ -50,7 +50,7 @@ public class KeycardHolderMenu extends AbstractContainerMenu {
 			slotStackCopy = slotStack.copy();
 
 			if (index < size) {
-				if (!moveItemStackTo(slotStack, size, 37, true))
+				if (!moveItemStackTo(slotStack, size, size + 27, true))
 					return ItemStack.EMPTY;
 
 				slot.onQuickCraft(slotStack, slotStackCopy);
