@@ -2,6 +2,8 @@
 
 Want a Minecraft server for this mod? [Kinetic Hosting](https://billing.kinetichosting.com/aff.php?aff=1031) has you covered.
 
+---
+
 # SecurityCraft (Fabric)
 
 A **Fabric** port of [SecurityCraft](https://github.com/Geforce132/SecurityCraft), the security and
