@@ -78,3 +78,6 @@ by the toolchain resolver — 17 for 1.20.1, newer for the later branches.
   ChainmailPickaxe. <https://github.com/Geforce132/SecurityCraft>
 - **Fabric port:** Verkos.
 - **License:** [MIT](LICENSE), unchanged from the original.
+
+
+AI is used exclusively for distribution on GitHub and for automated support on Discord
