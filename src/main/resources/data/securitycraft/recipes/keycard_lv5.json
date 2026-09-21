@@ -1,0 +1,21 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"category": "misc",
+	"group": "securitycraft:keycards",
+	"pattern": [
+		"III",
+		"SSS"
+	],
+	"key": {
+		"I": {
+			"item": "minecraft:iron_ingot"
+		},
+		"S": {
+			"item": "minecraft:purple_dye"
+		}
+	},
+	"result": {
+		"count": 1,
+		"item": "securitycraft:keycard_lv5"
+	}
+}

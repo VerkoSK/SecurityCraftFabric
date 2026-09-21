@@ -130,6 +130,8 @@
 		"securitycraft:retinal_scanner",
 		"securitycraft:scanner_door",
 		"securitycraft:scanner_trapdoor",
+		"securitycraft:keycard_reader",
+		"securitycraft:keycard_lock",
 		"securitycraft:reinforced_prismarine",
 		"securitycraft:reinforced_prismarine_bricks",
 		"securitycraft:reinforced_dark_prismarine",

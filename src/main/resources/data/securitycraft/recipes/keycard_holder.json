@@ -1,0 +1,23 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"category": "redstone",
+	"pattern": [
+		"IHI",
+		"LIL"
+	],
+	"key": {
+		"I": {
+			"item": "minecraft:iron_ingot"
+		},
+		"H": {
+			"item": "securitycraft:reinforced_hopper"
+		},
+		"L": {
+			"item": "minecraft:leather"
+		}
+	},
+	"result": {
+		"count": 1,
+		"item": "securitycraft:keycard_holder"
+	}
+}

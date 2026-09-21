@@ -1,0 +1,21 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"category": "misc",
+	"group": "securitycraft:keycards",
+	"pattern": [
+		"III",
+		"SSS"
+	],
+	"key": {
+		"I": {
+			"item": "minecraft:iron_ingot"
+		},
+		"S": {
+			"item": "minecraft:lapis_lazuli"
+		}
+	},
+	"result": {
+		"count": 1,
+		"item": "securitycraft:limited_use_keycard"
+	}
+}
