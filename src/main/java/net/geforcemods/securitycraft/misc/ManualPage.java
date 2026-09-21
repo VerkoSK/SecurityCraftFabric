@@ -24,11 +24,11 @@ import net.minecraft.world.level.block.Block;
  * Dropped versus upstream because the port lacks the underlying content: keycards, display cases, secret signs
  * (standing and hanging), security sea boats, and every reinforced-block manual page that upstream documents
  * individually (alarm, block change detector, block pocket manager/wall, cage trap, floor trap, inventory scanner
- * field, keycard lock/reader, keypad barrel/door/trapdoor/chest/furnace/smoker/blast furnace, motion activated
- * light, panic button, projector, scanner door, secure redstone interface, secure trading station, security camera,
+ * field, keycard lock/reader, keypad barrel/chest/furnace/smoker/blast furnace, motion activated
+ * light, panic button, projector, secure redstone interface, secure trading station, security camera,
  * trophy system, username logger, reinforced hopper, reinforced chiseled bookshelf, briefcase, camera monitor,
  * incognito mask, keycard holder, limited use keycard, portable tune player,
- * reinforced door item, rift stabilizer, scanner door item, sentry (+ remote access tool), taser,
+ * reinforced door item, rift stabilizer, sentry (+ remote access tool), taser,
  * admin tool). {@code LASER_FIELD} is also dropped: this port registers it with {@code registerBlockNoItem},
  * so it has no {@link Item} to build a page around.
  */
@@ -58,6 +58,9 @@ public class ManualPage {
 		add(SCContent.REINFORCED_BY_NAME.get("reinforced_lever").asItem());
 		add(SCContent.REINFORCED_BY_NAME.get("reinforced_iron_trapdoor").asItem(), "", true);
 		add(SCContent.KEYPAD_TRAPDOOR.asItem(), "", true);
+		add(SCContent.RETINAL_SCANNER.asItem(), "", true);
+		add(SCContent.SCANNER_DOOR_ITEM, "", true);
+		add(SCContent.SCANNER_TRAPDOOR.asItem(), "", true);
 		add(SCContent.FAKE_LAVA_BUCKET, "", true);
 		add(SCContent.FAKE_WATER_BUCKET, "", true);
 		add(SCContent.KEY_PANEL_ITEM);
