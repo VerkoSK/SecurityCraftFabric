@@ -299,7 +299,10 @@
     "securitycraft:reinforced_crystal_quartz_pillar",
     "securitycraft:reinforced_piston",
     "securitycraft:reinforced_sticky_piston",
-    "securitycraft:reinforced_piston_head"
+    "securitycraft:reinforced_piston_head",
+    "securitycraft:retinal_scanner",
+    "securitycraft:scanner_door",
+    "securitycraft:scanner_trapdoor"
   ],
   "replace": false
 }
