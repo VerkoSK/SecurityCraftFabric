@@ -125,10 +125,16 @@ public class KeycardReaderScreen extends AbstractContainerScreen<KeycardReaderMe
 
 		ItemStack stack = menu.keycardSlot.getItem();
 		boolean isEmpty = stack.isEmpty();
-		boolean isLimited = !isEmpty && stack.getItem() instanceof KeycardItem keycard && keycard.isLimited();
+		boolean wasActive = usesField.active;
+		boolean isLimited = !isEmpty && KeycardItem.isLimited(stack);
 
 		usesField.setEditable(isLimited);
 		usesField.active = isLimited;
+
+		if (!wasActive && isLimited)
+			usesField.setValue("" + KeycardItem.getUsesLeft(stack));
+		else if (wasActive && !isLimited)
+			usesField.setValue("");
 
 		if (firstTick) {
 			linkButton.active = false;
