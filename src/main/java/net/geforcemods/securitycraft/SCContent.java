@@ -9,6 +9,12 @@ import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.geforcemods.securitycraft.blockentities.KeypadBlockEntity;
 import net.geforcemods.securitycraft.blockentities.KeypadDoorBlockEntity;
+import net.geforcemods.securitycraft.blockentities.RetinalScannerBlockEntity;
+import net.geforcemods.securitycraft.blockentities.ScannerDoorBlockEntity;
+import net.geforcemods.securitycraft.blockentities.ScannerTrapdoorBlockEntity;
+import net.geforcemods.securitycraft.blocks.RetinalScannerBlock;
+import net.geforcemods.securitycraft.blocks.ScannerDoorBlock;
+import net.geforcemods.securitycraft.blocks.ScannerTrapdoorBlock;
 import net.geforcemods.securitycraft.blocks.KeypadBlock;
 import net.geforcemods.securitycraft.blocks.KeypadDoorBlock;
 import net.geforcemods.securitycraft.blockentities.KeypadTrapdoorBlockEntity;
@@ -74,6 +80,12 @@ public class SCContent {
 	public static BlockEntityType<KeypadDoorBlockEntity> KEYPAD_DOOR_BLOCK_ENTITY;
 	public static Block KEYPAD_TRAPDOOR;
 	public static BlockEntityType<KeypadTrapdoorBlockEntity> KEYPAD_TRAPDOOR_BLOCK_ENTITY;
+	public static Block RETINAL_SCANNER;
+	public static BlockEntityType<RetinalScannerBlockEntity> RETINAL_SCANNER_BLOCK_ENTITY;
+	public static Block SCANNER_DOOR;
+	public static BlockEntityType<ScannerDoorBlockEntity> SCANNER_DOOR_BLOCK_ENTITY;
+	public static Block SCANNER_TRAPDOOR;
+	public static BlockEntityType<ScannerTrapdoorBlockEntity> SCANNER_TRAPDOOR_BLOCK_ENTITY;
 	public static net.geforcemods.securitycraft.blocks.ElectrifiedIronFenceBlock ELECTRIFIED_IRON_FENCE;
 	public static net.geforcemods.securitycraft.blocks.ElectrifiedIronFenceGateBlock ELECTRIFIED_IRON_FENCE_GATE;
 	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.ElectrifiedFenceAndGateBlockEntity> ELECTRIFIED_FENCE_AND_GATE_BLOCK_ENTITY;
@@ -825,6 +837,12 @@ public class SCContent {
 		CUTOUT_BLOCKS.add(KEYPAD_DOOR);
 		KEYPAD_TRAPDOOR = register("keypad_trapdoor", key -> new KeypadTrapdoorBlock(BlockSetType.IRON, alwaysDrop(BlockBehaviour.Properties.of().mapColor(net.minecraft.world.level.material.MapColor.METAL).strength(5.0F, 12000.0F).sound(SoundType.METAL).noOcclusion()).setId(key)));
 		CUTOUT_BLOCKS.add(KEYPAD_TRAPDOOR);
+		RETINAL_SCANNER = register("retinal_scanner", key -> new RetinalScannerBlock(alwaysDrop(BlockBehaviour.Properties.of().mapColor(net.minecraft.world.level.material.MapColor.STONE).strength(5.0F, 12000.0F).sound(SoundType.STONE).noOcclusion()).setId(key)));
+		CUTOUT_BLOCKS.add(RETINAL_SCANNER);
+		SCANNER_DOOR = register("scanner_door", key -> new ScannerDoorBlock(BlockSetType.IRON, alwaysDrop(BlockBehaviour.Properties.of().mapColor(net.minecraft.world.level.material.MapColor.METAL).strength(5.0F, 12000.0F).sound(SoundType.METAL).noOcclusion()).setId(key)));
+		CUTOUT_BLOCKS.add(SCANNER_DOOR);
+		SCANNER_TRAPDOOR = register("scanner_trapdoor", key -> new ScannerTrapdoorBlock(BlockSetType.IRON, alwaysDrop(BlockBehaviour.Properties.of().mapColor(net.minecraft.world.level.material.MapColor.METAL).strength(5.0F, 12000.0F).sound(SoundType.METAL).noOcclusion()).setId(key)));
+		CUTOUT_BLOCKS.add(SCANNER_TRAPDOOR);
 		//upstream registers the electrified iron fence gate under the legacy name "reinforced_fence_gate"
 		ELECTRIFIED_IRON_FENCE = (net.geforcemods.securitycraft.blocks.ElectrifiedIronFenceBlock) register("electrified_iron_fence", key -> new net.geforcemods.securitycraft.blocks.ElectrifiedIronFenceBlock(alwaysDrop(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(5.0F, Float.MAX_VALUE).sound(SoundType.METAL)).setId(key)));
 		ELECTRIFIED_IRON_FENCE_GATE = (net.geforcemods.securitycraft.blocks.ElectrifiedIronFenceGateBlock) register("reinforced_fence_gate", key -> new net.geforcemods.securitycraft.blocks.ElectrifiedIronFenceGateBlock(alwaysDrop(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(5.0F, Float.MAX_VALUE).sound(SoundType.METAL)).setId(key)));
@@ -1064,6 +1082,9 @@ public class SCContent {
 		REINFORCED_DOOR_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("reinforced_door"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.ReinforcedDoorBlockEntity::new, REINFORCED_DOOR).build());
 		KEYPAD_DOOR_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("keypad_door"), FabricBlockEntityTypeBuilder.create(KeypadDoorBlockEntity::new, KEYPAD_DOOR).build());
 		KEYPAD_TRAPDOOR_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("keypad_trapdoor"), FabricBlockEntityTypeBuilder.create(KeypadTrapdoorBlockEntity::new, KEYPAD_TRAPDOOR).build());
+		RETINAL_SCANNER_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("retinal_scanner"), FabricBlockEntityTypeBuilder.create(RetinalScannerBlockEntity::new, RETINAL_SCANNER).build());
+		SCANNER_DOOR_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("scanner_door"), FabricBlockEntityTypeBuilder.create(ScannerDoorBlockEntity::new, SCANNER_DOOR).build());
+		SCANNER_TRAPDOOR_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("scanner_trapdoor"), FabricBlockEntityTypeBuilder.create(ScannerTrapdoorBlockEntity::new, SCANNER_TRAPDOOR).build());
 		KEYPAD_CHEST_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("keypad_chest"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.KeypadChestBlockEntity::new, KEYPAD_CHEST).build());
 		KEYPAD_BARREL_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("keypad_barrel"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.KeypadBarrelBlockEntity::new, KEYPAD_BARREL).build());
 		KEYPAD_FURNACE_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("keypad_furnace"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.KeypadFurnaceBlockEntity::new, KEYPAD_FURNACE).build());
@@ -1292,6 +1313,9 @@ public class SCContent {
 					output.accept(REINFORCED_DOOR);
 					output.accept(KEYPAD_DOOR);
 					output.accept(KEYPAD_TRAPDOOR);
+					output.accept(SCANNER_DOOR);
+					output.accept(SCANNER_TRAPDOOR);
+					output.accept(RETINAL_SCANNER);
 					output.accept(REINFORCED_PISTON);
 					output.accept(REINFORCED_STICKY_PISTON);
 					output.accept(REINFORCED_BY_NAME.get("reinforced_dispenser"));
@@ -1419,6 +1443,9 @@ public class SCContent {
 					output.accept(REINFORCED_DOOR);
 					output.accept(KEYPAD_DOOR);
 					output.accept(KEYPAD_TRAPDOOR);
+					output.accept(SCANNER_DOOR);
+					output.accept(SCANNER_TRAPDOOR);
+					output.accept(RETINAL_SCANNER);
 				})
 				.build();
 		Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, id("3_decoration"), decoration);
