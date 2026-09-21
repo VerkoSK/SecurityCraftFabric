@@ -1,0 +1,15 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"category": "equipment",
+	"pattern": [
+		" RL",
+		" IR",
+		"I  "
+	],
+	"key": {
+		"R": { "item": "minecraft:redstone" },
+		"L": { "item": "securitycraft:laser_block" },
+		"I": { "item": "minecraft:iron_ingot" }
+	},
+	"result": { "item": "securitycraft:universal_key_changer", "count": 1 }
+}
