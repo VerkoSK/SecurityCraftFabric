@@ -8,6 +8,7 @@ import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.geforcemods.securitycraft.commands.SCCommand;
 import net.geforcemods.securitycraft.items.MineRemoteAccessToolItem;
+import net.geforcemods.securitycraft.items.CodebreakerItem;
 import net.geforcemods.securitycraft.items.UniversalBlockModifierItem;
 import net.geforcemods.securitycraft.items.UniversalKeyChangerItem;
 import net.geforcemods.securitycraft.items.UniversalOwnerChangerItem;
@@ -32,6 +33,7 @@ public class SecurityCraft implements ModInitializer {
 		MineRemoteAccessToolItem.registerBindingCallback();
 		UniversalOwnerChangerItem.registerUseCallback();
 		UniversalKeyChangerItem.registerUseCallback();
+		CodebreakerItem.registerUseCallback();
 		UniversalBlockModifierItem.registerUseCallback();
 		ServerLifecycleEvents.SERVER_STARTED.register(server -> SERVER = server);
 		ServerLifecycleEvents.SERVER_STOPPED.register(server -> SERVER = null);

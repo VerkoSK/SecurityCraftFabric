@@ -88,6 +88,8 @@ public class SCContent {
 	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.ElectrifiedFenceAndGateBlockEntity> ELECTRIFIED_FENCE_AND_GATE_BLOCK_ENTITY;
 	public static Item UNIVERSAL_OWNER_CHANGER;
 	public static Item UNIVERSAL_KEY_CHANGER;
+	public static Item CODEBREAKER;
+	public static net.minecraft.core.component.DataComponentType<Long> CODEBREAKER_LAST_USED;
 	public static Item SC_MANUAL;
 	/** The secret sign items, in registration order, for the creative tab. */
 	public static final List<ItemLike> SECRET_SIGN_ITEMS = new ArrayList<>();
@@ -964,6 +966,7 @@ public class SCContent {
 		UNIVERSAL_BLOCK_MODIFIER = registerItem("universal_block_modifier", new net.geforcemods.securitycraft.items.UniversalBlockModifierItem(new Item.Properties().stacksTo(1)));
 		UNIVERSAL_OWNER_CHANGER = registerItem("universal_owner_changer", new net.geforcemods.securitycraft.items.UniversalOwnerChangerItem(new Item.Properties().stacksTo(1)));
 		UNIVERSAL_KEY_CHANGER = registerItem("universal_key_changer", new net.geforcemods.securitycraft.items.UniversalKeyChangerItem(new Item.Properties().stacksTo(1)));
+		CODEBREAKER = registerItem("codebreaker", new net.geforcemods.securitycraft.items.CodebreakerItem(new Item.Properties().stacksTo(1).durability(64)));
 		SC_MANUAL = registerItem("sc_manual", new net.geforcemods.securitycraft.items.SCManualItem(new Item.Properties().stacksTo(1)));
 		LENS = registerItem("lens", new Item(new Item.Properties()));
 		//the fluids have to exist before their blocks, and the blocks before the buckets, since each refers back
@@ -1027,6 +1030,7 @@ public class SCContent {
 		UNIVERSAL_BLOCK_REMOVER = registerConverterItem("universal_block_remover", 476, false);
 
 		UNREINFORCING = Registry.register(BuiltInRegistries.DATA_COMPONENT_TYPE, id("unreinforcing"), net.minecraft.core.component.DataComponentType.<net.minecraft.util.Unit>builder().persistent(com.mojang.serialization.Codec.unit(net.minecraft.util.Unit.INSTANCE)).networkSynchronized(net.minecraft.network.codec.StreamCodec.unit(net.minecraft.util.Unit.INSTANCE)).build());
+		CODEBREAKER_LAST_USED = Registry.register(BuiltInRegistries.DATA_COMPONENT_TYPE, id("codebreaker_last_used"), net.minecraft.core.component.DataComponentType.<Long>builder().persistent(com.mojang.serialization.Codec.LONG).networkSynchronized(net.minecraft.network.codec.ByteBufCodecs.VAR_LONG).build());
 		BLOCK_REINFORCING_SERIALIZER = Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, id("block_reinforcing"), new net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer<>(net.geforcemods.securitycraft.recipe.ReinforcerRecipe.Reinforcing::new));
 		BLOCK_UNREINFORCING_SERIALIZER = Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, id("block_unreinforcing"), new net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer<>(net.geforcemods.securitycraft.recipe.ReinforcerRecipe.Unreinforcing::new));
 		COPY_MINE_REMOTE_ACCESS_TOOL_RECIPE_SERIALIZER = Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, id("copy_mine_remote_access_tool_recipe"), new net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer<>(net.geforcemods.securitycraft.recipe.CopyPositionComponentItemRecipe::mineRemoteAccessTool));
@@ -1267,6 +1271,7 @@ public class SCContent {
 					output.accept(UNIVERSAL_BLOCK_MODIFIER);
 					output.accept(UNIVERSAL_OWNER_CHANGER);
 					output.accept(UNIVERSAL_KEY_CHANGER);
+					output.accept(CODEBREAKER);
 					output.accept(UNIVERSAL_BLOCK_REINFORCER_LVL1);
 					output.accept(UNIVERSAL_BLOCK_REINFORCER_LVL2);
 					output.accept(UNIVERSAL_BLOCK_REINFORCER_LVL3);
