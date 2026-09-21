@@ -12,18 +12,22 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.DoorBlock;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.BlockHitResult;
@@ -46,7 +50,7 @@ public class KeypadDoorBlock extends DoorBlock implements EntityBlock {
 	}
 
 	@Override
-	protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
+	public InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
 		BlockPos codePos = lowerPos(pos, state);
 
 		if (!(level.getBlockEntity(codePos) instanceof KeypadDoorBlockEntity be))
@@ -64,7 +68,7 @@ public class KeypadDoorBlock extends DoorBlock implements EntityBlock {
 					if (be.sendsAllowlistMessage())
 						PlayerUtils.sendMessageToPlayer(player, Utils.localize(getDescriptionId()), Utils.localize("messages.securitycraft:module.onAllowlist"), ChatFormatting.GREEN);
 
-					activate(level, codePos);
+					activate(level, codePos, be.getSignalLength());
 				}
 				else
 					NetworkHandler.openKeypadScreen(serverPlayer, codePos, false, be.getOwner().getName());
@@ -89,7 +93,7 @@ public class KeypadDoorBlock extends DoorBlock implements EntityBlock {
 	}
 
 	/** Toggles both halves of the door at {@code lowerPos} and plays the door sound, bypassing redstone. */
-	public void activate(Level level, BlockPos lowerPos) {
+	public void activate(Level level, BlockPos lowerPos, int signalLength) {
 		BlockState lower = level.getBlockState(lowerPos);
 
 		if (!(lower.getBlock() instanceof KeypadDoorBlock))
@@ -107,18 +111,30 @@ public class KeypadDoorBlock extends DoorBlock implements EntityBlock {
 		level.playSound(null, lowerPos, open ? type().doorOpen() : type().doorClose(), SoundSource.BLOCKS, 1.0F, 1.0F);
 		level.gameEvent(null, open ? GameEvent.BLOCK_OPEN : GameEvent.BLOCK_CLOSE, lowerPos);
 		level.updateNeighborsAt(lowerPos, this);
+
+		if (open && signalLength > 0)
+			level.scheduleTick(lowerPos, this, signalLength);
+	}
+
+	@Override
+	public void tick(BlockState state, net.minecraft.server.level.ServerLevel level, BlockPos pos, net.minecraft.util.RandomSource random) {
+		BlockPos lowerPos = state.getValue(HALF) == DoubleBlockHalf.LOWER ? pos : pos.below();
+		BlockState lower = level.getBlockState(lowerPos);
+
+		if (lower.getBlock() instanceof KeypadDoorBlock && lower.getValue(OPEN))
+			activate(level, lowerPos, 0);
 	}
 
 	/** The keypad door only opens on a correct code; a redstone signal must not open it the way a vanilla door would. */
 	@Override
-	public void neighborChanged(BlockState state, Level level, BlockPos pos, net.minecraft.world.level.block.Block block, BlockPos fromPos, boolean movedByPiston) {}
+	public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, BlockPos fromPos, boolean movedByPiston) {}
 
 	/** Placing next to a redstone source must not place the door already open. */
 	@Override
-	public BlockState getStateForPlacement(net.minecraft.world.item.context.BlockPlaceContext ctx) {
+	public BlockState getStateForPlacement(BlockPlaceContext ctx) {
 		BlockState state = super.getStateForPlacement(ctx);
 
-		return state == null ? null : state.setValue(OPEN, false).setValue(POWERED, false);
+		return state == null ? null : state.setValue(OPEN, false).setValue(BlockStateProperties.POWERED, false);
 	}
 
 	@Override

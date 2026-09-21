@@ -1006,7 +1006,7 @@
 	"help.securitycraft.keycard_lv1.info": "Keycards can be linked to Keycard Readers and Keycard Locks in order to open them. Put one in a Keycard Reader and rightclick Link to set its signature, accepted levels and (optionally) the one player allowed to use it.",
 	"help.securitycraft.keycard_lock.info": "The keycard lock is a miniature keycard reader mounted like a button. It can only read cards, and can neither link cards nor change their signature - set it up by rightclicking it with a linked keycard. Rightclick it with a Universal Key Changer to reset it.",
 	"help.securitycraft.keycard_reader.info": "The keycard reader emits a redstone signal if you insert a keycard that matches its settings. Rightclick it with anything other than a linked keycard to open its programming screen. The signature links readers and keycards together: only keycards linked with the same signature as a reader will open it, and multiple readers can share the same signature.",
-	"help.securitycraft.limited_use_keycard.info": "A keycard with a fixed number of uses, set at a Keycard Reader after linking it. Each successful use consumes one.",
+	"help.securitycraft.limited_use_keycard.info": "Combine a Limited Use Keycard with any keycard in a crafting grid to make that keycard limited-use, retaining its signature and link settings.",
 	"item.securitycraft.keycard_holder": "Keycard Holder",
 	"item.securitycraft.keycard_lv1": "Level 1 Keycard",
 	"item.securitycraft.keycard_lv2": "Level 2 Keycard",

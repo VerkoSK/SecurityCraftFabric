@@ -57,7 +57,7 @@ public class ScannerDoorBlockEntity extends CustomizableBlockEntity implements I
 		if (!(state.getBlock() instanceof ScannerDoorBlock block))
 			return false;
 
-		if (hitResult.getDirection().getAxis() != state.getValue(DoorBlock.FACING).getAxis())
+		if (hitResult.getDirection().getAxis() != net.geforcemods.securitycraft.blocks.ScannerDoorBlock.getFacingAxis(state))
 			return false;
 
 		if (!(entity instanceof Player player))
@@ -67,7 +67,7 @@ public class ScannerDoorBlockEntity extends CustomizableBlockEntity implements I
 
 		if (!isOwnedBy(player) && !isAllowed(viewer.getName())) {
 			if (sendMessage.get())
-				PlayerUtils.sendMessageToPlayer(player, Utils.localize(SCContent.SCANNER_DOOR_ITEM.getDescriptionId()), Utils.localize("messages.securitycraft:retinalScanner.notOwner", getOwner().getName()), ChatFormatting.RED);
+				PlayerUtils.sendMessageToPlayer(player, Utils.localize(SCContent.SCANNER_DOOR.getDescriptionId()), Utils.localize("messages.securitycraft:retinalScanner.notOwner", getOwner().getName()), ChatFormatting.RED);
 
 			return true;
 		}
@@ -78,7 +78,7 @@ public class ScannerDoorBlockEntity extends CustomizableBlockEntity implements I
 
 		if (willOpen) {
 			if (sendMessage.get())
-				PlayerUtils.sendMessageToPlayer(player, Utils.localize(SCContent.SCANNER_DOOR_ITEM.getDescriptionId()), Utils.localize("messages.securitycraft:retinalScanner.hello", viewer.getName()), ChatFormatting.GREEN);
+				PlayerUtils.sendMessageToPlayer(player, Utils.localize(SCContent.SCANNER_DOOR.getDescriptionId()), Utils.localize("messages.securitycraft:retinalScanner.hello", viewer.getName()), ChatFormatting.GREEN);
 
 			if (signalLength.get() > 0)
 				level.scheduleTick(worldPosition, block, signalLength.get());
