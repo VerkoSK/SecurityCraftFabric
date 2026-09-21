@@ -821,6 +821,8 @@
 	"option.securitycraft.username_logger.searchRadius": "Search radius: %s",
 	"option.securitycraft.username_logger.searchRadius.description": "The range in blocks in which the username logger searches for players.",
 	"messages.securitycraft:notOwned": "Sorry, you cannot do that. This is owned by %s.",
+	"messages.securitycraft:keyPanel.locked": "This container is now locked to you. Only you (and your team) can open or break it.",
+	"messages.securitycraft:keyPanel.unlocked": "This container has been unlocked.",
 	"block.securitycraft.electrified_iron_fence": "Electrified Iron Fence",
 	"death.attack.securitycraft.electricity": "%s was electrocuted",
 	"death.attack.securitycraft.electricity.player": "%1$s was electrocuted whilst fighting %2$s",
