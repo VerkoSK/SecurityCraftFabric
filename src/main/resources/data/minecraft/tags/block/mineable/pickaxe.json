@@ -302,7 +302,9 @@
     "securitycraft:reinforced_piston_head",
     "securitycraft:retinal_scanner",
     "securitycraft:scanner_door",
-    "securitycraft:scanner_trapdoor"
+    "securitycraft:scanner_trapdoor",
+    "securitycraft:keycard_reader",
+    "securitycraft:keycard_lock"
   ],
   "replace": false
 }
