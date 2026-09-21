@@ -71,23 +71,19 @@ public class KeyPanelItem extends BlockItem {
 
 			if (level instanceof ServerLevel serverLevel && level.getBlockEntity(pos) instanceof Container && !(level.getBlockEntity(pos) instanceof IOwnable)) {
 				ContainerLockData data = ContainerLockData.get(serverLevel);
+				ContainerLockData.LockedContainer lock = data.get(pos);
 
-				if (data.isLocked(pos)) {
-					Owner owner = data.getOwner(pos);
-
-					if (!owner.isTreatedTheSameAs(new Owner(player)))
+				if (lock != null) {
+					if (!lock.getOwner().isTreatedTheSameAs(new Owner(player)))
 						return InteractionResult.PASS; //not yours to unlock; fall through so this doesn't consume a key panel either
 
 					data.unlock(pos);
-					PlayerUtils.sendMessageToPlayer(player, Component.literal("SecurityCraft"), Utils.localize("messages.securitycraft:keyPanel.unlocked"), ChatFormatting.GREEN);
 				}
 				else {
 					data.lock(pos, new Owner(player));
 
 					if (!player.isCreative())
 						stack.shrink(1);
-
-					PlayerUtils.sendMessageToPlayer(player, Component.literal("SecurityCraft"), Utils.localize("messages.securitycraft:keyPanel.locked"), ChatFormatting.GREEN);
 				}
 
 				level.playSound(null, pos, SCSounds.LOCK.event, SoundSource.BLOCKS, 1.0F, 1.0F);
