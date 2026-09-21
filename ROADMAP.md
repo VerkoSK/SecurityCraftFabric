@@ -126,10 +126,11 @@ Features this port has that upstream SecurityCraft does not.
 - **Locking any modded container** — the Key Panel converts a vanilla-compatible chest (see the
   `convertible_chests` tag above) into a real keypad chest, same as upstream. For a container it
   can't convert (a modded chest/barrel/etc that doesn't extend `ChestBlock`), right-clicking it
-  with a Key Panel instead locks that position: only the owner (and their team) can open or break
-  it, enforced globally regardless of the block's mod of origin. No passcode, no GUI — ownership
-  only, tracked in `ContainerLockData` rather than by replacing the block. Right-click your own
-  lock again to remove it.
+  with a Key Panel instead locks that position, tracked in `ContainerLockData` rather than by
+  replacing the block. The locked position then behaves exactly like a real keypad chest - same
+  set/check passcode screens, opening it requires the code same as everyone else including the
+  owner, and only the owner (and their team) can break it - enforced globally regardless of the
+  block's mod of origin. Right-click your own lock again with a Key Panel to remove it.
 
 ---
 
