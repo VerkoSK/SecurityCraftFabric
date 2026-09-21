@@ -900,8 +900,6 @@
 	"messages.securitycraft:mrat.unbound": "Unbound the mine at %s from the remote access tool.",
 	"messages.securitycraft:notEnoughKeyPanels": "You need %s key panels to convert this block!",
 	"messages.securitycraft:notOwned": "Sorry, you cannot do that. This is owned by %s.",
-	"messages.securitycraft:keyPanel.locked": "This container is now locked to you. Only you (and your team) can open or break it.",
-	"messages.securitycraft:keyPanel.unlocked": "This container has been unlocked.",
 	"messages.securitycraft:passcode.correct": "Correct passcode!",
 	"messages.securitycraft:passcode.incorrect": "Incorrect passcode.",
 	"messages.securitycraft:passcode.notSetUp": "This keypad has not been set up by its owner yet.",
