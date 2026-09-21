@@ -67,6 +67,7 @@ public class ManualPage {
 		add(SCContent.UNIVERSAL_BLOCK_REMOVER);
 		add(SCContent.UNIVERSAL_OWNER_CHANGER);
 		add(SCContent.UNIVERSAL_KEY_CHANGER);
+		add(SCContent.CODEBREAKER);
 		add(SCContent.WIRE_CUTTERS);
 		add(SCContent.DENYLIST_MODULE);
 		add(SCContent.DISGUISE_MODULE);

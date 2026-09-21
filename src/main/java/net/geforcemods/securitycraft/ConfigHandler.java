@@ -41,6 +41,10 @@ public final class ConfigHandler {
 	public static double nonOwnedBreakingSlowdown = 1.0;
 	/** Should players be able to claim blocks that have no owner yet, using the Universal Owner Changer? (upstream default true) */
 	public static boolean allowBlockClaim = true;
+	/** Chance (0.0-1.0) that a single Codebreaker use breaks into a passcode-protected block. (upstream default 0.33) */
+	public static double codebreakerChance = 0.33;
+	/** Should the Codebreaker item be usable at all? (upstream default true) */
+	public static boolean allowCodebreakerItem = true;
 
 	private ConfigHandler() {}
 
@@ -88,6 +92,12 @@ public final class ConfigHandler {
 				if (json.has("allow_block_claim"))
 					allowBlockClaim = json.get("allow_block_claim").getAsBoolean();
 
+				if (json.has("codebreaker_chance"))
+					codebreakerChance = Math.max(0.0, Math.min(1.0, json.get("codebreaker_chance").getAsDouble()));
+
+				if (json.has("allow_codebreaker_item"))
+					allowCodebreakerItem = json.get("allow_codebreaker_item").getAsBoolean();
+
 			}
 			else
 				save();
@@ -113,6 +123,8 @@ public final class ConfigHandler {
 		json.addProperty("owned_breaking_slowdown", ownedBreakingSlowdown);
 		json.addProperty("non_owned_breaking_slowdown", nonOwnedBreakingSlowdown);
 		json.addProperty("allow_block_claim", allowBlockClaim);
+		json.addProperty("codebreaker_chance", codebreakerChance);
+		json.addProperty("allow_codebreaker_item", allowCodebreakerItem);
 
 		try {
 			Files.writeString(FILE, new GsonBuilder().setPrettyPrinting().create().toJson(json));
