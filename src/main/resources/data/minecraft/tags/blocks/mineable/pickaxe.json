@@ -16,6 +16,8 @@
 		"securitycraft:retinal_scanner",
 		"securitycraft:scanner_door",
 		"securitycraft:scanner_trapdoor",
+		"securitycraft:keycard_reader",
+		"securitycraft:keycard_lock",
 		"securitycraft:laser_block",
 		"securitycraft:portable_radar",
 		"securitycraft:electrified_iron_fence",
