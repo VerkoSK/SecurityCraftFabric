@@ -51,14 +51,6 @@ public class RetinalScannerBlock extends Block implements EntityBlock {
 	}
 
 	@Override
-	public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
-		if (state.getValue(POWERED)) {
-			level.setBlockAndUpdate(pos, state.setValue(POWERED, false));
-			BlockUtils.updateIndirectNeighbors(level, pos, this);
-		}
-	}
-
-	@Override
 	protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel level, BlockPos pos, boolean movedByPiston) {
 		if (state.getValue(POWERED)) {
 			level.updateNeighborsAt(pos, this);
