@@ -49,6 +49,9 @@ public class KeypadTrapdoorBlock extends TrapDoorBlock implements EntityBlock {
 		if (!(level.getBlockEntity(pos) instanceof KeypadTrapdoorBlockEntity be))
 			return InteractionResult.PASS;
 
+		if (state.getValue(OPEN) && be.getSignalLength() > 0)
+			return InteractionResult.PASS;
+
 		if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
 			if (be.isDisabled())
 				player.displayClientMessage(Utils.localize("gui.securitycraft:scManual.disabled"), true);
@@ -61,7 +64,7 @@ public class KeypadTrapdoorBlock extends TrapDoorBlock implements EntityBlock {
 					if (be.sendsAllowlistMessage())
 						PlayerUtils.sendMessageToPlayer(player, Utils.localize(getDescriptionId()), Utils.localize("messages.securitycraft:module.onAllowlist"), ChatFormatting.GREEN);
 
-					activate(level, pos);
+					activate(level, pos, be.getSignalLength());
 				}
 				else
 					NetworkHandler.openKeypadScreen(serverPlayer, pos, false, be.getOwner().getName());
@@ -86,7 +89,7 @@ public class KeypadTrapdoorBlock extends TrapDoorBlock implements EntityBlock {
 	}
 
 	/** Toggles the trapdoor and plays its sound, bypassing redstone. */
-	public void activate(Level level, BlockPos pos) {
+	public void activate(Level level, BlockPos pos, int signalLength) {
 		BlockState state = level.getBlockState(pos);
 
 		if (!(state.getBlock() instanceof KeypadTrapdoorBlock))
@@ -98,6 +101,15 @@ public class KeypadTrapdoorBlock extends TrapDoorBlock implements EntityBlock {
 		level.playSound(null, pos, open ? blockSetType.trapdoorOpen() : blockSetType.trapdoorClose(), SoundSource.BLOCKS, 1.0F, 1.0F);
 		level.gameEvent(null, open ? GameEvent.BLOCK_OPEN : GameEvent.BLOCK_CLOSE, pos);
 		level.updateNeighborsAt(pos, this);
+
+		if (open && signalLength > 0)
+			level.scheduleTick(pos, this, signalLength);
+	}
+
+	@Override
+	public void tick(BlockState state, net.minecraft.server.level.ServerLevel level, BlockPos pos, net.minecraft.util.RandomSource random) {
+		if (state.getValue(OPEN))
+			activate(level, pos, 0);
 	}
 
 	/** Redstone must not open the keypad trapdoor the way it opens a vanilla one. */
