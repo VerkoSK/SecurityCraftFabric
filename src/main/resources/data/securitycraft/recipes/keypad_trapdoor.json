@@ -1,0 +1,9 @@
+{
+	"type": "minecraft:crafting_shapeless",
+	"category": "redstone",
+	"ingredients": [
+		{ "item": "securitycraft:reinforced_iron_trapdoor" },
+		{ "item": "securitycraft:keypad" }
+	],
+	"result": { "item": "securitycraft:keypad_trapdoor", "count": 1 }
+}
