@@ -29,7 +29,7 @@ import net.minecraft.world.phys.BlockHitResult;
 /** Block entity for the {@link ScannerTrapdoorBlock}: owner, allowlist module and the view-scan logic. */
 public class ScannerTrapdoorBlockEntity extends CustomizableBlockEntity implements IViewActivated, ITickingBlockEntity {
 	private BooleanOption sendMessage = new BooleanOption("sendMessage", true);
-	private IntOption signalLength = new IntOption("signalLength", 0, 0, 400, 5);
+	private IntOption signalLength = new IntOption("signalLength", 60, 0, 400, 5);
 	private DoubleOption maximumDistance = new DoubleOption("maximumDistance", 5.0D, 0.1D, 25.0D, 0.1D) {
 		@Override
 		public String getKey(String denotation) {
