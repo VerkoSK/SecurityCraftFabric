@@ -8,6 +8,7 @@ import net.geforcemods.securitycraft.api.Option;
 import net.geforcemods.securitycraft.api.Option.DisabledOption;
 import net.geforcemods.securitycraft.api.Option.SendAllowlistMessageOption;
 import net.geforcemods.securitycraft.api.Option.SendDenylistMessageOption;
+import net.geforcemods.securitycraft.api.Option.SignalLengthOption;
 import net.geforcemods.securitycraft.api.Option.SmartModuleCooldownOption;
 import net.geforcemods.securitycraft.api.PasscodeProtected;
 import net.geforcemods.securitycraft.blocks.KeypadDoorBlock;
@@ -28,6 +29,7 @@ public class KeypadDoorBlockEntity extends CustomizableBlockEntity implements Pa
 	private DisabledOption disabled = new DisabledOption(false);
 	private SendAllowlistMessageOption sendAllowlistMessage = new SendAllowlistMessageOption(false);
 	private SendDenylistMessageOption sendDenylistMessage = new SendDenylistMessageOption(true);
+	private SignalLengthOption signalLength = new SignalLengthOption(60);
 	private SmartModuleCooldownOption smartModuleCooldown = new SmartModuleCooldownOption();
 	private long cooldownEnd = 0;
 	private String salt = UUID.randomUUID().toString();
@@ -58,7 +60,7 @@ public class KeypadDoorBlockEntity extends CustomizableBlockEntity implements Pa
 	@Override
 	public void activate(ServerLevel level) {
 		if (getBlockState().getBlock() instanceof KeypadDoorBlock block)
-			block.activate(level, worldPosition);
+			block.activate(level, worldPosition, getSignalLength());
 	}
 
 	@Override
@@ -92,6 +94,10 @@ public class KeypadDoorBlockEntity extends CustomizableBlockEntity implements Pa
 		return sendDenylistMessage.get();
 	}
 
+	public int getSignalLength() {
+		return signalLength.get();
+	}
+
 	@Override
 	public ModuleType[] acceptedModules() {
 		return new ModuleType[] {
@@ -102,7 +108,7 @@ public class KeypadDoorBlockEntity extends CustomizableBlockEntity implements Pa
 	@Override
 	public Option<?>[] customOptions() {
 		return new Option[] {
-				sendAllowlistMessage, sendDenylistMessage, disabled, smartModuleCooldown
+				sendAllowlistMessage, sendDenylistMessage, signalLength, disabled, smartModuleCooldown
 		};
 	}
 
