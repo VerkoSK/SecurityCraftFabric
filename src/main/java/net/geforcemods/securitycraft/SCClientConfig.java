@@ -15,6 +15,8 @@ public final class SCClientConfig {
 	private static final Path FILE = FabricLoader.getInstance().getConfigDir().resolve("securitycraft-client.json");
 	public static int tintColor = 0x999999;
 	public static TintMode tintMode = TintMode.ALL;
+	/** Whether to check for a newer SecurityCraft release on join and show a chat notification. */
+	public static boolean checkForUpdates = true;
 
 	private SCClientConfig() {}
 
@@ -29,6 +31,9 @@ public final class SCClientConfig {
 
 				if (json.has("reinforced_block_tint_mode"))
 					tintMode = TintMode.valueOf(json.get("reinforced_block_tint_mode").getAsString());
+
+				if (json.has("check_for_updates"))
+					checkForUpdates = json.get("check_for_updates").getAsBoolean();
 			}
 		}
 		catch (Exception e) {
@@ -48,6 +53,7 @@ public final class SCClientConfig {
 
 		json.addProperty("reinforced_block_tint_color", tintColor);
 		json.addProperty("reinforced_block_tint_mode", tintMode.name());
+		json.addProperty("check_for_updates", checkForUpdates);
 
 		try {
 			Files.writeString(FILE, new GsonBuilder().setPrettyPrinting().create().toJson(json));
