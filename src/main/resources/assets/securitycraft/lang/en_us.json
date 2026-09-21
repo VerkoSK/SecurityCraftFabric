@@ -549,6 +549,8 @@
 	"item.securitycraft.keypad_item": "Key Panel",
 	"gui.securitycraft:scManual.recipe.keypad": "Place down a Frame and rightclick it with a Key Panel.",
 	"messages.securitycraft:notEnoughKeyPanels": "You need %s key panels to convert this block!",
+	"messages.securitycraft:keyPanel.locked": "This container is now locked to you. Only you (and your team) can open or break it.",
+	"messages.securitycraft:keyPanel.unlocked": "This container has been unlocked.",
 	"messages.securitycraft:passcodeProtected.notSetUp": "There is no passcode set yet. You cannot interact with this.",
 	"death.attack.securitycraft.laser.player": "%1$s was sliced to death by a laser whilst fighting %2$s",
 	"messages.securitycraft:module.onAllowlist": "You are added to the allowlist.",
