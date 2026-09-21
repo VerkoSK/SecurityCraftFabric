@@ -84,10 +84,15 @@ public class SecurityCraftClient implements ClientModInitializer {
 	public void onInitializeClient() {
 		SCClientConfig.load();
 		net.geforcemods.securitycraft.misc.UpdateChecker.run();
-		net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> client.execute(() -> net.geforcemods.securitycraft.misc.UpdateChecker.notify(message -> {
-			if (client.player != null)
-				client.player.displayClientMessage(message, false);
-		})));
+		net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> client.execute(() -> {
+			java.util.function.Consumer<net.minecraft.network.chat.Component> messageSink = message -> {
+				if (client.player != null)
+					client.player.displayClientMessage(message, false);
+			};
+
+			net.geforcemods.securitycraft.misc.WelcomeMessage.show(messageSink);
+			net.geforcemods.securitycraft.misc.UpdateChecker.notify(messageSink);
+		}));
 		ClientPlayNetworking.registerGlobalReceiver(OpenKeypadScreenPayload.TYPE, (payload, context) -> context.client().execute(() -> {
 			net.minecraft.network.chat.Component title = context.client().level != null ? context.client().level.getBlockState(payload.pos()).getBlock().getName() : net.minecraft.network.chat.Component.empty();
 

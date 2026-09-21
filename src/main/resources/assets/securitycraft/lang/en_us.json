@@ -854,6 +854,8 @@
 	"messages.securitycraft:codebreakerDisabled": "The codebreaker has been disabled through the config file.",
 	"messages.securitycraft:updateChecker.updateAvailable": "SecurityCraft %s is available (you have %s).",
 	"messages.securitycraft:updateChecker.download": "Download: %s",
+	"messages.securitycraft:thanks": "Thanks for using SecurityCraft (Fabric port) %s!",
+	"messages.securitycraft:bugReport": "Found a bug or have feedback? Report it on %s.",
 	"help.securitycraft.universal_key_changer.info": "The universal key changer allows you to change the passcode of passcode-protected blocks you own. Rightclick a passcode-protected block to open a GUI, then type in the new passcode you want.",
 	"item.securitycraft.universal_key_changer": "Universal Key Changer",
 	"help.securitycraft.universal_owner_changer.info": "The Universal Owner Changer can change a block's owner. To do this, rename the item in an anvil to the name of the new owner of the block. Then just rightclick one of your blocks with an owner and it will change. If enabled, blocks without an owner can be claimed by rightclicking with an unnamed Changer.",
