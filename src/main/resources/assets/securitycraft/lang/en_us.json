@@ -778,6 +778,8 @@
 	"help.securitycraft.track_mine.info": "The track mine explodes when a minecart passes on top of it.",
 	"help.securitycraft.universal_block_modifier.info": "The universal block modifier is used to customize various blocks added by SecurityCraft. Rightclick a block to open the customization GUI. You can then insert \"modules\" to customize how that block functions.",
 	"help.securitycraft.universal_block_remover.info": "If enabled, the universal block remover is used to destroy reinforced blocks by rightclicking it. Only the person who placed the block down can destroy it.",
+	"help.securitycraft.universal_key_changer.info": "The universal key changer allows you to change the passcode of passcode-protected blocks you own. Rightclick a passcode-protected block to open a GUI, then type in the new passcode you want.",
+	"item.securitycraft.universal_key_changer": "Universal Key Changer",
 	"help.securitycraft.universal_owner_changer.info": "The Universal Owner Changer can change a block's owner. To do this, rename the item in an anvil to the name of the new owner of the block. Then just rightclick one of your blocks with an owner and it will change. If enabled, blocks without an owner can be claimed by rightclicking with an unnamed Changer.",
 	"help.securitycraft.whitelist_module.info": "The allowlist module usually removes player(s) from a block's effect or passcode-checking.",
 	"help.securitycraft.wire_cutters.info": "The wire cutters can be used to defuse several types of mines and deactivate a cage trap by rightclicking the block with them. Furthermore, sneak-rightclicking a passcode-protected block removes the passcode protection.",
