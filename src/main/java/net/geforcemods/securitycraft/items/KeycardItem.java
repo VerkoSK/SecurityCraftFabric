@@ -24,6 +24,8 @@ import net.minecraft.world.item.component.TooltipDisplay;
 public class KeycardItem extends Item {
 	private static final Component LINK_INFO = Component.translatable("tooltip.securitycraft:keycard.link_info").setStyle(Utils.GRAY_STYLE);
 	public static final Component LIMITED_INFO = Component.translatable("tooltip.securitycraft:keycard.limited_info").setStyle(Utils.GRAY_STYLE);
+	public static final Component LIMITED_INFO_1 = Component.translatable("tooltip.securitycraft:keycard.limited_info_1").setStyle(Utils.GRAY_STYLE);
+	public static final Component LIMITED_INFO_2 = Component.translatable("tooltip.securitycraft:keycard.limited_info_2").setStyle(Utils.GRAY_STYLE);
 	private final int level; //0-indexed
 
 	public KeycardItem(Item.Properties properties, int level) {
@@ -95,12 +97,16 @@ public class KeycardItem extends Item {
 			tooltip.accept(Component.translatable("tooltip.securitycraft:keycard.reader_owner", data.ownerName()).setStyle(Utils.GRAY_STYLE));
 			tooltip.accept(Component.translatable("tooltip.securitycraft:keycard.usable_by", data.usableByOptional().<Component>map(Component::literal).orElse(Component.translatable("tooltip.securitycraft:keycard.everyone"))).setStyle(Utils.GRAY_STYLE));
 		}
-		else
+		else {
+			tooltip.accept(Component.translatable("tooltip.securitycraft:keycard.reader_owner", data.ownerName()).setStyle(Utils.GRAY_STYLE));
 			tooltip.accept(LINK_INFO);
+		}
 
 		if (data.limited())
 			tooltip.accept(Component.translatable("tooltip.securitycraft:keycard.uses", data.usesLeft()).setStyle(Utils.GRAY_STYLE));
-		else
-			tooltip.accept(LIMITED_INFO);
+		else {
+			tooltip.accept(LIMITED_INFO_1);
+			tooltip.accept(LIMITED_INFO_2);
+		}
 	}
 }
