@@ -15,6 +15,10 @@ import net.geforcemods.securitycraft.blockentities.ScannerTrapdoorBlockEntity;
 import net.geforcemods.securitycraft.blocks.RetinalScannerBlock;
 import net.geforcemods.securitycraft.blocks.ScannerDoorBlock;
 import net.geforcemods.securitycraft.blocks.ScannerTrapdoorBlock;
+import net.geforcemods.securitycraft.blockentities.KeycardReaderBlockEntity;
+import net.geforcemods.securitycraft.blockentities.KeycardLockBlockEntity;
+import net.geforcemods.securitycraft.blocks.KeycardReaderBlock;
+import net.geforcemods.securitycraft.blocks.KeycardLockBlock;
 import net.geforcemods.securitycraft.blocks.KeypadBlock;
 import net.geforcemods.securitycraft.blocks.KeypadDoorBlock;
 import net.geforcemods.securitycraft.blockentities.KeypadTrapdoorBlockEntity;
@@ -91,6 +95,21 @@ public class SCContent {
 	public static BlockEntityType<ScannerDoorBlockEntity> SCANNER_DOOR_BLOCK_ENTITY;
 	public static Block SCANNER_TRAPDOOR;
 	public static BlockEntityType<ScannerTrapdoorBlockEntity> SCANNER_TRAPDOOR_BLOCK_ENTITY;
+	public static Block KEYCARD_READER;
+	public static BlockEntityType<KeycardReaderBlockEntity> KEYCARD_READER_BLOCK_ENTITY;
+	public static Block KEYCARD_LOCK;
+	public static BlockEntityType<KeycardLockBlockEntity> KEYCARD_LOCK_BLOCK_ENTITY;
+	public static net.minecraft.world.inventory.MenuType<net.geforcemods.securitycraft.inventory.KeycardReaderMenu> KEYCARD_READER_MENU;
+	public static net.minecraft.world.inventory.MenuType<net.geforcemods.securitycraft.inventory.KeycardHolderMenu> KEYCARD_HOLDER_MENU;
+	public static Item KEYCARD_LV1;
+	public static Item KEYCARD_LV2;
+	public static Item KEYCARD_LV3;
+	public static Item KEYCARD_LV4;
+	public static Item KEYCARD_LV5;
+	public static Item LIMITED_USE_KEYCARD;
+	public static Item KEYCARD_HOLDER;
+	public static net.minecraft.core.component.DataComponentType<net.geforcemods.securitycraft.components.KeycardData> KEYCARD_DATA;
+	public static net.minecraft.core.component.DataComponentType<net.geforcemods.securitycraft.components.KeycardHolderData> KEYCARD_HOLDER_DATA;
 	public static net.geforcemods.securitycraft.blocks.ElectrifiedIronFenceBlock ELECTRIFIED_IRON_FENCE;
 	public static net.geforcemods.securitycraft.blocks.ElectrifiedIronFenceGateBlock ELECTRIFIED_IRON_FENCE_GATE;
 	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.ElectrifiedFenceAndGateBlockEntity> ELECTRIFIED_FENCE_AND_GATE_BLOCK_ENTITY;
@@ -839,6 +858,10 @@ public class SCContent {
 		CUTOUT_BLOCKS.add(SCANNER_DOOR);
 		SCANNER_TRAPDOOR = register("scanner_trapdoor", key -> new ScannerTrapdoorBlock(BlockSetType.IRON, alwaysDrop(BlockBehaviour.Properties.of().mapColor(net.minecraft.world.level.material.MapColor.METAL).strength(5.0F, 12000.0F).sound(SoundType.METAL).noOcclusion()).setId(key)));
 		CUTOUT_BLOCKS.add(SCANNER_TRAPDOOR);
+		KEYCARD_READER = register("keycard_reader", key -> new KeycardReaderBlock(alwaysDrop(BlockBehaviour.Properties.of().mapColor(net.minecraft.world.level.material.MapColor.STONE).strength(5.0F, 12000.0F).sound(SoundType.STONE).noOcclusion()).setId(key)));
+		CUTOUT_BLOCKS.add(KEYCARD_READER);
+		KEYCARD_LOCK = register("keycard_lock", key -> new KeycardLockBlock(alwaysDrop(BlockBehaviour.Properties.of().strength(3.5F).sound(SoundType.METAL).noOcclusion()).setId(key)));
+		CUTOUT_BLOCKS.add(KEYCARD_LOCK);
 		//upstream registers the electrified iron fence gate under the legacy name "reinforced_fence_gate"
 		ELECTRIFIED_IRON_FENCE = (net.geforcemods.securitycraft.blocks.ElectrifiedIronFenceBlock) register("electrified_iron_fence", key -> new net.geforcemods.securitycraft.blocks.ElectrifiedIronFenceBlock(alwaysDrop(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(5.0F, Float.MAX_VALUE).sound(SoundType.METAL)).setId(key)));
 		ELECTRIFIED_IRON_FENCE_GATE = (net.geforcemods.securitycraft.blocks.ElectrifiedIronFenceGateBlock) register("reinforced_fence_gate", key -> new net.geforcemods.securitycraft.blocks.ElectrifiedIronFenceGateBlock(alwaysDrop(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(5.0F, Float.MAX_VALUE).sound(SoundType.METAL)).setId(key)));
@@ -992,6 +1015,13 @@ public class SCContent {
 		UNIVERSAL_OWNER_CHANGER = registerItem("universal_owner_changer", new net.geforcemods.securitycraft.items.UniversalOwnerChangerItem(new Item.Properties().stacksTo(1).setId(ResourceKey.create(Registries.ITEM, id("universal_owner_changer")))));
 		UNIVERSAL_KEY_CHANGER = registerItem("universal_key_changer", new net.geforcemods.securitycraft.items.UniversalKeyChangerItem(new Item.Properties().stacksTo(1).setId(ResourceKey.create(Registries.ITEM, id("universal_key_changer")))));
 		CODEBREAKER = registerItem("codebreaker", new net.geforcemods.securitycraft.items.CodebreakerItem(new Item.Properties().stacksTo(1).durability(64).setId(ResourceKey.create(Registries.ITEM, id("codebreaker")))));
+		KEYCARD_LV1 = registerItem("keycard_lv1", new net.geforcemods.securitycraft.items.KeycardItem(new Item.Properties().setId(ResourceKey.create(Registries.ITEM, id("keycard_lv1"))), 0));
+		KEYCARD_LV2 = registerItem("keycard_lv2", new net.geforcemods.securitycraft.items.KeycardItem(new Item.Properties().setId(ResourceKey.create(Registries.ITEM, id("keycard_lv2"))), 1));
+		KEYCARD_LV3 = registerItem("keycard_lv3", new net.geforcemods.securitycraft.items.KeycardItem(new Item.Properties().setId(ResourceKey.create(Registries.ITEM, id("keycard_lv3"))), 2));
+		KEYCARD_LV4 = registerItem("keycard_lv4", new net.geforcemods.securitycraft.items.KeycardItem(new Item.Properties().setId(ResourceKey.create(Registries.ITEM, id("keycard_lv4"))), 3));
+		KEYCARD_LV5 = registerItem("keycard_lv5", new net.geforcemods.securitycraft.items.KeycardItem(new Item.Properties().setId(ResourceKey.create(Registries.ITEM, id("keycard_lv5"))), 4));
+		LIMITED_USE_KEYCARD = registerItem("limited_use_keycard", new net.geforcemods.securitycraft.items.KeycardItem(new Item.Properties().setId(ResourceKey.create(Registries.ITEM, id("limited_use_keycard"))), 0, true));
+		KEYCARD_HOLDER = registerItem("keycard_holder", new net.geforcemods.securitycraft.items.KeycardHolderItem(new Item.Properties().stacksTo(1).setId(ResourceKey.create(Registries.ITEM, id("keycard_holder")))));
 		SC_MANUAL = registerItem("sc_manual", new net.geforcemods.securitycraft.items.SCManualItem(new Item.Properties().stacksTo(1).setId(ResourceKey.create(Registries.ITEM, id("sc_manual")))));
 		LENS = registerItem("lens", new Item(new Item.Properties().setId(ResourceKey.create(Registries.ITEM, id("lens")))));
 		//the fluids have to exist before their blocks, and the blocks before the buckets, since each refers back
@@ -1058,6 +1088,8 @@ public class SCContent {
 
 		UNREINFORCING = Registry.register(BuiltInRegistries.DATA_COMPONENT_TYPE, id("unreinforcing"), net.minecraft.core.component.DataComponentType.<net.minecraft.util.Unit>builder().persistent(com.mojang.serialization.Codec.unit(net.minecraft.util.Unit.INSTANCE)).networkSynchronized(net.minecraft.network.codec.StreamCodec.unit(net.minecraft.util.Unit.INSTANCE)).build());
 		CODEBREAKER_LAST_USED = Registry.register(BuiltInRegistries.DATA_COMPONENT_TYPE, id("codebreaker_last_used"), net.minecraft.core.component.DataComponentType.<Long>builder().persistent(com.mojang.serialization.Codec.LONG).networkSynchronized(net.minecraft.network.codec.ByteBufCodecs.VAR_LONG).build());
+		KEYCARD_DATA = Registry.register(BuiltInRegistries.DATA_COMPONENT_TYPE, id("keycard_data"), net.minecraft.core.component.DataComponentType.<net.geforcemods.securitycraft.components.KeycardData>builder().persistent(net.geforcemods.securitycraft.components.KeycardData.CODEC).networkSynchronized(net.geforcemods.securitycraft.components.KeycardData.STREAM_CODEC).cacheEncoding().build());
+		KEYCARD_HOLDER_DATA = Registry.register(BuiltInRegistries.DATA_COMPONENT_TYPE, id("keycard_holder_data"), net.minecraft.core.component.DataComponentType.<net.geforcemods.securitycraft.components.KeycardHolderData>builder().persistent(net.geforcemods.securitycraft.components.KeycardHolderData.codec(net.geforcemods.securitycraft.items.KeycardHolderItem.SLOTS)).networkSynchronized(net.geforcemods.securitycraft.components.KeycardHolderData.streamCodec(net.geforcemods.securitycraft.items.KeycardHolderItem.SLOTS)).cacheEncoding().build());
 		BLOCK_REINFORCING_SERIALIZER = Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, id("block_reinforcing"), new net.minecraft.world.item.crafting.CustomRecipe.Serializer<>(net.geforcemods.securitycraft.recipe.ReinforcerRecipe.Reinforcing::new));
 		BLOCK_UNREINFORCING_SERIALIZER = Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, id("block_unreinforcing"), new net.minecraft.world.item.crafting.CustomRecipe.Serializer<>(net.geforcemods.securitycraft.recipe.ReinforcerRecipe.Unreinforcing::new));
 		BLOCK_REINFORCER_MENU = Registry.register(BuiltInRegistries.MENU, id("block_reinforcer"), new net.minecraft.world.inventory.MenuType<>(net.geforcemods.securitycraft.inventory.BlockReinforcerMenu::new, net.minecraft.world.flag.FeatureFlags.VANILLA_SET));
@@ -1081,6 +1113,8 @@ public class SCContent {
 		RETINAL_SCANNER_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("retinal_scanner"), FabricBlockEntityTypeBuilder.create(RetinalScannerBlockEntity::new, RETINAL_SCANNER).build());
 		SCANNER_DOOR_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("scanner_door"), FabricBlockEntityTypeBuilder.create(ScannerDoorBlockEntity::new, SCANNER_DOOR).build());
 		SCANNER_TRAPDOOR_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("scanner_trapdoor"), FabricBlockEntityTypeBuilder.create(ScannerTrapdoorBlockEntity::new, SCANNER_TRAPDOOR).build());
+		KEYCARD_READER_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("keycard_reader"), FabricBlockEntityTypeBuilder.create(KeycardReaderBlockEntity::new, KEYCARD_READER).build());
+		KEYCARD_LOCK_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("keycard_lock"), FabricBlockEntityTypeBuilder.create(KeycardLockBlockEntity::new, KEYCARD_LOCK).build());
 		KEYPAD_CHEST_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("keypad_chest"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.KeypadChestBlockEntity::new, KEYPAD_CHEST).build());
 		KEYPAD_BARREL_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("keypad_barrel"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.KeypadBarrelBlockEntity::new, KEYPAD_BARREL).build());
 		KEYPAD_FURNACE_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("keypad_furnace"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.KeypadFurnaceBlockEntity::new, KEYPAD_FURNACE).build());
@@ -1089,6 +1123,8 @@ public class SCContent {
 		KEYPAD_FURNACE_MENU = Registry.register(BuiltInRegistries.MENU, id("keypad_furnace"), new net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType<>((syncId, inv, pos) -> new net.geforcemods.securitycraft.inventory.KeypadFurnaceMenu(syncId, inv.player.level(), pos, inv), net.minecraft.core.BlockPos.STREAM_CODEC));
 		KEYPAD_SMOKER_MENU = Registry.register(BuiltInRegistries.MENU, id("keypad_smoker"), new net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType<>((syncId, inv, pos) -> new net.geforcemods.securitycraft.inventory.KeypadSmokerMenu(syncId, inv.player.level(), pos, inv), net.minecraft.core.BlockPos.STREAM_CODEC));
 		KEYPAD_BLAST_FURNACE_MENU = Registry.register(BuiltInRegistries.MENU, id("keypad_blast_furnace"), new net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType<>((syncId, inv, pos) -> new net.geforcemods.securitycraft.inventory.KeypadBlastFurnaceMenu(syncId, inv.player.level(), pos, inv), net.minecraft.core.BlockPos.STREAM_CODEC));
+		KEYCARD_READER_MENU = Registry.register(BuiltInRegistries.MENU, id("keycard_reader"), new net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType<>((syncId, inv, pos) -> new net.geforcemods.securitycraft.inventory.KeycardReaderMenu(syncId, inv.player.level(), pos, inv), net.minecraft.core.BlockPos.STREAM_CODEC));
+		KEYCARD_HOLDER_MENU = Registry.register(BuiltInRegistries.MENU, id("keycard_holder"), new net.minecraft.world.inventory.MenuType<>(net.geforcemods.securitycraft.inventory.KeycardHolderMenu::new, net.minecraft.world.flag.FeatureFlags.VANILLA_SET));
 		REINFORCED_HOPPER_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("reinforced_hopper"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.ReinforcedHopperBlockEntity::new, REINFORCED_BY_NAME.get("reinforced_hopper")).build());
 		REINFORCED_DISPENSER_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("reinforced_dispenser"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.ReinforcedDispenserBlockEntity::new, REINFORCED_BY_NAME.get("reinforced_dispenser")).build());
 		REINFORCED_DROPPER_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("reinforced_dropper"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.ReinforcedDropperBlockEntity::new, REINFORCED_BY_NAME.get("reinforced_dropper")).build());
@@ -1315,6 +1351,15 @@ public class SCContent {
 					output.accept(SCANNER_DOOR);
 					output.accept(SCANNER_TRAPDOOR);
 					output.accept(RETINAL_SCANNER);
+					output.accept(KEYCARD_READER);
+					output.accept(KEYCARD_LOCK);
+					output.accept(KEYCARD_LV1);
+					output.accept(KEYCARD_LV2);
+					output.accept(KEYCARD_LV3);
+					output.accept(KEYCARD_LV4);
+					output.accept(KEYCARD_LV5);
+					output.accept(LIMITED_USE_KEYCARD);
+					output.accept(KEYCARD_HOLDER);
 					output.accept(REINFORCED_PISTON);
 					output.accept(REINFORCED_STICKY_PISTON);
 					output.accept(REINFORCED_BY_NAME.get("reinforced_dispenser"));
@@ -1433,6 +1478,15 @@ public class SCContent {
 					output.accept(SCANNER_DOOR);
 					output.accept(SCANNER_TRAPDOOR);
 					output.accept(RETINAL_SCANNER);
+					output.accept(KEYCARD_READER);
+					output.accept(KEYCARD_LOCK);
+					output.accept(KEYCARD_LV1);
+					output.accept(KEYCARD_LV2);
+					output.accept(KEYCARD_LV3);
+					output.accept(KEYCARD_LV4);
+					output.accept(KEYCARD_LV5);
+					output.accept(LIMITED_USE_KEYCARD);
+					output.accept(KEYCARD_HOLDER);
 				})
 				.build();
 		Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, id("3_decoration"), decoration);
