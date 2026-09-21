@@ -1,0 +1,11 @@
+{
+	"type": "minecraft:crafting_shapeless",
+	"category": "redstone",
+	"ingredients": [
+		"securitycraft:reinforced_iron_trapdoor",
+		"securitycraft:retinal_scanner"
+	],
+	"result": {
+		"id": "securitycraft:scanner_trapdoor"
+	}
+}
