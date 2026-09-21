@@ -158,6 +158,12 @@ public abstract class AbstractKeypadFurnaceBlockEntity extends AbstractFurnaceBl
 	}
 
 	@Override
+	public void useCodebreaker(Player player) {
+		if (player instanceof ServerPlayer serverPlayer && getBlockState().getBlock() instanceof AbstractKeypadFurnaceBlock block)
+			block.activate(this, (ServerLevel) level, worldPosition, serverPlayer);
+	}
+
+	@Override
 	public void startCooldown() {
 		if (!isOnCooldown()) {
 			cooldownEnd = System.currentTimeMillis() + smartModuleCooldown.get() * 50L;
