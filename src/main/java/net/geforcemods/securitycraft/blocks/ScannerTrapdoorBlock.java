@@ -65,12 +65,6 @@ public class ScannerTrapdoorBlock extends TrapDoorBlock implements EntityBlock {
 	}
 
 	@Override
-	public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
-		if (state.getValue(OPEN))
-			activate(level, pos);
-	}
-
-	@Override
 	public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, net.minecraft.world.level.redstone.Orientation orientation, boolean movedByPiston) {}
 
 	@Override
