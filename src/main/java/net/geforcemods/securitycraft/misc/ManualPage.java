@@ -61,6 +61,10 @@ public class ManualPage {
 		add(SCContent.RETINAL_SCANNER.asItem(), "", true);
 		add(SCContent.SCANNER_DOOR.asItem(), "", true);
 		add(SCContent.SCANNER_TRAPDOOR.asItem(), "", true);
+		add(SCContent.KEYCARD_READER.asItem(), "", true);
+		add(SCContent.KEYCARD_LOCK.asItem(), "", true);
+		add(SCContent.KEYCARD_LV1);
+		add(SCContent.KEYCARD_HOLDER);
 		add(SCContent.FAKE_LAVA_BUCKET, "", true);
 		add(SCContent.FAKE_WATER_BUCKET, "", true);
 		add(SCContent.KEY_PANEL_ITEM);
