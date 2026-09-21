@@ -52,10 +52,12 @@ public class ManualPage {
 		add(SCContent.REINFORCED_BY_NAME.get("reinforced_hopper").asItem());
 		add(SCContent.PORTABLE_RADAR.asItem());
 		add(SCContent.REINFORCED_DOOR.asItem());
+		add(SCContent.KEYPAD_DOOR.asItem(), "", true);
 		add(SCContent.ELECTRIFIED_IRON_FENCE_GATE.asItem());
 		add(SCContent.TRACK_MINE.asItem());
 		add(SCContent.REINFORCED_BY_NAME.get("reinforced_lever").asItem());
 		add(SCContent.REINFORCED_BY_NAME.get("reinforced_iron_trapdoor").asItem(), "", true);
+		add(SCContent.KEYPAD_TRAPDOOR.asItem(), "", true);
 		add(SCContent.FAKE_LAVA_BUCKET, "", true);
 		add(SCContent.FAKE_WATER_BUCKET, "", true);
 		add(SCContent.KEY_PANEL_ITEM);
@@ -65,6 +67,7 @@ public class ManualPage {
 		add(SCContent.UNIVERSAL_BLOCK_MODIFIER);
 		add(SCContent.UNIVERSAL_BLOCK_REMOVER);
 		add(SCContent.UNIVERSAL_OWNER_CHANGER);
+		add(SCContent.UNIVERSAL_KEY_CHANGER);
 		add(SCContent.WIRE_CUTTERS);
 		add(SCContent.DENYLIST_MODULE);
 		add(SCContent.DISGUISE_MODULE);
