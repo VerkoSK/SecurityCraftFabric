@@ -286,11 +286,18 @@ public class KeypadChestBlock extends ChestBlock {
 	}
 
 	public static class Convertible implements IPasscodeConvertible {
+		/**
+		 * Blocks the Key Panel/Keypad may turn into a keypad chest (and restore back to on unprotect). Defaults to
+		 * just the vanilla chest; add modded wooden chests to it via a datapack. Matches upstream's approach of
+		 * gating on a tag ("chests/wooden" there) instead of hardcoding one block.
+		 */
+		public static final net.minecraft.tags.TagKey<net.minecraft.world.level.block.Block> CONVERTIBLE_CHESTS = net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.BLOCK, SCContent.id("convertible_chests"));
+
 		@Override
 		public boolean isUnprotectedBlock(BlockState state) {
-			//upstream matches the "chests/wooden" tag to catch modded wooden chests too; this port has no such
-			//tag wired up yet, so this is narrowed to vanilla's own chest
-			return state.is(Blocks.CHEST);
+			//also require an actual ChestBlock: convertSingleChest below casts the block entity to ChestBlockEntity,
+			//which only blocks extending ChestBlock (the vast majority of tag-compatible modded chests) provide
+			return state.is(CONVERTIBLE_CHESTS) && state.getBlock() instanceof net.minecraft.world.level.block.ChestBlock;
 		}
 
 		@Override
