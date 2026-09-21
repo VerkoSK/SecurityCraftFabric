@@ -1,6 +1,5 @@
 package net.geforcemods.securitycraft.blocks;
 
-import net.minecraft.server.level.ServerLevel;
 import java.util.Optional;
 
 import net.geforcemods.securitycraft.SCContent;
@@ -20,12 +19,12 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.Mth;
 import net.minecraft.world.CompoundContainer;
 import net.minecraft.world.Container;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.LivingEntity;
@@ -149,7 +148,8 @@ public class KeypadChestBlock extends ChestBlock {
 
 	public void activate(BlockState state, Level level, BlockPos pos, Player player) {
 		if (!level.isClientSide()) {
-			MenuProvider menuProvider = getMenuProvider(state, level, pos);
+			KeypadChestBlock block = (KeypadChestBlock) state.getBlock();
+			MenuProvider menuProvider = block.getMenuProvider(state, level, pos);
 
 			if (menuProvider != null) {
 				player.openMenu(menuProvider);
@@ -241,7 +241,6 @@ public class KeypadChestBlock extends ChestBlock {
 		if (level.getBlockEntity(pos) instanceof IModuleInventory inv && inv.shouldDropModules())
 			inv.dropAllModules();
 
-
 		super.affectNeighborsAfterRemoval(state, level, pos, movedByPiston);
 	}
 
@@ -280,16 +279,25 @@ public class KeypadChestBlock extends ChestBlock {
 
 	@Override
 	public RenderShape getRenderShape(BlockState state) {
-		//like every chest, the block model is empty and the chest itself is drawn by its block entity renderer
+		//like every chest, the block model is empty and the chest itself is drawn by its block entity renderer;
+		//ENTITYBLOCK_ANIMATED was removed for this Minecraft version, and vanilla's own ChestBlock doesn't
+		//override this at all (falling back to the default MODEL), so this matches that
 		return RenderShape.MODEL;
 	}
 
 	public static class Convertible implements IPasscodeConvertible {
+		/**
+		 * Blocks the Key Panel/Keypad may turn into a keypad chest (and restore back to on unprotect). Defaults to
+		 * just the vanilla chest; add modded wooden chests to it via a datapack. Matches upstream's approach of
+		 * gating on a tag ("chests/wooden" there) instead of hardcoding one block.
+		 */
+		public static final net.minecraft.tags.TagKey<net.minecraft.world.level.block.Block> CONVERTIBLE_CHESTS = net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.BLOCK, SCContent.id("convertible_chests"));
+
 		@Override
 		public boolean isUnprotectedBlock(BlockState state) {
-			//upstream matches the "chests/wooden" tag to catch modded wooden chests too; this port has no such
-			//tag wired up yet, so this is narrowed to vanilla's own chest
-			return state.is(Blocks.CHEST);
+			//also require an actual ChestBlock: convertSingleChest below casts the block entity to ChestBlockEntity,
+			//which only blocks extending ChestBlock (the vast majority of tag-compatible modded chests) provide
+			return state.is(CONVERTIBLE_CHESTS) && state.getBlock() instanceof net.minecraft.world.level.block.ChestBlock;
 		}
 
 		@Override
@@ -340,15 +348,18 @@ public class KeypadChestBlock extends ChestBlock {
 			if (protect)
 				convertedBlock = SCContent.KEYPAD_CHEST;
 			else {
-				convertedBlock = BuiltInRegistries.BLOCK.get(((KeypadChestBlockEntity) chest).getPreviousChest()).map(net.minecraft.core.Holder.Reference::value).orElse(Blocks.CHEST);
+				convertedBlock = BuiltInRegistries.BLOCK.getValue(((KeypadChestBlockEntity) chest).getPreviousChest());
+
+				if (convertedBlock == Blocks.AIR)
+					convertedBlock = Blocks.CHEST;
 			}
 
 			chest.unpackLootTable(player); //generate loot (if any), so items don't spill out when converting and no additional loot table is generated
-			tag = net.geforcemods.securitycraft.util.BlockUtils.saveBlockEntity(chest, level);
+			tag = chest.saveWithFullMetadata(level.registryAccess());
 			chest.clearContent();
 			level.setBlockAndUpdate(pos, convertedBlock.defaultBlockState().setValue(FACING, facing).setValue(TYPE, type));
 			chest = (ChestBlockEntity) level.getBlockEntity(pos);
-			net.geforcemods.securitycraft.util.BlockUtils.loadBlockEntity(chest, tag, level);
+			net.geforcemods.securitycraft.util.BlockUtils.loadBlockEntityWithComponents(chest, tag, level.registryAccess());
 
 			if (protect) {
 				if (player != null)
