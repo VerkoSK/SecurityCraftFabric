@@ -44,7 +44,7 @@ public class ScannerTrapdoorBlock extends TrapDoorBlock implements EntityBlock {
 	}
 
 	@Override
-	protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
+	public InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
 		return InteractionResult.PASS;
 	}
 
@@ -62,12 +62,6 @@ public class ScannerTrapdoorBlock extends TrapDoorBlock implements EntityBlock {
 		level.gameEvent(null, open ? GameEvent.BLOCK_OPEN : GameEvent.BLOCK_CLOSE, pos);
 		level.updateNeighborsAt(pos, this);
 		BlockUtils.updateIndirectNeighbors(level, pos, this);
-	}
-
-	@Override
-	public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
-		if (state.getValue(OPEN))
-			activate(level, pos);
 	}
 
 	@Override
