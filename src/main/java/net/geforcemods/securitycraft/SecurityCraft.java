@@ -34,6 +34,7 @@ public class SecurityCraft implements ModInitializer {
 		UniversalOwnerChangerItem.registerUseCallback();
 		UniversalKeyChangerItem.registerUseCallback();
 		CodebreakerItem.registerUseCallback();
+		net.geforcemods.securitycraft.misc.ContainerLockEnforcement.register();
 		UniversalBlockModifierItem.registerUseCallback();
 		ServerLifecycleEvents.SERVER_STARTED.register(server -> SERVER = server);
 		ServerLifecycleEvents.SERVER_STOPPED.register(server -> SERVER = null);
