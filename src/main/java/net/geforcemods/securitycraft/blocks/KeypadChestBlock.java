@@ -287,9 +287,7 @@ public class KeypadChestBlock extends ChestBlock {
 	public static class Convertible implements IPasscodeConvertible {
 		@Override
 		public boolean isUnprotectedBlock(BlockState state) {
-			//upstream matches the "chests/wooden" tag to catch modded wooden chests too; this port has no such
-			//tag wired up yet, so this is narrowed to vanilla's own chest
-			return state.is(Blocks.CHEST);
+			return state.is(net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.BLOCK, net.minecraft.resources.Identifier.fromNamespaceAndPath(SecurityCraft.MODID, "convertible_chests"))) || state.is(Blocks.CHEST);
 		}
 
 		@Override
