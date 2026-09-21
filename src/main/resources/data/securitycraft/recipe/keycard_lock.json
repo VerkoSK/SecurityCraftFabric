@@ -1,0 +1,18 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"category": "redstone",
+	"pattern": [
+		"SS",
+		"R_",
+		"SS"
+	],
+	"key": {
+		"S": "securitycraft:reinforced_stone",
+		"R": "minecraft:redstone",
+		"_": "securitycraft:reinforced_cobblestone_slab"
+	},
+	"result": {
+		"id": "securitycraft:keycard_lock",
+		"count": 1
+	}
+}
