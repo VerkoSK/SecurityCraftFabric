@@ -29,7 +29,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -65,7 +65,7 @@ public class KeypadChestBlockEntity extends ChestBlockEntity implements Passcode
 	private SmartModuleCooldownOption smartModuleCooldown = new SmartModuleCooldownOption();
 	private long cooldownEnd = 0;
 	private Map<ModuleType, Boolean> moduleStates = new EnumMap<>(ModuleType.class);
-	private Identifier previousChest;
+	private ResourceLocation previousChest;
 	/** The player whose passcode attempt is currently being verified, so {@link #activate(ServerLevel)} knows who to open the menu for. */
 	private UUID pendingOpener;
 
@@ -109,7 +109,7 @@ public class KeypadChestBlockEntity extends ChestBlockEntity implements Passcode
 		String savedPreviousChest = input.getStringOr("previous_chest", "");
 
 		if (!savedPreviousChest.isBlank()) {
-			Identifier parsedPreviousChest = Identifier.parse(savedPreviousChest);
+			ResourceLocation parsedPreviousChest = ResourceLocation.parse(savedPreviousChest);
 
 			if (parsedPreviousChest.getPath() != null && !parsedPreviousChest.getPath().isBlank())
 				previousChest = parsedPreviousChest;
@@ -173,6 +173,12 @@ public class KeypadChestBlockEntity extends ChestBlockEntity implements Passcode
 
 		if (player instanceof ServerPlayer && getBlockState().getBlock() instanceof KeypadChestBlock block)
 			block.activate(getBlockState(), level, worldPosition, player);
+	}
+
+	@Override
+	public void useCodebreaker(Player player) {
+		if (player instanceof ServerPlayer serverPlayer && getBlockState().getBlock() instanceof KeypadChestBlock block)
+			block.activate(getBlockState(), (ServerLevel) level, worldPosition, serverPlayer);
 	}
 
 	@Override
@@ -436,7 +442,7 @@ public class KeypadChestBlockEntity extends ChestBlockEntity implements Passcode
 		this.previousChest = BuiltInRegistries.BLOCK.getKey(previousChest);
 	}
 
-	public Identifier getPreviousChest() {
+	public ResourceLocation getPreviousChest() {
 		return previousChest;
 	}
 
