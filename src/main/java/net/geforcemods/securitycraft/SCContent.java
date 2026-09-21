@@ -79,6 +79,8 @@ public class SCContent {
 	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.ElectrifiedFenceAndGateBlockEntity> ELECTRIFIED_FENCE_AND_GATE_BLOCK_ENTITY;
 	public static Item UNIVERSAL_OWNER_CHANGER;
 	public static Item UNIVERSAL_KEY_CHANGER;
+	public static Item CODEBREAKER;
+	public static net.minecraft.core.component.DataComponentType<Long> CODEBREAKER_LAST_USED;
 	public static Item SC_MANUAL;
 	/** The secret sign items, in registration order, for the creative tab. */
 	public static final List<ItemLike> SECRET_SIGN_ITEMS = new ArrayList<>();
@@ -1022,6 +1024,7 @@ public class SCContent {
 		UNIVERSAL_BLOCK_MODIFIER = registerItem("universal_block_modifier", new net.geforcemods.securitycraft.items.UniversalBlockModifierItem(new Item.Properties().stacksTo(1).setId(ResourceKey.create(Registries.ITEM, id("universal_block_modifier")))));
 		UNIVERSAL_OWNER_CHANGER = registerItem("universal_owner_changer", new net.geforcemods.securitycraft.items.UniversalOwnerChangerItem(new Item.Properties().stacksTo(1).setId(ResourceKey.create(Registries.ITEM, id("universal_owner_changer")))));
 		UNIVERSAL_KEY_CHANGER = registerItem("universal_key_changer", new net.geforcemods.securitycraft.items.UniversalKeyChangerItem(new Item.Properties().stacksTo(1).setId(ResourceKey.create(Registries.ITEM, id("universal_key_changer")))));
+		CODEBREAKER = registerItem("codebreaker", new net.geforcemods.securitycraft.items.CodebreakerItem(new Item.Properties().stacksTo(1).durability(64).setId(ResourceKey.create(Registries.ITEM, id("codebreaker")))));
 		SC_MANUAL = registerItem("sc_manual", new net.geforcemods.securitycraft.items.SCManualItem(new Item.Properties().stacksTo(1).setId(ResourceKey.create(Registries.ITEM, id("sc_manual")))));
 		LENS = registerItem("lens", new Item(new Item.Properties().setId(ResourceKey.create(Registries.ITEM, id("lens")))));
 		//the fluids have to exist before their blocks, and the blocks before the buckets, since each refers back
@@ -1317,6 +1320,7 @@ public class SCContent {
 					output.accept(UNIVERSAL_BLOCK_MODIFIER);
 					output.accept(UNIVERSAL_OWNER_CHANGER);
 					output.accept(UNIVERSAL_KEY_CHANGER);
+					output.accept(CODEBREAKER);
 					output.accept(UNIVERSAL_BLOCK_REINFORCER_LVL1);
 					output.accept(UNIVERSAL_BLOCK_REINFORCER_LVL2);
 					output.accept(UNIVERSAL_BLOCK_REINFORCER_LVL3);
