@@ -3,6 +3,7 @@ package net.geforcemods.securitycraft.compat.jade;
 import net.geforcemods.securitycraft.SecurityCraft;
 import net.geforcemods.securitycraft.api.IModuleInventory;
 import net.geforcemods.securitycraft.api.IOwnable;
+import net.geforcemods.securitycraft.api.Owner;
 import net.geforcemods.securitycraft.misc.ContainerLockData;
 import net.geforcemods.securitycraft.misc.ModuleType;
 import net.geforcemods.securitycraft.util.PlayerUtils;
@@ -41,6 +42,8 @@ public final class SCJadePlugin implements IWailaPlugin, IBlockComponentProvider
 	private static final ResourceLocation SHOW_MODULES = ResourceLocation.fromNamespaceAndPath(SecurityCraft.MODID, "showmodules");
 	private static final ResourceLocation SHOW_CUSTOM_NAME = ResourceLocation.fromNamespaceAndPath(SecurityCraft.MODID, "showcustomname");
 	private static final String LOCKED_TAG = "securitycraft_locked";
+	private static final String LOCKED_OWNER_NAME_TAG = "securitycraft_locked_owner_name";
+	private static final String LOCKED_OWNER_UUID_TAG = "securitycraft_locked_owner_uuid";
 
 	@Override
 	public void register(IWailaCommonRegistration registration) {
@@ -55,17 +58,33 @@ public final class SCJadePlugin implements IWailaPlugin, IBlockComponentProvider
 		registration.registerBlockComponent(this, Block.class);
 	}
 
-	/** Server side: does this generic Key Panel lock cover the position being looked at? */
+	/** Server side: does this generic Key Panel lock cover the position being looked at, and if so, by whom? */
 	@Override
 	public void appendServerData(CompoundTag tag, BlockAccessor accessor) {
-		if (accessor.getLevel() instanceof ServerLevel level && ContainerLockData.get(level).isLocked(accessor.getPosition()))
-			tag.putBoolean(LOCKED_TAG, true);
+		if (accessor.getLevel() instanceof ServerLevel level) {
+			ContainerLockData.LockedContainer lock = ContainerLockData.get(level).get(accessor.getPosition());
+
+			if (lock != null) {
+				tag.putBoolean(LOCKED_TAG, true);
+				tag.putString(LOCKED_OWNER_NAME_TAG, lock.getOwner().getName());
+				tag.putString(LOCKED_OWNER_UUID_TAG, lock.getOwner().getUUID());
+			}
+		}
 	}
 
 	@Override
 	public void appendTooltip(ITooltip tooltip, BlockAccessor accessor, IPluginConfig config) {
-		if (accessor.getServerData().getBooleanOr(LOCKED_TAG, false))
+		CompoundTag serverData = accessor.getServerData();
+
+		if (serverData.getBooleanOr(LOCKED_TAG, false)) {
 			tooltip.add(0, Utils.localize("waila.securitycraft:passcodeProtected").withStyle(ChatFormatting.GOLD));
+
+			if (config.get(SHOW_OWNER) && serverData.contains(LOCKED_OWNER_NAME_TAG)) {
+				Owner owner = new Owner(serverData.getStringOr(LOCKED_OWNER_NAME_TAG, ""), serverData.getStringOr(LOCKED_OWNER_UUID_TAG, ""));
+
+				tooltip.add(1, Utils.localize("waila.securitycraft:owner", PlayerUtils.getOwnerComponent(owner)).withStyle(ChatFormatting.GRAY));
+			}
+		}
 
 		BlockEntity be = accessor.getBlockEntity();
 
