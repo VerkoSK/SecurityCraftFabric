@@ -29,7 +29,9 @@ import net.minecraft.world.phys.BlockHitResult;
 /** Block entity for the {@link ScannerTrapdoorBlock}: owner, allowlist module and the view-scan logic. */
 public class ScannerTrapdoorBlockEntity extends CustomizableBlockEntity implements IViewActivated, ITickingBlockEntity {
 	private BooleanOption sendMessage = new BooleanOption("sendMessage", true);
-	private IntOption signalLength = new IntOption("signalLength", 60, 0, 400, 5);
+	//upstream defaults this to 0 (no auto-close, pure toggle-on-view) unlike RetinalScannerBlockEntity's redstone
+	//signal, which does default to 60; the 0-400 range still lets the owner opt into a timed close
+	private IntOption signalLength = new IntOption("signalLength", 0, 0, 400, 5);
 	private DoubleOption maximumDistance = new DoubleOption("maximumDistance", 5.0D, 0.1D, 25.0D, 0.1D) {
 		@Override
 		public String getKey(String denotation) {
@@ -86,7 +88,9 @@ public class ScannerTrapdoorBlockEntity extends CustomizableBlockEntity implemen
 			if (sendMessage.get())
 				PlayerUtils.sendMessageToPlayer(player, Utils.localize(SCContent.SCANNER_TRAPDOOR.getDescriptionId()), Utils.localize("messages.securitycraft:retinalScanner.hello", viewer.getName()), ChatFormatting.GREEN);
 
-			closeTicksLeft = signalLength.get();
+			//matches upstream: a signal length of 0 means no scheduled auto-close at all, only another look toggles it
+			if (signalLength.get() > 0)
+				closeTicksLeft = signalLength.get();
 		}
 
 		return true;
