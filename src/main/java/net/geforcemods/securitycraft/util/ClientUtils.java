@@ -26,6 +26,7 @@ public class ClientUtils {
 		else if (module == ModuleType.SPEED)
 			guiGraphics.blit(RenderPipelines.GUI_TEXTURED, net.minecraft.resources.Identifier.withDefaultNamespace("textures/item/sugar.png"), x, y, 0.0F, 0.0F, 16, 16, 16, 16, color);
 
+		//a single long Component doesn't wrap on its own - split it into lines first, or it renders edge to edge
 		if (tooltip != null && mouseX >= x && mouseX < x + 16 && mouseY >= y && mouseY <= y + 16)
 			guiGraphics.setComponentTooltipForNextFrame(font, java.util.List.of(tooltip), mouseX, mouseY);
 	}
