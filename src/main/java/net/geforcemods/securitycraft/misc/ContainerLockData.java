@@ -14,7 +14,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.saveddata.SavedDataType;
@@ -149,8 +148,14 @@ public class ContainerLockData extends SavedData {
 
 			pendingOpener = null;
 
-			if (player instanceof ServerPlayer && level.getBlockEntity(pos) instanceof MenuProvider menuProvider)
-				player.openMenu(menuProvider);
+			//let the block's own use() open it, instead of guessing at a menu ourselves: some mods build their
+			//container menu (size, tier, extra data) inside use() itself rather than through a plain MenuProvider,
+			//so opening it any other way risks a wrong-sized or broken screen
+			if (player instanceof ServerPlayer) {
+				net.minecraft.world.level.block.state.BlockState state = level.getBlockState(pos);
+
+				state.useWithoutItem(level, player, new net.minecraft.world.phys.BlockHitResult(net.minecraft.world.phys.Vec3.atCenterOf(pos), net.minecraft.core.Direction.UP, pos, false));
+			}
 		}
 
 		@Override
