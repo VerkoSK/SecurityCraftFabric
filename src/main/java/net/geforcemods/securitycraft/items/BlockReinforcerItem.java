@@ -11,11 +11,14 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 
 /**
- * Converts blocks between vanilla and reinforced. Lvl1 always reinforces, the remover always
- * unreinforces, and Lvl2/Lvl3 default to reinforcing but can be toggled to unreinforcing (stored in
- * the {@link SCContent#UNREINFORCING} data component). Damages the tool per use when it has durability.
+ * Reinforces a vanilla block into its reinforced counterpart in place, or - in remove mode - instantly destroys a
+ * reinforced block and drops it, bypassing its normal (much slower) break time, matching upstream's
+ * UniversalBlockRemoverItem. Lvl1 always reinforces, the remover always removes, and Lvl2/Lvl3 default to
+ * reinforcing but can be toggled to remove mode (stored in the {@link SCContent#UNREINFORCING} data component). Damages the tool per use when it has durability.
  */
 public class BlockReinforcerItem extends Item {
 	/** The item's base capability: true = a reinforcer (Lvl1/2/3), false = the remover. */
@@ -102,7 +105,17 @@ public class BlockReinforcerItem extends Item {
 		}
 
 		if (level instanceof ServerLevel) {
-			level.setBlockAndUpdate(pos, target.withPropertiesOf(state));
+			if (isReinforcing(stack))
+				level.setBlockAndUpdate(pos, target.withPropertiesOf(state));
+			else {
+				//matches upstream's remover: it doesn't downgrade the block to its vanilla counterpart in place,
+				//it instantly removes the reinforced block and drops it (bypassing the normal, much slower break
+				//time), same as the original UniversalBlockRemoverItem#onItemUseFirst
+				BlockPos destroyPos = state.hasProperty(BlockStateProperties.DOUBLE_BLOCK_HALF) && state.getValue(BlockStateProperties.DOUBLE_BLOCK_HALF) == DoubleBlockHalf.UPPER ? pos.below() : pos;
+
+				level.destroyBlock(destroyPos, true);
+			}
+
 			stack.hurtAndBreak(1, player, net.minecraft.world.entity.LivingEntity.getSlotForHand(ctx.getHand()));
 		}
 
