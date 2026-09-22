@@ -42,6 +42,28 @@ public class PlayerUtils {
 	}
 
 	/**
+	 * Resolves a player name to a UUID even when that player is offline, by falling back to the server's
+	 * {@link net.minecraft.server.players.GameProfileCache} (the same lookup vanilla commands like {@code /whitelist
+	 * add} use). Online players are checked first to avoid an unnecessary cache/Mojang lookup.
+	 *
+	 * @param name The player name to resolve
+	 * @return The player's UUID as a string, or empty if the name doesn't belong to a real account
+	 */
+	public static java.util.Optional<String> resolveUUID(String name) {
+		ServerPlayer online = getPlayerFromName(name);
+
+		if (online != null)
+			return java.util.Optional.of(online.getUUID().toString());
+
+		MinecraftServer server = SecurityCraft.SERVER;
+
+		if (server == null)
+			return java.util.Optional.empty();
+
+		return server.getProfileCache().get(name).map(profile -> profile.getId().toString());
+	}
+
+	/**
 	 * @param owner The owner whose player to look up
 	 * @return A collection containing the owner's player if they are online, an empty collection otherwise
 	 */
