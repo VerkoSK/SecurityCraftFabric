@@ -1,7 +1,7 @@
 package net.geforcemods.securitycraft.blocks.reinforced;
 
+import net.geforcemods.securitycraft.api.IDoorActivator;
 import net.geforcemods.securitycraft.api.IReinforcedBlock;
-import net.geforcemods.securitycraft.blocks.KeypadBlock;
 import net.geforcemods.securitycraft.blocks.OwnableBlock;
 import net.geforcemods.securitycraft.util.OwnershipUtils;
 import net.minecraft.core.BlockPos;
@@ -23,8 +23,9 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 
 /**
- * Reinforced iron door: opens only when a powered SecurityCraft keypad is adjacent, not from ordinary redstone,
- * and — like every reinforced block — can only be mined by whoever placed it. Mirrors the trapdoor's behaviour.
+ * Reinforced iron door: opens only when a powered {@link IDoorActivator} (Keypad, Retinal Scanner, Keycard Reader
+ * or Lock) is adjacent, not from ordinary redstone, and — like every reinforced block — can only be mined by
+ * whoever placed it. Mirrors the trapdoor's behaviour.
  */
 public class ReinforcedDoorBlock extends DoorBlock implements IReinforcedBlock, EntityBlock {
 	private final float destroyTimeForOwner;
@@ -34,8 +35,8 @@ public class ReinforcedDoorBlock extends DoorBlock implements IReinforcedBlock, 
 		destroyTimeForOwner = OwnableBlock.getStoredDestroyTime();
 	}
 
-	/** Checks both halves, so a keypad next to either one opens the whole door. */
-	private static boolean hasActiveKeypadNextTo(Level level, BlockPos pos, BlockState state) {
+	/** Checks both halves, so an active door activator next to either one opens the whole door. */
+	private static boolean hasActiveDoorActivatorNextTo(Level level, BlockPos pos, BlockState state) {
 		BlockPos other = state.getValue(HALF) == DoubleBlockHalf.LOWER ? pos.above() : pos.below();
 
 		for (BlockPos checked : new BlockPos[] {
@@ -44,7 +45,7 @@ public class ReinforcedDoorBlock extends DoorBlock implements IReinforcedBlock, 
 			for (Direction dir : Direction.values()) {
 				BlockState neighbor = level.getBlockState(checked.relative(dir));
 
-				if (neighbor.getBlock() instanceof KeypadBlock && neighbor.getValue(BlockStateProperties.POWERED))
+				if (neighbor.getBlock() instanceof IDoorActivator && neighbor.getValue(BlockStateProperties.POWERED))
 					return true;
 			}
 		}
@@ -59,14 +60,14 @@ public class ReinforcedDoorBlock extends DoorBlock implements IReinforcedBlock, 
 		if (base == null)
 			return null;
 
-		boolean active = hasActiveKeypadNextTo(ctx.getLevel(), ctx.getClickedPos(), base);
+		boolean active = hasActiveDoorActivatorNextTo(ctx.getLevel(), ctx.getClickedPos(), base);
 
 		return base.setValue(BlockStateProperties.OPEN, active).setValue(BlockStateProperties.POWERED, active);
 	}
 
 	@Override
 	public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, BlockPos fromPos, boolean movedByPiston) {
-		boolean active = hasActiveKeypadNextTo(level, pos, state);
+		boolean active = hasActiveDoorActivatorNextTo(level, pos, state);
 
 		if (active != state.getValue(BlockStateProperties.OPEN)) {
 			level.setBlock(pos, state.setValue(BlockStateProperties.OPEN, active).setValue(BlockStateProperties.POWERED, active), 2);

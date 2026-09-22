@@ -30,7 +30,7 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 /** Thin wall/floor/ceiling panel form of the Keycard Reader - same link/use logic as {@link KeycardReaderBlock}. */
-public class KeycardLockBlock extends AbstractPanelBlock {
+public class KeycardLockBlock extends AbstractPanelBlock implements net.geforcemods.securitycraft.api.IDoorActivator {
 	public static final VoxelShape FLOOR_NS = Block.box(2.0D, 0.0D, 1.0D, 14.0D, 1.0D, 15.0D);
 	public static final VoxelShape FLOOR_EW = Block.box(1.0D, 0.0D, 2.0D, 15.0D, 1.0D, 14.0D);
 	public static final VoxelShape CEILING_NS = Block.box(2.0D, 15.0D, 1.0D, 14.0D, 16.0D, 15.0D);
