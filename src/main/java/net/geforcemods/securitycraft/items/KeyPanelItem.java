@@ -80,7 +80,7 @@ public class KeyPanelItem extends BlockItem {
 					data.unlock(pos);
 				}
 				else {
-					data.lock(pos, new Owner(player));
+					data.lock(level, pos, new Owner(player));
 
 					if (!player.isCreative())
 						stack.shrink(1);
