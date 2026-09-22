@@ -13,7 +13,7 @@ Want a Minecraft server for this mod? [Kinetic Hosting](https://billing.kinetich
 
 ---
 
-## Status — V0.5
+## Status — V0.6
 
 SecurityCraft is one of the largest Minecraft mods there is, so this port grows a **working core**
 feature by feature rather than dropping a half-compiling copy of everything at once. Every feature
@@ -29,7 +29,11 @@ is measured against the original mod's own branch for the same Minecraft version
 | **Universal Block Reinforcer / Remover** | all three reinforcer levels, with their colour chooser |
 | **Universal Block Modifier** | the full Customize screen: module slots, per-block options, and enabling or disabling a module without taking it out |
 | **Modules** | all eight, with the allow/deny list editor and the disguise module screen |
-| **Passcode-protected blocks** | keypad, key panel, keypad frame, and the passcode chest, barrel, furnace, smoker and blast furnace |
+| **Passcode-protected blocks** | keypad, key panel, keypad frame, keypad door, keypad trapdoor, and the passcode chest, barrel, furnace, smoker and blast furnace |
+| **Keycard system** | Keycard Reader and Keycard Lock, keycard levels 1–5, the Limited Use Keycard and Keycard Holder, all with per-owner linking |
+| **Retinal Scanner** | Retinal Scanner, Scanner Door and Scanner Trapdoor — opens for whoever the owner allows, by name |
+| **Universal Key Changer** | resets a block's passcode or keycard link |
+| **Codebreaker** | the attacker's side of the passcode and keycard systems, with its cooldown and failure chance |
 | **Laser block** | laser fields, per-side configuration and dyed lenses |
 | **Explosives** | the whole set of 42 — mine, bouncing betty, claymore, IMS, track mine and every block mine — plus the Mine Remote Access Tool and the wire cutters |
 | **Portable Radar** | |
@@ -38,6 +42,7 @@ is measured against the original mod's own branch for the same Minecraft version
 | **Crystal quartz set** | plain and reinforced |
 | **Fake water and fake lava** | |
 | **SecurityCraft Manual** | the in-game manual, with its recipe pages |
+| **Version checker** | notifies in chat on join when a newer release is available, with a download link |
 | **Mod compatibility** | JEI and Jade |
 
 [**ROADMAP.md**](ROADMAP.md) lists what is still missing and which release each piece is planned
