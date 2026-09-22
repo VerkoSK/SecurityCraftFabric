@@ -25,12 +25,13 @@ import net.minecraft.world.item.ItemStack;
 /**
  * The keycard reader/lock's programming screen: put an unlinked (or your own already-linked) keycard in the slot,
  * pick which levels it should open, optionally restrict it to one player's name, then Link. Laid out to match
- * upstream's screen 1:1 (signature field + stepper row, level toggles + the "=" / ">=" mode button, usable-by
- * field, uses field + return button, link button, an icon top-left). One simplification: the "=" / ">=" toggle is a
- * pure client-side convenience here (no Smart Module gate - the port's reader always allows free editing), and the
- * level toggle icons are this port's own (1.20.1 predates the per-sprite gui/sprites/... convention vanilla's
- * beacon confirm/cancel icon would need, so copying it by UV offset from the old spritesheet wasn't worth the risk
- * of getting the offset wrong).
+ * upstream's screen 1:1 (signature field + stepper row, level toggles, usable-by field, uses field + return
+ * button, link button, a top-left Smart Module indicator). Matches upstream's Smart Module gate too: without one
+ * installed, level toggling is restricted to "exactly this level" (default) or "this level and every one above it"
+ * (the "=" / ">=" button, upstream-style); with one installed, each level toggles independently and that button
+ * disappears. The level toggle icons are this port's own (1.20.1 predates the per-sprite gui/sprites/...
+ * convention vanilla's beacon confirm/cancel icon would need, so copying it by UV offset from the old spritesheet
+ * wasn't worth the risk of getting the offset wrong).
  */
 public class KeycardReaderScreen extends AbstractContainerScreen<KeycardReaderMenu> {
 	private static final ResourceLocation TEXTURE = SCContent.id("textures/gui/container/keycard_reader.png");
@@ -50,6 +51,8 @@ public class KeycardReaderScreen extends AbstractContainerScreen<KeycardReaderMe
 	private final Component signatureText = Utils.localize("gui.securitycraft:keycard_reader.signature");
 	private final KeycardReaderBlockEntity be;
 	private final boolean isOwner;
+	private final boolean hasSmartModule;
+	private final Component smartModuleTooltip;
 	private boolean[] acceptedLevels;
 	private boolean isExactLevel = true;
 	private int signature;
@@ -68,6 +71,8 @@ public class KeycardReaderScreen extends AbstractContainerScreen<KeycardReaderMe
 		acceptedLevels = be.getAcceptedLevels().clone();
 		previousSignature = signature = be.getSignature();
 		isOwner = be.isOwnedBy(inv.player);
+		hasSmartModule = be.isModuleEnabled(net.geforcemods.securitycraft.misc.ModuleType.SMART);
+		smartModuleTooltip = Utils.localize(hasSmartModule ? "gui.securitycraft:keycard_reader.smartModule" : "gui.securitycraft:keycard_reader.noSmartModule");
 		imageWidth = 176;
 		imageHeight = 249;
 	}
@@ -110,11 +115,14 @@ public class KeycardReaderScreen extends AbstractContainerScreen<KeycardReaderMe
 			levelBoxes[i].active = isOwner;
 		}
 
-		Button exactLevelButton = addRenderableWidget(Button.builder(isExactLevel ? EQUALS : GREATER_EQUALS, b -> {
-			isExactLevel = !isExactLevel;
-			b.setMessage(isExactLevel ? EQUALS : GREATER_EQUALS);
-		}).bounds(leftPos + 135, topPos + 67, 18, 18).build());
-		exactLevelButton.active = isOwner;
+		//only meaningful without a Smart Module: with one, every level toggles independently and there is no mode to pick
+		if (!hasSmartModule) {
+			Button exactLevelButton = addRenderableWidget(Button.builder(isExactLevel ? EQUALS : GREATER_EQUALS, b -> {
+				isExactLevel = !isExactLevel;
+				b.setMessage(isExactLevel ? EQUALS : GREATER_EQUALS);
+			}).bounds(leftPos + 135, topPos + 67, 18, 18).build());
+			exactLevelButton.active = isOwner;
+		}
 
 		usableByField = addRenderableWidget(new EditBox(font, leftPos + 8, topPos + 66, 70, 15, Component.empty()));
 		usableByField.setHint(Utils.localize("gui.securitycraft:keycard_reader.usable_by.hint"));
@@ -140,8 +148,17 @@ public class KeycardReaderScreen extends AbstractContainerScreen<KeycardReaderMe
 		changeSignature(signature);
 	}
 
-	/** Applies the "=" (only this level) or ">=" (this level and every one above it) mode to a level button click. */
+	/**
+	 * With a Smart Module installed, each level is an independent on/off toggle. Without one, upstream restricts it
+	 * to either "=" (exactly this level - clicking one unchecks every other) or ">=" (this level and every one
+	 * above it), picked with the button next to the list.
+	 */
 	private void onLevelToggled(int index, boolean selected) {
+		if (hasSmartModule) {
+			setLevelState(index, selected);
+			return;
+		}
+
 		if (isExactLevel) {
 			for (int i = 0; i < 5; i++) {
 				setLevelState(i, i == index);
@@ -239,7 +256,7 @@ public class KeycardReaderScreen extends AbstractContainerScreen<KeycardReaderMe
 	@Override
 	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
 		super.render(guiGraphics, mouseX, mouseY, partialTicks);
-		guiGraphics.renderItem(new ItemStack(SCContent.KEYCARD_READER), leftPos + 6, topPos + 6);
+		net.geforcemods.securitycraft.util.ClientUtils.renderModuleInfo(guiGraphics, font, net.geforcemods.securitycraft.misc.ModuleType.SMART, smartModuleTooltip, hasSmartModule, leftPos + 5, topPos + 5, mouseX, mouseY);
 		renderTooltip(guiGraphics, mouseX, mouseY);
 	}
 
