@@ -99,7 +99,7 @@ public class BlockReinforcerItem extends Item {
 		net.minecraft.world.entity.player.Player player = ctx.getPlayer();
 		Block target = isReinforcing(stack) ? SCContent.reinforcedCounterpart(state.getBlock()) : SCContent.vanillaCounterpart(state.getBlock());
 
-		if (target == null || player == null || player.isCreative() || !level.mayInteract(player, pos))
+		if (target == null || player == null || !level.mayInteract(player, pos))
 			return InteractionResult.PASS;
 
 		//removing reinforcement strips the block's protection entirely, so this must respect ownership just like
@@ -113,8 +113,49 @@ public class BlockReinforcerItem extends Item {
 		}
 
 		if (level instanceof ServerLevel) {
-			if (isReinforcing(stack))
+			if (isReinforcing(stack)) {
+				net.minecraft.world.level.block.entity.BlockEntity be = level.getBlockEntity(pos);
+				net.minecraft.nbt.CompoundTag tag = null;
+
+				if (be != null) {
+					tag = be.saveWithoutMetadata();
+
+					if (be instanceof net.minecraft.world.Clearable clearable)
+						clearable.clearContent();
+				}
+
 				level.setBlockAndUpdate(pos, target.withPropertiesOf(state));
+
+				if (tag != null && level.getBlockEntity(pos) != null)
+					level.getBlockEntity(pos).load(tag);
+
+				net.geforcemods.securitycraft.util.OwnershipUtils.setPlacedBy(level, pos, player);
+
+				if (state.hasProperty(BlockStateProperties.DOUBLE_BLOCK_HALF)) {
+					DoubleBlockHalf half = state.getValue(BlockStateProperties.DOUBLE_BLOCK_HALF);
+					BlockPos otherHalfPos = half == DoubleBlockHalf.LOWER ? pos.above() : pos.below();
+					BlockState otherHalfState = level.getBlockState(otherHalfPos);
+
+					if (otherHalfState.is(state.getBlock())) {
+						net.minecraft.world.level.block.entity.BlockEntity otherBe = level.getBlockEntity(otherHalfPos);
+						net.minecraft.nbt.CompoundTag otherTag = null;
+
+						if (otherBe != null) {
+							otherTag = otherBe.saveWithoutMetadata();
+
+							if (otherBe instanceof net.minecraft.world.Clearable clearable)
+								clearable.clearContent();
+						}
+
+						level.setBlockAndUpdate(otherHalfPos, target.withPropertiesOf(otherHalfState));
+
+						if (otherTag != null && level.getBlockEntity(otherHalfPos) != null)
+							level.getBlockEntity(otherHalfPos).load(otherTag);
+
+						net.geforcemods.securitycraft.util.OwnershipUtils.setPlacedBy(level, otherHalfPos, player);
+					}
+				}
+			}
 			else {
 				//matches upstream's remover: it doesn't downgrade the block to its vanilla counterpart in place,
 				//it instantly removes the reinforced block and drops it (bypassing the normal, much slower break
@@ -124,7 +165,8 @@ public class BlockReinforcerItem extends Item {
 				level.destroyBlock(destroyPos, true);
 			}
 
-			stack.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(ctx.getHand()));
+			if (!player.isCreative())
+				stack.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(ctx.getHand()));
 		}
 
 		return InteractionResult.SUCCESS;
