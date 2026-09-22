@@ -36,14 +36,14 @@ import net.minecraft.world.item.ItemStack;
  */
 public class KeycardReaderScreen extends AbstractContainerScreen<KeycardReaderMenu> {
 	private static final ResourceLocation TEXTURE = SCContent.id("textures/gui/container/keycard_reader.png");
-	private static final ResourceLocation LEVEL_CONFIRM_SPRITE = SCContent.id("textures/gui/sprites/widget/level_confirm.png");
-	private static final ResourceLocation LEVEL_CANCEL_SPRITE = SCContent.id("textures/gui/sprites/widget/level_cancel.png");
-	private static final ResourceLocation RANDOM_SPRITE = SCContent.id("textures/gui/sprites/widget/random.png");
-	private static final ResourceLocation RANDOM_INACTIVE_SPRITE = SCContent.id("textures/gui/sprites/widget/random_inactive.png");
-	private static final ResourceLocation RESET_SPRITE = SCContent.id("textures/gui/sprites/widget/reset.png");
-	private static final ResourceLocation RESET_INACTIVE_SPRITE = SCContent.id("textures/gui/sprites/widget/reset_inactive.png");
-	private static final ResourceLocation RETURN_SPRITE = SCContent.id("textures/gui/sprites/widget/return.png");
-	private static final ResourceLocation RETURN_INACTIVE_SPRITE = SCContent.id("textures/gui/sprites/widget/return_inactive.png");
+	private static final ResourceLocation LEVEL_CONFIRM_SPRITE = SCContent.id("widget/level_confirm");
+	private static final ResourceLocation LEVEL_CANCEL_SPRITE = SCContent.id("widget/level_cancel");
+	private static final ResourceLocation RANDOM_SPRITE = SCContent.id("widget/random");
+	private static final ResourceLocation RANDOM_INACTIVE_SPRITE = SCContent.id("widget/random_inactive");
+	private static final ResourceLocation RESET_SPRITE = SCContent.id("widget/reset");
+	private static final ResourceLocation RESET_INACTIVE_SPRITE = SCContent.id("widget/reset_inactive");
+	private static final ResourceLocation RETURN_SPRITE = SCContent.id("widget/return");
+	private static final ResourceLocation RETURN_INACTIVE_SPRITE = SCContent.id("widget/return_inactive");
 	private static final Component EQUALS = Component.literal("=");
 	private static final Component GREATER_EQUALS = Component.literal(">=");
 	private static final int MAX_SIGNATURE = 99999;
