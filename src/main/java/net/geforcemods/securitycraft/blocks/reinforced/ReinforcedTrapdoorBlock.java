@@ -1,17 +1,17 @@
 package net.geforcemods.securitycraft.blocks.reinforced;
 
+import net.geforcemods.securitycraft.api.IDoorActivator;
 import net.geforcemods.securitycraft.api.IReinforcedBlock;
-import net.geforcemods.securitycraft.blocks.KeypadBlock;
 import net.geforcemods.securitycraft.blocks.OwnableBlock;
 import net.geforcemods.securitycraft.util.OwnershipUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.TrapDoorBlock;
@@ -21,7 +21,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
-/** Reinforced iron trapdoor: opens only when a powered SecurityCraft keypad is adjacent — NOT by regular redstone. */
+/** Reinforced iron trapdoor: opens only when a powered {@link IDoorActivator} (Keypad, Retinal Scanner, Keycard Reader or Lock) is adjacent — NOT by regular redstone. */
 public class ReinforcedTrapdoorBlock extends TrapDoorBlock implements IReinforcedBlock, EntityBlock {
 	private final float destroyTimeForOwner;
 
@@ -46,11 +46,11 @@ public class ReinforcedTrapdoorBlock extends TrapDoorBlock implements IReinforce
 		return OwnershipUtils.newBlockEntity(pos, state);
 	}
 
-	private static boolean hasActiveKeypadNextTo(Level level, BlockPos pos) {
+	private static boolean hasActiveDoorActivatorNextTo(Level level, BlockPos pos) {
 		for (Direction dir : Direction.values()) {
 			BlockState neighbor = level.getBlockState(pos.relative(dir));
 
-			if (neighbor.getBlock() instanceof KeypadBlock && neighbor.getValue(BlockStateProperties.POWERED))
+			if (neighbor.getBlock() instanceof IDoorActivator && neighbor.getValue(BlockStateProperties.POWERED))
 				return true;
 		}
 
@@ -64,13 +64,13 @@ public class ReinforcedTrapdoorBlock extends TrapDoorBlock implements IReinforce
 		if (base == null)
 			return null;
 
-		boolean active = hasActiveKeypadNextTo(ctx.getLevel(), ctx.getClickedPos());
+		boolean active = hasActiveDoorActivatorNextTo(ctx.getLevel(), ctx.getClickedPos());
 		return base.setValue(BlockStateProperties.OPEN, active).setValue(BlockStateProperties.POWERED, active);
 	}
 
 	@Override
 	public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, net.minecraft.world.level.redstone.Orientation orientation, boolean movedByPiston) {
-		boolean active = hasActiveKeypadNextTo(level, pos);
+		boolean active = hasActiveDoorActivatorNextTo(level, pos);
 
 		if (active != state.getValue(BlockStateProperties.OPEN))
 			level.setBlock(pos, state.setValue(BlockStateProperties.OPEN, active).setValue(BlockStateProperties.POWERED, active), 2);

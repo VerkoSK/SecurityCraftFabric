@@ -46,7 +46,7 @@ import net.minecraft.world.phys.BlockHitResult;
  * gating, configurable signal length), minus the NeoForge-only {@code shouldCheckWeakPower} hook and the
  * Frame-conversion / Codebreaker subsystems (separate blocks/items not present in this port).
  */
-public class KeypadBlock extends Block implements EntityBlock, SimpleWaterloggedBlock {
+public class KeypadBlock extends Block implements EntityBlock, SimpleWaterloggedBlock, net.geforcemods.securitycraft.api.IDoorActivator {
 	public static final EnumProperty<Direction> FACING = BlockStateProperties.FACING;
 	public static final EnumProperty<Direction> ROTATION = EnumProperty.create("rotation", Direction.class, Direction.Plane.HORIZONTAL);
 	public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
@@ -66,7 +66,7 @@ public class KeypadBlock extends Block implements EntityBlock, SimpleWaterlogged
 			return InteractionResult.PASS;
 		else if (!level.isClientSide() && player instanceof ServerPlayer serverPlayer) {
 			if (be.isDisabled())
-				player.sendOverlayMessage(Utils.localize("gui.securitycraft:scManual.disabled"));
+				player.displayClientMessage(Utils.localize("gui.securitycraft:scManual.disabled"), true);
 			else if (verifyPasscodeSet(level, pos, be, serverPlayer)) {
 				if (be.isDenied(player)) {
 					if (be.sendsDenylistMessage())
