@@ -22,7 +22,7 @@ import net.minecraft.world.level.Level;
  * NBT; this port has no NBT tags, so they live in the {@link KeycardHolderData} data component instead.
  */
 public class KeycardHolderItem extends Item {
-	public static final int SLOTS = 6;
+	public static final int SLOTS = 5;
 
 	public KeycardHolderItem(Properties properties) {
 		super(properties);

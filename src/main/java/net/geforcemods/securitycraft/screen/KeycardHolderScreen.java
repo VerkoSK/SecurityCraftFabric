@@ -14,7 +14,13 @@ public class KeycardHolderScreen extends AbstractContainerScreen<KeycardHolderMe
 	public KeycardHolderScreen(KeycardHolderMenu menu, Inventory inv, Component title) {
 		super(menu, inv, title);
 		imageWidth = 176;
-		imageHeight = 174;
+		imageHeight = 133;
+	}
+
+	@Override
+	protected void init() {
+		super.init();
+		titleLabelX = imageWidth / 2 - font.width(title) / 2;
 		inventoryLabelY = imageHeight - 94;
 	}
 
