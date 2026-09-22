@@ -69,24 +69,29 @@ public class KeyPanelItem extends BlockItem {
 				}
 			}
 
-			if (level instanceof ServerLevel serverLevel && level.getBlockEntity(pos) instanceof Container && !(level.getBlockEntity(pos) instanceof IOwnable)) {
-				ContainerLockData data = ContainerLockData.get(serverLevel);
-				ContainerLockData.LockedContainer lock = data.get(pos);
+			//checked on both sides so the client doesn't fall through to super.useOn() below and ghost-place the Key
+			//Panel block for a moment before the server's (non-placing) response corrects it back
+			if (level.getBlockEntity(pos) instanceof Container && !(level.getBlockEntity(pos) instanceof IOwnable)) {
+				if (level instanceof ServerLevel serverLevel) {
+					ContainerLockData data = ContainerLockData.get(serverLevel);
+					ContainerLockData.LockedContainer lock = data.get(pos);
 
-				if (lock != null) {
-					if (!lock.getOwner().isTreatedTheSameAs(new Owner(player)))
-						return InteractionResult.PASS; //not yours to unlock; fall through so this doesn't consume a key panel either
+					if (lock != null) {
+						if (!lock.getOwner().isTreatedTheSameAs(new Owner(player)))
+							return InteractionResult.PASS; //not yours to unlock; fall through so this doesn't consume a key panel either
 
-					data.unlock(pos);
+						data.unlock(pos);
+					}
+					else {
+						data.lock(level, pos, new Owner(player));
+
+						if (!player.isCreative())
+							stack.shrink(1);
+					}
+
+					level.playSound(null, pos, SCSounds.LOCK.event, SoundSource.BLOCKS, 1.0F, 1.0F);
 				}
-				else {
-					data.lock(level, pos, new Owner(player));
 
-					if (!player.isCreative())
-						stack.shrink(1);
-				}
-
-				level.playSound(null, pos, SCSounds.LOCK.event, SoundSource.BLOCKS, 1.0F, 1.0F);
 				return InteractionResult.SUCCESS;
 			}
 		}
