@@ -14,6 +14,11 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class LevelUtils {
+	@SuppressWarnings("unchecked")
+	public static <E extends BlockEntity, A extends BlockEntity> BlockEntityTicker<A> createTickerHelper(BlockEntityType<A> serverType, BlockEntityType<E> clientType, BlockEntityTicker<? super E> ticker) {
+		return serverType == clientType ? (BlockEntityTicker<A>) ticker : null;
+	}
+
 	private LevelUtils() {}
 
 	public static <T extends BlockEntity> void blockEntityTicker(Level level, BlockPos pos, BlockState state, T be) {

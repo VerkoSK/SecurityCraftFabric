@@ -1,5 +1,7 @@
 package net.geforcemods.securitycraft.misc;
 
+import net.geforcemods.securitycraft.SCContent;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -49,7 +51,7 @@ public class ContainerLockData extends SavedData {
 	private final Map<Long, LockedContainer> locks = new HashMap<>();
 
 	private static final Codec<ContainerLockData> CODEC = CompoundTag.CODEC.xmap(ContainerLockData::load, data -> data.save(new CompoundTag()));
-	private static final SavedDataType<ContainerLockData> TYPE = new SavedDataType<>("securitycraft_container_locks", ContainerLockData::new, CODEC, null);
+	private static final SavedDataType<ContainerLockData> TYPE = new SavedDataType<>(SCContent.id("container_locks"), ContainerLockData::new, CODEC, null);
 
 	public static ContainerLockData get(ServerLevel level) {
 		return level.getDataStorage().computeIfAbsent(TYPE);

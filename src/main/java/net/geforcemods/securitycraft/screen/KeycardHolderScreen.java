@@ -2,31 +2,24 @@ package net.geforcemods.securitycraft.screen;
 
 import net.geforcemods.securitycraft.SCContent;
 import net.geforcemods.securitycraft.inventory.KeycardHolderMenu;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
 public class KeycardHolderScreen extends AbstractContainerScreen<KeycardHolderMenu> {
-	private static final ResourceLocation TEXTURE = SCContent.id("textures/gui/container/keycard_holder.png");
+	private static final Identifier TEXTURE = SCContent.id("textures/gui/container/keycard_holder.png");
 
 	public KeycardHolderScreen(KeycardHolderMenu menu, Inventory inv, Component title) {
-		super(menu, inv, title);
-		imageWidth = 176;
-		imageHeight = 174;
+		super(menu, inv, title, 176, 174);
 		inventoryLabelY = imageHeight - 94;
 	}
 
 	@Override
-	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
-		super.render(guiGraphics, mouseX, mouseY, partialTicks);
-		renderTooltip(guiGraphics, mouseX, mouseY);
-	}
-
-	@Override
-	protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int mouseX, int mouseY) {
-		guiGraphics.blit(RenderType::guiTextured, TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight, 256, 256);
+	public void extractRenderState(GuiGraphicsExtractor extractor, int mouseX, int mouseY, float partialTick) {
+		extractor.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, leftPos, topPos, 0.0F, 0.0F, imageWidth, imageHeight, 256, 256);
+		super.extractRenderState(extractor, mouseX, mouseY, partialTick);
 	}
 }

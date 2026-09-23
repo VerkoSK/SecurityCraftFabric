@@ -111,29 +111,7 @@ public class KeypadTrapdoorBlockEntity extends CustomizableBlockEntity implement
 		};
 	}
 
-	@Override
-	public void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-		super.saveAdditional(tag, registries);
 
-		long cooldownLeft = getCooldownEnd() - System.currentTimeMillis();
-
-		tag.putString("salt", salt);
-		tag.putLong("cooldownLeft", cooldownLeft <= 0 ? -1 : cooldownLeft);
-
-		if (passcodeHash != null)
-			tag.putString("passcodeHash", passcodeHash);
-	}
-
-	@Override
-	public void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-		super.loadAdditional(tag, registries);
-
-		if (tag.contains("salt"))
-			salt = tag.getStringOr("salt", "");
-
-		cooldownEnd = System.currentTimeMillis() + tag.getLongOr("cooldownLeft", 0L);
-		passcodeHash = tag.contains("passcodeHash") ? tag.getStringOr("passcodeHash", null) : null;
-	}
 
 	@Override
 	public CompoundTag getUpdateTag(HolderLookup.Provider registries) {

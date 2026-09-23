@@ -2,7 +2,7 @@ package net.geforcemods.securitycraft.blockentities;
 
 import java.util.Optional;
 
-import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
+import net.fabricmc.fabric.api.menu.v1.ExtendedMenuProvider;
 import net.geforcemods.securitycraft.SCContent;
 import net.geforcemods.securitycraft.api.Codebreakable;
 import net.geforcemods.securitycraft.api.CustomizableBlockEntity;
@@ -17,6 +17,8 @@ import net.geforcemods.securitycraft.misc.ModuleType;
 import net.geforcemods.securitycraft.util.BlockUtils;
 import net.geforcemods.securitycraft.util.ITickingBlockEntity;
 import net.geforcemods.securitycraft.util.TeamUtils;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -38,7 +40,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
  * it. A correct card/hack pulses redstone. Ported from upstream's {@code KeycardReaderBlockEntity}, minus the
  * disguise module and the Sonic Security System lock (not ported).
  */
-public class KeycardReaderBlockEntity extends CustomizableBlockEntity implements MenuProvider, ExtendedScreenHandlerFactory<BlockPos>, Codebreakable, ITickingBlockEntity {
+public class KeycardReaderBlockEntity extends CustomizableBlockEntity implements MenuProvider, ExtendedMenuProvider<BlockPos>, Codebreakable, ITickingBlockEntity {
 	protected boolean[] acceptedLevels = {
 			true, false, false, false, false
 	};
@@ -58,38 +60,31 @@ public class KeycardReaderBlockEntity extends CustomizableBlockEntity implements
 	}
 
 	@Override
-	public void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-		super.saveAdditional(tag, registries);
-
-		CompoundTag levels = new CompoundTag();
+	public void saveAdditional(ValueOutput output) {
+		super.saveAdditional(output);
 
 		for (int i = 0; i < 5; i++) {
-			levels.putBoolean("lvl" + (i + 1), acceptedLevels[i]);
+			output.putBoolean("lvl" + (i + 1), acceptedLevels[i]);
 		}
 
-		tag.put("acceptedLevels", levels);
-		tag.putInt("signature", signature);
+		output.putInt("signature", signature);
 	}
 
 	@Override
-	public void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-		super.loadAdditional(tag, registries);
+	public void loadAdditional(ValueInput input) {
+		super.loadAdditional(input);
 
-		if (tag.contains("acceptedLevels")) {
-			CompoundTag levels = tag.getCompoundOrEmpty("acceptedLevels");
-
-			for (int i = 0; i < 5; i++) {
-				acceptedLevels[i] = levels.getBooleanOr("lvl" + (i + 1), false);
-			}
+		for (int i = 0; i < 5; i++) {
+			acceptedLevels[i] = input.getBooleanOr("lvl" + (i + 1), false);
 		}
 
-		signature = tag.getIntOr("signature", 0);
+		signature = input.getIntOr("signature", 0);
 	}
 
 	@Override
 	public boolean shouldAttemptCodebreak(Player player) {
 		if (isDisabled()) {
-			player.displayClientMessage(net.geforcemods.securitycraft.util.Utils.localize("gui.securitycraft:scManual.disabled"), true);
+			if (player instanceof ServerPlayer serverPlayer) serverPlayer.sendSystemMessage(net.geforcemods.securitycraft.util.Utils.localize("gui.securitycraft:scManual.disabled"), true);
 			return false;
 		}
 
@@ -98,7 +93,7 @@ public class KeycardReaderBlockEntity extends CustomizableBlockEntity implements
 
 	@Override
 	public void useCodebreaker(Player player) {
-		if (level != null && !level.isClientSide)
+		if (level != null && !level.isClientSide())
 			activate();
 	}
 
@@ -128,7 +123,7 @@ public class KeycardReaderBlockEntity extends CustomizableBlockEntity implements
 
 		Optional<String> usableBy = KeycardItem.getUsableBy(stack);
 
-		if (usableBy.isPresent() && !usableBy.get().equals(player.getGameProfile().getName()))
+		if (usableBy.isPresent() && !usableBy.get().equals(player.getGameProfile().name()))
 			return Component.translatable("messages.securitycraft:keycard_acceptor.cant_use");
 
 		if (getSignature() != KeycardItem.getSignature(stack))

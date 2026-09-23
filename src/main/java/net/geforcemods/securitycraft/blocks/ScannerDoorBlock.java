@@ -1,5 +1,7 @@
 package net.geforcemods.securitycraft.blocks;
 
+import net.minecraft.world.level.block.BaseEntityBlock;
+
 import net.geforcemods.securitycraft.api.IModuleInventory;
 import net.geforcemods.securitycraft.blockentities.ScannerDoorBlockEntity;
 import net.geforcemods.securitycraft.util.LevelUtils;
@@ -120,6 +122,6 @@ public class ScannerDoorBlock extends DoorBlock implements EntityBlock {
 
 	@Override
 	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-		return level.isClientSide || state.getValue(HALF) != DoubleBlockHalf.LOWER ? null : LevelUtils.createTickerHelper(type, net.geforcemods.securitycraft.SCContent.SCANNER_DOOR_BLOCK_ENTITY, LevelUtils::blockEntityTicker);
+		return level.isClientSide() || state.getValue(HALF) != DoubleBlockHalf.LOWER ? null : LevelUtils.createTickerHelper(type, net.geforcemods.securitycraft.SCContent.SCANNER_DOOR_BLOCK_ENTITY, LevelUtils::blockEntityTicker);
 	}
 }

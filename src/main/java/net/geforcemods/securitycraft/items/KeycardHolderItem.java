@@ -55,7 +55,7 @@ public class KeycardHolderItem extends Item {
 	public InteractionResult use(Level level, Player player, InteractionHand hand) {
 		ItemStack stack = player.getItemInHand(hand);
 
-		if (!level.isClientSide) {
+		if (!level.isClientSide()) {
 			player.openMenu(new MenuProvider() {
 				@Override
 				public AbstractContainerMenu createMenu(int id, Inventory inv, Player p) {

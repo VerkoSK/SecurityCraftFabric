@@ -8,14 +8,14 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 /**
  * Client -> server: the keycard reader/lock screen's accepted levels and signature (kept live so the block reflects
  * changes immediately), and, if {@code link} is set, links the keycard currently in the slot with those settings.
  */
 public record SyncKeycardSettingsPayload(BlockPos pos, List<Boolean> acceptedLevels, int signature, boolean link, Optional<String> usableBy) implements CustomPacketPayload {
-	public static final Type<SyncKeycardSettingsPayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath("securitycraft", "sync_keycard_settings"));
+	public static final Type<SyncKeycardSettingsPayload> TYPE = new Type<>(Identifier.fromNamespaceAndPath("securitycraft", "sync_keycard_settings"));
 	public static final StreamCodec<RegistryFriendlyByteBuf, SyncKeycardSettingsPayload> CODEC = StreamCodec.composite(
 			BlockPos.STREAM_CODEC, SyncKeycardSettingsPayload::pos,
 			ByteBufCodecs.BOOL.apply(ByteBufCodecs.list(5)), SyncKeycardSettingsPayload::acceptedLevels,

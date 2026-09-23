@@ -83,7 +83,7 @@ public class SecurityCraftClient implements ClientModInitializer {
 		net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> client.execute(() -> {
 			java.util.function.Consumer<net.minecraft.network.chat.Component> messageSink = message -> {
 				if (client.player != null)
-					client.player.displayClientMessage(message, false);
+					client.player.sendSystemMessage(message);
 			};
 
 			net.geforcemods.securitycraft.misc.WelcomeMessage.show(messageSink);

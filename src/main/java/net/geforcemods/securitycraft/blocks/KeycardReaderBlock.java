@@ -1,9 +1,12 @@
 package net.geforcemods.securitycraft.blocks;
 
+import net.minecraft.world.level.block.BaseEntityBlock;
+
 import net.geforcemods.securitycraft.SCContent;
 import net.geforcemods.securitycraft.blockentities.KeycardReaderBlockEntity;
 import net.geforcemods.securitycraft.items.KeycardItem;
 import net.geforcemods.securitycraft.util.BlockUtils;
+import net.geforcemods.securitycraft.util.LevelUtils;
 import net.geforcemods.securitycraft.util.OwnershipUtils;
 import net.geforcemods.securitycraft.util.PlayerUtils;
 import net.geforcemods.securitycraft.util.Utils;
@@ -57,11 +60,12 @@ public class KeycardReaderBlock extends Block implements EntityBlock, net.geforc
 		if (!(level.getBlockEntity(pos) instanceof KeycardReaderBlockEntity be))
 			return InteractionResult.PASS;
 
-		if (level.isClientSide)
+		if (level.isClientSide())
 			return InteractionResult.SUCCESS;
 
 		if (be.isDisabled()) {
-			player.displayClientMessage(Utils.localize("gui.securitycraft:scManual.disabled"), true);
+			if (player instanceof ServerPlayer serverPlayer)
+				serverPlayer.sendSystemMessage(Utils.localize("gui.securitycraft:scManual.disabled"), true);
 			return InteractionResult.SUCCESS;
 		}
 
@@ -85,11 +89,12 @@ public class KeycardReaderBlock extends Block implements EntityBlock, net.geforc
 		if (!(level.getBlockEntity(pos) instanceof KeycardReaderBlockEntity be))
 			return InteractionResult.TRY_WITH_EMPTY_HAND;
 
-		if (level.isClientSide)
+		if (level.isClientSide())
 			return InteractionResult.SUCCESS;
 
 		if (be.isDisabled()) {
-			player.displayClientMessage(Utils.localize("gui.securitycraft:scManual.disabled"), true);
+			if (player instanceof ServerPlayer serverPlayer)
+				serverPlayer.sendSystemMessage(Utils.localize("gui.securitycraft:scManual.disabled"), true);
 			return InteractionResult.SUCCESS;
 		}
 
@@ -180,6 +185,6 @@ public class KeycardReaderBlock extends Block implements EntityBlock, net.geforc
 
 	@Override
 	public <T extends BlockEntity> net.minecraft.world.level.block.entity.BlockEntityTicker<T> getTicker(Level level, BlockState state, net.minecraft.world.level.block.entity.BlockEntityType<T> type) {
-		return level.isClientSide ? null : net.geforcemods.securitycraft.util.LevelUtils.createTickerHelper(type, net.geforcemods.securitycraft.SCContent.KEYCARD_READER_BLOCK_ENTITY, net.geforcemods.securitycraft.util.LevelUtils::blockEntityTicker);
+		return level.isClientSide() ? null : LevelUtils.createTickerHelper(type, net.geforcemods.securitycraft.SCContent.KEYCARD_READER_BLOCK_ENTITY, net.geforcemods.securitycraft.util.LevelUtils::blockEntityTicker);
 	}
 }

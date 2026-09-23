@@ -54,7 +54,7 @@ public final class UpdateChecker {
 
 			JsonObject json = JsonParser.parseString(response.body()).getAsJsonObject();
 			JsonObject promos = json.getAsJsonObject("promos");
-			String mcVersion = SharedConstants.getCurrentVersion().getName();
+			String mcVersion = SharedConstants.getCurrentVersion().name();
 
 			if (promos != null && promos.has(mcVersion)) {
 				latestVersion = promos.get(mcVersion).getAsString();

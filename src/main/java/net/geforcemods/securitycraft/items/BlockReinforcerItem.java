@@ -103,7 +103,7 @@ public class BlockReinforcerItem extends Item {
 
 		if (level instanceof ServerLevel) {
 			level.setBlockAndUpdate(pos, target.withPropertiesOf(state));
-			stack.hurtAndBreak(1, player, net.minecraft.world.entity.LivingEntity.getSlotForHand(ctx.getHand()));
+			stack.hurtAndBreak(1, player, ctx.getHand());
 		}
 
 		return InteractionResult.SUCCESS;
