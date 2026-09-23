@@ -108,6 +108,6 @@ public class ScannerTrapdoorBlock extends TrapDoorBlock implements EntityBlock {
 
 	@Override
 	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-		return level.isClientSide ? null : LevelUtils.createTickerHelper(type, SCContent.SCANNER_TRAPDOOR_BLOCK_ENTITY, LevelUtils::blockEntityTicker);
+		return level.isClientSide ? null : net.minecraft.world.level.block.BaseEntityBlock.createTickerHelper(type, SCContent.SCANNER_TRAPDOOR_BLOCK_ENTITY, LevelUtils::blockEntityTicker);
 	}
 }
