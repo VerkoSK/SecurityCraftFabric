@@ -28,7 +28,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -76,7 +76,7 @@ public class KeypadBarrelBlockEntity extends RandomizableContainerBlockEntity im
 		protected void openerCountChanged(Level level, BlockPos pos, BlockState state, int count, int openCount) {}
 
 		@Override
-		protected boolean isOwnContainer(Player player) {
+		public boolean isOwnContainer(Player player) {
 			if (player.containerMenu instanceof ChestMenu menu)
 				return menu.getContainer() == KeypadBarrelBlockEntity.this;
 
@@ -92,7 +92,7 @@ public class KeypadBarrelBlockEntity extends RandomizableContainerBlockEntity im
 	private SmartModuleCooldownOption smartModuleCooldown = new SmartModuleCooldownOption();
 	private long cooldownEnd = 0;
 	private Map<ModuleType, Boolean> moduleStates = new EnumMap<>(ModuleType.class);
-	private ResourceLocation previousBarrel;
+	private Identifier previousBarrel;
 	/** The player whose passcode attempt is currently being verified, so {@link #activate(ServerLevel)} knows who to open the menu for. */
 	private UUID pendingOpener;
 
@@ -145,7 +145,7 @@ public class KeypadBarrelBlockEntity extends RandomizableContainerBlockEntity im
 		String savedPreviousBarrel = input.getStringOr("previous_barrel", "");
 
 		if (!savedPreviousBarrel.isBlank()) {
-			ResourceLocation parsedPreviousBarrel = ResourceLocation.parse(savedPreviousBarrel);
+			Identifier parsedPreviousBarrel = Identifier.parse(savedPreviousBarrel);
 
 			if (parsedPreviousBarrel.getPath() != null && !parsedPreviousBarrel.getPath().isBlank())
 				previousBarrel = parsedPreviousBarrel;
@@ -324,15 +324,15 @@ public class KeypadBarrelBlockEntity extends RandomizableContainerBlockEntity im
 	}
 
 	@Override
-	public void startOpen(Player player) {
-		if (!remove && !player.isSpectator())
-			openersCounter.incrementOpeners(player, getLevel(), getBlockPos(), getBlockState());
+	public void startOpen(net.minecraft.world.entity.ContainerUser player) {
+		if (!remove && !player.getLivingEntity().isSpectator())
+			openersCounter.incrementOpeners(player.getLivingEntity(), getLevel(), getBlockPos(), getBlockState(), player.getContainerInteractionRange());
 	}
 
 	@Override
-	public void stopOpen(Player player) {
-		if (!remove && !player.isSpectator())
-			openersCounter.decrementOpeners(player, getLevel(), getBlockPos(), getBlockState());
+	public void stopOpen(net.minecraft.world.entity.ContainerUser player) {
+		if (!remove && !player.getLivingEntity().isSpectator())
+			openersCounter.decrementOpeners(player.getLivingEntity(), getLevel(), getBlockPos(), getBlockState());
 	}
 
 	public void recheckOpen() {
@@ -355,14 +355,14 @@ public class KeypadBarrelBlockEntity extends RandomizableContainerBlockEntity im
 		double y = worldPosition.getY() + 0.5D + facingNormal.getY() / 2.0D;
 		double z = worldPosition.getZ() + 0.5D + facingNormal.getZ() / 2.0D;
 
-		level.playSound(null, x, y, z, sound, SoundSource.BLOCKS, 0.5F, level.random.nextFloat() * 0.1F + 0.9F);
+		level.playSound(null, x, y, z, sound, SoundSource.BLOCKS, 0.5F, level.getRandom().nextFloat() * 0.1F + 0.9F);
 	}
 
 	public void setPreviousBarrel(Block previousBarrel) {
 		this.previousBarrel = BuiltInRegistries.BLOCK.getKey(previousBarrel);
 	}
 
-	public ResourceLocation getPreviousBarrel() {
+	public Identifier getPreviousBarrel() {
 		return previousBarrel;
 	}
 

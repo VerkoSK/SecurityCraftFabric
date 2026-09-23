@@ -35,6 +35,11 @@ public class LimitedUseKeycardRecipe extends CombineRecipe {
 	}
 
 	@Override
+	public boolean canBeCombined(ItemStack firstItem, ItemStack secondItem) {
+		return !firstItem.isEmpty() && !secondItem.isEmpty();
+	}
+
+	@Override
 	public RecipeSerializer<? extends CustomRecipe> getSerializer() {
 		return SCContent.LIMITED_USE_KEYCARD_RECIPE_SERIALIZER;
 	}

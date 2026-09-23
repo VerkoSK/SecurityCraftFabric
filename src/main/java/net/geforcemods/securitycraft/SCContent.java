@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
+
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.geforcemods.securitycraft.blockentities.KeypadBlockEntity;
 import net.geforcemods.securitycraft.blockentities.KeypadDoorBlockEntity;
@@ -902,9 +902,9 @@ public class SCContent {
 		REINFORCED_MOVING_PISTON = registerBlockNoItem("reinforced_moving_piston", key -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedMovingPistonBlock(reinforcedCopy(Blocks.MOVING_PISTON).setId(key)));
 		REINFORCED_CAULDRON = registerFunctionalReinforced("reinforced_cauldron", key -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedCauldronBlock(reinforcedCopy(Blocks.CAULDRON).setId(key), net.geforcemods.securitycraft.blocks.reinforced.ReinforcedCauldronBlock.IReinforcedCauldronInteraction.EMPTY));
 		//the filled cauldrons are states of the empty one, so like vanilla they have no item of their own
-		REINFORCED_WATER_CAULDRON = registerBlockNoItem("reinforced_water_cauldron", key -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedLayeredCauldronBlock(net.minecraft.world.level.biome.Biome.Precipitation.RAIN, net.geforcemods.securitycraft.blocks.reinforced.ReinforcedCauldronBlock.IReinforcedCauldronInteraction.WATER, reinforcedCopy(Blocks.WATER_CAULDRON).setId(key), Blocks.WATER_CAULDRON));
+		REINFORCED_WATER_CAULDRON = registerBlockNoItem("reinforced_water_cauldron", key -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedLayeredCauldronBlock(reinforcedCopy(Blocks.WATER_CAULDRON).setId(key), net.minecraft.world.level.biome.Biome.Precipitation.RAIN, net.geforcemods.securitycraft.blocks.reinforced.ReinforcedCauldronBlock.IReinforcedCauldronInteraction.WATER, Blocks.WATER_CAULDRON));
 		REINFORCED_LAVA_CAULDRON = registerBlockNoItem("reinforced_lava_cauldron", key -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedLavaCauldronBlock(reinforcedCopy(Blocks.LAVA_CAULDRON).setId(key)));
-		REINFORCED_POWDER_SNOW_CAULDRON = registerBlockNoItem("reinforced_powder_snow_cauldron", key -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedLayeredCauldronBlock(net.minecraft.world.level.biome.Biome.Precipitation.SNOW, net.geforcemods.securitycraft.blocks.reinforced.ReinforcedCauldronBlock.IReinforcedCauldronInteraction.POWDER_SNOW, reinforcedCopy(Blocks.POWDER_SNOW_CAULDRON).setId(key), Blocks.POWDER_SNOW_CAULDRON));
+		REINFORCED_POWDER_SNOW_CAULDRON = registerBlockNoItem("reinforced_powder_snow_cauldron", key -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedLayeredCauldronBlock(reinforcedCopy(Blocks.POWDER_SNOW_CAULDRON).setId(key), net.minecraft.world.level.biome.Biome.Precipitation.SNOW, net.geforcemods.securitycraft.blocks.reinforced.ReinforcedCauldronBlock.IReinforcedCauldronInteraction.POWDER_SNOW, Blocks.POWDER_SNOW_CAULDRON));
 		REINFORCED_LECTERN = registerFunctionalReinforced("reinforced_lectern", key -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedLecternBlock(reinforcedCopy(Blocks.LECTERN).setId(key)));
 		REINFORCED_CHISELED_BOOKSHELF = registerFunctionalReinforced("reinforced_chiseled_bookshelf", key -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedChiseledBookshelfBlock(reinforcedCopy(Blocks.CHISELED_BOOKSHELF).setId(key)));
 		registerFunctionalReinforced("reinforced_hopper", key -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedHopperBlock(reinforcedCopy(Blocks.HOPPER).setId(key)));
@@ -1093,9 +1093,10 @@ public class SCContent {
 
 		UNREINFORCING = Registry.register(BuiltInRegistries.DATA_COMPONENT_TYPE, id("unreinforcing"), net.minecraft.core.component.DataComponentType.<net.minecraft.util.Unit>builder().persistent(com.mojang.serialization.MapCodec.unitCodec(net.minecraft.util.Unit.INSTANCE)).networkSynchronized(net.minecraft.network.codec.StreamCodec.unit(net.minecraft.util.Unit.INSTANCE)).build());
 		BOUND_MINES = Registry.register(BuiltInRegistries.DATA_COMPONENT_TYPE, id("bound_mines"), net.minecraft.core.component.DataComponentType.<net.geforcemods.securitycraft.components.BoundMines>builder().persistent(net.geforcemods.securitycraft.components.BoundMines.CODEC).networkSynchronized(net.geforcemods.securitycraft.components.BoundMines.STREAM_CODEC).build());
-		BLOCK_REINFORCING_SERIALIZER = Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, id("block_reinforcing"), new net.minecraft.world.item.crafting.CustomRecipe.Serializer<>(net.geforcemods.securitycraft.recipe.ReinforcerRecipe.Reinforcing::new));
-		BLOCK_UNREINFORCING_SERIALIZER = Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, id("block_unreinforcing"), new net.minecraft.world.item.crafting.CustomRecipe.Serializer<>(net.geforcemods.securitycraft.recipe.ReinforcerRecipe.Unreinforcing::new));
-		COPY_MINE_REMOTE_ACCESS_TOOL_RECIPE_SERIALIZER = Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, id("copy_mine_remote_access_tool_recipe"), new net.minecraft.world.item.crafting.CustomRecipe.Serializer<>(net.geforcemods.securitycraft.recipe.CopyPositionComponentItemRecipe::new));
+		BLOCK_REINFORCING_SERIALIZER = Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, id("block_reinforcing"), net.geforcemods.securitycraft.recipe.SimpleCraftingRecipeSerializer.create(net.geforcemods.securitycraft.recipe.ReinforcerRecipe.Reinforcing::new));
+		BLOCK_UNREINFORCING_SERIALIZER = Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, id("block_unreinforcing"), net.geforcemods.securitycraft.recipe.SimpleCraftingRecipeSerializer.create(net.geforcemods.securitycraft.recipe.ReinforcerRecipe.Unreinforcing::new));
+		COPY_MINE_REMOTE_ACCESS_TOOL_RECIPE_SERIALIZER = Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, id("copy_mine_remote_access_tool_recipe"), net.geforcemods.securitycraft.recipe.SimpleCraftingRecipeSerializer.create(net.geforcemods.securitycraft.recipe.CopyPositionComponentItemRecipe::new));
+		LIMITED_USE_KEYCARD_RECIPE_SERIALIZER = Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, id("limited_use_keycard_recipe"), net.geforcemods.securitycraft.recipe.SimpleCraftingRecipeSerializer.create(net.geforcemods.securitycraft.recipe.LimitedUseKeycardRecipe::new));
 		BLOCK_REINFORCER_MENU = Registry.register(BuiltInRegistries.MENU, id("block_reinforcer"), new net.minecraft.world.inventory.MenuType<>(net.geforcemods.securitycraft.inventory.BlockReinforcerMenu::new, net.minecraft.world.flag.FeatureFlags.VANILLA_SET));
 
 		KEYPAD_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("keypad"), FabricBlockEntityTypeBuilder.create(KeypadBlockEntity::new, KEYPAD).build());
@@ -1123,10 +1124,10 @@ public class SCContent {
 		KEYPAD_FURNACE_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("keypad_furnace"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.KeypadFurnaceBlockEntity::new, KEYPAD_FURNACE).build());
 		KEYPAD_SMOKER_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("keypad_smoker"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.KeypadSmokerBlockEntity::new, KEYPAD_SMOKER).build());
 		KEYPAD_BLAST_FURNACE_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("keypad_blast_furnace"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.KeypadBlastFurnaceBlockEntity::new, KEYPAD_BLAST_FURNACE).build());
-		KEYPAD_FURNACE_MENU = Registry.register(BuiltInRegistries.MENU, id("keypad_furnace"), new net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType<>((syncId, inv, pos) -> new net.geforcemods.securitycraft.inventory.KeypadFurnaceMenu(syncId, inv.player.level(), pos, inv), net.minecraft.core.BlockPos.STREAM_CODEC));
-		KEYPAD_SMOKER_MENU = Registry.register(BuiltInRegistries.MENU, id("keypad_smoker"), new net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType<>((syncId, inv, pos) -> new net.geforcemods.securitycraft.inventory.KeypadSmokerMenu(syncId, inv.player.level(), pos, inv), net.minecraft.core.BlockPos.STREAM_CODEC));
-		KEYPAD_BLAST_FURNACE_MENU = Registry.register(BuiltInRegistries.MENU, id("keypad_blast_furnace"), new net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType<>((syncId, inv, pos) -> new net.geforcemods.securitycraft.inventory.KeypadBlastFurnaceMenu(syncId, inv.player.level(), pos, inv), net.minecraft.core.BlockPos.STREAM_CODEC));
-		KEYCARD_READER_MENU = Registry.register(BuiltInRegistries.MENU, id("keycard_reader"), new net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType<>((syncId, inv, pos) -> new net.geforcemods.securitycraft.inventory.KeycardReaderMenu(syncId, inv.player.level(), pos, inv), net.minecraft.core.BlockPos.STREAM_CODEC));
+		KEYPAD_FURNACE_MENU = Registry.register(BuiltInRegistries.MENU, id("keypad_furnace"), new net.fabricmc.fabric.api.menu.v1.ExtendedMenuType<>((syncId, inv, pos) -> new net.geforcemods.securitycraft.inventory.KeypadFurnaceMenu(syncId, inv.player.level(), pos, inv), net.minecraft.core.BlockPos.STREAM_CODEC));
+		KEYPAD_SMOKER_MENU = Registry.register(BuiltInRegistries.MENU, id("keypad_smoker"), new net.fabricmc.fabric.api.menu.v1.ExtendedMenuType<>((syncId, inv, pos) -> new net.geforcemods.securitycraft.inventory.KeypadSmokerMenu(syncId, inv.player.level(), pos, inv), net.minecraft.core.BlockPos.STREAM_CODEC));
+		KEYPAD_BLAST_FURNACE_MENU = Registry.register(BuiltInRegistries.MENU, id("keypad_blast_furnace"), new net.fabricmc.fabric.api.menu.v1.ExtendedMenuType<>((syncId, inv, pos) -> new net.geforcemods.securitycraft.inventory.KeypadBlastFurnaceMenu(syncId, inv.player.level(), pos, inv), net.minecraft.core.BlockPos.STREAM_CODEC));
+		KEYCARD_READER_MENU = Registry.register(BuiltInRegistries.MENU, id("keycard_reader"), new net.fabricmc.fabric.api.menu.v1.ExtendedMenuType<>((syncId, inv, pos) -> new net.geforcemods.securitycraft.inventory.KeycardReaderMenu(syncId, inv.player.level(), pos, inv), net.minecraft.core.BlockPos.STREAM_CODEC));
 		KEYCARD_HOLDER_MENU = Registry.register(BuiltInRegistries.MENU, id("keycard_holder"), new net.minecraft.world.inventory.MenuType<>(net.geforcemods.securitycraft.inventory.KeycardHolderMenu::new, net.minecraft.world.flag.FeatureFlags.VANILLA_SET));
 		REINFORCED_HOPPER_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("reinforced_hopper"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.ReinforcedHopperBlockEntity::new, REINFORCED_BY_NAME.get("reinforced_hopper")).build());
 		REINFORCED_DISPENSER_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("reinforced_dispenser"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.ReinforcedDispenserBlockEntity::new, REINFORCED_BY_NAME.get("reinforced_dispenser")).build());
@@ -1136,7 +1137,7 @@ public class SCContent {
 		REINFORCED_CAULDRON_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("reinforced_cauldron"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.ReinforcedCauldronBlockEntity::new, REINFORCED_CAULDRON, REINFORCED_WATER_CAULDRON, REINFORCED_LAVA_CAULDRON, REINFORCED_POWDER_SNOW_CAULDRON).build());
 		REINFORCED_LECTERN_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("reinforced_lectern"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.ReinforcedLecternBlockEntity::new, REINFORCED_LECTERN).build());
 		REINFORCED_CHISELED_BOOKSHELF_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("reinforced_chiseled_bookshelf"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.ReinforcedChiseledBookshelfBlockEntity::new, REINFORCED_CHISELED_BOOKSHELF).build());
-		REINFORCED_LECTERN_MENU = Registry.register(BuiltInRegistries.MENU, id("reinforced_lectern"), new net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType<>((syncId, inv, pos) -> new net.geforcemods.securitycraft.inventory.ReinforcedLecternMenu(syncId, (net.geforcemods.securitycraft.blockentities.ReinforcedLecternBlockEntity) inv.player.level().getBlockEntity(pos)), net.minecraft.core.BlockPos.STREAM_CODEC));
+		REINFORCED_LECTERN_MENU = Registry.register(BuiltInRegistries.MENU, id("reinforced_lectern"), new net.fabricmc.fabric.api.menu.v1.ExtendedMenuType<>((syncId, inv, pos) -> new net.geforcemods.securitycraft.inventory.ReinforcedLecternMenu(syncId, (net.geforcemods.securitycraft.blockentities.ReinforcedLecternBlockEntity) inv.player.level().getBlockEntity(pos)), net.minecraft.core.BlockPos.STREAM_CODEC));
 		SECRET_SIGN_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("secret_sign"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.SecretSignBlockEntity::new, SECRET_OAK_SIGN, SECRET_OAK_WALL_SIGN, SECRET_SPRUCE_SIGN, SECRET_SPRUCE_WALL_SIGN, SECRET_BIRCH_SIGN, SECRET_BIRCH_WALL_SIGN, SECRET_JUNGLE_SIGN, SECRET_JUNGLE_WALL_SIGN, SECRET_ACACIA_SIGN, SECRET_ACACIA_WALL_SIGN, SECRET_DARK_OAK_SIGN, SECRET_DARK_OAK_WALL_SIGN, SECRET_MANGROVE_SIGN, SECRET_MANGROVE_WALL_SIGN, SECRET_CHERRY_SIGN, SECRET_CHERRY_WALL_SIGN, SECRET_BAMBOO_SIGN, SECRET_BAMBOO_WALL_SIGN, SECRET_CRIMSON_SIGN, SECRET_CRIMSON_WALL_SIGN, SECRET_WARPED_SIGN, SECRET_WARPED_WALL_SIGN).build());
 		SECRET_HANGING_SIGN_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("secret_hanging_sign"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.SecretHangingSignBlockEntity::new, SECRET_OAK_HANGING_SIGN, SECRET_OAK_WALL_HANGING_SIGN, SECRET_SPRUCE_HANGING_SIGN, SECRET_SPRUCE_WALL_HANGING_SIGN, SECRET_BIRCH_HANGING_SIGN, SECRET_BIRCH_WALL_HANGING_SIGN, SECRET_JUNGLE_HANGING_SIGN, SECRET_JUNGLE_WALL_HANGING_SIGN, SECRET_ACACIA_HANGING_SIGN, SECRET_ACACIA_WALL_HANGING_SIGN, SECRET_DARK_OAK_HANGING_SIGN, SECRET_DARK_OAK_WALL_HANGING_SIGN, SECRET_MANGROVE_HANGING_SIGN, SECRET_MANGROVE_WALL_HANGING_SIGN, SECRET_CHERRY_HANGING_SIGN, SECRET_CHERRY_WALL_HANGING_SIGN, SECRET_BAMBOO_HANGING_SIGN, SECRET_BAMBOO_WALL_HANGING_SIGN, SECRET_CRIMSON_HANGING_SIGN, SECRET_CRIMSON_WALL_HANGING_SIGN, SECRET_WARPED_HANGING_SIGN, SECRET_WARPED_WALL_HANGING_SIGN).build());
 		MINE_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("mine"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.MineBlockEntity::new, MINE).build());
@@ -1151,8 +1152,8 @@ public class SCContent {
 		Registry.register(BuiltInRegistries.ENTITY_TYPE, id("bouncingbetty"), BOUNCING_BETTY_ENTITY);
 		IMS_BOMB_ENTITY = net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder.<net.geforcemods.securitycraft.entity.IMSBomb>create(net.minecraft.world.entity.MobCategory.MISC, net.geforcemods.securitycraft.entity.IMSBomb::new).dimensions(net.minecraft.world.entity.EntityDimensions.fixed(0.25F, 0.3F)).trackRangeBlocks(256).trackedUpdateRate(1).forceTrackedVelocityUpdates(true).build(ResourceKey.create(Registries.ENTITY_TYPE, id("imsbomb")));
 		Registry.register(BuiltInRegistries.ENTITY_TYPE, id("imsbomb"), IMS_BOMB_ENTITY);
-		SINGLE_LENS_MENU = Registry.register(BuiltInRegistries.MENU, id("single_lens"), new net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType<>((syncId, inv, pos) -> new net.geforcemods.securitycraft.inventory.SingleLensMenu(syncId, inv.player.level(), pos, inv), net.minecraft.core.BlockPos.STREAM_CODEC));
-		CUSTOMIZE_BLOCK_MENU = Registry.register(BuiltInRegistries.MENU, id("customize_block"), new net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType<>((syncId, inv, pos) -> new net.geforcemods.securitycraft.inventory.CustomizeBlockMenu(syncId, inv.player.level(), pos, inv), net.minecraft.core.BlockPos.STREAM_CODEC));
+		SINGLE_LENS_MENU = Registry.register(BuiltInRegistries.MENU, id("single_lens"), new net.fabricmc.fabric.api.menu.v1.ExtendedMenuType<>((syncId, inv, pos) -> new net.geforcemods.securitycraft.inventory.SingleLensMenu(syncId, inv.player.level(), pos, inv), net.minecraft.core.BlockPos.STREAM_CODEC));
+		CUSTOMIZE_BLOCK_MENU = Registry.register(BuiltInRegistries.MENU, id("customize_block"), new net.fabricmc.fabric.api.menu.v1.ExtendedMenuType<>((syncId, inv, pos) -> new net.geforcemods.securitycraft.inventory.CustomizeBlockMenu(syncId, inv.player.level(), pos, inv), net.minecraft.core.BlockPos.STREAM_CODEC));
 		KEY_PANEL_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("key_panel"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.KeyPanelBlockEntity::new, KEY_PANEL).build());
 		FRAME_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("keypad_frame"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.FrameBlockEntity::new, FRAME).build());
 		//These block entities subclass a vanilla one whose (BlockPos, BlockState) constructor hard-codes the vanilla
@@ -1165,7 +1166,7 @@ public class SCContent {
 		allowVanillaBlockEntityOn(net.minecraft.world.level.block.entity.BlockEntityType.HANGING_SIGN, SECRET_HANGING_SIGN_BLOCK_ENTITY);
 		allowVanillaBlockEntityOn(net.minecraft.world.level.block.entity.BlockEntityType.BRUSHABLE_BLOCK, BRUSHABLE_MINE_BLOCK_ENTITY);
 		allowVanillaBlockEntityOn(net.minecraft.world.level.block.entity.BlockEntityType.CREAKING_HEART, CREAKING_HEART_MINE_BLOCK_ENTITY);
-		LASER_BLOCK_MENU = Registry.register(BuiltInRegistries.MENU, id("laser_block"), new net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType<>((syncId, inv, data) -> new net.geforcemods.securitycraft.inventory.LaserBlockMenu(syncId, inv.player.level(), data.pos(), data.sideConfig(), inv), net.geforcemods.securitycraft.inventory.LaserBlockData.STREAM_CODEC));
+		LASER_BLOCK_MENU = Registry.register(BuiltInRegistries.MENU, id("laser_block"), new net.fabricmc.fabric.api.menu.v1.ExtendedMenuType<>((syncId, inv, data) -> new net.geforcemods.securitycraft.inventory.LaserBlockMenu(syncId, inv.player.level(), data.pos(), data.sideConfig(), inv), net.geforcemods.securitycraft.inventory.LaserBlockData.STREAM_CODEC));
 		DISGUISE_MODULE_MENU = Registry.register(BuiltInRegistries.MENU, id("disguise_module"), new net.minecraft.world.inventory.MenuType<>(net.geforcemods.securitycraft.inventory.DisguiseModuleMenu::new, net.minecraft.world.flag.FeatureFlags.VANILLA_SET));
 		net.geforcemods.securitycraft.misc.SCSounds.register();
 		registerCreativeTab();
@@ -1194,7 +1195,7 @@ public class SCContent {
 				case "wall" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedWallBlock(props);
 				case "slab" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedSlabBlock(props);
 				case "stairs" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedStairBlock(Blocks.STONE.defaultBlockState(), props);
-				case "button" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedButtonBlock(props, BlockSetType.STONE, 20);
+				case "button" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedButtonBlock(props, BlockSetType.STONE, 20, true);
 				case "pressure_plate" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedPressurePlateBlock(props, BlockSetType.STONE);
 				case "trapdoor" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedTrapdoorBlock(BlockSetType.IRON, props);
 				default -> new BaseReinforcedBlock(props);
@@ -1324,7 +1325,7 @@ public class SCContent {
 	}
 
 	private static void registerCreativeTab() {
-		CreativeModeTab technical = FabricItemGroup.builder()
+		CreativeModeTab technical = CreativeModeTab.builder(CreativeModeTab.Row.TOP, 0)
 				.icon(() -> new ItemStack(KEYPAD))
 				.title(Component.translatable("itemGroup.securitycraft.technical"))
 				//upstream's SCCreativeModeTabs order, with the entries whose blocks this port does not have yet left out
@@ -1392,7 +1393,7 @@ public class SCContent {
 		Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, id("1_technical"), technical);
 
 		//upstream's MINE_TAB uses withTabsBefore(TECHNICAL_TAB); on Fabric the display order follows the registration order, so this has to sit between the technical and decoration tabs.
-		CreativeModeTab mine = FabricItemGroup.builder()
+		CreativeModeTab mine = CreativeModeTab.builder(CreativeModeTab.Row.TOP, 1)
 				.icon(() -> new ItemStack(MINE))
 				.title(Component.translatable("itemGroup.securitycraft.explosives"))
 				.displayItems((params, output) -> {
@@ -1443,7 +1444,7 @@ public class SCContent {
 				.build();
 		Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, id("2_mine"), mine);
 
-		CreativeModeTab decoration = FabricItemGroup.builder()
+		CreativeModeTab decoration = CreativeModeTab.builder(CreativeModeTab.Row.TOP, 2)
 				.icon(() -> new ItemStack(REINFORCED_BY_NAME.getOrDefault("reinforced_oak_stairs", KEYPAD)))
 				.title(Component.translatable("itemGroup.securitycraft.decoration"))
 				.displayItems((params, output) -> {

@@ -59,7 +59,7 @@ public class PlayerUtils {
 		//withStyle on the whole component would tint the message too, which is what this used to do.
 		MutableComponent line = Component.literal("[").append(title.setStyle(Style.EMPTY.withColor(color))).append(Component.literal("] ")).setStyle(Style.EMPTY.withColor(ChatFormatting.WHITE)).append(message);
 
-		player.displayClientMessage(line, false);
+		player.sendSystemMessage(line);
 	}
 
 	/**
@@ -99,12 +99,7 @@ public class PlayerUtils {
 		if (online != null)
 			return java.util.Optional.of(online.getUUID().toString());
 
-		MinecraftServer server = SecurityCraft.SERVER;
-
-		if (server == null)
-			return java.util.Optional.empty();
-
-		return server.getProfileCache().get(name).map(profile -> profile.getId().toString());
+		return java.util.Optional.empty();
 	}
 }
 

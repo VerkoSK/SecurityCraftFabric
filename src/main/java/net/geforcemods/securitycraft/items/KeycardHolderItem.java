@@ -69,7 +69,7 @@ public class KeycardHolderItem extends Item {
 	}
 
 	private void openMenu(Level level, Player player, ItemStack stack) {
-		if (!level.isClientSide) {
+		if (!level.isClientSide()) {
 			player.openMenu(new MenuProvider() {
 				@Override
 				public AbstractContainerMenu createMenu(int id, Inventory inv, Player p) {

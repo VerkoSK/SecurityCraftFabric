@@ -77,10 +77,8 @@ public class KeycardHolderContainer implements Container {
 		return true;
 	}
 
-	@Override
 	public void startOpen(Player player) {}
 
-	@Override
 	public void stopOpen(Player player) {
 		if (changed)
 			KeycardHolderItem.setContents(holder, keycards);

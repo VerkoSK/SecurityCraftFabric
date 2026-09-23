@@ -119,7 +119,7 @@ public class BlockReinforcerItem extends Item {
 				level.setBlockAndUpdate(pos, target.withPropertiesOf(state));
 
 				if (tag != null && level.getBlockEntity(pos) != null)
-					net.geforcemods.securitycraft.util.BlockUtils.loadBlockEntityWithComponents(level.getBlockEntity(pos), tag, level.registryAccess());
+					net.geforcemods.securitycraft.util.BlockUtils.loadBlockEntity(level.getBlockEntity(pos), tag, level);
 
 				net.geforcemods.securitycraft.util.OwnershipUtils.setPlacedBy(level, pos, player);
 
@@ -142,7 +142,7 @@ public class BlockReinforcerItem extends Item {
 						level.setBlockAndUpdate(otherHalfPos, target.withPropertiesOf(otherHalfState));
 
 						if (otherTag != null && level.getBlockEntity(otherHalfPos) != null)
-							net.geforcemods.securitycraft.util.BlockUtils.loadBlockEntityWithComponents(level.getBlockEntity(otherHalfPos), otherTag, level.registryAccess());
+							net.geforcemods.securitycraft.util.BlockUtils.loadBlockEntity(level.getBlockEntity(otherHalfPos), otherTag, level);
 
 						net.geforcemods.securitycraft.util.OwnershipUtils.setPlacedBy(level, otherHalfPos, player);
 					}
@@ -158,7 +158,7 @@ public class BlockReinforcerItem extends Item {
 			}
 
 			if (!player.isCreative())
-				stack.hurtAndBreak(1, player, net.minecraft.world.entity.LivingEntity.getSlotForHand(ctx.getHand()));
+				stack.hurtAndBreak(1, player, ctx.getHand());
 		}
 
 		return InteractionResult.SUCCESS;

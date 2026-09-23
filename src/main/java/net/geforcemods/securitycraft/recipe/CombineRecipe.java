@@ -1,6 +1,5 @@
 package net.geforcemods.securitycraft.recipe;
 
-import net.minecraft.core.HolderLookup;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CraftingInput;
@@ -9,8 +8,16 @@ import net.minecraft.world.level.Level;
 
 /** A recipe that combines exactly two specific items into one result. 1:1 with upstream CombineRecipe. */
 public abstract class CombineRecipe extends CustomRecipe {
+	protected final CraftingBookCategory category;
+
 	protected CombineRecipe(CraftingBookCategory craftingBookCategory) {
-		super(craftingBookCategory);
+		super();
+		this.category = craftingBookCategory;
+	}
+
+	@Override
+	public CraftingBookCategory category() {
+		return category;
 	}
 
 	@Override
@@ -41,7 +48,7 @@ public abstract class CombineRecipe extends CustomRecipe {
 	}
 
 	@Override
-	public ItemStack assemble(CraftingInput inv, HolderLookup.Provider lookupProvider) {
+	public ItemStack assemble(CraftingInput inv) {
 		ItemStack firstItem = ItemStack.EMPTY;
 		ItemStack secondItem = ItemStack.EMPTY;
 
@@ -61,9 +68,7 @@ public abstract class CombineRecipe extends CustomRecipe {
 
 	public abstract boolean matchesSecondItem(ItemStack stack);
 
-	public boolean canBeCombined(ItemStack firstItem, ItemStack secondItem) {
-		return !firstItem.isEmpty() && !secondItem.isEmpty();
-	}
+	public abstract boolean canBeCombined(ItemStack firstItem, ItemStack secondItem);
 
 	public abstract ItemStack combine(ItemStack firstItem, ItemStack secondItem);
 }
