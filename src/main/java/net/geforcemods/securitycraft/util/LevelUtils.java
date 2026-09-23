@@ -12,12 +12,6 @@ import net.minecraft.world.level.block.state.BlockState;
 public class LevelUtils {
 	private LevelUtils() {}
 
-	public static <T extends BlockEntity> void blockEntityTicker(Level level, BlockPos pos, BlockState state, T be) {
-		if (be instanceof ITickingBlockEntity ticking)
-			ticking.tick(level, pos, state);
-	}
-<<<<<<< HEAD
-
 	/** Runs {@code runnable} on the client's or the server's main thread, whichever owns {@code level}. */
 	public static void addScheduledTask(LevelAccessor level, Runnable runnable) {
 		if (level instanceof ServerLevel serverLevel)

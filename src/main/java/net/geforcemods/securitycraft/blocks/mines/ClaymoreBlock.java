@@ -190,7 +190,7 @@ public class ClaymoreBlock extends ExplosiveBlock implements SimpleWaterloggedBl
 
 	@Override
 	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-		return level.isClientSide ? null : createTickerHelper(type, SCContent.CLAYMORE_BLOCK_ENTITY, LevelUtils::blockEntityTicker);
+		return level.isClientSide ? null : createTickerHelper(type, SCContent.CLAYMORE_BLOCK_ENTITY, (l, p, s, be) -> be.tick(l, p, s));
 	}
 
 	@Override

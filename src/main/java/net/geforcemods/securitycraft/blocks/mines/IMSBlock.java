@@ -154,6 +154,6 @@ public class IMSBlock extends OwnableBlock implements SimpleWaterloggedBlock {
 
 	@Override
 	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-		return createTickerHelper(type, SCContent.IMS_BLOCK_ENTITY, LevelUtils::blockEntityTicker);
+		return createTickerHelper(type, SCContent.IMS_BLOCK_ENTITY, (l, p, s, be) -> be.tick(l, p, s));
 	}
 }

@@ -28,7 +28,7 @@ public class ClientUtils {
 
 		//a single long Component doesn't wrap on its own - split it into lines first, or it renders edge to edge
 		if (tooltip != null && mouseX >= x && mouseX < x + 16 && mouseY >= y && mouseY <= y + 16)
-			guiGraphics.setComponentTooltipForNextFrame(font, font.split(tooltip, 200), mouseX, mouseY);
+			guiGraphics.setComponentTooltipForNextFrame(font, java.util.List.of(tooltip), mouseX, mouseY);
 	}
 
 	private static net.minecraft.resources.ResourceLocation moduleTexture(ModuleType module) {

@@ -58,32 +58,23 @@ public class KeycardReaderBlockEntity extends CustomizableBlockEntity implements
 	}
 
 	@Override
-	public void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-		super.saveAdditional(tag, registries);
-
-		CompoundTag levels = new CompoundTag();
+	public void saveAdditional(net.minecraft.world.level.storage.ValueOutput output) {
+		super.saveAdditional(output);
+		output.putInt("signature", signature);
 
 		for (int i = 0; i < 5; i++) {
-			levels.putBoolean("lvl" + (i + 1), acceptedLevels[i]);
+			output.putBoolean("lvl" + (i + 1), acceptedLevels[i]);
 		}
-
-		tag.put("acceptedLevels", levels);
-		tag.putInt("signature", signature);
 	}
 
 	@Override
-	public void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-		super.loadAdditional(tag, registries);
+	public void loadAdditional(net.minecraft.world.level.storage.ValueInput input) {
+		super.loadAdditional(input);
+		signature = input.getIntOr("signature", 0);
 
-		if (tag.contains("acceptedLevels")) {
-			CompoundTag levels = tag.getCompoundOrEmpty("acceptedLevels");
-
-			for (int i = 0; i < 5; i++) {
-				acceptedLevels[i] = levels.getBooleanOr("lvl" + (i + 1), false);
-			}
+		for (int i = 0; i < 5; i++) {
+			acceptedLevels[i] = input.getBooleanOr("lvl" + (i + 1), false);
 		}
-
-		signature = tag.getIntOr("signature", 0);
 	}
 
 	@Override

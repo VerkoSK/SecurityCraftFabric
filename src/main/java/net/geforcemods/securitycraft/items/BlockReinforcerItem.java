@@ -13,6 +13,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
+import net.minecraft.world.level.block.entity.BlockEntity;
 
 /**
  * Reinforces a vanilla block into its reinforced counterpart in place, or - in remove mode - instantly destroys a
@@ -118,8 +119,12 @@ public class BlockReinforcerItem extends Item {
 
 				level.setBlockAndUpdate(pos, target.withPropertiesOf(state));
 
-				if (tag != null && level.getBlockEntity(pos) != null)
-					level.getBlockEntity(pos).loadWithComponents(tag, level.registryAccess());
+				if (tag != null) {
+					BlockEntity newBe = BlockEntity.loadStatic(pos, level.getBlockState(pos), tag, level.registryAccess());
+
+					if (newBe != null)
+						level.setBlockEntity(newBe);
+				}
 
 				net.geforcemods.securitycraft.util.OwnershipUtils.setPlacedBy(level, pos, player);
 
@@ -141,8 +146,12 @@ public class BlockReinforcerItem extends Item {
 
 						level.setBlockAndUpdate(otherHalfPos, target.withPropertiesOf(otherHalfState));
 
-						if (otherTag != null && level.getBlockEntity(otherHalfPos) != null)
-							level.getBlockEntity(otherHalfPos).loadWithComponents(otherTag, level.registryAccess());
+						if (otherTag != null) {
+							BlockEntity newOtherBe = BlockEntity.loadStatic(otherHalfPos, level.getBlockState(otherHalfPos), otherTag, level.registryAccess());
+
+							if (newOtherBe != null)
+								level.setBlockEntity(newOtherBe);
+						}
 
 						net.geforcemods.securitycraft.util.OwnershipUtils.setPlacedBy(level, otherHalfPos, player);
 					}
