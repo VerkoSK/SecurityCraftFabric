@@ -119,7 +119,7 @@ public class BlockReinforcerItem extends Item {
 				level.setBlockAndUpdate(pos, target.withPropertiesOf(state));
 
 				if (tag != null && level.getBlockEntity(pos) != null)
-					level.getBlockEntity(pos).loadWithComponents(tag, level.registryAccess());
+					net.geforcemods.securitycraft.util.BlockUtils.loadBlockEntityWithComponents(level.getBlockEntity(pos), tag, level.registryAccess());
 
 				net.geforcemods.securitycraft.util.OwnershipUtils.setPlacedBy(level, pos, player);
 
@@ -142,7 +142,7 @@ public class BlockReinforcerItem extends Item {
 						level.setBlockAndUpdate(otherHalfPos, target.withPropertiesOf(otherHalfState));
 
 						if (otherTag != null && level.getBlockEntity(otherHalfPos) != null)
-							level.getBlockEntity(otherHalfPos).loadWithComponents(otherTag, level.registryAccess());
+							net.geforcemods.securitycraft.util.BlockUtils.loadBlockEntityWithComponents(level.getBlockEntity(otherHalfPos), otherTag, level.registryAccess());
 
 						net.geforcemods.securitycraft.util.OwnershipUtils.setPlacedBy(level, otherHalfPos, player);
 					}
