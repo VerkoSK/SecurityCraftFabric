@@ -12,8 +12,10 @@ import net.minecraft.world.level.block.state.BlockState;
 public class LevelUtils {
 	private LevelUtils() {}
 
-	public static <E extends BlockEntity, A extends BlockEntity> BlockEntityTicker<A> createTickerHelper(BlockEntityType<A> serverType, BlockEntityType<E> clientType, BlockEntityTicker<? super E> ticker) {
-		return net.minecraft.world.level.block.BaseEntityBlock.createTickerHelper(serverType, clientType, ticker);
+	/** Public stand-in for {@code BaseEntityBlock.createTickerHelper}, which is protected and thus unreachable from blocks that do not extend it. */
+	@SuppressWarnings("unchecked")
+	public static <A extends BlockEntity, E extends BlockEntity> BlockEntityTicker<A> createTickerHelper(BlockEntityType<A> givenType, BlockEntityType<E> expectedType, BlockEntityTicker<? super E> ticker) {
+		return expectedType == givenType ? (BlockEntityTicker<A>) ticker : null;
 	}
 
 	public static <T extends BlockEntity> void blockEntityTicker(Level level, BlockPos pos, BlockState state, T be) {
