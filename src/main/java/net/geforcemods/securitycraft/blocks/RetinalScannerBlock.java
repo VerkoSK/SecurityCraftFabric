@@ -107,6 +107,6 @@ public class RetinalScannerBlock extends Block implements EntityBlock, net.gefor
 
 	@Override
 	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-		return level.isClientSide ? null : LevelUtils.createTickerHelper(type, SCContent.RETINAL_SCANNER_BLOCK_ENTITY, LevelUtils::blockEntityTicker);
+		return level.isClientSide ? null : net.minecraft.world.level.block.BaseEntityBlock.createTickerHelper(type, SCContent.RETINAL_SCANNER_BLOCK_ENTITY, LevelUtils::blockEntityTicker);
 	}
 }
