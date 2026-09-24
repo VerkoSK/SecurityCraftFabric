@@ -691,8 +691,7 @@
 	"waila.securitycraft:customName": "Custom name: %s",
 	"waila.securitycraft:equipped": "Equipped with:",
 	"waila.securitycraft:owner": "Owner: %s",
-	"waila.securitycraft:passcodeProtected": "Passcode-Protected"
-	"waila.securitycraft:owner": "Owner: %s",
+	"waila.securitycraft:passcodeProtected": "Passcode-Protected",
 	"block.securitycraft.reinforced_iron_door": "Reinforced Door",
 	"block.securitycraft.keypad_door": "Keypad Door",
 	"help.securitycraft.keypad_door.info": "The Keypad Door acts like a Keypad combined with a Reinforced Iron Door: a code has to be entered to open the door.",
