@@ -78,17 +78,13 @@ public class KeycardHolderContainer implements Container {
 	}
 
 	@Override
-	public void startOpen(Player player) {}
-
-	@Override
-	public void stopOpen(Player player) {
-		if (changed)
-			KeycardHolderItem.setContents(holder, keycards);
-	}
-
-	@Override
 	public boolean canPlaceItem(int index, ItemStack stack) {
 		return stack.getItem() instanceof KeycardItem;
+	}
+
+	public void saveContents() {
+		if (changed)
+			KeycardHolderItem.setContents(holder, keycards);
 	}
 
 	@Override

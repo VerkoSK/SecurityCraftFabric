@@ -25,7 +25,7 @@ public final class ContainerLockEnforcement {
 
 	public static void register() {
 		UseBlockCallback.EVENT.register((player, level, hand, hitResult) -> {
-			if (level.isClientSide || !(level instanceof ServerLevel serverLevel) || !(player instanceof ServerPlayer serverPlayer))
+			if (level.isClientSide() || !(level instanceof ServerLevel serverLevel) || !(player instanceof ServerPlayer serverPlayer))
 				return InteractionResult.PASS;
 
 			BlockPos pos = hitResult.getBlockPos();
@@ -49,7 +49,7 @@ public final class ContainerLockEnforcement {
 		});
 
 		PlayerBlockBreakEvents.BEFORE.register((level, player, pos, state, blockEntity) -> {
-			if (level.isClientSide || player.isCreative() || player.isSpectator() || !(level instanceof ServerLevel serverLevel))
+			if (level.isClientSide() || player.isCreative() || player.isSpectator() || !(level instanceof ServerLevel serverLevel))
 				return true;
 
 			LockedContainer lock = ContainerLockData.get(serverLevel).get(pos);
@@ -68,17 +68,8 @@ public final class ContainerLockEnforcement {
 
 		//the lock was broken along with the block: forget it, instead of leaking a stale entry once another block replaces it
 		PlayerBlockBreakEvents.AFTER.register((level, player, pos, state, blockEntity) -> {
-			if (!level.isClientSide && level instanceof ServerLevel serverLevel) {
-				ContainerLockData data = ContainerLockData.get(serverLevel);
-
-				//unlike a real keypad chest, the block itself carries no memory of being locked once it drops as its
-				//own mod's item - at least hand back the Key Panel that was spent locking it (lock() only ever spends
-				//one, even for a linked double container) rather than losing it for good
-				if (data.get(pos) != null) {
-					net.minecraft.world.level.block.Block.popResource(level, pos, new net.minecraft.world.item.ItemStack(net.geforcemods.securitycraft.SCContent.KEY_PANEL_ITEM));
-					data.unlock(pos);
-				}
-			}
+			if (!level.isClientSide() && level instanceof ServerLevel serverLevel)
+				ContainerLockData.get(serverLevel).unlock(pos);
 		});
 	}
 }

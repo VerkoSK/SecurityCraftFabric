@@ -1,5 +1,7 @@
 package net.geforcemods.securitycraft.blocks;
 
+import net.minecraft.world.level.block.BaseEntityBlock;
+
 import net.geforcemods.securitycraft.SCContent;
 import net.geforcemods.securitycraft.api.IModuleInventory;
 import net.geforcemods.securitycraft.blockentities.ScannerTrapdoorBlockEntity;
@@ -108,6 +110,6 @@ public class ScannerTrapdoorBlock extends TrapDoorBlock implements EntityBlock {
 
 	@Override
 	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-		return level.isClientSide ? null : LevelUtils.createTickerHelper(type, SCContent.SCANNER_TRAPDOOR_BLOCK_ENTITY, LevelUtils::blockEntityTicker);
+		return level.isClientSide() ? null : LevelUtils.createTickerHelper(type, SCContent.SCANNER_TRAPDOOR_BLOCK_ENTITY, LevelUtils::blockEntityTicker);
 	}
 }

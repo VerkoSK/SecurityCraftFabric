@@ -1,6 +1,5 @@
 package net.geforcemods.securitycraft.recipe;
 
-import net.minecraft.core.HolderLookup;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CraftingInput;
@@ -10,7 +9,7 @@ import net.minecraft.world.level.Level;
 /** A recipe that combines exactly two specific items into one result. 1:1 with upstream CombineRecipe. */
 public abstract class CombineRecipe extends CustomRecipe {
 	protected CombineRecipe(CraftingBookCategory craftingBookCategory) {
-		super(craftingBookCategory);
+		super();
 	}
 
 	@Override
@@ -41,7 +40,7 @@ public abstract class CombineRecipe extends CustomRecipe {
 	}
 
 	@Override
-	public ItemStack assemble(CraftingInput inv, HolderLookup.Provider lookupProvider) {
+	public ItemStack assemble(CraftingInput inv) {
 		ItemStack firstItem = ItemStack.EMPTY;
 		ItemStack secondItem = ItemStack.EMPTY;
 

@@ -11,7 +11,6 @@ import net.geforcemods.securitycraft.util.PlayerUtils;
 import net.geforcemods.securitycraft.util.Utils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -71,7 +70,7 @@ public class UniversalOwnerChangerItem extends Item {
 			return InteractionResult.FAIL;
 		}
 
-		if (!stack.has(DataComponents.CUSTOM_NAME) && !isDefault) {
+		if (!stack.has(net.minecraft.core.component.DataComponents.CUSTOM_NAME) && !isDefault) {
 			message(player, "messages.securitycraft:universalOwnerChanger.noName", ChatFormatting.RED);
 			return InteractionResult.FAIL;
 		}
@@ -82,21 +81,13 @@ public class UniversalOwnerChangerItem extends Item {
 				return InteractionResult.FAIL;
 			}
 
-			if (!stack.has(DataComponents.CUSTOM_NAME))
+			if (!stack.has(net.minecraft.core.component.DataComponents.CUSTOM_NAME))
 				newOwner = player.getName().getString();
 		}
 
-		//falling back to the default-owner UUID here (as if newOwner were unset) would silently strip the block's
-		//protection instead of transferring it, since Owner#owns() treats that UUID as "unowned" - so an unresolvable
-		//name must fail instead of resolving to that sentinel
-		java.util.Optional<String> resolvedUUID = PlayerUtils.resolveUUID(newOwner);
+		ServerPlayer target = PlayerUtils.getPlayerFromName(newOwner);
 
-		if (resolvedUUID.isEmpty()) {
-			PlayerUtils.sendMessageToPlayer(player, Utils.localize(SCContent.UNIVERSAL_OWNER_CHANGER.getDescriptionId()), Utils.localize("messages.securitycraft:universalOwnerChanger.unknownPlayer", newOwner), ChatFormatting.RED);
-			return InteractionResult.FAIL;
-		}
-
-		ownable.setOwner(newOwner, resolvedUUID.get());
+		ownable.setOwner(newOwner, target != null ? target.getUUID().toString() : "ownerUUID");
 		level.sendBlockUpdated(pos, state, state, 3);
 
 		//the new owner should not inherit the previous one's modules, so they are handed back to the world

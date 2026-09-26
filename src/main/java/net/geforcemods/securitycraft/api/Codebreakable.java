@@ -56,7 +56,7 @@ public interface Codebreakable {
 		boolean isSuccessful = canBypass || player.getRandom().nextDouble() < ConfigHandler.codebreakerChance;
 
 		if (!canBypass) {
-			codebreaker.hurtAndBreak(1, player, net.minecraft.world.entity.LivingEntity.getSlotForHand(hand));
+			codebreaker.hurtAndBreak(1, player, hand);
 			CodebreakerItem.markUsed(codebreaker);
 		}
 

@@ -1,5 +1,9 @@
 package net.geforcemods.securitycraft.blockentities;
 
+import java.util.Optional;
+
+import com.mojang.authlib.properties.PropertyMap;
+
 import net.geforcemods.securitycraft.SCContent;
 import net.geforcemods.securitycraft.api.CustomizableBlockEntity;
 import net.geforcemods.securitycraft.api.IViewActivated;
@@ -18,9 +22,15 @@ import net.geforcemods.securitycraft.util.PlayerUtils;
 import net.geforcemods.securitycraft.util.Utils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.util.StringUtil;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.component.ResolvableProfile;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.SkullBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 
@@ -36,6 +46,7 @@ public class RetinalScannerBlockEntity extends CustomizableBlockEntity implement
 	};
 	private DisabledOption disabled = new DisabledOption(false);
 	private RespectInvisibilityOption respectInvisibility = new RespectInvisibilityOption();
+	private ResolvableProfile ownerProfile;
 	private int viewCooldown = 0;
 	/** Ticks left until the signal is turned back off; driven by this block entity's own tick, not a scheduled block tick. */
 	private int powerTicksLeft = 0;
@@ -141,7 +152,7 @@ public class RetinalScannerBlockEntity extends CustomizableBlockEntity implement
 	@Override
 	public ModuleType[] acceptedModules() {
 		return new ModuleType[] {
-				ModuleType.ALLOWLIST
+				ModuleType.ALLOWLIST, ModuleType.DISGUISE
 		};
 	}
 
@@ -150,6 +161,43 @@ public class RetinalScannerBlockEntity extends CustomizableBlockEntity implement
 		return new Option[] {
 				activatedByEntities, sendMessage, signalLength, disabled, maximumDistance, respectInvisibility
 		};
+	}
+
+	@Override
+	public void setOwner(String name, String uuid) {
+		super.setOwner(name, uuid);
+
+		if (name != null && !name.isEmpty() && !name.equals("owner")) {
+			setOwnerProfile(ResolvableProfile.createUnresolved(name));
+		}
+	}
+
+	public void setOwnerProfile(ResolvableProfile ownerProfile) {
+		this.ownerProfile = ownerProfile;
+		setChanged();
+		sync();
+	}
+
+	public ResolvableProfile getPlayerProfile() {
+		return ownerProfile;
+	}
+
+	@Override
+	public void saveAdditional(net.minecraft.world.level.storage.ValueOutput output) {
+		super.saveAdditional(output);
+
+		if (!StringUtil.isNullOrEmpty(getOwner().getName()) && !getOwner().getName().equals("owner") && ownerProfile != null)
+			output.store("ownerProfile", ResolvableProfile.CODEC, ownerProfile);
+	}
+
+	@Override
+	public void loadAdditional(net.minecraft.world.level.storage.ValueInput input) {
+		super.loadAdditional(input);
+
+		input.read("ownerProfile", ResolvableProfile.CODEC).ifPresent(this::setOwnerProfile);
+
+		if (ownerProfile == null && !StringUtil.isNullOrEmpty(getOwner().getName()) && !getOwner().getName().equals("owner"))
+			setOwnerProfile(ResolvableProfile.createUnresolved(getOwner().getName()));
 	}
 
 	@Override

@@ -75,7 +75,7 @@ public class LaserBlock extends OwnableBlock implements SimpleWaterloggedBlock {
 		if (be.isOwnedBy(player)) {
 			if (!level.isClientSide()) {
 				if (!be.isEnabled())
-					player.displayClientMessage(Utils.localize("gui.securitycraft:scManual.disabled"), true);
+					player.sendOverlayMessage(Utils.localize("gui.securitycraft:scManual.disabled"));
 				else
 					player.openMenu(be);
 			}
@@ -251,6 +251,6 @@ public class LaserBlock extends OwnableBlock implements SimpleWaterloggedBlock {
 
 	@Override
 	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-		return LevelUtils.createTickerHelper(type, SCContent.LASER_BLOCK_BLOCK_ENTITY, LevelUtils::blockEntityTicker);
+		return BaseEntityBlock.createTickerHelper(type, SCContent.LASER_BLOCK_BLOCK_ENTITY, LevelUtils::blockEntityTicker);
 	}
 }

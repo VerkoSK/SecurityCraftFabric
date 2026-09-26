@@ -112,26 +112,7 @@ public class KeypadDoorBlockEntity extends CustomizableBlockEntity implements Pa
 		};
 	}
 
-	@Override
-	public void saveAdditional(net.minecraft.world.level.storage.ValueOutput output) {
-		super.saveAdditional(output);
 
-		long cooldownLeft = getCooldownEnd() - System.currentTimeMillis();
-
-		output.putString("salt", salt);
-		output.putLong("cooldownLeft", cooldownLeft <= 0 ? -1 : cooldownLeft);
-
-		if (passcodeHash != null)
-			output.putString("passcodeHash", passcodeHash);
-	}
-
-	@Override
-	public void loadAdditional(net.minecraft.world.level.storage.ValueInput input) {
-		super.loadAdditional(input);
-		salt = input.getStringOr("salt", salt);
-		cooldownEnd = System.currentTimeMillis() + input.getLongOr("cooldownLeft", 0L);
-		passcodeHash = input.getString("passcodeHash").orElse(null);
-	}
 
 	@Override
 	public CompoundTag getUpdateTag(HolderLookup.Provider registries) {

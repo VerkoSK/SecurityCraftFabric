@@ -2,7 +2,7 @@
     "parent": "block/door_top_right",
     "render_type": "minecraft:cutout",
     "textures": {
-        "bottom": "securitycraft:block/reinforced_door_lower",
+        "bottom": "securitycraft:block/scanner_door_upper",
         "top": "securitycraft:block/scanner_door_upper"
     }
 }
