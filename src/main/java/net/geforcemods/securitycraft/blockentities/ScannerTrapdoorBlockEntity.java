@@ -9,6 +9,7 @@ import net.geforcemods.securitycraft.api.Option.DisabledOption;
 import net.geforcemods.securitycraft.api.Option.DoubleOption;
 import net.geforcemods.securitycraft.api.Option.IntOption;
 import net.geforcemods.securitycraft.api.Option.RespectInvisibilityOption;
+import net.geforcemods.securitycraft.api.Option.SignalLengthOption;
 import net.geforcemods.securitycraft.api.Owner;
 import net.geforcemods.securitycraft.blocks.ScannerTrapdoorBlock;
 import net.geforcemods.securitycraft.misc.ModuleType;
@@ -29,7 +30,9 @@ import net.minecraft.world.phys.BlockHitResult;
 /** Block entity for the {@link ScannerTrapdoorBlock}: owner, allowlist module and the view-scan logic. */
 public class ScannerTrapdoorBlockEntity extends CustomizableBlockEntity implements IViewActivated, ITickingBlockEntity {
 	private BooleanOption sendMessage = new BooleanOption("sendMessage", true);
-	private IntOption signalLength = new IntOption("signalLength", 60, 0, 400, 5);
+	//upstream defaults this to 0 (no auto-close, pure toggle-on-view) unlike RetinalScannerBlockEntity's redstone
+	//signal, which does default to 60; SignalLengthOption's 0-400 range still lets the owner opt into a timed close
+	private SignalLengthOption signalLength = new SignalLengthOption(0);
 	private DoubleOption maximumDistance = new DoubleOption("maximumDistance", 5.0D, 0.1D, 25.0D, 0.1D) {
 		@Override
 		public String getKey(String denotation) {
@@ -64,7 +67,7 @@ public class ScannerTrapdoorBlockEntity extends CustomizableBlockEntity implemen
 		if (!(state.getBlock() instanceof ScannerTrapdoorBlock block) || !(entity instanceof Player player))
 			return false;
 
-		boolean correctFace = state.getValue(TrapDoorBlock.OPEN) ? hitResult.getDirection().getAxis() == state.getValue(HorizontalDirectionalBlock.FACING).getAxis() : hitResult.getDirection().getAxis() == Direction.Axis.Y;
+		boolean correctFace = state.getValue(TrapDoorBlock.OPEN) ? hitResult.getDirection().getAxis() == state.getValue(HorizontalDirectionalBlock.FACING).getClockWise().getAxis() : hitResult.getDirection().getAxis() == Direction.Axis.Y;
 
 		if (!correctFace)
 			return false;
@@ -86,8 +89,12 @@ public class ScannerTrapdoorBlockEntity extends CustomizableBlockEntity implemen
 			if (sendMessage.get())
 				PlayerUtils.sendMessageToPlayer(player, Utils.localize(SCContent.SCANNER_TRAPDOOR.getDescriptionId()), Utils.localize("messages.securitycraft:retinalScanner.hello", viewer.getName()), ChatFormatting.GREEN);
 
-			closeTicksLeft = signalLength.get();
+			//matches upstream: a signal length of 0 means no scheduled auto-close at all, only another look toggles it
+			if (signalLength.get() > 0)
+				closeTicksLeft = signalLength.get();
 		}
+		else
+			closeTicksLeft = 0;
 
 		return true;
 	}
@@ -120,7 +127,7 @@ public class ScannerTrapdoorBlockEntity extends CustomizableBlockEntity implemen
 	@Override
 	public ModuleType[] acceptedModules() {
 		return new ModuleType[] {
-				ModuleType.ALLOWLIST
+				ModuleType.ALLOWLIST, ModuleType.DISGUISE
 		};
 	}
 
