@@ -1,0 +1,116 @@
+package net.geforcemods.securitycraft.renderers;
+
+import org.joml.Matrix4f;
+
+import com.mojang.authlib.GameProfile;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.PoseStack.Pose;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
+
+import net.geforcemods.securitycraft.blockentities.RetinalScannerBlockEntity;
+import net.geforcemods.securitycraft.blocks.RetinalScannerBlock;
+import net.geforcemods.securitycraft.items.ModuleItem;
+import net.geforcemods.securitycraft.misc.ModuleType;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.resources.DefaultPlayerSkin;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.LightLayer;
+import net.minecraft.world.level.block.state.BlockState;
+
+public class RetinalScannerRenderer implements BlockEntityRenderer<RetinalScannerBlockEntity> {
+	private static final float CORRECT_FACTOR = 1 / 550F;
+
+	public RetinalScannerRenderer(BlockEntityRendererProvider.Context ctx) {}
+
+	@Override
+	public void render(RetinalScannerBlockEntity be, float partialTicks, PoseStack pose, MultiBufferSource buffer, int combinedLight, int combinedOverlay) {
+		BlockState state = be.getBlockState();
+		Direction facing = state.getValue(RetinalScannerBlock.FACING);
+
+		if (facing != null) {
+			if (be.isModuleEnabled(ModuleType.DISGUISE) && ModuleItem.getBlockAddon(be.getModule(ModuleType.DISGUISE)) != null)
+				return;
+
+			pose.pushPose();
+
+			if (facing.getAxis().isHorizontal()) {
+				switch (facing) {
+					case NORTH:
+						pose.translate(0.25F, 1.0F / 16.0F, 0.0F);
+						break;
+					case SOUTH:
+						pose.translate(0.75F, 1.0F / 16.0F, 1.0F);
+						pose.mulPose(Axis.YP.rotationDegrees(180.0F));
+						break;
+					case WEST:
+						pose.translate(0.0F, 1.0F / 16.0F, 0.75F);
+						pose.mulPose(Axis.YP.rotationDegrees(90.0F));
+						break;
+					case EAST:
+						pose.translate(1.0F, 1.0F / 16.0F, 0.25F);
+						pose.mulPose(Axis.YP.rotationDegrees(270.0F));
+						break;
+					default:
+						break;
+				}
+			}
+			else {
+				pose.translate(0.5D, 0.5D, 0.5D);
+
+				if (facing == Direction.DOWN) {
+					pose.mulPose(Axis.XP.rotationDegrees(-90.0F));
+					pose.mulPose(Axis.ZP.rotationDegrees(180.0F));
+				}
+				else if (facing == Direction.UP) {
+					pose.mulPose(Axis.XP.rotationDegrees(90.0F));
+					pose.mulPose(Axis.ZP.rotationDegrees(180.0F));
+				}
+
+				pose.translate(-0.25D, -0.4375D, -0.501D);
+			}
+
+			pose.scale(-1.0F, -1.0F, 1.0F);
+
+			VertexConsumer vertexBuilder = buffer.getBuffer(RenderType.entityCutout(getSkinTexture(be.getPlayerProfile())));
+			Pose last = pose.last();
+			Matrix4f positionMatrix = last.pose();
+			int normalX = facing.getStepX();
+			int normalY = facing.getStepY();
+			int normalZ = facing.getStepZ();
+			BlockPos offsetPos = be.getBlockPos().relative(facing);
+
+			if (be.getLevel() != null)
+				combinedLight = LightTexture.pack(be.getLevel().getBrightness(LightLayer.BLOCK, offsetPos), be.getLevel().getBrightness(LightLayer.SKY, offsetPos));
+
+			// face
+			vertexBuilder.vertex(positionMatrix, CORRECT_FACTOR, CORRECT_FACTOR * 1.5F, 0F).color(255, 255, 255, 255).uv(0.125F, 0.25F).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(combinedLight).normal(normalX, normalY, normalZ).endVertex();
+			vertexBuilder.vertex(positionMatrix, CORRECT_FACTOR, -0.5F - CORRECT_FACTOR / 2F, 0F).color(255, 255, 255, 255).uv(0.125F, 0.125F).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(combinedLight).normal(normalX, normalY, normalZ).endVertex();
+			vertexBuilder.vertex(positionMatrix, -0.5F - CORRECT_FACTOR, -0.5F - CORRECT_FACTOR / 2, 0F).color(255, 255, 255, 255).uv(0.25F, 0.125F).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(combinedLight).normal(normalX, normalY, normalZ).endVertex();
+			vertexBuilder.vertex(positionMatrix, -0.5F - CORRECT_FACTOR, CORRECT_FACTOR * 1.5F, 0F).color(255, 255, 255, 255).uv(0.25F, 0.25F).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(combinedLight).normal(normalX, normalY, normalZ).endVertex();
+
+			// helmet
+			vertexBuilder.vertex(positionMatrix, CORRECT_FACTOR, CORRECT_FACTOR * 1.5F, 0F).color(255, 255, 255, 255).uv(0.625F, 0.25F).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(combinedLight).normal(normalX, normalY, normalZ).endVertex();
+			vertexBuilder.vertex(positionMatrix, CORRECT_FACTOR, -0.5F - CORRECT_FACTOR / 2F, 0F).color(255, 255, 255, 255).uv(0.625F, 0.125F).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(combinedLight).normal(normalX, normalY, normalZ).endVertex();
+			vertexBuilder.vertex(positionMatrix, -0.5F - CORRECT_FACTOR, -0.5F - CORRECT_FACTOR / 2, 0F).color(255, 255, 255, 255).uv(0.75F, 0.125F).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(combinedLight).normal(normalX, normalY, normalZ).endVertex();
+			vertexBuilder.vertex(positionMatrix, -0.5F - CORRECT_FACTOR, CORRECT_FACTOR * 1.5F, 0F).color(255, 255, 255, 255).uv(0.75F, 0.25F).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(combinedLight).normal(normalX, normalY, normalZ).endVertex();
+
+			pose.popPose();
+		}
+	}
+
+	private static ResourceLocation getSkinTexture(GameProfile profile) {
+		if (profile != null)
+			return Minecraft.getInstance().getSkinManager().getInsecureSkinLocation(profile);
+		else
+			return DefaultPlayerSkin.getDefaultSkin();
+	}
+}

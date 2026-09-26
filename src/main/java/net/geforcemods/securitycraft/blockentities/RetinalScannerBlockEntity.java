@@ -39,6 +39,7 @@ public class RetinalScannerBlockEntity extends CustomizableBlockEntity implement
 	private int viewCooldown = 0;
 	/** Ticks left until the signal is turned back off; driven by this block entity's own tick, not a scheduled block tick. */
 	private int powerTicksLeft = 0;
+	private com.mojang.authlib.GameProfile ownerProfile;
 
 	public RetinalScannerBlockEntity(BlockPos pos, BlockState state) {
 		super(SCContent.RETINAL_SCANNER_BLOCK_ENTITY, pos, state);
@@ -141,7 +142,7 @@ public class RetinalScannerBlockEntity extends CustomizableBlockEntity implement
 	@Override
 	public ModuleType[] acceptedModules() {
 		return new ModuleType[] {
-				ModuleType.ALLOWLIST
+				ModuleType.ALLOWLIST, ModuleType.DISGUISE
 		};
 	}
 
@@ -150,6 +151,61 @@ public class RetinalScannerBlockEntity extends CustomizableBlockEntity implement
 		return new Option[] {
 				activatedByEntities, sendMessage, signalLength, disabled, maximumDistance, respectInvisibility
 		};
+	}
+
+	@Override
+	public void setOwner(String name, String uuid) {
+		super.setOwner(name, uuid);
+
+		if (name != null && !name.isEmpty() && !name.equals("owner")) {
+			setOwnerProfile(new com.mojang.authlib.GameProfile(null, name));
+		}
+	}
+
+	public void setOwnerProfile(com.mojang.authlib.GameProfile ownerProfile) {
+		this.ownerProfile = ownerProfile;
+		updateOwnerProfile();
+	}
+
+	private void updateOwnerProfile() {
+		if (ownerProfile != null && (!ownerProfile.isComplete() || !ownerProfile.getProperties().containsKey("textures"))) {
+			net.minecraft.world.level.block.entity.SkullBlockEntity.updateGameprofile(ownerProfile, profile -> {
+				this.ownerProfile = profile;
+				setChanged();
+				sync();
+			});
+		}
+		else {
+			setChanged();
+			sync();
+		}
+	}
+
+	public com.mojang.authlib.GameProfile getPlayerProfile() {
+		return ownerProfile;
+	}
+
+	@Override
+	public void saveAdditional(net.minecraft.nbt.CompoundTag tag) {
+		super.saveAdditional(tag);
+
+		if (!net.minecraft.util.StringUtil.isNullOrEmpty(getOwner().getName()) && !getOwner().getName().equals("owner") && ownerProfile != null) {
+			net.minecraft.nbt.CompoundTag profileTag = new net.minecraft.nbt.CompoundTag();
+			net.minecraft.nbt.NbtUtils.writeGameProfile(profileTag, ownerProfile);
+			tag.put("ownerProfile", profileTag);
+		}
+	}
+
+	@Override
+	public void load(net.minecraft.nbt.CompoundTag tag) {
+		super.load(tag);
+
+		if (tag.contains("ownerProfile", net.minecraft.nbt.Tag.TAG_COMPOUND)) {
+			setOwnerProfile(net.minecraft.nbt.NbtUtils.readGameProfile(tag.getCompound("ownerProfile")));
+		}
+		else if (!net.minecraft.util.StringUtil.isNullOrEmpty(getOwner().getName()) && !getOwner().getName().equals("owner")) {
+			setOwnerProfile(new com.mojang.authlib.GameProfile(null, getOwner().getName()));
+		}
 	}
 
 	@Override

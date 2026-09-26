@@ -92,6 +92,8 @@ public class ScannerTrapdoorBlockEntity extends CustomizableBlockEntity implemen
 			if (signalLength.get() > 0)
 				closeTicksLeft = signalLength.get();
 		}
+		else
+			closeTicksLeft = 0;
 
 		return true;
 	}
@@ -124,7 +126,7 @@ public class ScannerTrapdoorBlockEntity extends CustomizableBlockEntity implemen
 	@Override
 	public ModuleType[] acceptedModules() {
 		return new ModuleType[] {
-				ModuleType.ALLOWLIST
+				ModuleType.ALLOWLIST, ModuleType.DISGUISE
 		};
 	}
 
