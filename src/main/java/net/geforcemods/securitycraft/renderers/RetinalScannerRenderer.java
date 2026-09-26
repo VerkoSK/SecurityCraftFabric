@@ -25,6 +25,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.component.ResolvableProfile;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 
 public class RetinalScannerRenderer implements BlockEntityRenderer<RetinalScannerBlockEntity> {
 	private static final float CORRECT_FACTOR = 1 / 550F;
@@ -32,7 +33,7 @@ public class RetinalScannerRenderer implements BlockEntityRenderer<RetinalScanne
 	public RetinalScannerRenderer(BlockEntityRendererProvider.Context ctx) {}
 
 	@Override
-	public void render(RetinalScannerBlockEntity be, float partialTicks, PoseStack pose, MultiBufferSource buffer, int combinedLight, int combinedOverlay) {
+	public void render(RetinalScannerBlockEntity be, float partialTicks, PoseStack pose, MultiBufferSource buffer, int combinedLight, int combinedOverlay, Vec3 cameraPos) {
 		BlockState state = be.getBlockState();
 		Direction facing = state.getValue(RetinalScannerBlock.FACING);
 

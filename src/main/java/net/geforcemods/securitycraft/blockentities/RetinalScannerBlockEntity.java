@@ -208,10 +208,9 @@ public class RetinalScannerBlockEntity extends CustomizableBlockEntity implement
 		super.loadAdditional(tag, lookupProvider);
 
 		if (tag.contains("ownerProfile")) {
-			CompoundTag ownerProfileTag = tag.getCompound("ownerProfile");
+			CompoundTag ownerProfileTag = tag.getCompoundOrEmpty("ownerProfile");
 
-			if (ownerProfileTag.contains("Name"))
-				ownerProfileTag.putString("name", ownerProfileTag.getString("Name"));
+			ownerProfileTag.getString("Name").ifPresent(name -> ownerProfileTag.putString("name", name));
 
 			ResolvableProfile.CODEC.parse(NbtOps.INSTANCE, ownerProfileTag).resultOrPartial(name -> net.geforcemods.securitycraft.SecurityCraft.LOGGER.error("Failed to load profile from player head: {}", name)).ifPresent(this::setOwnerProfile);
 		}
