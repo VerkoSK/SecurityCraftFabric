@@ -119,7 +119,9 @@ public class SecurityCraftClient implements ClientModInitializer {
 		registerSignRenderer(SCContent.SECRET_HANGING_SIGN_BLOCK_ENTITY, net.geforcemods.securitycraft.renderers.SecretHangingSignRenderer::new);
 		net.minecraft.client.renderer.blockentity.BlockEntityRenderers.register(SCContent.KEYPAD_CHEST_BLOCK_ENTITY, net.geforcemods.securitycraft.renderers.KeypadChestRenderer::new);
 		net.minecraft.client.renderer.blockentity.BlockEntityRenderers.register(SCContent.CLAYMORE_BLOCK_ENTITY, net.geforcemods.securitycraft.renderers.ClaymoreRenderer::new);
+		net.minecraft.client.renderer.blockentity.BlockEntityRenderers.register(SCContent.RETINAL_SCANNER_BLOCK_ENTITY, net.geforcemods.securitycraft.renderers.RetinalScannerRenderer::new);
 		net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry.registerModelLayer(net.geforcemods.securitycraft.models.IMSBombModel.LAYER_LOCATION, net.geforcemods.securitycraft.models.IMSBombModel::createBodyLayer);
+		BlockRenderLayerMap.INSTANCE.putBlock(SCContent.TRACK_MINE, RenderType.cutout());
 		ClientPlayNetworking.registerGlobalReceiver(net.geforcemods.securitycraft.network.UpdateLaserColorsPayload.TYPE, (payload, context) -> context.client().execute(() -> {
 			for (net.minecraft.core.BlockPos pos : payload.positions())
 				context.client().levelRenderer.setBlocksDirty(pos.getX(), pos.getY(), pos.getZ(), pos.getX(), pos.getY(), pos.getZ());
