@@ -158,7 +158,7 @@ public class BlockReinforcerItem extends Item {
 			}
 
 			if (!player.isCreative())
-				stack.hurtAndBreak(1, player, net.minecraft.world.entity.LivingEntity.getSlotForHand(ctx.getHand()));
+				stack.hurtAndBreak(1, player, ctx.getHand());
 		}
 
 		return InteractionResult.SUCCESS;

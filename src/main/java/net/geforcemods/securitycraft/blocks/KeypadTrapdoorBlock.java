@@ -52,7 +52,7 @@ public class KeypadTrapdoorBlock extends TrapDoorBlock implements EntityBlock {
 		if (state.getValue(OPEN) && be.getSignalLength() > 0)
 			return InteractionResult.PASS;
 
-		if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
+		if (!level.isClientSide() && player instanceof ServerPlayer serverPlayer) {
 			if (be.isDisabled())
 				player.displayClientMessage(Utils.localize("gui.securitycraft:scManual.disabled"), true);
 			else if (verifyPasscodeSet(pos, be, serverPlayer)) {

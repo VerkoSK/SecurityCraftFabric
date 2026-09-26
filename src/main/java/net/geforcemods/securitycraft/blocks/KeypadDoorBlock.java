@@ -57,7 +57,7 @@ public class KeypadDoorBlock extends DoorBlock implements EntityBlock {
 		if (!(level.getBlockEntity(codePos) instanceof KeypadDoorBlockEntity be))
 			return InteractionResult.PASS;
 
-		if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
+		if (!level.isClientSide() && player instanceof ServerPlayer serverPlayer) {
 			if (be.isDisabled())
 				player.displayClientMessage(Utils.localize("gui.securitycraft:scManual.disabled"), true);
 			else if (verifyPasscodeSet(codePos, be, serverPlayer)) {
