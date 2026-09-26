@@ -2,15 +2,15 @@ package net.geforcemods.securitycraft.screen.components;
 
 import java.util.function.Consumer;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 /** A {@link PictureButton} that flips between two sprites (a red X / green check) each click, reporting the new state. */
 public class TogglePictureButton extends PictureButton implements IToggleableButton {
-	private final ResourceLocation offSprite;
-	private final ResourceLocation onSprite;
+	private final Identifier offSprite;
+	private final Identifier onSprite;
 	private int currentIndex;
 
-	public TogglePictureButton(int xPos, int yPos, int width, int height, int drawOffsetX, int drawOffsetY, int drawWidth, int drawHeight, ResourceLocation offSprite, ResourceLocation onSprite, boolean initiallyOn, Consumer<Boolean> onToggle) {
+	public TogglePictureButton(int xPos, int yPos, int width, int height, int drawOffsetX, int drawOffsetY, int drawWidth, int drawHeight, Identifier offSprite, Identifier onSprite, boolean initiallyOn, Consumer<Boolean> onToggle) {
 		super(xPos, yPos, width, height, offSprite, drawOffsetX, drawOffsetY, drawWidth, drawHeight, b -> {
 			TogglePictureButton self = (TogglePictureButton) b;
 
@@ -23,7 +23,7 @@ public class TogglePictureButton extends PictureButton implements IToggleableBut
 	}
 
 	@Override
-	public ResourceLocation getSpriteLocation() {
+	public Identifier getSpriteLocation() {
 		return currentIndex == 1 ? onSprite : offSprite;
 	}
 

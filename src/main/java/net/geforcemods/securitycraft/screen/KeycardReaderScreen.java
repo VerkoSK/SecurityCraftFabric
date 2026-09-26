@@ -18,7 +18,7 @@ import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
@@ -35,15 +35,15 @@ import net.minecraft.world.item.ItemStack;
  * wasn't worth the risk of getting the offset wrong).
  */
 public class KeycardReaderScreen extends AbstractContainerScreen<KeycardReaderMenu> {
-	private static final ResourceLocation TEXTURE = SCContent.id("textures/gui/container/keycard_reader.png");
-	private static final ResourceLocation LEVEL_CONFIRM_SPRITE = SCContent.id("widget/level_confirm");
-	private static final ResourceLocation LEVEL_CANCEL_SPRITE = SCContent.id("widget/level_cancel");
-	private static final ResourceLocation RANDOM_SPRITE = SCContent.id("widget/random");
-	private static final ResourceLocation RANDOM_INACTIVE_SPRITE = SCContent.id("widget/random_inactive");
-	private static final ResourceLocation RESET_SPRITE = SCContent.id("widget/reset");
-	private static final ResourceLocation RESET_INACTIVE_SPRITE = SCContent.id("widget/reset_inactive");
-	private static final ResourceLocation RETURN_SPRITE = SCContent.id("widget/return");
-	private static final ResourceLocation RETURN_INACTIVE_SPRITE = SCContent.id("widget/return_inactive");
+	private static final Identifier TEXTURE = SCContent.id("textures/gui/container/keycard_reader.png");
+	private static final Identifier LEVEL_CONFIRM_SPRITE = SCContent.id("widget/level_confirm");
+	private static final Identifier LEVEL_CANCEL_SPRITE = SCContent.id("widget/level_cancel");
+	private static final Identifier RANDOM_SPRITE = SCContent.id("widget/random");
+	private static final Identifier RANDOM_INACTIVE_SPRITE = SCContent.id("widget/random_inactive");
+	private static final Identifier RESET_SPRITE = SCContent.id("widget/reset");
+	private static final Identifier RESET_INACTIVE_SPRITE = SCContent.id("widget/reset_inactive");
+	private static final Identifier RETURN_SPRITE = SCContent.id("widget/return");
+	private static final Identifier RETURN_INACTIVE_SPRITE = SCContent.id("widget/return_inactive");
 	private static final Component EQUALS = Component.literal("=");
 	private static final Component GREATER_EQUALS = Component.literal(">=");
 	private static final int MAX_SIGNATURE = 99999;

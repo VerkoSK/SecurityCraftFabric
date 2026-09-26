@@ -91,7 +91,7 @@ public class KeycardReaderBlockEntity extends CustomizableBlockEntity implements
 
 	@Override
 	public void useCodebreaker(Player player) {
-		if (level != null && !level.isClientSide)
+		if (level != null && !level.isClientSide())
 			activate();
 	}
 
@@ -121,7 +121,7 @@ public class KeycardReaderBlockEntity extends CustomizableBlockEntity implements
 
 		Optional<String> usableBy = KeycardItem.getUsableBy(stack);
 
-		if (usableBy.isPresent() && !usableBy.get().equals(player.getGameProfile().getName()))
+		if (usableBy.isPresent() && !usableBy.get().equals(player.getGameProfile().name()))
 			return Component.translatable("messages.securitycraft:keycard_acceptor.cant_use");
 
 		if (getSignature() != KeycardItem.getSignature(stack))

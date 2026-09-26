@@ -99,12 +99,7 @@ public class PlayerUtils {
 		if (online != null)
 			return java.util.Optional.of(online.getUUID().toString());
 
-		MinecraftServer server = SecurityCraft.SERVER;
-
-		if (server == null)
-			return java.util.Optional.empty();
-
-		return server.getProfileCache().get(name).map(profile -> profile.getId().toString());
+		return java.util.Optional.empty();
 	}
 }
 

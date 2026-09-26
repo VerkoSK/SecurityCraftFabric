@@ -57,7 +57,7 @@ public class KeycardReaderBlock extends Block implements EntityBlock, net.geforc
 		if (!(level.getBlockEntity(pos) instanceof KeycardReaderBlockEntity be))
 			return InteractionResult.PASS;
 
-		if (level.isClientSide)
+		if (level.isClientSide())
 			return InteractionResult.SUCCESS;
 
 		if (be.isDisabled()) {
@@ -85,7 +85,7 @@ public class KeycardReaderBlock extends Block implements EntityBlock, net.geforc
 		if (!(level.getBlockEntity(pos) instanceof KeycardReaderBlockEntity be))
 			return InteractionResult.TRY_WITH_EMPTY_HAND;
 
-		if (level.isClientSide)
+		if (level.isClientSide())
 			return InteractionResult.SUCCESS;
 
 		if (be.isDisabled()) {
@@ -180,6 +180,6 @@ public class KeycardReaderBlock extends Block implements EntityBlock, net.geforc
 
 	@Override
 	public <T extends BlockEntity> net.minecraft.world.level.block.entity.BlockEntityTicker<T> getTicker(Level level, BlockState state, net.minecraft.world.level.block.entity.BlockEntityType<T> type) {
-		return level.isClientSide ? null : net.geforcemods.securitycraft.util.LevelUtils.createTickerHelper(type, net.geforcemods.securitycraft.SCContent.KEYCARD_READER_BLOCK_ENTITY, net.geforcemods.securitycraft.util.LevelUtils::blockEntityTicker);
+		return level.isClientSide() ? null : net.geforcemods.securitycraft.util.LevelUtils.createTickerHelper(type, net.geforcemods.securitycraft.SCContent.KEYCARD_READER_BLOCK_ENTITY, net.geforcemods.securitycraft.util.LevelUtils::blockEntityTicker);
 	}
 }

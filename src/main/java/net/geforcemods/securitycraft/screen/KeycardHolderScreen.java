@@ -6,11 +6,11 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
 public class KeycardHolderScreen extends AbstractContainerScreen<KeycardHolderMenu> {
-	private static final ResourceLocation TEXTURE = SCContent.id("textures/gui/container/keycard_holder.png");
+	private static final Identifier TEXTURE = SCContent.id("textures/gui/container/keycard_holder.png");
 
 	public KeycardHolderScreen(KeycardHolderMenu menu, Inventory inv, Component title) {
 		super(menu, inv, title);
