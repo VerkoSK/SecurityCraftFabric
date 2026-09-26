@@ -1,0 +1,74 @@
+package net.geforcemods.securitycraft.recipe;
+
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingBookCategory;
+import net.minecraft.world.item.crafting.CraftingInput;
+import net.minecraft.world.item.crafting.CustomRecipe;
+import net.minecraft.world.level.Level;
+
+/** A recipe that combines exactly two specific items into one result. 1:1 with upstream CombineRecipe. */
+public abstract class CombineRecipe extends CustomRecipe {
+	protected final CraftingBookCategory category;
+
+	protected CombineRecipe(CraftingBookCategory craftingBookCategory) {
+		super();
+		this.category = craftingBookCategory;
+	}
+
+	@Override
+	public CraftingBookCategory category() {
+		return category;
+	}
+
+	@Override
+	public boolean matches(CraftingInput inv, Level level) {
+		ItemStack firstItem = ItemStack.EMPTY;
+		ItemStack secondItem = ItemStack.EMPTY;
+
+		for (int i = 0; i < inv.size(); ++i) {
+			ItemStack stack = inv.getItem(i);
+
+			if (matchesFirstItem(stack)) {
+				if (firstItem.isEmpty())
+					firstItem = stack;
+				else
+					return false;
+			}
+			else if (matchesSecondItem(stack)) {
+				if (secondItem.isEmpty())
+					secondItem = stack;
+				else
+					return false;
+			}
+			else if (!stack.isEmpty())
+				return false;
+		}
+
+		return canBeCombined(firstItem, secondItem);
+	}
+
+	@Override
+	public ItemStack assemble(CraftingInput inv) {
+		ItemStack firstItem = ItemStack.EMPTY;
+		ItemStack secondItem = ItemStack.EMPTY;
+
+		for (int i = 0; i < inv.size(); ++i) {
+			ItemStack stack = inv.getItem(i);
+
+			if (matchesFirstItem(stack))
+				firstItem = stack;
+			else if (matchesSecondItem(stack))
+				secondItem = stack;
+		}
+
+		return combine(firstItem, secondItem);
+	}
+
+	public abstract boolean matchesFirstItem(ItemStack stack);
+
+	public abstract boolean matchesSecondItem(ItemStack stack);
+
+	public abstract boolean canBeCombined(ItemStack firstItem, ItemStack secondItem);
+
+	public abstract ItemStack combine(ItemStack firstItem, ItemStack secondItem);
+}

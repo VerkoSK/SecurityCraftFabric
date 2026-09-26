@@ -1,0 +1,46 @@
+package net.geforcemods.securitycraft.recipe;
+
+import net.geforcemods.securitycraft.SCContent;
+import net.geforcemods.securitycraft.components.KeycardData;
+import net.geforcemods.securitycraft.items.KeycardItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingBookCategory;
+import net.minecraft.world.item.crafting.CustomRecipe;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+
+/** Combines any not-yet-limited keycard with a Limited Use Keycard, making the first one limited-use. 1:1 with upstream. */
+public class LimitedUseKeycardRecipe extends CombineRecipe {
+	public LimitedUseKeycardRecipe(CraftingBookCategory craftingBookCategory) {
+		super(craftingBookCategory);
+	}
+
+	@Override
+	public boolean matchesFirstItem(ItemStack stack) {
+		return stack.getItem() instanceof KeycardItem && !matchesSecondItem(stack) && !KeycardItem.isLimited(stack);
+	}
+
+	@Override
+	public boolean matchesSecondItem(ItemStack stack) {
+		return stack.is(SCContent.LIMITED_USE_KEYCARD);
+	}
+
+	@Override
+	public ItemStack combine(ItemStack keycardToCopy, ItemStack limitedUseKeycard) {
+		ItemStack outputKeycard = keycardToCopy.copy();
+		KeycardData madeLimited = KeycardItem.madeLimited(outputKeycard);
+
+		outputKeycard.set(SCContent.KEYCARD_DATA, madeLimited);
+		outputKeycard.setCount(2);
+		return outputKeycard;
+	}
+
+	@Override
+	public boolean canBeCombined(ItemStack firstItem, ItemStack secondItem) {
+		return !firstItem.isEmpty() && !secondItem.isEmpty();
+	}
+
+	@Override
+	public RecipeSerializer<? extends CustomRecipe> getSerializer() {
+		return SCContent.LIMITED_USE_KEYCARD_RECIPE_SERIALIZER;
+	}
+}

@@ -3,20 +3,26 @@ package net.geforcemods.securitycraft.compat.jade;
 import net.geforcemods.securitycraft.SecurityCraft;
 import net.geforcemods.securitycraft.api.IModuleInventory;
 import net.geforcemods.securitycraft.api.IOwnable;
+import net.geforcemods.securitycraft.api.Owner;
+import net.geforcemods.securitycraft.misc.ContainerLockData;
 import net.geforcemods.securitycraft.misc.ModuleType;
 import net.geforcemods.securitycraft.util.PlayerUtils;
 import net.geforcemods.securitycraft.util.Utils;
 import net.minecraft.ChatFormatting;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Nameable;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import snownee.jade.api.BlockAccessor;
 import snownee.jade.api.IBlockComponentProvider;
+import snownee.jade.api.IServerDataProvider;
 import snownee.jade.api.ITooltip;
 import snownee.jade.api.IWailaClientRegistration;
+import snownee.jade.api.IWailaCommonRegistration;
 import snownee.jade.api.IWailaPlugin;
 import snownee.jade.api.WailaPlugin;
 import snownee.jade.api.config.IPluginConfig;
@@ -24,13 +30,25 @@ import snownee.jade.api.config.IPluginConfig;
 /**
  * Shows a block's owner — and its installed modules and custom name — in Jade's tooltip, the way the original
  * mod does. Jade is optional: this class is only ever loaded when Jade is present.
+ * <p>
+ * Also flags a modded container the Key Panel locked via {@link ContainerLockData} (not a real SecurityCraft block,
+ * so it carries no owner-implementing block entity Jade could read directly) - the lock lives in server-only save
+ * data, so it needs its own {@link IServerDataProvider} to sync the "is this locked" flag to the client.
  */
 @WailaPlugin(SecurityCraft.MODID)
-public final class SCJadePlugin implements IWailaPlugin, IBlockComponentProvider {
+public final class SCJadePlugin implements IWailaPlugin, IBlockComponentProvider, IServerDataProvider<BlockAccessor> {
 	private static final Identifier ID = Identifier.fromNamespaceAndPath(SecurityCraft.MODID, "info");
 	private static final Identifier SHOW_OWNER = Identifier.fromNamespaceAndPath(SecurityCraft.MODID, "showowner");
 	private static final Identifier SHOW_MODULES = Identifier.fromNamespaceAndPath(SecurityCraft.MODID, "showmodules");
 	private static final Identifier SHOW_CUSTOM_NAME = Identifier.fromNamespaceAndPath(SecurityCraft.MODID, "showcustomname");
+	private static final String LOCKED_TAG = "securitycraft_locked";
+	private static final String LOCKED_OWNER_NAME_TAG = "securitycraft_locked_owner_name";
+	private static final String LOCKED_OWNER_UUID_TAG = "securitycraft_locked_owner_uuid";
+
+	@Override
+	public void register(IWailaCommonRegistration registration) {
+		registration.registerBlockDataProvider(this, BlockEntity.class);
+	}
 
 	@Override
 	public void registerClient(IWailaClientRegistration registration) {
@@ -40,8 +58,34 @@ public final class SCJadePlugin implements IWailaPlugin, IBlockComponentProvider
 		registration.registerBlockComponent(this, Block.class);
 	}
 
+	/** Server side: does this generic Key Panel lock cover the position being looked at, and if so, by whom? */
+	@Override
+	public void appendServerData(CompoundTag tag, BlockAccessor accessor) {
+		if (accessor.getLevel() instanceof ServerLevel level) {
+			ContainerLockData.LockedContainer lock = ContainerLockData.get(level).get(accessor.getPosition());
+
+			if (lock != null) {
+				tag.putBoolean(LOCKED_TAG, true);
+				tag.putString(LOCKED_OWNER_NAME_TAG, lock.getOwner().getName());
+				tag.putString(LOCKED_OWNER_UUID_TAG, lock.getOwner().getUUID());
+			}
+		}
+	}
+
 	@Override
 	public void appendTooltip(ITooltip tooltip, BlockAccessor accessor, IPluginConfig config) {
+		CompoundTag serverData = accessor.getServerData();
+
+		if (serverData.getBooleanOr(LOCKED_TAG, false)) {
+			tooltip.add(0, Utils.localize("waila.securitycraft:passcodeProtected").withStyle(ChatFormatting.GOLD));
+
+			if (config.get(SHOW_OWNER) && serverData.contains(LOCKED_OWNER_NAME_TAG)) {
+				Owner owner = new Owner(serverData.getStringOr(LOCKED_OWNER_NAME_TAG, ""), serverData.getStringOr(LOCKED_OWNER_UUID_TAG, ""));
+
+				tooltip.add(1, Utils.localize("waila.securitycraft:owner", PlayerUtils.getOwnerComponent(owner)).withStyle(ChatFormatting.GRAY));
+			}
+		}
+
 		BlockEntity be = accessor.getBlockEntity();
 
 		if (be == null)

@@ -17,6 +17,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionResult;
@@ -74,8 +75,10 @@ public class LaserBlock extends OwnableBlock implements SimpleWaterloggedBlock {
 
 		if (be.isOwnedBy(player)) {
 			if (!level.isClientSide()) {
-				if (!be.isEnabled())
-					player.sendOverlayMessage(Utils.localize("gui.securitycraft:scManual.disabled"));
+				if (!be.isEnabled()) {
+					if (player instanceof ServerPlayer serverPlayer)
+						serverPlayer.sendSystemMessage(Utils.localize("gui.securitycraft:scManual.disabled"), true);
+				}
 				else
 					player.openMenu(be);
 			}
@@ -251,6 +254,6 @@ public class LaserBlock extends OwnableBlock implements SimpleWaterloggedBlock {
 
 	@Override
 	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-		return BaseEntityBlock.createTickerHelper(type, SCContent.LASER_BLOCK_BLOCK_ENTITY, LevelUtils::blockEntityTicker);
+		return LevelUtils.createTickerHelper(type, SCContent.LASER_BLOCK_BLOCK_ENTITY, LevelUtils::blockEntityTicker);
 	}
 }

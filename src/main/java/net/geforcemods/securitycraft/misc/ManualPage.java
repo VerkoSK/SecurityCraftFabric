@@ -55,6 +55,13 @@ public class ManualPage {
 		add(SCContent.TRACK_MINE.asItem());
 		add(SCContent.REINFORCED_BY_NAME.get("reinforced_lever").asItem());
 		add(SCContent.REINFORCED_BY_NAME.get("reinforced_iron_trapdoor").asItem(), "", true);
+		add(SCContent.RETINAL_SCANNER.asItem());
+		add(SCContent.SCANNER_DOOR.asItem());
+		add(SCContent.SCANNER_TRAPDOOR.asItem());
+		add(SCContent.KEYCARD_READER.asItem());
+		add(SCContent.KEYCARD_LOCK.asItem());
+		add(SCContent.KEYCARD_LV1);
+		add(SCContent.KEYCARD_HOLDER);
 		add(SCContent.FAKE_LAVA_BUCKET, "", true);
 		add(SCContent.FAKE_WATER_BUCKET, "", true);
 		add(SCContent.KEY_PANEL_ITEM);
@@ -64,6 +71,8 @@ public class ManualPage {
 		add(SCContent.UNIVERSAL_BLOCK_MODIFIER);
 		add(SCContent.UNIVERSAL_BLOCK_REMOVER);
 		add(SCContent.UNIVERSAL_OWNER_CHANGER);
+		add(SCContent.UNIVERSAL_KEY_CHANGER);
+		add(SCContent.CODEBREAKER);
 		add(SCContent.WIRE_CUTTERS);
 		add(SCContent.DENYLIST_MODULE);
 		add(SCContent.DISGUISE_MODULE);
