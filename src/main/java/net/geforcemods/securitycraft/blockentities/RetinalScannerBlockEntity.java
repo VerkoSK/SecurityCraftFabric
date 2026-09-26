@@ -1,5 +1,9 @@
 package net.geforcemods.securitycraft.blockentities;
 
+import java.util.Optional;
+
+import com.mojang.authlib.properties.PropertyMap;
+
 import net.geforcemods.securitycraft.SCContent;
 import net.geforcemods.securitycraft.api.CustomizableBlockEntity;
 import net.geforcemods.securitycraft.api.IViewActivated;
@@ -18,9 +22,15 @@ import net.geforcemods.securitycraft.util.PlayerUtils;
 import net.geforcemods.securitycraft.util.Utils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.util.StringUtil;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.component.ResolvableProfile;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.SkullBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 
@@ -36,6 +46,7 @@ public class RetinalScannerBlockEntity extends CustomizableBlockEntity implement
 	};
 	private DisabledOption disabled = new DisabledOption(false);
 	private RespectInvisibilityOption respectInvisibility = new RespectInvisibilityOption();
+	private ResolvableProfile ownerProfile;
 	private int viewCooldown = 0;
 	/** Ticks left until the signal is turned back off; driven by this block entity's own tick, not a scheduled block tick. */
 	private int powerTicksLeft = 0;
@@ -141,7 +152,7 @@ public class RetinalScannerBlockEntity extends CustomizableBlockEntity implement
 	@Override
 	public ModuleType[] acceptedModules() {
 		return new ModuleType[] {
-				ModuleType.ALLOWLIST
+				ModuleType.ALLOWLIST, ModuleType.DISGUISE
 		};
 	}
 
@@ -150,6 +161,63 @@ public class RetinalScannerBlockEntity extends CustomizableBlockEntity implement
 		return new Option[] {
 				activatedByEntities, sendMessage, signalLength, disabled, maximumDistance, respectInvisibility
 		};
+	}
+
+	@Override
+	public void setOwner(String name, String uuid) {
+		super.setOwner(name, uuid);
+
+		if (name != null && !name.isEmpty() && !name.equals("owner")) {
+			setOwnerProfile(new ResolvableProfile(Optional.of(name), Optional.empty(), new PropertyMap()));
+		}
+	}
+
+	public void setOwnerProfile(ResolvableProfile ownerProfile) {
+		this.ownerProfile = ownerProfile;
+		updateOwnerProfile();
+	}
+
+	private void updateOwnerProfile() {
+		if (ownerProfile != null && !ownerProfile.isResolved()) {
+			ownerProfile.resolve().thenAcceptAsync(ownerProfile -> {
+				this.ownerProfile = ownerProfile;
+				setChanged();
+				sync();
+			}, SkullBlockEntity.CHECKED_MAIN_THREAD_EXECUTOR);
+		}
+		else {
+			setChanged();
+			sync();
+		}
+	}
+
+	public ResolvableProfile getPlayerProfile() {
+		return ownerProfile;
+	}
+
+	@Override
+	public void saveAdditional(CompoundTag tag, HolderLookup.Provider lookupProvider) {
+		super.saveAdditional(tag, lookupProvider);
+
+		if (!StringUtil.isNullOrEmpty(getOwner().getName()) && !getOwner().getName().equals("owner") && ownerProfile != null)
+			tag.put("ownerProfile", ResolvableProfile.CODEC.encodeStart(NbtOps.INSTANCE, ownerProfile).getOrThrow());
+	}
+
+	@Override
+	public void loadAdditional(CompoundTag tag, HolderLookup.Provider lookupProvider) {
+		super.loadAdditional(tag, lookupProvider);
+
+		if (tag.contains("ownerProfile")) {
+			CompoundTag ownerProfileTag = tag.getCompound("ownerProfile");
+
+			if (ownerProfileTag.contains("Name"))
+				ownerProfileTag.putString("name", ownerProfileTag.getString("Name"));
+
+			ResolvableProfile.CODEC.parse(NbtOps.INSTANCE, ownerProfileTag).resultOrPartial(name -> net.geforcemods.securitycraft.SecurityCraft.LOGGER.error("Failed to load profile from player head: {}", name)).ifPresent(this::setOwnerProfile);
+		}
+		else if (!StringUtil.isNullOrEmpty(getOwner().getName()) && !getOwner().getName().equals("owner")) {
+			setOwnerProfile(new ResolvableProfile(Optional.of(getOwner().getName()), Optional.empty(), new PropertyMap()));
+		}
 	}
 
 	@Override
