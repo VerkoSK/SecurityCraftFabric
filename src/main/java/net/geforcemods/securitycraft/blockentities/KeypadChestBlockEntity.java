@@ -22,6 +22,7 @@ import net.geforcemods.securitycraft.util.BlockUtils;
 import net.geforcemods.securitycraft.util.PasscodeUtils;
 import net.geforcemods.securitycraft.util.Utils;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -39,6 +40,8 @@ import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.ChestType;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 /**
  * Ported from upstream's {@code KeypadChestBlockEntity}. Cannot extend the port's {@link net.geforcemods.securitycraft.api.CustomizableBlockEntity}
@@ -71,52 +74,50 @@ public class KeypadChestBlockEntity extends ChestBlockEntity implements Passcode
 	}
 
 	@Override
-	public void saveAdditional(net.minecraft.world.level.storage.ValueOutput tag) {
+	public void saveAdditional(ValueOutput output) {
 		long cooldownLeft;
 
-		super.saveAdditional(tag);
-		writeModuleInventory(tag);
-		writeModuleStates(tag);
-		writeOptions(tag);
+		super.saveAdditional(output);
+		writeModuleInventory(output);
+		writeModuleStates(output);
+		writeOptions(output);
 		cooldownLeft = getCooldownEnd() - System.currentTimeMillis();
-		tag.putLong("cooldownLeft", cooldownLeft <= 0 ? -1 : cooldownLeft);
-		tag.putString("salt", salt);
+		output.putLong("cooldownLeft", cooldownLeft <= 0 ? -1 : cooldownLeft);
+		output.putString("salt", salt);
 
 		if (passcodeHash != null)
-			tag.putString("passcodeHash", passcodeHash);
+			output.putString("passcodeHash", passcodeHash);
 
-		owner.save(tag);
+		owner.save(output);
 
 		if (previousChest != null)
-			tag.putString("previous_chest", previousChest.toString());
+			output.putString("previous_chest", previousChest.toString());
 	}
 
 	@Override
-	public void loadAdditional(net.minecraft.world.level.storage.ValueInput tag) {
-		super.loadAdditional(tag);
+	public void loadAdditional(ValueInput input) {
+		super.loadAdditional(input);
 
-		modules = readModuleInventory(tag);
-		moduleStates = readModuleStates(tag);
-		readOptions(tag);
-		cooldownEnd = System.currentTimeMillis() + tag.getLongOr("cooldownLeft", 0L);
-		salt = tag.getStringOr("salt", salt);
-		passcodeHash = tag.getString("passcodeHash").orElse(null);
-		owner = Owner.load(tag);
+		modules = readModuleInventory(input);
+		moduleStates = readModuleStates(input);
+		readOptions(input);
+		cooldownEnd = System.currentTimeMillis() + input.getLongOr("cooldownLeft", 0L);
+		salt = input.getStringOr("salt", salt);
+		passcodeHash = input.getString("passcodeHash").orElse(null);
+		owner = Owner.load(input);
 
-		String savedPreviousChest = tag.getStringOr("previous_chest", "");
+		String savedPreviousChest = input.getStringOr("previous_chest", "");
 
-		{
-			if (!savedPreviousChest.isBlank()) {
-				Identifier parsedPreviousChest = Identifier.parse(savedPreviousChest);
+		if (!savedPreviousChest.isBlank()) {
+			Identifier parsedPreviousChest = Identifier.parse(savedPreviousChest);
 
-				if (parsedPreviousChest.getPath() != null && !parsedPreviousChest.getPath().isBlank())
-					previousChest = parsedPreviousChest;
-			}
+			if (parsedPreviousChest.getPath() != null && !parsedPreviousChest.getPath().isBlank())
+				previousChest = parsedPreviousChest;
 		}
 	}
 
 	@Override
-	public CompoundTag getUpdateTag(net.minecraft.core.HolderLookup.Provider registries) {
+	public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
 		CompoundTag tag = saveWithoutMetadata(registries);
 
 		tag.remove("passcodeHash");
@@ -172,6 +173,12 @@ public class KeypadChestBlockEntity extends ChestBlockEntity implements Passcode
 
 		if (player instanceof ServerPlayer && getBlockState().getBlock() instanceof KeypadChestBlock block)
 			block.activate(getBlockState(), level, worldPosition, player);
+	}
+
+	@Override
+	public void useCodebreaker(Player player) {
+		if (player instanceof ServerPlayer serverPlayer && getBlockState().getBlock() instanceof KeypadChestBlock block)
+			block.activate(getBlockState(), (ServerLevel) level, worldPosition, serverPlayer);
 	}
 
 	@Override
@@ -330,11 +337,11 @@ public class KeypadChestBlockEntity extends ChestBlockEntity implements Passcode
 			insertModule(other.getModule(type), false);
 		}
 
-		try (net.minecraft.util.ProblemReporter.ScopedCollector reporter = new net.minecraft.util.ProblemReporter.ScopedCollector(other.problemPath(), net.geforcemods.securitycraft.SecurityCraft.LOGGER)) {
-			net.minecraft.world.level.storage.TagValueOutput out = net.minecraft.world.level.storage.TagValueOutput.createWithContext(reporter, other.level.registryAccess());
+		Option<?>[] ownOptions = customOptions();
+		Option<?>[] otherOptions = other.customOptions();
 
-			other.writeOptions(out);
-			readOptions(net.minecraft.world.level.storage.TagValueInput.create(reporter, other.level.registryAccess(), out.buildResult()));
+		for (int i = 0; i < ownOptions.length; i++) {
+			ownOptions[i].copy(otherOptions[i]);
 		}
 
 		copyPasscodeFrom(other);

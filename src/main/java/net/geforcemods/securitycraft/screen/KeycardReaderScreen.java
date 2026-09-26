@@ -12,13 +12,13 @@ import net.geforcemods.securitycraft.network.SyncKeycardSettingsPayload;
 import net.geforcemods.securitycraft.screen.components.ActiveBasedTextureButton;
 import net.geforcemods.securitycraft.screen.components.TogglePictureButton;
 import net.geforcemods.securitycraft.util.Utils;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
@@ -35,15 +35,15 @@ import net.minecraft.world.item.ItemStack;
  * wasn't worth the risk of getting the offset wrong).
  */
 public class KeycardReaderScreen extends AbstractContainerScreen<KeycardReaderMenu> {
-	private static final ResourceLocation TEXTURE = SCContent.id("textures/gui/container/keycard_reader.png");
-	private static final ResourceLocation LEVEL_CONFIRM_SPRITE = SCContent.id("widget/level_confirm");
-	private static final ResourceLocation LEVEL_CANCEL_SPRITE = SCContent.id("widget/level_cancel");
-	private static final ResourceLocation RANDOM_SPRITE = SCContent.id("widget/random");
-	private static final ResourceLocation RANDOM_INACTIVE_SPRITE = SCContent.id("widget/random_inactive");
-	private static final ResourceLocation RESET_SPRITE = SCContent.id("widget/reset");
-	private static final ResourceLocation RESET_INACTIVE_SPRITE = SCContent.id("widget/reset_inactive");
-	private static final ResourceLocation RETURN_SPRITE = SCContent.id("widget/return");
-	private static final ResourceLocation RETURN_INACTIVE_SPRITE = SCContent.id("widget/return_inactive");
+	private static final Identifier TEXTURE = SCContent.id("textures/gui/container/keycard_reader.png");
+	private static final Identifier LEVEL_CONFIRM_SPRITE = SCContent.id("widget/level_confirm");
+	private static final Identifier LEVEL_CANCEL_SPRITE = SCContent.id("widget/level_cancel");
+	private static final Identifier RANDOM_SPRITE = SCContent.id("widget/random");
+	private static final Identifier RANDOM_INACTIVE_SPRITE = SCContent.id("widget/random_inactive");
+	private static final Identifier RESET_SPRITE = SCContent.id("widget/reset");
+	private static final Identifier RESET_INACTIVE_SPRITE = SCContent.id("widget/reset_inactive");
+	private static final Identifier RETURN_SPRITE = SCContent.id("widget/return");
+	private static final Identifier RETURN_INACTIVE_SPRITE = SCContent.id("widget/return_inactive");
 	private static final Component EQUALS = Component.literal("=");
 	private static final Component GREATER_EQUALS = Component.literal(">=");
 	private static final int MAX_SIGNATURE = 99999;
@@ -67,15 +67,13 @@ public class KeycardReaderScreen extends AbstractContainerScreen<KeycardReaderMe
 	private boolean firstTick = true;
 
 	public KeycardReaderScreen(KeycardReaderMenu menu, Inventory inv, Component title) {
-		super(menu, inv, title);
+		super(menu, inv, title, 176, 249);
 		be = menu.be;
 		acceptedLevels = be.getAcceptedLevels().clone();
 		previousSignature = signature = be.getSignature();
 		isOwner = be.isOwnedBy(inv.player);
 		hasSmartModule = be.isModuleEnabled(net.geforcemods.securitycraft.misc.ModuleType.SMART);
 		smartModuleTooltip = Utils.localize(hasSmartModule ? "gui.securitycraft:keycard_reader.smartModule" : "gui.securitycraft:keycard_reader.noSmartModule");
-		imageWidth = 176;
-		imageHeight = 249;
 	}
 
 	@Override
@@ -88,10 +86,18 @@ public class KeycardReaderScreen extends AbstractContainerScreen<KeycardReaderMe
 
 		signatureField = addRenderableWidget(new EditBox(font, leftPos + 96, topPos + 21, 40, 12, Component.empty()));
 		signatureField.setValue(leftPaddedSignature());
-		signatureField.setFilter(s -> s.matches("\\d{0,5}"));
 		signatureField.setMaxLength(5);
 		signatureField.setEditable(isOwner);
-		signatureField.setResponder(this::changeSignatureFromField);
+		signatureField.setResponder(text -> {
+			String digits = text.replaceAll("\\D", "");
+
+			if (digits.length() > 5)
+				digits = digits.substring(0, 5);
+			if (!digits.equals(text))
+				signatureField.setValue(digits);
+			else
+				changeSignatureFromField(digits);
+		});
 
 		minusThree = addRenderableWidget(Button.builder(Component.literal("---"), b -> changeSignature(signature - 100)).bounds(leftPos + 22, buttonY, 24, 13).build());
 		minusTwo = addRenderableWidget(Button.builder(Component.literal("--"), b -> changeSignature(signature - 10)).bounds(leftPos + 48, buttonY, 18, 13).build());
@@ -136,8 +142,15 @@ public class KeycardReaderScreen extends AbstractContainerScreen<KeycardReaderMe
 		linkButton.active = false;
 
 		usesField = addRenderableWidget(new EditBox(font, leftPos + 28, topPos + 107, 30, 15, Component.empty()));
-		usesField.setFilter(s -> s.matches("\\d*"));
 		usesField.setMaxLength(4);
+		usesField.setResponder(text -> {
+			String digits = text.replaceAll("\\D", "");
+
+			if (digits.length() > 4)
+				digits = digits.substring(0, 4);
+			if (!digits.equals(text))
+				usesField.setValue(digits);
+		});
 
 		setUsesButton = addRenderableWidget(new ActiveBasedTextureButton(leftPos + 62, topPos + 106, 16, 17, RETURN_SPRITE, RETURN_INACTIVE_SPRITE, 2, 2, 14, 14, b -> {
 			if (!usesField.getValue().isEmpty())
@@ -212,19 +225,19 @@ public class KeycardReaderScreen extends AbstractContainerScreen<KeycardReaderMe
 	}
 
 	@Override
-	protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
-		guiGraphics.drawString(font, title, imageWidth / 2 - font.width(title) / 2, 6, 4210752, false);
-		guiGraphics.drawString(font, signatureText, signatureTextStartX, 23, 4210752, false);
+	protected void extractLabels(GuiGraphicsExtractor extractor, int mouseX, int mouseY) {
+		extractor.text(font, title, imageWidth / 2 - font.width(title) / 2, 6, 4210752, false);
+		extractor.text(font, signatureText, signatureTextStartX, 23, 4210752, false);
 
 		Component keycardLevels = Utils.localize("gui.securitycraft:keycard_reader.keycard_levels");
 
-		guiGraphics.drawString(font, keycardLevels, 170 - font.width(keycardLevels), 56, 4210752, false);
+		extractor.text(font, keycardLevels, 170 - font.width(keycardLevels), 56, 4210752, false);
 
 		for (int i = 1; i <= 5; i++) {
-			guiGraphics.drawString(font, "" + i, 91, 55 + 17 * i, 4210752, false);
+			extractor.text(font, "" + i, 91, 55 + 17 * i, 4210752, false);
 		}
 
-		guiGraphics.drawString(font, playerInventoryTitle, 8, imageHeight - 93, 4210752, false);
+		extractor.text(font, playerInventoryTitle, 8, imageHeight - 93, 4210752, false);
 	}
 
 	@Override
@@ -255,15 +268,10 @@ public class KeycardReaderScreen extends AbstractContainerScreen<KeycardReaderMe
 	}
 
 	@Override
-	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
-		super.render(guiGraphics, mouseX, mouseY, partialTicks);
-		net.geforcemods.securitycraft.util.ClientUtils.renderModuleInfo(guiGraphics, font, net.geforcemods.securitycraft.misc.ModuleType.SMART, smartModuleTooltip, hasSmartModule, leftPos + 5, topPos + 5, mouseX, mouseY);
-		renderTooltip(guiGraphics, mouseX, mouseY);
-	}
-
-	@Override
-	protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int mouseX, int mouseY) {
-		guiGraphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight, 256, 256);
+	public void extractRenderState(GuiGraphicsExtractor extractor, int mouseX, int mouseY, float partialTick) {
+		extractor.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, leftPos, topPos, 0.0F, 0.0F, imageWidth, imageHeight, 256, 256);
+		super.extractRenderState(extractor, mouseX, mouseY, partialTick);
+		net.geforcemods.securitycraft.util.ClientUtils.renderModuleInfo(extractor, font, net.geforcemods.securitycraft.misc.ModuleType.SMART, smartModuleTooltip, hasSmartModule, leftPos + 5, topPos + 5, mouseX, mouseY);
 	}
 
 	@Override

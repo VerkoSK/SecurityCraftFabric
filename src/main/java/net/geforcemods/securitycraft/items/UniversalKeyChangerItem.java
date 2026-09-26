@@ -35,7 +35,7 @@ public class UniversalKeyChangerItem extends Item {
 			if (!(level.getBlockEntity(pos) instanceof PasscodeProtected passcode))
 				return InteractionResult.PASS;
 
-			if (level.isClientSide)
+			if (level.isClientSide())
 				return InteractionResult.SUCCESS;
 
 			if (!(player instanceof ServerPlayer serverPlayer))

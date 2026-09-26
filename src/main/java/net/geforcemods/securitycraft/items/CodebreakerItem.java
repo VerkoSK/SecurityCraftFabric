@@ -46,7 +46,7 @@ public class CodebreakerItem extends Item {
 			if (!(level.getBlockEntity(pos) instanceof Codebreakable codebreakable))
 				return InteractionResult.PASS;
 
-			if (level.isClientSide)
+			if (level.isClientSide())
 				return InteractionResult.SUCCESS;
 
 			codebreakable.handleCodebreaking(player, hand);

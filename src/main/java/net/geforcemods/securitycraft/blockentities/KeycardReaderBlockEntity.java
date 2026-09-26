@@ -2,7 +2,7 @@ package net.geforcemods.securitycraft.blockentities;
 
 import java.util.Optional;
 
-import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
+import net.fabricmc.fabric.api.menu.v1.ExtendedMenuProvider;
 import net.geforcemods.securitycraft.SCContent;
 import net.geforcemods.securitycraft.api.Codebreakable;
 import net.geforcemods.securitycraft.api.CustomizableBlockEntity;
@@ -38,7 +38,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
  * it. A correct card/hack pulses redstone. Ported from upstream's {@code KeycardReaderBlockEntity}, minus the
  * disguise module and the Sonic Security System lock (not ported).
  */
-public class KeycardReaderBlockEntity extends CustomizableBlockEntity implements MenuProvider, ExtendedScreenHandlerFactory<BlockPos>, Codebreakable, ITickingBlockEntity {
+public class KeycardReaderBlockEntity extends CustomizableBlockEntity implements MenuProvider, ExtendedMenuProvider<BlockPos>, Codebreakable, ITickingBlockEntity {
 	protected boolean[] acceptedLevels = {
 			true, false, false, false, false
 	};
@@ -82,7 +82,9 @@ public class KeycardReaderBlockEntity extends CustomizableBlockEntity implements
 	@Override
 	public boolean shouldAttemptCodebreak(Player player) {
 		if (isDisabled()) {
-			player.displayClientMessage(net.geforcemods.securitycraft.util.Utils.localize("gui.securitycraft:scManual.disabled"), true);
+			if (player instanceof ServerPlayer serverPlayer)
+				serverPlayer.sendSystemMessage(net.geforcemods.securitycraft.util.Utils.localize("gui.securitycraft:scManual.disabled"), true);
+
 			return false;
 		}
 
@@ -91,7 +93,7 @@ public class KeycardReaderBlockEntity extends CustomizableBlockEntity implements
 
 	@Override
 	public void useCodebreaker(Player player) {
-		if (level != null && !level.isClientSide)
+		if (level != null && !level.isClientSide())
 			activate();
 	}
 
@@ -121,7 +123,7 @@ public class KeycardReaderBlockEntity extends CustomizableBlockEntity implements
 
 		Optional<String> usableBy = KeycardItem.getUsableBy(stack);
 
-		if (usableBy.isPresent() && !usableBy.get().equals(player.getGameProfile().getName()))
+		if (usableBy.isPresent() && !usableBy.get().equals(player.getGameProfile().name()))
 			return Component.translatable("messages.securitycraft:keycard_acceptor.cant_use");
 
 		if (getSignature() != KeycardItem.getSignature(stack))

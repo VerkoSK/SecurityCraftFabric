@@ -49,7 +49,7 @@ public class KeycardLockBlock extends AbstractPanelBlock implements net.geforcem
 		if (!(level.getBlockEntity(pos) instanceof KeycardLockBlockEntity be))
 			return InteractionResult.PASS;
 
-		if (level.isClientSide)
+		if (level.isClientSide())
 			return InteractionResult.SUCCESS;
 
 		if (!be.isSetUp()) {
@@ -69,7 +69,7 @@ public class KeycardLockBlock extends AbstractPanelBlock implements net.geforcem
 		if (!(level.getBlockEntity(pos) instanceof KeycardLockBlockEntity be))
 			return InteractionResult.TRY_WITH_EMPTY_HAND;
 
-		if (level.isClientSide)
+		if (level.isClientSide())
 			return InteractionResult.SUCCESS;
 
 		Item item = stack.getItem();
@@ -85,7 +85,7 @@ public class KeycardLockBlock extends AbstractPanelBlock implements net.geforcem
 
 		if (item instanceof UniversalKeyChangerItem) {
 			if (be.isOwnedBy(player)) {
-				stack.hurtAndBreak(1, player, LivingEntity.getSlotForHand(hand));
+				stack.hurtAndBreak(1, player, hand);
 				be.reset();
 				PlayerUtils.sendMessageToPlayer(player, Utils.localize(getDescriptionId()), Utils.localize("messages.securitycraft:keycard_lock.reset"), ChatFormatting.GREEN);
 			}
@@ -160,6 +160,6 @@ public class KeycardLockBlock extends AbstractPanelBlock implements net.geforcem
 
 	@Override
 	public <T extends BlockEntity> net.minecraft.world.level.block.entity.BlockEntityTicker<T> getTicker(Level level, BlockState state, net.minecraft.world.level.block.entity.BlockEntityType<T> type) {
-		return level.isClientSide ? null : net.geforcemods.securitycraft.util.LevelUtils.createTickerHelper(type, net.geforcemods.securitycraft.SCContent.KEYCARD_LOCK_BLOCK_ENTITY, net.geforcemods.securitycraft.util.LevelUtils::blockEntityTicker);
+		return level.isClientSide() ? null : net.geforcemods.securitycraft.util.LevelUtils.createTickerHelper(type, net.geforcemods.securitycraft.SCContent.KEYCARD_LOCK_BLOCK_ENTITY, net.geforcemods.securitycraft.util.LevelUtils::blockEntityTicker);
 	}
 }

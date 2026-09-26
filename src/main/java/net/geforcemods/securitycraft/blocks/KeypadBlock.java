@@ -66,7 +66,7 @@ public class KeypadBlock extends Block implements EntityBlock, SimpleWaterlogged
 			return InteractionResult.PASS;
 		else if (!level.isClientSide() && player instanceof ServerPlayer serverPlayer) {
 			if (be.isDisabled())
-				player.sendOverlayMessage(Utils.localize("gui.securitycraft:scManual.disabled"));
+				serverPlayer.sendSystemMessage(Utils.localize("gui.securitycraft:scManual.disabled"), true);
 			else if (verifyPasscodeSet(level, pos, be, serverPlayer)) {
 				if (be.isDenied(player)) {
 					if (be.sendsDenylistMessage())

@@ -17,6 +17,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionResult;
@@ -74,8 +75,10 @@ public class LaserBlock extends OwnableBlock implements SimpleWaterloggedBlock {
 
 		if (be.isOwnedBy(player)) {
 			if (!level.isClientSide()) {
-				if (!be.isEnabled())
-					player.displayClientMessage(Utils.localize("gui.securitycraft:scManual.disabled"), true);
+				if (!be.isEnabled()) {
+					if (player instanceof ServerPlayer serverPlayer)
+						serverPlayer.sendSystemMessage(Utils.localize("gui.securitycraft:scManual.disabled"), true);
+				}
 				else
 					player.openMenu(be);
 			}
