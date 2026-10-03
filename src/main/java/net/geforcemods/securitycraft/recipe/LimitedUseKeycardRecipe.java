@@ -10,6 +10,10 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 
 /** Combines any not-yet-limited keycard with a Limited Use Keycard, making the first one limited-use. 1:1 with upstream. */
 public class LimitedUseKeycardRecipe extends CombineRecipe {
+	public LimitedUseKeycardRecipe() {
+		super();
+	}
+
 	public LimitedUseKeycardRecipe(CraftingBookCategory craftingBookCategory) {
 		super(craftingBookCategory);
 	}

@@ -8,6 +8,10 @@ import net.minecraft.world.level.Level;
 
 /** A recipe that combines exactly two specific items into one result. 1:1 with upstream CombineRecipe. */
 public abstract class CombineRecipe extends CustomRecipe {
+	protected CombineRecipe() {
+		super();
+	}
+
 	protected CombineRecipe(CraftingBookCategory craftingBookCategory) {
 		super();
 	}
