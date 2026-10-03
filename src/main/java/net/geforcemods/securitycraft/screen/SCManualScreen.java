@@ -14,8 +14,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import org.lwjgl.glfw.GLFW;
-
 import com.mojang.blaze3d.platform.InputConstants;
 
 import net.fabricmc.loader.api.FabricLoader;
@@ -118,15 +116,11 @@ public class SCManualScreen extends Screen implements StillValid {
 	}
 
 	private static boolean shiftDown() {
-		com.mojang.blaze3d.platform.Window window = Minecraft.getInstance().getWindow();
-
-		return InputConstants.isKeyDown(window, GLFW.GLFW_KEY_LEFT_SHIFT) || InputConstants.isKeyDown(window, GLFW.GLFW_KEY_RIGHT_SHIFT);
+		return InputConstants.isKeyDown(InputConstants.KEY_LSHIFT) || InputConstants.isKeyDown(InputConstants.KEY_RSHIFT);
 	}
 
 	private static boolean controlDown() {
-		com.mojang.blaze3d.platform.Window window = Minecraft.getInstance().getWindow();
-
-		return InputConstants.isKeyDown(window, GLFW.GLFW_KEY_LEFT_CONTROL) || InputConstants.isKeyDown(window, GLFW.GLFW_KEY_RIGHT_CONTROL);
+		return InputConstants.isKeyDown(InputConstants.KEY_LCONTROL) || InputConstants.isKeyDown(InputConstants.KEY_RCONTROL);
 	}
 
 	@Override
@@ -134,7 +128,7 @@ public class SCManualScreen extends Screen implements StillValid {
 		byte startY = 2;
 
 		startX = (width - 256) / 2;
-		patreonLinkButton = addRenderableWidget(new HyperlinkButton(startX + 225, 143, 16, 16, b -> net.minecraft.util.Util.getPlatform().openUri(URI.create("https://www.patreon.com/Geforce"))));
+		patreonLinkButton = addRenderableWidget(new HyperlinkButton(startX + 225, 143, 16, 16, b -> net.minecraft.client.gui.screens.ConfirmLinkScreen.confirmLinkNow(this, URI.create("https://www.patreon.com/Geforce"))));
 		patronList = addRenderableWidget(new PatronList(112, 90, 90, startX + 130));
 		patronList.fetchPatrons();
 		previousSubpage = addRenderableWidget(new ChangePageButton(startX + 155, startY + 95, false, b -> previousSubpage()));

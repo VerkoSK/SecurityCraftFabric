@@ -29,10 +29,10 @@ public class SecretHangingSignRenderer extends HangingSignRenderer {
 			LocalPlayer player = Minecraft.getInstance().player;
 
 			if (!secretSign.isPlayerAllowedToSeeText(player, true))
-				state.frontText = new SignText();
+				state.frontText = SignText.EMPTY;
 
 			if (!secretSign.isPlayerAllowedToSeeText(player, false))
-				state.backText = new SignText();
+				state.backText = SignText.EMPTY;
 		}
 	}
 }

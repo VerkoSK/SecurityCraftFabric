@@ -67,10 +67,7 @@ public class OwnableBlock extends BaseEntityBlock {
 		return new OwnableBlockEntity(SCContent.ABSTRACT_BLOCK_ENTITY, pos, state);
 	}
 
-	@Override
-	protected MapCodec<? extends BaseEntityBlock> codec() {
-		return null;
-	}
+
 
 	/** Registers the block as unbreakable while remembering the destroy time it asked for. */
 	public static BlockBehaviour.Properties withReinforcedDestroyTime(BlockBehaviour.Properties properties) {

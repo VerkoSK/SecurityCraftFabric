@@ -65,8 +65,6 @@ public class IngredientDisplay implements Renderable {
 	}
 
 	private static boolean hasShiftDown() {
-		com.mojang.blaze3d.platform.Window window = Minecraft.getInstance().getWindow();
-
-		return InputConstants.isKeyDown(window, org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT_SHIFT) || InputConstants.isKeyDown(window, org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT_SHIFT);
+		return InputConstants.isKeyDown(InputConstants.KEY_LSHIFT) || InputConstants.isKeyDown(InputConstants.KEY_RSHIFT);
 	}
 }

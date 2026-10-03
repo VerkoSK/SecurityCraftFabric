@@ -57,13 +57,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
  * config check in {@code canHarvestBlock} (not ported, see {@code ReinforcedHopperBlock}).
  */
 public class ReinforcedCauldronBlock extends AbstractCauldronBlock implements IReinforcedBlock, EntityBlock {
-	public static final com.mojang.serialization.MapCodec<ReinforcedCauldronBlock> CODEC = simpleCodec(properties -> new ReinforcedCauldronBlock(properties, new CauldronInteraction.Dispatcher()));
 	private final float destroyTimeForOwner;
-
-	@Override
-	protected com.mojang.serialization.MapCodec<? extends AbstractCauldronBlock> codec() {
-		return CODEC;
-	}
 
 	public ReinforcedCauldronBlock(BlockBehaviour.Properties properties, CauldronInteraction.Dispatcher interactions) {
 		super(OwnableBlock.withReinforcedDestroyTime(properties), interactions);

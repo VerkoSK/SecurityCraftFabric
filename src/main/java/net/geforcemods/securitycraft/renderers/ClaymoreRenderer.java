@@ -29,7 +29,7 @@ public class ClaymoreRenderer implements BlockEntityRenderer<ClaymoreBlockEntity
 
 		pose.pushPose();
 		pose.translate(0.5D, 0.0D, 0.5D);
-		pose.mulPose(state.rotation);
+		pose.rotate(state.rotation);
 		pose.translate(-0.5D, 0.0D, -0.5D);
 
 		collector.submitCustomGeometry(pose, RenderTypes.lines(), (vertexPose, builder) -> {

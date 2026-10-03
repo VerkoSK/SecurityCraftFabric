@@ -177,7 +177,7 @@ public class ReinforcedPistonBaseBlock extends PistonBaseBlock implements IReinf
 				}
 
 				if (!flag) {
-					if (id != 1 || offsetState.isAir() || !isPushable(offsetState, level, pos, offsetPos, direction.getOpposite(), false, direction) || offsetState.getPistonPushReaction() != PushReaction.NORMAL && !offsetState.is(SCContent.REINFORCED_PISTON) && !offsetState.is(SCContent.REINFORCED_STICKY_PISTON))
+					if (id != 1 || offsetState.isAir() || !isPushable(offsetState, level, pos, offsetPos, direction.getOpposite(), false, direction) || offsetState.getPistonPushReaction() != PushReaction.PUSH_PULL && !offsetState.is(SCContent.REINFORCED_PISTON) && !offsetState.is(SCContent.REINFORCED_STICKY_PISTON))
 						level.removeBlock(pos.relative(direction), false);
 					else
 						moveBlocks(level, pos, direction, false);
@@ -212,11 +212,11 @@ public class ReinforcedPistonBaseBlock extends PistonBaseBlock implements IReinf
 							return false;
 
 						switch (state.getPistonPushReaction()) {
-							case BLOCK:
+							case IMMOVEABLE:
 								return false;
-							case DESTROY:
+							case POPPED:
 								return destroyBlocks;
-							case PUSH_ONLY:
+							case PUSH:
 								return facing == direction;
 							default:
 								break;
@@ -416,7 +416,7 @@ public class ReinforcedPistonBaseBlock extends PistonBaseBlock implements IReinf
 			toDestroy.clear();
 
 			if (!isPushable(state, level, pistonPos, startPos, pushDirection, false, pistonDirection)) {
-				if (extending && state.getPistonPushReaction() == PushReaction.DESTROY) {
+				if (extending && state.getPistonPushReaction() == PushReaction.POPPED) {
 					toDestroy.add(startPos);
 					return true;
 				}
@@ -505,7 +505,7 @@ public class ReinforcedPistonBaseBlock extends PistonBaseBlock implements IReinf
 						if (!isPushable(state, level, pistonPos, offsetPos, pushDirection, true, pushDirection) || offsetPos.equals(pistonPos))
 							return false;
 
-						if (state.getPistonPushReaction() == PushReaction.DESTROY) {
+						if (state.getPistonPushReaction() == PushReaction.POPPED) {
 							toDestroy.add(offsetPos);
 							return true;
 						}

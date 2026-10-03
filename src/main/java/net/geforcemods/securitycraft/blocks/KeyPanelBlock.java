@@ -24,7 +24,6 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 /** Thin wall/floor/ceiling passcode panel that emits a redstone pulse when the correct code is entered. */
 public class KeyPanelBlock extends AbstractPanelBlock {
-	public static final MapCodec<KeyPanelBlock> CODEC = simpleCodec(KeyPanelBlock::new);
 	public static final VoxelShape FLOOR_NS = Block.box(2.0D, 0.0D, 1.0D, 14.0D, 1.0D, 15.0D);
 	public static final VoxelShape FLOOR_EW = Block.box(1.0D, 0.0D, 2.0D, 15.0D, 1.0D, 14.0D);
 	public static final VoxelShape CEILING_NS = Block.box(2.0D, 15.0D, 1.0D, 14.0D, 16.0D, 15.0D);
@@ -38,10 +37,7 @@ public class KeyPanelBlock extends AbstractPanelBlock {
 		super(properties);
 	}
 
-	@Override
-	protected MapCodec<? extends BaseEntityBlock> codec() {
-		return CODEC;
-	}
+
 
 	@Override
 	protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {

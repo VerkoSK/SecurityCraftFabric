@@ -36,7 +36,6 @@ import net.minecraft.world.phys.shapes.VoxelShape;
  * subsystem is not ported, so the frame is otherwise decorative.
  */
 public class FrameBlock extends OwnableBlock implements SimpleWaterloggedBlock {
-	public static final MapCodec<FrameBlock> CODEC = simpleCodec(FrameBlock::new);
 	public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
 	public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
 	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
@@ -50,10 +49,7 @@ public class FrameBlock extends OwnableBlock implements SimpleWaterloggedBlock {
 		registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(POWERED, false).setValue(WATERLOGGED, false));
 	}
 
-	@Override
-	protected MapCodec<? extends BaseEntityBlock> codec() {
-		return CODEC;
-	}
+
 
 	@Override
 	protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext ctx) {

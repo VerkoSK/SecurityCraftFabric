@@ -49,8 +49,9 @@ public class KeypadChestRenderer extends ChestRenderer<ChestBlockEntity> {
 			default -> active ? ACTIVE : INACTIVE;
 		};
 		ChestModel model = models.select(state.type);
-
-		collector.submitModel(model, Float.valueOf(openness), pose, state.lightCoords, OverlayTexture.NO_OVERLAY, -1, sprite, sprites, 0, state.breakProgress);
+		collector.submitModel(model, Float.valueOf(openness), pose, state.lightCoords, OverlayTexture.NO_OVERLAY, -1, sprite, sprites, 0);
+		if (state.breakProgress != null)
+			collector.order(1).submitCrumblingOverlay(model, Float.valueOf(openness), pose, sprite.renderType(model.renderType()), state.lightCoords, OverlayTexture.NO_OVERLAY, -1, state.breakProgress);
 		pose.popPose();
 	}
 

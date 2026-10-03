@@ -62,7 +62,7 @@ public class EditModuleScreen extends Screen {
 		inputField = addRenderableWidget(new EditBox(font, cx, topPos + 20, 62, 16, Component.empty()) {
 			@Override
 			public boolean keyPressed(KeyEvent event) {
-				if (isFocused() && (event.key() == org.lwjgl.glfw.GLFW.GLFW_KEY_ENTER || event.key() == org.lwjgl.glfw.GLFW.GLFW_KEY_KP_ENTER)) {
+				if (isFocused() && (event.key() == com.mojang.blaze3d.platform.InputConstants.KEY_RETURN || event.key() == com.mojang.blaze3d.platform.InputConstants.KEY_NUMPADENTER)) {
 					addPlayer();
 					return true;
 				}

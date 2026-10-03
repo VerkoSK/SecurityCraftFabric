@@ -2,10 +2,7 @@ package net.geforcemods.securitycraft.screen.components;
 
 import java.util.function.IntFunction;
 
-import org.lwjgl.glfw.GLFW;
-
 import com.mojang.blaze3d.platform.InputConstants;
-import com.mojang.blaze3d.platform.Window;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -52,9 +49,7 @@ public class ToggleComponentButton extends Button implements IToggleableButton {
 	}
 
 	private static int shiftModifier() {
-		Window window = Minecraft.getInstance().getWindow();
-
-		return InputConstants.isKeyDown(window, GLFW.GLFW_KEY_LEFT_SHIFT) || InputConstants.isKeyDown(window, GLFW.GLFW_KEY_RIGHT_SHIFT) ? GLFW.GLFW_MOD_SHIFT : 0;
+		return InputConstants.isKeyDown(InputConstants.KEY_LSHIFT) || InputConstants.isKeyDown(InputConstants.KEY_RSHIFT) ? InputConstants.MOD_SHIFT : 0;
 	}
 
 	public void cycleIndex(int value) {
