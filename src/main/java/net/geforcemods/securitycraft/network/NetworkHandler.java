@@ -28,6 +28,8 @@ public final class NetworkHandler {
 		PayloadTypeRegistry.serverboundPlay().register(RemoveMineFromMRATPayload.TYPE, RemoveMineFromMRATPayload.CODEC);
 		PayloadTypeRegistry.serverboundPlay().register(SetOptionPayload.TYPE, SetOptionPayload.CODEC);
 		PayloadTypeRegistry.serverboundPlay().register(ToggleModulePayload.TYPE, ToggleModulePayload.CODEC);
+		PayloadTypeRegistry.serverboundPlay().register(SyncKeycardSettingsPayload.TYPE, SyncKeycardSettingsPayload.CODEC);
+		PayloadTypeRegistry.serverboundPlay().register(SetKeycardUsesPayload.TYPE, SetKeycardUsesPayload.CODEC);
 	}
 
 	/** Registers the server-side handlers for the client -> server passcode packets. */
@@ -94,6 +96,20 @@ public final class NetworkHandler {
 
 			if (server != null)
 				server.execute(() -> handleRemoveMineFromMRAT(player, payload));
+		});
+		ServerPlayNetworking.registerGlobalReceiver(SyncKeycardSettingsPayload.TYPE, (payload, context) -> {
+			ServerPlayer player = context.player();
+			MinecraftServer server = player.level().getServer();
+
+			if (server != null)
+				server.execute(() -> handleSyncKeycardSettings(player, payload));
+		});
+		ServerPlayNetworking.registerGlobalReceiver(SetKeycardUsesPayload.TYPE, (payload, context) -> {
+			ServerPlayer player = context.player();
+			MinecraftServer server = player.level().getServer();
+
+			if (server != null)
+				server.execute(() -> handleSetKeycardUses(player, payload));
 		});
 	}
 
@@ -242,5 +258,27 @@ public final class NetworkHandler {
 
 	private static boolean inReach(ServerPlayer player, BlockPos pos) {
 		return pos.closerThan(player.blockPosition(), REACH);
+	}
+
+	private static void handleSyncKeycardSettings(ServerPlayer player, SyncKeycardSettingsPayload payload) {
+		ServerLevel level = player.level();
+
+		if (player.isSpectator() || !inReach(player, payload.pos()) || !(level.getBlockEntity(payload.pos()) instanceof net.geforcemods.securitycraft.blockentities.KeycardReaderBlockEntity be) || !be.isOwnedBy(player))
+			return;
+
+		be.setAcceptedLevels(payload.acceptedLevelsArray());
+		be.setSignature(payload.signature());
+
+		if (payload.link() && player.containerMenu instanceof net.geforcemods.securitycraft.inventory.KeycardReaderMenu openMenu && openMenu.be == be)
+			openMenu.link(payload.usableBy());
+	}
+
+	private static void handleSetKeycardUses(ServerPlayer player, SetKeycardUsesPayload payload) {
+		ServerLevel level = player.level();
+
+		if (player.isSpectator() || !inReach(player, payload.pos()) || !(level.getBlockEntity(payload.pos()) instanceof net.geforcemods.securitycraft.blockentities.KeycardReaderBlockEntity) || !(player.containerMenu instanceof net.geforcemods.securitycraft.inventory.KeycardReaderMenu menu))
+			return;
+
+		menu.setKeycardUsesLeft(payload.usesLeft());
 	}
 }
