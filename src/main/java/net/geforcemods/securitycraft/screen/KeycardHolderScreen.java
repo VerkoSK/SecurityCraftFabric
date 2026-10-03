@@ -13,7 +13,13 @@ public class KeycardHolderScreen extends AbstractContainerScreen<KeycardHolderMe
 	private static final Identifier TEXTURE = SCContent.id("textures/gui/container/keycard_holder.png");
 
 	public KeycardHolderScreen(KeycardHolderMenu menu, Inventory inv, Component title) {
-		super(menu, inv, title, 176, 174);
+		super(menu, inv, title, 176, 133);
+	}
+
+	@Override
+	protected void init() {
+		super.init();
+		titleLabelX = imageWidth / 2 - font.width(title) / 2;
 		inventoryLabelY = imageHeight - 94;
 	}
 
