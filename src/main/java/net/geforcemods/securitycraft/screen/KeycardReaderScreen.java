@@ -11,7 +11,6 @@ import net.geforcemods.securitycraft.network.SetKeycardUsesPayload;
 import net.geforcemods.securitycraft.network.SyncKeycardSettingsPayload;
 import net.geforcemods.securitycraft.screen.components.ActiveBasedTextureButton;
 import net.geforcemods.securitycraft.screen.components.TogglePictureButton;
-import net.geforcemods.securitycraft.util.ClientUtils;
 import net.geforcemods.securitycraft.util.Utils;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
@@ -37,14 +36,14 @@ import net.minecraft.world.item.ItemStack;
  */
 public class KeycardReaderScreen extends AbstractContainerScreen<KeycardReaderMenu> {
 	private static final Identifier TEXTURE = SCContent.id("textures/gui/container/keycard_reader.png");
-	private static final Identifier LEVEL_CONFIRM_SPRITE = SCContent.id("textures/gui/sprites/widget/level_confirm.png");
-	private static final Identifier LEVEL_CANCEL_SPRITE = SCContent.id("textures/gui/sprites/widget/level_cancel.png");
-	private static final Identifier RANDOM_SPRITE = SCContent.id("textures/gui/sprites/widget/random.png");
-	private static final Identifier RANDOM_INACTIVE_SPRITE = SCContent.id("textures/gui/sprites/widget/random_inactive.png");
-	private static final Identifier RESET_SPRITE = SCContent.id("textures/gui/sprites/widget/reset.png");
-	private static final Identifier RESET_INACTIVE_SPRITE = SCContent.id("textures/gui/sprites/widget/reset_inactive.png");
-	private static final Identifier RETURN_SPRITE = SCContent.id("textures/gui/sprites/widget/return.png");
-	private static final Identifier RETURN_INACTIVE_SPRITE = SCContent.id("textures/gui/sprites/widget/return_inactive.png");
+	private static final Identifier LEVEL_CONFIRM_SPRITE = SCContent.id("widget/level_confirm");
+	private static final Identifier LEVEL_CANCEL_SPRITE = SCContent.id("widget/level_cancel");
+	private static final Identifier RANDOM_SPRITE = SCContent.id("widget/random");
+	private static final Identifier RANDOM_INACTIVE_SPRITE = SCContent.id("widget/random_inactive");
+	private static final Identifier RESET_SPRITE = SCContent.id("widget/reset");
+	private static final Identifier RESET_INACTIVE_SPRITE = SCContent.id("widget/reset_inactive");
+	private static final Identifier RETURN_SPRITE = SCContent.id("widget/return");
+	private static final Identifier RETURN_INACTIVE_SPRITE = SCContent.id("widget/return_inactive");
 	private static final Component EQUALS = Component.literal("=");
 	private static final Component GREATER_EQUALS = Component.literal(">=");
 	private static final int MAX_SIGNATURE = 99999;
@@ -89,7 +88,16 @@ public class KeycardReaderScreen extends AbstractContainerScreen<KeycardReaderMe
 		signatureField.setValue(leftPaddedSignature());
 		signatureField.setMaxLength(5);
 		signatureField.setEditable(isOwner);
-		signatureField.setResponder(this::changeSignatureFromField);
+		signatureField.setResponder(text -> {
+			String digits = text.replaceAll("\\D", "");
+
+			if (digits.length() > 5)
+				digits = digits.substring(0, 5);
+			if (!digits.equals(text))
+				signatureField.setValue(digits);
+			else
+				changeSignatureFromField(digits);
+		});
 
 		minusThree = addRenderableWidget(Button.builder(Component.literal("---"), b -> changeSignature(signature - 100)).bounds(leftPos + 22, buttonY, 24, 13).build());
 		minusTwo = addRenderableWidget(Button.builder(Component.literal("--"), b -> changeSignature(signature - 10)).bounds(leftPos + 48, buttonY, 18, 13).build());
@@ -135,6 +143,14 @@ public class KeycardReaderScreen extends AbstractContainerScreen<KeycardReaderMe
 
 		usesField = addRenderableWidget(new EditBox(font, leftPos + 28, topPos + 107, 30, 15, Component.empty()));
 		usesField.setMaxLength(4);
+		usesField.setResponder(text -> {
+			String digits = text.replaceAll("\\D", "");
+
+			if (digits.length() > 4)
+				digits = digits.substring(0, 4);
+			if (!digits.equals(text))
+				usesField.setValue(digits);
+		});
 
 		setUsesButton = addRenderableWidget(new ActiveBasedTextureButton(leftPos + 62, topPos + 106, 16, 17, RETURN_SPRITE, RETURN_INACTIVE_SPRITE, 2, 2, 14, 14, b -> {
 			if (!usesField.getValue().isEmpty())
@@ -221,7 +237,7 @@ public class KeycardReaderScreen extends AbstractContainerScreen<KeycardReaderMe
 			extractor.text(font, "" + i, 91, 55 + 17 * i, 0xFF404040, false);
 		}
 
-		extractor.text(font, playerInventoryTitle, inventoryLabelX, inventoryLabelY, 0xFF404040, false);
+		extractor.text(font, playerInventoryTitle, 8, imageHeight - 93, 0xFF404040, false);
 	}
 
 	@Override
@@ -255,7 +271,7 @@ public class KeycardReaderScreen extends AbstractContainerScreen<KeycardReaderMe
 	public void extractRenderState(GuiGraphicsExtractor extractor, int mouseX, int mouseY, float partialTick) {
 		extractor.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, leftPos, topPos, 0.0F, 0.0F, imageWidth, imageHeight, 256, 256);
 		super.extractRenderState(extractor, mouseX, mouseY, partialTick);
-		ClientUtils.renderModuleInfo(extractor, font, net.geforcemods.securitycraft.misc.ModuleType.SMART, smartModuleTooltip, hasSmartModule, leftPos + 5, topPos + 5, mouseX, mouseY);
+		net.geforcemods.securitycraft.util.ClientUtils.renderModuleInfo(extractor, font, net.geforcemods.securitycraft.misc.ModuleType.SMART, smartModuleTooltip, hasSmartModule, leftPos + 5, topPos + 5, mouseX, mouseY);
 	}
 
 	@Override
