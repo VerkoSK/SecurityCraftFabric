@@ -67,15 +67,13 @@ public class RetinalScannerRenderer implements BlockEntityRenderer<RetinalScanne
 				pose.translate(0.5D, 0.5D, 0.5D);
 
 				if (facing == Direction.DOWN) {
-					pose.mulPose(Axis.XP.rotationDegrees(-90.0F));
-					pose.mulPose(Axis.ZP.rotationDegrees(180.0F));
+					pose.mulPose(Axis.XP.rotationDegrees(90.0F));
 				}
 				else if (facing == Direction.UP) {
-					pose.mulPose(Axis.XP.rotationDegrees(90.0F));
-					pose.mulPose(Axis.ZP.rotationDegrees(180.0F));
+					pose.mulPose(Axis.XP.rotationDegrees(-90.0F));
 				}
 
-				pose.translate(-0.25D, -0.4375D, -0.501D);
+				pose.translate(-0.25D, -0.4375D, -0.5F);
 			}
 
 			pose.scale(-1.0F, -1.0F, 1.0F);
