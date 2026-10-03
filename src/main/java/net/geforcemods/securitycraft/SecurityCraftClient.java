@@ -112,6 +112,7 @@ public class SecurityCraftClient implements ClientModInitializer {
 		//Without these the claymore's lens slot draws nothing and, worse, spawning a bouncing betty or an IMS bomb
 		//throws because Fabric has no renderer registered for their entity types.
 		net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(SCContent.BOUNCING_BETTY_ENTITY, net.geforcemods.securitycraft.renderers.BouncingBettyRenderer::new);
+		net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry.registerModelLayer(net.geforcemods.securitycraft.renderers.IMSBombRenderer.IMS_BOMB_LOCATION, net.geforcemods.securitycraft.models.IMSBombModel::createLayer);
 		net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(SCContent.IMS_BOMB_ENTITY, net.geforcemods.securitycraft.renderers.IMSBombRenderer::new);
 		//the chest's block model is empty, so both the placed block and the item are drawn by its own renderer
 		//the secret signs draw their text only for the players allowed to read it
