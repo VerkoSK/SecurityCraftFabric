@@ -35,16 +35,30 @@ import snownee.jade.api.config.IPluginConfig;
  * data, so it needs its own {@link IServerDataProvider} to sync the "is this locked" flag to the client.
  */
 @WailaPlugin(SecurityCraft.MODID)
-public final class SCJadePlugin implements IWailaPlugin, IBlockComponentProvider, IServerDataProvider<BlockAccessor> {
+public final class SCJadePlugin implements IWailaPlugin, IBlockComponentProvider {
 	private static final Identifier ID = Identifier.fromNamespaceAndPath(SecurityCraft.MODID, "info");
+	private static final Identifier DATA_ID = Identifier.fromNamespaceAndPath(SecurityCraft.MODID, "data");
 	private static final Identifier SHOW_OWNER = Identifier.fromNamespaceAndPath(SecurityCraft.MODID, "showowner");
 	private static final Identifier SHOW_MODULES = Identifier.fromNamespaceAndPath(SecurityCraft.MODID, "showmodules");
 	private static final Identifier SHOW_CUSTOM_NAME = Identifier.fromNamespaceAndPath(SecurityCraft.MODID, "showcustomname");
 	private static final String LOCKED_TAG = "securitycraft_locked";
 
+	private static final IServerDataProvider<BlockAccessor> SERVER_DATA_PROVIDER = new IServerDataProvider<>() {
+		@Override
+		public void appendServerData(CompoundTag tag, BlockAccessor accessor) {
+			if (accessor.getLevel() instanceof ServerLevel level && ContainerLockData.get(level).isLocked(accessor.getPosition()))
+				tag.putBoolean(LOCKED_TAG, true);
+		}
+
+		@Override
+		public Identifier getUid() {
+			return DATA_ID;
+		}
+	};
+
 	@Override
 	public void register(IWailaCommonRegistration registration) {
-		registration.registerBlockDataProvider(this, BlockEntity.class);
+		registration.registerBlockDataProvider(SERVER_DATA_PROVIDER, BlockEntity.class);
 	}
 
 	@Override
@@ -53,13 +67,6 @@ public final class SCJadePlugin implements IWailaPlugin, IBlockComponentProvider
 		registration.addConfig(SHOW_MODULES, true);
 		registration.addConfig(SHOW_CUSTOM_NAME, true);
 		registration.registerBlockComponent(this, Block.class);
-	}
-
-	/** Server side: does this generic Key Panel lock cover the position being looked at? */
-	@Override
-	public void appendServerData(CompoundTag tag, BlockAccessor accessor) {
-		if (accessor.getLevel() instanceof ServerLevel level && ContainerLockData.get(level).isLocked(accessor.getPosition()))
-			tag.putBoolean(LOCKED_TAG, true);
 	}
 
 	@Override
