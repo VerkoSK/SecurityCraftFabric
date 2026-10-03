@@ -28,6 +28,8 @@ public final class NetworkHandler {
 		PayloadTypeRegistry.playC2S().register(RemoveMineFromMRATPayload.TYPE, RemoveMineFromMRATPayload.CODEC);
 		PayloadTypeRegistry.playC2S().register(SetOptionPayload.TYPE, SetOptionPayload.CODEC);
 		PayloadTypeRegistry.playC2S().register(ToggleModulePayload.TYPE, ToggleModulePayload.CODEC);
+		PayloadTypeRegistry.playC2S().register(SyncKeycardSettingsPayload.TYPE, SyncKeycardSettingsPayload.CODEC);
+		PayloadTypeRegistry.playC2S().register(SetKeycardUsesPayload.TYPE, SetKeycardUsesPayload.CODEC);
 	}
 
 	/** Registers the server-side handlers for the client -> server passcode packets. */
@@ -80,6 +82,20 @@ public final class NetworkHandler {
 
 			if (server != null)
 				server.execute(() -> handleRemoveMineFromMRAT(player, payload));
+		});
+		ServerPlayNetworking.registerGlobalReceiver(SyncKeycardSettingsPayload.TYPE, (payload, context) -> {
+			ServerPlayer player = context.player();
+			MinecraftServer server = player.level().getServer();
+
+			if (server != null)
+				server.execute(() -> handleSyncKeycardSettings(player, payload));
+		});
+		ServerPlayNetworking.registerGlobalReceiver(SetKeycardUsesPayload.TYPE, (payload, context) -> {
+			ServerPlayer player = context.player();
+			MinecraftServer server = player.level().getServer();
+
+			if (server != null)
+				server.execute(() -> handleSetKeycardUses(player, payload));
 		});
 		ServerPlayNetworking.registerGlobalReceiver(SetOptionPayload.TYPE, (payload, context) -> {
 			ServerPlayer player = context.player();
@@ -154,6 +170,7 @@ public final class NetworkHandler {
 			be.setChanged();
 			level.sendBlockUpdated(payload.pos(), be.getBlockState(), be.getBlockState(), 3);
 		}
+
 	}
 
 	private static void handleRemoteControlMine(ServerPlayer player, RemoteControlMinePayload payload) {
@@ -242,5 +259,27 @@ public final class NetworkHandler {
 
 	private static boolean inReach(ServerPlayer player, BlockPos pos) {
 		return pos.closerThan(player.blockPosition(), REACH);
+	}
+
+	private static void handleSyncKeycardSettings(ServerPlayer player, SyncKeycardSettingsPayload payload) {
+		ServerLevel level = player.level();
+
+		if (player.isSpectator() || !inReach(player, payload.pos()) || !(level.getBlockEntity(payload.pos()) instanceof net.geforcemods.securitycraft.blockentities.KeycardReaderBlockEntity be) || !be.isOwnedBy(player))
+			return;
+
+		be.setAcceptedLevels(payload.acceptedLevelsArray());
+		be.setSignature(payload.signature());
+
+		if (payload.link() && player.containerMenu instanceof net.geforcemods.securitycraft.inventory.KeycardReaderMenu openMenu && openMenu.be == be)
+			openMenu.link(payload.usableBy());
+	}
+
+	private static void handleSetKeycardUses(ServerPlayer player, SetKeycardUsesPayload payload) {
+		ServerLevel level = player.level();
+
+		if (player.isSpectator() || !inReach(player, payload.pos()) || !(level.getBlockEntity(payload.pos()) instanceof net.geforcemods.securitycraft.blockentities.KeycardReaderBlockEntity) || !(player.containerMenu instanceof net.geforcemods.securitycraft.inventory.KeycardReaderMenu menu))
+			return;
+
+		menu.setKeycardUsesLeft(payload.usesLeft());
 	}
 }
