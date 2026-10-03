@@ -36,8 +36,9 @@ public class RetinalScannerRenderer implements BlockEntityRenderer<RetinalScanne
 	public void render(RetinalScannerBlockEntity be, float partialTicks, PoseStack pose, MultiBufferSource buffer, int combinedLight, int combinedOverlay, Vec3 cameraPos) {
 		BlockState state = be.getBlockState();
 		Direction facing = state.getValue(RetinalScannerBlock.FACING);
+		Direction rotation = state.getValue(RetinalScannerBlock.ROTATION);
 
-		if (facing != null) {
+		if (facing != null && rotation != null) {
 			if (be.isModuleEnabled(ModuleType.DISGUISE) && ModuleItem.getBlockAddon(be.getModule(ModuleType.DISGUISE)) != null)
 				return;
 
@@ -68,13 +69,15 @@ public class RetinalScannerRenderer implements BlockEntityRenderer<RetinalScanne
 				pose.translate(0.5D, 0.5D, 0.5D);
 
 				if (facing == Direction.DOWN) {
-					pose.mulPose(Axis.XP.rotationDegrees(90.0F));
+					pose.mulPose(Axis.XP.rotationDegrees(-90.0F));
+					pose.mulPose(Axis.ZP.rotationDegrees(rotation.toYRot() + 180.0F));
 				}
 				else if (facing == Direction.UP) {
-					pose.mulPose(Axis.XP.rotationDegrees(-90.0F));
+					pose.mulPose(Axis.XP.rotationDegrees(90.0F));
+					pose.mulPose(Axis.ZP.rotationDegrees(180.0F - rotation.toYRot()));
 				}
 
-				pose.translate(-0.25D, -0.4375D, -0.5F);
+				pose.translate(-0.25D, -0.4375D, -0.501D);
 			}
 
 			pose.scale(-1.0F, -1.0F, 1.0F);
