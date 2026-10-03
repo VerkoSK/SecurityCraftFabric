@@ -45,14 +45,17 @@ public class RetinalScannerRenderer implements BlockEntityRenderer<RetinalScanne
 
 		BlockState blockState = be.getBlockState();
 		Direction facing = blockState.getValue(RetinalScannerBlock.FACING);
+		Direction rotation = blockState.getValue(RetinalScannerBlock.ROTATION);
 
-		if (facing != null) {
+		if (facing != null && rotation != null) {
 			if (be.isModuleEnabled(ModuleType.DISGUISE) && ModuleItem.getBlockAddon(be.getModule(ModuleType.DISGUISE)) != null) {
 				state.facing = null;
+				state.rotation = null;
 				return;
 			}
 
 			state.facing = facing;
+			state.rotation = rotation;
 			state.normalX = facing.getStepX();
 			state.normalY = facing.getStepY();
 			state.normalZ = facing.getStepZ();
@@ -72,14 +75,16 @@ public class RetinalScannerRenderer implements BlockEntityRenderer<RetinalScanne
 		}
 		else {
 			state.facing = null;
+			state.rotation = null;
 		}
 	}
 
 	@Override
 	public void submit(RetinalScannerRenderState state, PoseStack pose, SubmitNodeCollector collector, CameraRenderState camera) {
 		Direction facing = state.facing;
+		Direction rotation = state.rotation;
 
-		if (facing == null || state.renderType == null)
+		if (facing == null || rotation == null || state.renderType == null)
 			return;
 
 		pose.pushPose();
@@ -109,13 +114,15 @@ public class RetinalScannerRenderer implements BlockEntityRenderer<RetinalScanne
 			pose.translate(0.5D, 0.5D, 0.5D);
 
 			if (facing == Direction.DOWN) {
-					pose.mulPose(Axis.XP.rotationDegrees(90.0F));
-				}
-				else if (facing == Direction.UP) {
-					pose.mulPose(Axis.XP.rotationDegrees(-90.0F));
-				}
+				pose.mulPose(Axis.XP.rotationDegrees(-90.0F));
+				pose.mulPose(Axis.ZP.rotationDegrees(rotation.toYRot() + 180.0F));
+			}
+			else if (facing == Direction.UP) {
+				pose.mulPose(Axis.XP.rotationDegrees(90.0F));
+				pose.mulPose(Axis.ZP.rotationDegrees(180.0F - rotation.toYRot()));
+			}
 
-				pose.translate(-0.25D, -0.4375D, -0.5F);
+			pose.translate(-0.25D, -0.4375D, -0.501D);
 		}
 
 		pose.scale(-1.0F, -1.0F, 1.0F);
