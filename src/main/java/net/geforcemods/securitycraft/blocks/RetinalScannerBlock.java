@@ -35,13 +35,14 @@ import net.minecraft.world.level.block.state.properties.EnumProperty;
  */
 public class RetinalScannerBlock extends Block implements EntityBlock, net.geforcemods.securitycraft.api.IDoorActivator {
 	public static final EnumProperty<Direction> FACING = BlockStateProperties.FACING;
+	public static final EnumProperty<Direction> ROTATION = EnumProperty.create("rotation", Direction.class, Direction.Plane.HORIZONTAL);
 	public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
 	private final float destroyTimeForOwner;
 
 	public RetinalScannerBlock(BlockBehaviour.Properties properties) {
 		super(OwnableBlock.withReinforcedDestroyTime(properties));
 		destroyTimeForOwner = OwnableBlock.getStoredDestroyTime();
-		registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(POWERED, false));
+		registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(ROTATION, Direction.NORTH).setValue(POWERED, false));
 	}
 
 	@Override
@@ -77,7 +78,19 @@ public class RetinalScannerBlock extends Block implements EntityBlock, net.gefor
 
 	@Override
 	public BlockState getStateForPlacement(BlockPlaceContext ctx) {
-		return defaultBlockState().setValue(FACING, ctx.getNearestLookingDirection().getOpposite()).setValue(POWERED, false);
+		Direction facing = ctx.getNearestLookingDirection().getOpposite();
+		BlockState state = super.getStateForPlacement(ctx).setValue(FACING, facing);
+
+		if (facing == Direction.UP || facing == Direction.DOWN) {
+			Direction horizontalDir = ctx.getHorizontalDirection();
+
+			if (horizontalDir == Direction.NORTH || horizontalDir == Direction.SOUTH)
+				return state.setValue(ROTATION, horizontalDir.getOpposite());
+			else
+				return state.setValue(ROTATION, horizontalDir);
+		}
+		else
+			return state.setValue(ROTATION, facing);
 	}
 
 	@Override
@@ -87,17 +100,17 @@ public class RetinalScannerBlock extends Block implements EntityBlock, net.gefor
 
 	@Override
 	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-		builder.add(FACING, POWERED);
+		builder.add(FACING, ROTATION, POWERED);
 	}
 
 	@Override
 	public BlockState rotate(BlockState state, Rotation rot) {
-		return state.setValue(FACING, rot.rotate(state.getValue(FACING)));
+		return state.setValue(FACING, rot.rotate(state.getValue(FACING))).setValue(ROTATION, rot.rotate(state.getValue(ROTATION)));
 	}
 
 	@Override
 	public BlockState mirror(BlockState state, Mirror mirror) {
-		return state.setValue(FACING, mirror.mirror(state.getValue(FACING)));
+		return state.rotate(mirror.getRotation(state.getValue(FACING)));
 	}
 
 	@Override
