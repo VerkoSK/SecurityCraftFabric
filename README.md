@@ -1,3 +1,9 @@
+[![image](https://media.forgecdn.net/attachments/description/1615498/description_366d7ee0-3830-4ded-b411-0bf089a21dca.png)](https://billing.kinetichosting.com/aff.php?aff=1031)
+
+Want a Minecraft server for this mod? [Kinetic Hosting](https://billing.kinetichosting.com/aff.php?aff=1031) has you covered.
+
+---
+
 # SecurityCraft (Fabric)
 
 A **Fabric** port of [SecurityCraft](https://github.com/Geforce132/SecurityCraft), the security and
@@ -6,6 +12,8 @@ Redstone_Dubstep, ChainmailPickaxe).
 
 > The original mod is licensed MIT. This port keeps that license and preserves the original
 > copyright and attribution. It is **not** affiliated with or endorsed by the original authors.
+
+
 
 ---
 
@@ -51,7 +59,7 @@ for, all the way to V1.0.
 One branch per Minecraft version, each a complete source tree rather than a preprocessor target:
 
 `1.20.1` · `1.20.6` · `1.21.1` · `1.21.3` · `1.21.4` · `1.21.5` · `1.21.6` · `1.21.7` · `1.21.8` ·
-`1.21.10` · `1.21.11` · `26.1` · `26.1.1` · `26.1.2` · `26.2`
+`1.21.10` · `1.21.11` · `26.1` · `26.1.1` · `26.1.2` · `26.2` · `26.3`
 
 New features land on **1.20.1** first and are only carried to the other branches once they have been
 tested there, so the newest release may reach some branches a little later than others.
@@ -74,3 +82,6 @@ by the toolchain resolver — 17 for 1.20.1, newer for the later branches.
   ChainmailPickaxe. <https://github.com/Geforce132/SecurityCraft>
 - **Fabric port:** Verkos.
 - **License:** [MIT](LICENSE), unchanged from the original.
+
+
+AI is used exclusively for distribution on GitHub and for automated support on Discord
