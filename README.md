@@ -1,3 +1,9 @@
+[![image](https://media.forgecdn.net/attachments/description/1615498/description_366d7ee0-3830-4ded-b411-0bf089a21dca.png)](https://billing.kinetichosting.com/aff.php?aff=1031)
+
+Want a Minecraft server for this mod? [Kinetic Hosting](https://billing.kinetichosting.com/aff.php?aff=1031) has you covered.
+
+---
+
 # SecurityCraft (Fabric)
 
 A **Fabric** port of [SecurityCraft](https://github.com/Geforce132/SecurityCraft), the security and
@@ -7,9 +13,11 @@ Redstone_Dubstep, ChainmailPickaxe).
 > The original mod is licensed MIT. This port keeps that license and preserves the original
 > copyright and attribution. It is **not** affiliated with or endorsed by the original authors.
 
+
+
 ---
 
-## Status — V0.5
+## Status — V0.6
 
 SecurityCraft is one of the largest Minecraft mods there is, so this port grows a **working core**
 feature by feature rather than dropping a half-compiling copy of everything at once. Every feature
@@ -25,7 +33,11 @@ is measured against the original mod's own branch for the same Minecraft version
 | **Universal Block Reinforcer / Remover** | all three reinforcer levels, with their colour chooser |
 | **Universal Block Modifier** | the full Customize screen: module slots, per-block options, and enabling or disabling a module without taking it out |
 | **Modules** | all eight, with the allow/deny list editor and the disguise module screen |
-| **Passcode-protected blocks** | keypad, key panel, keypad frame, and the passcode chest, barrel, furnace, smoker and blast furnace |
+| **Passcode-protected blocks** | keypad, key panel, keypad frame, keypad door, keypad trapdoor, and the passcode chest, barrel, furnace, smoker and blast furnace |
+| **Keycard system** | Keycard Reader and Keycard Lock, keycard levels 1–5, the Limited Use Keycard and Keycard Holder, all with per-owner linking |
+| **Retinal Scanner** | Retinal Scanner, Scanner Door and Scanner Trapdoor — opens for whoever the owner allows, by name |
+| **Universal Key Changer** | resets a block's passcode or keycard link |
+| **Codebreaker** | the attacker's side of the passcode and keycard systems, with its cooldown and failure chance |
 | **Laser block** | laser fields, per-side configuration and dyed lenses |
 | **Explosives** | the whole set of 42 — mine, bouncing betty, claymore, IMS, track mine and every block mine — plus the Mine Remote Access Tool and the wire cutters |
 | **Portable Radar** | |
@@ -34,6 +46,7 @@ is measured against the original mod's own branch for the same Minecraft version
 | **Crystal quartz set** | plain and reinforced |
 | **Fake water and fake lava** | |
 | **SecurityCraft Manual** | the in-game manual, with its recipe pages |
+| **Version checker** | notifies in chat on join when a newer release is available, with a download link |
 | **Mod compatibility** | JEI and Jade |
 
 [**ROADMAP.md**](ROADMAP.md) lists what is still missing and which release each piece is planned
@@ -46,7 +59,7 @@ for, all the way to V1.0.
 One branch per Minecraft version, each a complete source tree rather than a preprocessor target:
 
 `1.20.1` · `1.20.6` · `1.21.1` · `1.21.3` · `1.21.4` · `1.21.5` · `1.21.6` · `1.21.7` · `1.21.8` ·
-`1.21.10` · `1.21.11` · `26.1` · `26.1.1` · `26.1.2` · `26.2`
+`1.21.10` · `1.21.11` · `26.1` · `26.1.1` · `26.1.2` · `26.2` · `26.3`
 
 New features land on **1.20.1** first and are only carried to the other branches once they have been
 tested there, so the newest release may reach some branches a little later than others.
@@ -69,3 +82,6 @@ by the toolchain resolver — 17 for 1.20.1, newer for the later branches.
   ChainmailPickaxe. <https://github.com/Geforce132/SecurityCraft>
 - **Fabric port:** Verkos.
 - **License:** [MIT](LICENSE), unchanged from the original.
+
+
+AI is used exclusively for distribution on GitHub and for automated support on Discord
