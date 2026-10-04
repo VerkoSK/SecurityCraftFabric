@@ -7,7 +7,7 @@ Everything is measured against the original mod's own branch for the same Minecr
 (`Geforce132/SecurityCraft`), so "done" always means *behaves like the original*, not *behaves
 plausibly*.
 
-Development happens on **1.20.1** first. A release is only propagated to the other 14 branches once
+Development happens on **1.20.1** first. A release is only propagated to the other 15 branches once
 it has been tested there.
 
 ---
@@ -22,7 +22,7 @@ modules, the allow/deny list editor, the disguise module screen.
 every block mine), the Mine Remote Access Tool, wire cutters, JEI and Jade integration, creative tab
 ordering.
 
-**V0.5** [RELEASING 25.8.2026] — the ownership system (every reinforced block, door and trapdoor remembers its owner and
+**V0.5** — the ownership system (every reinforced block, door and trapdoor remembers its owner and
 can only be broken by them; team ownership; variable break time), the Universal Owner Changer, the
 Universal Block Modifier and the whole Customize screen including the module enable/disable toggle,
 the electrified iron fence and fence gate, 47 further reinforced blocks (carpets, glazed terracotta,
@@ -32,9 +32,7 @@ passcode-protected chest, barrel, furnace, smoker and blast furnace, and the rei
 hopper, dispenser, dropper, observer, pistons, cauldrons, lectern and chiseled bookshelf, the
 crystal quartz set and the secret signs.
 
----
-
-**V0.6** [RELEASING 18.9.2026] — access control: the keycard system (Keycard Reader, Keycard Lock,
+**V0.6** — access control: the keycard system (Keycard Reader, Keycard Lock,
 keycard levels 1–5, the Limited Use Keycard and Keycard Holder, all with per-owner linking), the
 Universal Key Changer, the Codebreaker, Keypad Door and Keypad Trapdoor on top of V0.5's reinforced
 door work, the Retinal Scanner with the Scanner Door and Scanner Trapdoor, and the version checker
@@ -102,7 +100,7 @@ What is left of the original's own blocks once the reinforced set is complete.
 | Incognito Mask, Admin Tool | |
 | Horizontal reinforced iron bars | |
 
-Then: bring V1.0 to all 15 supported Minecraft versions, and a full pass comparing this port's
+Then: bring V1.0 to all 16 supported Minecraft versions, and a full pass comparing this port's
 behaviour against the original's branch for each of them.
 
 ---
@@ -128,13 +126,7 @@ These are places where the port already has the content but not all of the origi
 They get folded into whichever release touches the same area.
 
 - **Lens colouring on 1.20.6** — the recipe does not apply the dye there.
-- **Passcode-protecting modded chests** — the original converts any block in the `c:chests/wooden` tag
-  with the Key Panel, so wooden chests from other mods can be locked too. The port only recognises the
-  vanilla chest for now; wiring the tag back in is a small V0.6 job.
 - **Module automation** — the original lets hoppers insert modules through a Forge capability. Fabric's
   equivalent is the Transfer API; nothing in the port exposes one yet.
-- **Door activators** — the original has an `IDoorActivator` registry so any SecurityCraft block can
-  open a door or fence gate. The port hardcodes the keypad instead; the registry arrives with V0.6,
-  when there is more than one thing that can open a door.
 - **Disguise module** — works on the keypad and laser block. Every further disguisable block added
   from V0.6 onwards has to be wired into the same baked-model wrapper.
