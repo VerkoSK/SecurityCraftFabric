@@ -66,6 +66,9 @@ public class KeycardReaderBlockEntity extends CustomizableBlockEntity implements
 		}
 
 		output.putInt("signature", signature);
+
+		if (powerTicksLeft > 0)
+			output.putInt("powerTicksLeft", powerTicksLeft);
 	}
 
 	@Override
@@ -77,6 +80,7 @@ public class KeycardReaderBlockEntity extends CustomizableBlockEntity implements
 		}
 
 		signature = input.getIntOr("signature", 0);
+		powerTicksLeft = input.getIntOr("powerTicksLeft", 0);
 	}
 
 	@Override
@@ -160,9 +164,17 @@ public class KeycardReaderBlockEntity extends CustomizableBlockEntity implements
 
 	@Override
 	public void tick(net.minecraft.world.level.Level level, BlockPos pos, BlockState state) {
-		if (powerTicksLeft > 0 && --powerTicksLeft == 0 && state.getValue(BlockStateProperties.POWERED)) {
-			level.setBlockAndUpdate(pos, state.setValue(BlockStateProperties.POWERED, false));
-			BlockUtils.updateIndirectNeighbors(level, pos, state.getBlock());
+		if (state.getValue(BlockStateProperties.POWERED)) {
+			if (powerTicksLeft > 0) {
+				if (--powerTicksLeft == 0) {
+					level.setBlockAndUpdate(pos, state.setValue(BlockStateProperties.POWERED, false));
+					BlockUtils.updateIndirectNeighbors(level, pos, state.getBlock());
+				}
+			}
+			else if (getSignalLength() > 0) {
+				level.setBlockAndUpdate(pos, state.setValue(BlockStateProperties.POWERED, false));
+				BlockUtils.updateIndirectNeighbors(level, pos, state.getBlock());
+			}
 		}
 	}
 
