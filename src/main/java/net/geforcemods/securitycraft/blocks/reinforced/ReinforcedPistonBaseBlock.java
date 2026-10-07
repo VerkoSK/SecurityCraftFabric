@@ -84,6 +84,12 @@ public class ReinforcedPistonBaseBlock extends PistonBaseBlock implements IReinf
 			checkIfExtend(level, pos, state);
 	}
 
+	@Override
+	public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, net.minecraft.world.level.redstone.Orientation orientation, boolean isMoving) {
+		if (!level.isClientSide())
+			checkIfExtend(level, pos, state);
+	}
+
 	public void checkIfExtend(Level level, BlockPos pos, BlockState state) {
 		Direction direction = state.getValue(FACING);
 		boolean hasSignal = getNeighborSignal(level, pos, direction);
@@ -305,7 +311,7 @@ public class ReinforcedPistonBaseBlock extends PistonBaseBlock implements IReinf
 				BlockState movingPiston = SCContent.REINFORCED_MOVING_PISTON.defaultBlockState().setValue(MovingPistonBlock.FACING, facing).setValue(MovingPistonBlock.TYPE, isSticky ? PistonType.STICKY : PistonType.DEFAULT);
 				OwnableBlockEntity headBe = new OwnableBlockEntity(SCContent.ABSTRACT_BLOCK_ENTITY, frontPos, movingPiston);
 
-				if (pistonBe instanceof OwnableBlockEntity ownable) //synchronize owner to the piston head
+				if (pistonBe instanceof IOwnable ownable) //synchronize owner to the piston head
 					headBe.setOwner(ownable.getOwner().getName(), ownable.getOwner().getUUID());
 
 				stateToPosMap.remove(frontPos);
@@ -371,10 +377,10 @@ public class ReinforcedPistonBaseBlock extends PistonBaseBlock implements IReinf
 
 	private static boolean isSameOwner(BlockPos blockPos, BlockPos pistonPos, Level level) {
 		BlockEntity pistonBe = level.getBlockEntity(pistonPos);
-		IOwnable blockBe = (IOwnable) level.getBlockEntity(blockPos);
+		BlockEntity blockBe = level.getBlockEntity(blockPos);
 
-		if (pistonBe instanceof IOwnable ownable)
-			return blockBe.isOwnedBy(ownable.getOwner());
+		if (pistonBe instanceof IOwnable ownable && blockBe instanceof IOwnable targetOwnable)
+			return targetOwnable.isOwnedBy(ownable.getOwner());
 
 		return false;
 	}
