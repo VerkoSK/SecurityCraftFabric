@@ -85,7 +85,7 @@ public class ReinforcedPistonMovingBlockEntity extends BlockEntity implements IO
 	}
 
 	public Direction getFacing() {
-		return direction;
+		return direction == null ? Direction.NORTH : direction;
 	}
 
 	public boolean isSourcePiston() {
@@ -103,15 +103,15 @@ public class ReinforcedPistonMovingBlockEntity extends BlockEntity implements IO
 	}
 
 	public float getOffsetX(float ticks) {
-		return direction.getStepX() * getExtendedProgress(getProgress(ticks));
+		return getFacing().getStepX() * getExtendedProgress(getProgress(ticks));
 	}
 
 	public float getOffsetY(float ticks) {
-		return direction.getStepY() * getExtendedProgress(getProgress(ticks));
+		return getFacing().getStepY() * getExtendedProgress(getProgress(ticks));
 	}
 
 	public float getOffsetZ(float ticks) {
-		return direction.getStepZ() * getExtendedProgress(getProgress(ticks));
+		return getFacing().getStepZ() * getExtendedProgress(getProgress(ticks));
 	}
 
 	private float getExtendedProgress(float progress) {
@@ -119,7 +119,7 @@ public class ReinforcedPistonMovingBlockEntity extends BlockEntity implements IO
 	}
 
 	private BlockState getCollisionRelatedBlockState() {
-		return !isExtending() && isSourcePiston() && movedState.getBlock() instanceof ReinforcedPistonBaseBlock ? SCContent.REINFORCED_PISTON_HEAD.defaultBlockState().setValue(PistonHeadBlock.SHORT, progress > 0.25F).setValue(PistonHeadBlock.TYPE, movedState.is(SCContent.REINFORCED_STICKY_PISTON) ? PistonType.STICKY : PistonType.DEFAULT).setValue(DirectionalBlock.FACING, movedState.getValue(DirectionalBlock.FACING)) : movedState;
+		return !isExtending() && isSourcePiston() && movedState != null && movedState.getBlock() instanceof ReinforcedPistonBaseBlock ? SCContent.REINFORCED_PISTON_HEAD.defaultBlockState().setValue(PistonHeadBlock.SHORT, progress > 0.25F).setValue(PistonHeadBlock.TYPE, movedState.is(SCContent.REINFORCED_STICKY_PISTON) ? PistonType.STICKY : PistonType.DEFAULT).setValue(DirectionalBlock.FACING, movedState.getValue(DirectionalBlock.FACING)) : (movedState == null ? Blocks.AIR.defaultBlockState() : movedState);
 	}
 
 	private static void moveCollidedEntities(Level level, BlockPos pos, float progress, ReinforcedPistonMovingBlockEntity be) {
@@ -220,11 +220,11 @@ public class ReinforcedPistonMovingBlockEntity extends BlockEntity implements IO
 	}
 
 	private boolean isStickyForEntities() {
-		return this.movedState.is(Blocks.HONEY_BLOCK);
+		return this.movedState != null && this.movedState.is(Blocks.HONEY_BLOCK);
 	}
 
 	public Direction getMovementDirection() {
-		return extending ? direction : direction.getOpposite();
+		return direction == null ? Direction.NORTH : (extending ? direction : direction.getOpposite());
 	}
 
 	private static double getMovement(AABB headShape, Direction direction, AABB facing) {
@@ -240,7 +240,8 @@ public class ReinforcedPistonMovingBlockEntity extends BlockEntity implements IO
 
 	private static AABB moveByPositionAndProgress(BlockPos pos, AABB boundingBox, ReinforcedPistonMovingBlockEntity be) {
 		double extendedProgress = be.getExtendedProgress(be.progress);
-		return boundingBox.move(pos.getX() + extendedProgress * be.direction.getStepX(), pos.getY() + extendedProgress * be.direction.getStepY(), pos.getZ() + extendedProgress * be.direction.getStepZ());
+		Direction dir = be.getFacing();
+		return boundingBox.move(pos.getX() + extendedProgress * dir.getStepX(), pos.getY() + extendedProgress * dir.getStepY(), pos.getZ() + extendedProgress * dir.getStepZ());
 	}
 
 	private static void fixEntityWithinPistonBase(BlockPos pos, Entity entity, Direction pushDirection, double progress) {
@@ -260,7 +261,7 @@ public class ReinforcedPistonMovingBlockEntity extends BlockEntity implements IO
 	}
 
 	public BlockState getMovedState() {
-		return movedState;
+		return movedState == null ? Blocks.AIR.defaultBlockState() : movedState;
 	}
 
 	/**
@@ -281,6 +282,8 @@ public class ReinforcedPistonMovingBlockEntity extends BlockEntity implements IO
 				else
 					pushedState = Block.updateFromNeighbourShapes(movedState, level, worldPosition);
 
+				level.setBlock(worldPosition, pushedState, 3);
+
 				if (movedBlockEntityTag != null) {
 					BlockEntity be = pushedState.hasBlockEntity() ? ((EntityBlock) pushedState.getBlock()).newBlockEntity(worldPosition, pushedState) : null;
 
@@ -299,7 +302,6 @@ public class ReinforcedPistonMovingBlockEntity extends BlockEntity implements IO
 					}
 				}
 
-				level.setBlock(worldPosition, pushedState, 3);
 				level.neighborChanged(worldPosition, pushedState.getBlock(), worldPosition);
 			}
 		}
@@ -327,6 +329,8 @@ public class ReinforcedPistonMovingBlockEntity extends BlockEntity implements IO
 						if (pushedState.hasProperty(BlockStateProperties.WATERLOGGED) && pushedState.getValue(BlockStateProperties.WATERLOGGED))
 							pushedState = pushedState.setValue(BlockStateProperties.WATERLOGGED, false);
 
+						level.setBlock(pos, pushedState, 67);
+
 						if (be.movedBlockEntityTag != null) {
 							BlockEntity storedBe = pushedState.hasBlockEntity() ? ((EntityBlock) pushedState.getBlock()).newBlockEntity(be.worldPosition, pushedState) : null;
 
@@ -345,7 +349,6 @@ public class ReinforcedPistonMovingBlockEntity extends BlockEntity implements IO
 							}
 						}
 
-						level.setBlock(pos, pushedState, 67);
 						level.neighborChanged(pos, pushedState.getBlock(), pos);
 					}
 				}
@@ -399,7 +402,7 @@ public class ReinforcedPistonMovingBlockEntity extends BlockEntity implements IO
 		VoxelShape shape;
 
 		if (!extending && isSourcePiston)
-			shape = movedState.setValue(PistonBaseBlock.EXTENDED, true).getCollisionShape(level, pos);
+			shape = movedState != null ? movedState.setValue(PistonBaseBlock.EXTENDED, true).getCollisionShape(level, pos) : Shapes.empty();
 		else
 			shape = Shapes.empty();
 
@@ -409,14 +412,18 @@ public class ReinforcedPistonMovingBlockEntity extends BlockEntity implements IO
 			BlockState state;
 
 			if (isSourcePiston())
-				state = SCContent.REINFORCED_PISTON_HEAD.defaultBlockState().setValue(DirectionalBlock.FACING, direction).setValue(PistonHeadBlock.SHORT, extending != 1.0F - progress < 4.0F);
+				state = SCContent.REINFORCED_PISTON_HEAD.defaultBlockState().setValue(DirectionalBlock.FACING, getFacing()).setValue(PistonHeadBlock.SHORT, extending != 1.0F - progress < 4.0F);
 			else
 				state = movedState;
 
+			if (state == null)
+				return shape;
+
 			float extendedProgress = getExtendedProgress(progress);
-			double x = direction.getStepX() * extendedProgress;
-			double y = direction.getStepY() * extendedProgress;
-			double z = direction.getStepZ() * extendedProgress;
+			Direction dir = getFacing();
+			double x = dir.getStepX() * extendedProgress;
+			double y = dir.getStepY() * extendedProgress;
+			double z = dir.getStepZ() * extendedProgress;
 
 			return Shapes.or(shape, state.getCollisionShape(level, pos).move(x, y, z));
 		}
