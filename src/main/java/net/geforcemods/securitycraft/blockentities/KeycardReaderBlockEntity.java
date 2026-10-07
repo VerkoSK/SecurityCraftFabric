@@ -69,6 +69,9 @@ public class KeycardReaderBlockEntity extends CustomizableBlockEntity implements
 
 		tag.put("acceptedLevels", levels);
 		tag.putInt("signature", signature);
+
+		if (powerTicksLeft > 0)
+			tag.putInt("powerTicksLeft", powerTicksLeft);
 	}
 
 	@Override
@@ -84,6 +87,9 @@ public class KeycardReaderBlockEntity extends CustomizableBlockEntity implements
 		}
 
 		signature = tag.getInt("signature");
+
+		if (tag.contains("powerTicksLeft"))
+			powerTicksLeft = tag.getInt("powerTicksLeft");
 	}
 
 	@Override
@@ -167,9 +173,17 @@ public class KeycardReaderBlockEntity extends CustomizableBlockEntity implements
 
 	@Override
 	public void tick(net.minecraft.world.level.Level level, BlockPos pos, BlockState state) {
-		if (powerTicksLeft > 0 && --powerTicksLeft == 0 && state.getValue(BlockStateProperties.POWERED)) {
-			level.setBlockAndUpdate(pos, state.setValue(BlockStateProperties.POWERED, false));
-			BlockUtils.updateIndirectNeighbors(level, pos, state.getBlock());
+		if (state.getValue(BlockStateProperties.POWERED)) {
+			if (powerTicksLeft > 0) {
+				if (--powerTicksLeft == 0) {
+					level.setBlockAndUpdate(pos, state.setValue(BlockStateProperties.POWERED, false));
+					BlockUtils.updateIndirectNeighbors(level, pos, state.getBlock());
+				}
+			}
+			else if (getSignalLength() > 0) {
+				level.setBlockAndUpdate(pos, state.setValue(BlockStateProperties.POWERED, false));
+				BlockUtils.updateIndirectNeighbors(level, pos, state.getBlock());
+			}
 		}
 	}
 
