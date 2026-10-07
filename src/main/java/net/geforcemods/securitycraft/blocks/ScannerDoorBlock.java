@@ -87,7 +87,8 @@ public class ScannerDoorBlock extends DoorBlock implements EntityBlock {
 
 	@Override
 	public float getDestroyProgress(BlockState state, Player player, BlockGetter level, BlockPos pos) {
-		return OwnershipUtils.getDestroyProgress(destroyTimeForOwner, state, player, level, pos);
+		BlockPos checkPos = state.getValue(HALF) == DoubleBlockHalf.LOWER ? pos : pos.below();
+		return OwnershipUtils.getDestroyProgress(destroyTimeForOwner, state, player, level, checkPos);
 	}
 
 	@Override

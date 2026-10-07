@@ -6,7 +6,11 @@ import net.geforcemods.securitycraft.ConfigHandler;
 import net.geforcemods.securitycraft.SCContent;
 import net.geforcemods.securitycraft.api.IOwnable;
 import net.geforcemods.securitycraft.api.Owner;
+import net.geforcemods.securitycraft.util.PlayerUtils;
+import net.geforcemods.securitycraft.util.Utils;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.Item;
@@ -104,12 +108,20 @@ public class BlockReinforcerItem extends Item {
 
 		//removing reinforcement strips the block's protection entirely, so this must respect ownership just like
 		//breaking the block would (OwnershipUtils#getDestroyProgress) - otherwise anyone could un-reinforce (and
-		//thus bypass) somebody else's blocks. Silent like that gate too: upstream doesn't message here either
-		if (!isReinforcing(stack) && level.getBlockEntity(pos) instanceof IOwnable ownable) {
-			Owner owner = ownable.getOwner();
+		//thus bypass) somebody else's blocks.
+		if (!isReinforcing(stack)) {
+			BlockPos checkPos = state.hasProperty(BlockStateProperties.DOUBLE_BLOCK_HALF) && state.getValue(BlockStateProperties.DOUBLE_BLOCK_HALF) == DoubleBlockHalf.UPPER ? pos.below() : pos;
+			BlockEntity be = level.getBlockEntity(checkPos);
 
-			if (owner.owns() && !ownable.isOwnedBy(player) && !ConfigHandler.allowBreakingNonOwnedBlocks)
+			if (be instanceof IOwnable ownable) {
+				if (!ConfigHandler.allowBreakingNonOwnedBlocks && !ownable.isOwnedBy(player)) {
+					PlayerUtils.sendMessageToPlayer(player, Utils.localize(stack.getDescriptionId()), Utils.localize("messages.securitycraft:notOwned", PlayerUtils.getOwnerComponent(ownable.getOwner())), ChatFormatting.RED);
+					return InteractionResult.FAIL;
+				}
+			}
+			else if (!ConfigHandler.allowBreakingNonOwnedBlocks) {
 				return InteractionResult.FAIL;
+			}
 		}
 
 		if (level instanceof ServerLevel) {
