@@ -1,7 +1,5 @@
 package net.geforcemods.securitycraft.blocks;
 
-import net.minecraft.world.level.block.BaseEntityBlock;
-
 import net.geforcemods.securitycraft.api.IModuleInventory;
 import net.geforcemods.securitycraft.blockentities.ScannerDoorBlockEntity;
 import net.geforcemods.securitycraft.util.LevelUtils;
@@ -89,7 +87,8 @@ public class ScannerDoorBlock extends DoorBlock implements EntityBlock {
 
 	@Override
 	public float getDestroyProgress(BlockState state, Player player, BlockGetter level, BlockPos pos) {
-		return OwnershipUtils.getDestroyProgress(destroyTimeForOwner, state, player, level, pos);
+		BlockPos checkPos = state.getValue(HALF) == DoubleBlockHalf.LOWER ? pos : pos.below();
+		return OwnershipUtils.getDestroyProgress(destroyTimeForOwner, state, player, level, checkPos);
 	}
 
 	@Override
