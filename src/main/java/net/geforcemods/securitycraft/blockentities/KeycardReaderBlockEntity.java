@@ -62,6 +62,9 @@ public class KeycardReaderBlockEntity extends CustomizableBlockEntity implements
 		super.saveAdditional(output);
 		output.putInt("signature", signature);
 
+		if (powerTicksLeft > 0)
+			output.putInt("powerTicksLeft", powerTicksLeft);
+
 		for (int i = 0; i < 5; i++) {
 			output.putBoolean("lvl" + (i + 1), acceptedLevels[i]);
 		}
@@ -71,6 +74,7 @@ public class KeycardReaderBlockEntity extends CustomizableBlockEntity implements
 	public void loadAdditional(net.minecraft.world.level.storage.ValueInput input) {
 		super.loadAdditional(input);
 		signature = input.getIntOr("signature", 0);
+		powerTicksLeft = input.getIntOr("powerTicksLeft", 0);
 
 		for (int i = 0; i < 5; i++) {
 			acceptedLevels[i] = input.getBooleanOr("lvl" + (i + 1), false);
@@ -158,9 +162,17 @@ public class KeycardReaderBlockEntity extends CustomizableBlockEntity implements
 
 	@Override
 	public void tick(net.minecraft.world.level.Level level, BlockPos pos, BlockState state) {
-		if (powerTicksLeft > 0 && --powerTicksLeft == 0 && state.getValue(BlockStateProperties.POWERED)) {
-			level.setBlockAndUpdate(pos, state.setValue(BlockStateProperties.POWERED, false));
-			BlockUtils.updateIndirectNeighbors(level, pos, state.getBlock());
+		if (state.getValue(BlockStateProperties.POWERED)) {
+			if (powerTicksLeft > 0) {
+				if (--powerTicksLeft == 0) {
+					level.setBlockAndUpdate(pos, state.setValue(BlockStateProperties.POWERED, false));
+					BlockUtils.updateIndirectNeighbors(level, pos, state.getBlock());
+				}
+			}
+			else if (getSignalLength() > 0) {
+				level.setBlockAndUpdate(pos, state.setValue(BlockStateProperties.POWERED, false));
+				BlockUtils.updateIndirectNeighbors(level, pos, state.getBlock());
+			}
 		}
 	}
 
