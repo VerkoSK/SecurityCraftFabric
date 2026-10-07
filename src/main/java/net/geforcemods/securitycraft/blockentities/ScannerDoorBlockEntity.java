@@ -19,6 +19,8 @@ import net.geforcemods.securitycraft.util.PlayerUtils;
 import net.geforcemods.securitycraft.util.Utils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ClipContext;
@@ -55,8 +57,15 @@ public class ScannerDoorBlockEntity extends CustomizableBlockEntity implements I
 	public void tick(Level level, BlockPos pos, BlockState state) {
 		checkView(level, pos);
 
-		if (closeTicksLeft > 0 && --closeTicksLeft == 0 && state.getBlock() instanceof ScannerDoorBlock block && state.getValue(DoorBlock.OPEN))
-			block.activate(level, worldPosition);
+		if (state.getBlock() instanceof ScannerDoorBlock block && state.getValue(DoorBlock.OPEN)) {
+			if (closeTicksLeft > 0) {
+				if (--closeTicksLeft == 0)
+					block.activate(level, worldPosition);
+			}
+			else if (signalLength.get() > 0) {
+				block.activate(level, worldPosition);
+			}
+		}
 	}
 
 	@Override
@@ -118,6 +127,8 @@ public class ScannerDoorBlockEntity extends CustomizableBlockEntity implements I
 			if (signalLength.get() > 0)
 				closeTicksLeft = signalLength.get();
 		}
+		else
+			closeTicksLeft = 0;
 
 		return true;
 	}
@@ -164,5 +175,20 @@ public class ScannerDoorBlockEntity extends CustomizableBlockEntity implements I
 	@Override
 	public boolean isConsideredInvisible(LivingEntity entity) {
 		return respectInvisibility.isConsideredInvisible(entity);
+	}
+
+	@Override
+	public void saveAdditional(CompoundTag tag, HolderLookup.Provider lookupProvider) {
+		super.saveAdditional(tag, lookupProvider);
+
+		if (closeTicksLeft > 0)
+			tag.putInt("closeTicksLeft", closeTicksLeft);
+	}
+
+	@Override
+	public void loadAdditional(CompoundTag tag, HolderLookup.Provider lookupProvider) {
+		super.loadAdditional(tag, lookupProvider);
+
+		closeTicksLeft = tag.getIntOr("closeTicksLeft", 0);
 	}
 }

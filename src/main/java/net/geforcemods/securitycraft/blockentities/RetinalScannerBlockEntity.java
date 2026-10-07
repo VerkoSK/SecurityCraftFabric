@@ -59,9 +59,17 @@ public class RetinalScannerBlockEntity extends CustomizableBlockEntity implement
 	public void tick(Level level, BlockPos pos, BlockState state) {
 		checkView(level, pos);
 
-		if (powerTicksLeft > 0 && --powerTicksLeft == 0 && state.getValue(RetinalScannerBlock.POWERED)) {
-			level.setBlockAndUpdate(pos, state.setValue(RetinalScannerBlock.POWERED, false));
-			BlockUtils.updateIndirectNeighbors(level, pos, state.getBlock());
+		if (state.getValue(RetinalScannerBlock.POWERED)) {
+			if (powerTicksLeft > 0) {
+				if (--powerTicksLeft == 0) {
+					level.setBlockAndUpdate(pos, state.setValue(RetinalScannerBlock.POWERED, false));
+					BlockUtils.updateIndirectNeighbors(level, pos, state.getBlock());
+				}
+			}
+			else if (getSignalLength() > 0) {
+				level.setBlockAndUpdate(pos, state.setValue(RetinalScannerBlock.POWERED, false));
+				BlockUtils.updateIndirectNeighbors(level, pos, state.getBlock());
+			}
 		}
 	}
 
@@ -96,9 +104,10 @@ public class RetinalScannerBlockEntity extends CustomizableBlockEntity implement
 		else if (activatedOnlyByPlayer())
 			return false;
 
-		level.setBlockAndUpdate(worldPosition, state.setValue(RetinalScannerBlock.POWERED, true));
+		boolean newPowered = length == 0 ? !state.getValue(RetinalScannerBlock.POWERED) : true;
+		level.setBlockAndUpdate(worldPosition, state.setValue(RetinalScannerBlock.POWERED, newPowered));
 		BlockUtils.updateIndirectNeighbors(level, worldPosition, SCContent.RETINAL_SCANNER);
-		powerTicksLeft = length;
+		powerTicksLeft = newPowered ? length : 0;
 
 		return true;
 	}
@@ -199,6 +208,9 @@ public class RetinalScannerBlockEntity extends CustomizableBlockEntity implement
 	public void saveAdditional(CompoundTag tag, HolderLookup.Provider lookupProvider) {
 		super.saveAdditional(tag, lookupProvider);
 
+		if (powerTicksLeft > 0)
+			tag.putInt("powerTicksLeft", powerTicksLeft);
+
 		if (!StringUtil.isNullOrEmpty(getOwner().getName()) && !getOwner().getName().equals("owner") && ownerProfile != null)
 			tag.put("ownerProfile", ResolvableProfile.CODEC.encodeStart(NbtOps.INSTANCE, ownerProfile).getOrThrow());
 	}
@@ -206,6 +218,8 @@ public class RetinalScannerBlockEntity extends CustomizableBlockEntity implement
 	@Override
 	public void loadAdditional(CompoundTag tag, HolderLookup.Provider lookupProvider) {
 		super.loadAdditional(tag, lookupProvider);
+
+		powerTicksLeft = tag.getIntOr("powerTicksLeft", 0);
 
 		if (tag.contains("ownerProfile")) {
 			CompoundTag ownerProfileTag = tag.getCompoundOrEmpty("ownerProfile");
