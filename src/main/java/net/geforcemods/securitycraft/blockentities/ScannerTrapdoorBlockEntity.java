@@ -53,8 +53,15 @@ public class ScannerTrapdoorBlockEntity extends CustomizableBlockEntity implemen
 	public void tick(Level level, BlockPos pos, BlockState state) {
 		checkView(level, pos);
 
-		if (closeTicksLeft > 0 && --closeTicksLeft == 0 && state.getBlock() instanceof ScannerTrapdoorBlock block && state.getValue(TrapDoorBlock.OPEN))
-			block.activate(level, worldPosition);
+		if (state.getBlock() instanceof ScannerTrapdoorBlock block && state.getValue(TrapDoorBlock.OPEN)) {
+			if (closeTicksLeft > 0) {
+				if (--closeTicksLeft == 0)
+					block.activate(level, worldPosition);
+			}
+			else if (signalLength.get() > 0) {
+				block.activate(level, worldPosition);
+			}
+		}
 	}
 
 	@Override
@@ -141,5 +148,20 @@ public class ScannerTrapdoorBlockEntity extends CustomizableBlockEntity implemen
 	@Override
 	public boolean isConsideredInvisible(LivingEntity entity) {
 		return respectInvisibility.isConsideredInvisible(entity);
+	}
+
+	@Override
+	public void saveAdditional(net.minecraft.world.level.storage.ValueOutput output) {
+		super.saveAdditional(output);
+
+		if (closeTicksLeft > 0)
+			output.putInt("closeTicksLeft", closeTicksLeft);
+	}
+
+	@Override
+	public void loadAdditional(net.minecraft.world.level.storage.ValueInput input) {
+		super.loadAdditional(input);
+
+		closeTicksLeft = input.getIntOr("closeTicksLeft", 0);
 	}
 }
