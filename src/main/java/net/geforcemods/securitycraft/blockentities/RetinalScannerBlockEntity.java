@@ -49,9 +49,17 @@ public class RetinalScannerBlockEntity extends CustomizableBlockEntity implement
 	public void tick(Level level, BlockPos pos, BlockState state) {
 		checkView(level, pos);
 
-		if (powerTicksLeft > 0 && --powerTicksLeft == 0 && state.getValue(RetinalScannerBlock.POWERED)) {
-			level.setBlockAndUpdate(pos, state.setValue(RetinalScannerBlock.POWERED, false));
-			BlockUtils.updateIndirectNeighbors(level, pos, state.getBlock());
+		if (state.getValue(RetinalScannerBlock.POWERED)) {
+			if (powerTicksLeft > 0) {
+				if (--powerTicksLeft == 0) {
+					level.setBlockAndUpdate(pos, state.setValue(RetinalScannerBlock.POWERED, false));
+					BlockUtils.updateIndirectNeighbors(level, pos, state.getBlock());
+				}
+			}
+			else if (getSignalLength() > 0) {
+				level.setBlockAndUpdate(pos, state.setValue(RetinalScannerBlock.POWERED, false));
+				BlockUtils.updateIndirectNeighbors(level, pos, state.getBlock());
+			}
 		}
 	}
 
@@ -86,9 +94,10 @@ public class RetinalScannerBlockEntity extends CustomizableBlockEntity implement
 		else if (activatedOnlyByPlayer())
 			return false;
 
-		level.setBlockAndUpdate(worldPosition, state.setValue(RetinalScannerBlock.POWERED, true));
+		boolean newPowered = length == 0 ? !state.getValue(RetinalScannerBlock.POWERED) : true;
+		level.setBlockAndUpdate(worldPosition, state.setValue(RetinalScannerBlock.POWERED, newPowered));
 		BlockUtils.updateIndirectNeighbors(level, worldPosition, SCContent.RETINAL_SCANNER);
-		powerTicksLeft = length;
+		powerTicksLeft = newPowered ? length : 0;
 
 		return true;
 	}
@@ -189,6 +198,9 @@ public class RetinalScannerBlockEntity extends CustomizableBlockEntity implement
 	public void saveAdditional(net.minecraft.nbt.CompoundTag tag) {
 		super.saveAdditional(tag);
 
+		if (powerTicksLeft > 0)
+			tag.putInt("powerTicksLeft", powerTicksLeft);
+
 		if (!net.minecraft.util.StringUtil.isNullOrEmpty(getOwner().getName()) && !getOwner().getName().equals("owner") && ownerProfile != null) {
 			net.minecraft.nbt.CompoundTag profileTag = new net.minecraft.nbt.CompoundTag();
 			net.minecraft.nbt.NbtUtils.writeGameProfile(profileTag, ownerProfile);
@@ -199,6 +211,9 @@ public class RetinalScannerBlockEntity extends CustomizableBlockEntity implement
 	@Override
 	public void load(net.minecraft.nbt.CompoundTag tag) {
 		super.load(tag);
+
+		if (tag.contains("powerTicksLeft"))
+			powerTicksLeft = tag.getInt("powerTicksLeft");
 
 		if (tag.contains("ownerProfile", net.minecraft.nbt.Tag.TAG_COMPOUND)) {
 			setOwnerProfile(net.minecraft.nbt.NbtUtils.readGameProfile(tag.getCompound("ownerProfile")));
