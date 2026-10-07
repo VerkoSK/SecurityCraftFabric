@@ -122,6 +122,7 @@ public class SecurityCraftClient implements ClientModInitializer {
 		net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry.INSTANCE.register(SCContent.KEYPAD_CHEST, new net.geforcemods.securitycraft.renderers.KeypadChestItemRenderer());
 		net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry.register(SCContent.CLAYMORE_BLOCK_ENTITY, net.geforcemods.securitycraft.renderers.ClaymoreRenderer::new);
 		net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry.register(SCContent.RETINAL_SCANNER_BLOCK_ENTITY, net.geforcemods.securitycraft.renderers.RetinalScannerRenderer::new);
+		net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry.register(SCContent.REINFORCED_MOVING_PISTON_BLOCK_ENTITY, net.geforcemods.securitycraft.renderers.ReinforcedPistonHeadRenderer::new);
 		ClientPlayNetworking.registerGlobalReceiver(net.geforcemods.securitycraft.network.UpdateLaserColorsPayload.TYPE, (payload, context) -> context.client().execute(() -> {
 			for (net.minecraft.core.BlockPos pos : payload.positions())
 				context.client().levelRenderer.setBlocksDirty(pos.getX(), pos.getY(), pos.getZ(), pos.getX(), pos.getY(), pos.getZ());
