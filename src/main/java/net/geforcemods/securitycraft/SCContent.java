@@ -825,12 +825,16 @@ public class SCContent {
 		CAMERA_MONITOR = registerItem("camera_monitor", new net.geforcemods.securitycraft.items.CameraMonitorItem(new Item.Properties().stacksTo(1)));
 		TAB_ITEMS.add(SECURITY_CAMERA_ITEM);
 		TAB_ITEMS.add(CAMERA_MONITOR);
+		CUTOUT_BLOCKS.add(SECURITY_CAMERA);
 		ALARM = (net.geforcemods.securitycraft.blocks.AlarmBlock) register("alarm", new net.geforcemods.securitycraft.blocks.AlarmBlock(prop(MapColor.COLOR_RED, 3.5F).sound(SoundType.METAL).lightLevel(state -> state.getValue(net.geforcemods.securitycraft.blocks.AlarmBlock.LIT) ? 15 : 0)));
+		CUTOUT_BLOCKS.add(ALARM);
 		PANIC_BUTTON = (net.geforcemods.securitycraft.blocks.PanicButtonBlock) register("panic_button", new net.geforcemods.securitycraft.blocks.PanicButtonBlock(prop(3.5F).lightLevel(state -> state.getValue(ButtonBlock.POWERED) ? 4 : 0), BlockSetType.STONE, -1, false));
 		USERNAME_LOGGER = (net.geforcemods.securitycraft.blocks.UsernameLoggerBlock) register("username_logger", new net.geforcemods.securitycraft.blocks.UsernameLoggerBlock(propDisguisable(3.5F)));
 		BLOCK_CHANGE_DETECTOR = (net.geforcemods.securitycraft.blocks.BlockChangeDetectorBlock) register("block_change_detector", new net.geforcemods.securitycraft.blocks.BlockChangeDetectorBlock(propDisguisable(3.5F)));
 		PROJECTOR = (net.geforcemods.securitycraft.blocks.ProjectorBlock) register("projector", new net.geforcemods.securitycraft.blocks.ProjectorBlock(propDisguisable(MapColor.METAL, 5.0F).sound(SoundType.METAL)));
+		CUTOUT_BLOCKS.add(PROJECTOR);
 		SECURE_TRADING_STATION = (net.geforcemods.securitycraft.blocks.SecureTradingStationBlock) register("secure_trading_station", new net.geforcemods.securitycraft.blocks.SecureTradingStationBlock(propDisguisable(MapColor.METAL, 5.0F)));
+		CUTOUT_BLOCKS.add(SECURE_TRADING_STATION);
 		KEY_PANEL = (net.geforcemods.securitycraft.blocks.KeyPanelBlock) registerBlockNoItem("key_panel", new net.geforcemods.securitycraft.blocks.KeyPanelBlock(alwaysDrop(BlockBehaviour.Properties.of().strength(3.5F).sound(SoundType.METAL).noOcclusion())));
 		KEY_PANEL_ITEM = registerItem("keypad_item", new net.geforcemods.securitycraft.items.KeyPanelItem(new Item.Properties()));
 		FRAME = (net.geforcemods.securitycraft.blocks.FrameBlock) register("keypad_frame", new net.geforcemods.securitycraft.blocks.FrameBlock(alwaysDrop(BlockBehaviour.Properties.of().mapColor(net.minecraft.world.level.material.MapColor.METAL).strength(5.0F).sound(SoundType.METAL).noOcclusion())));
@@ -1025,6 +1029,7 @@ public class SCContent {
 		CLAYMORE = register("claymore", new net.geforcemods.securitycraft.blocks.mines.ClaymoreBlock(mineProp(MapColor.TERRACOTTA_GREEN, 3.5F).sound(SoundType.METAL).forceSolidOn().pushReaction(PushReaction.NORMAL)));
 		IMS = register("ims", new net.geforcemods.securitycraft.blocks.mines.IMSBlock(mineProp(MapColor.TERRACOTTA_GREEN, 3.5F).sound(SoundType.METAL)));
 		TRACK_MINE = register("track_mine", new net.geforcemods.securitycraft.blocks.mines.TrackMineBlock(mineProp(MapColor.METAL, 0.7F).noCollission().sound(SoundType.METAL)));
+		CUTOUT_BLOCKS.add(TRACK_MINE);
 		STONE_MINE = register("stone_mine", new BaseFullMineBlock(reinforcedCopy(Blocks.STONE), Blocks.STONE));
 		DEEPSLATE_MINE = register("deepslate_mine", new DeepslateMineBlock(reinforcedCopy(Blocks.DEEPSLATE), Blocks.DEEPSLATE));
 		COBBLED_DEEPSLATE_MINE = register("cobbled_deepslate_mine", new BaseFullMineBlock(reinforcedCopy(Blocks.COBBLED_DEEPSLATE), Blocks.COBBLED_DEEPSLATE));

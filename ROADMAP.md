@@ -38,25 +38,9 @@ Universal Key Changer, the Codebreaker, Keypad Door and Keypad Trapdoor on top o
 door work, the Retinal Scanner with the Scanner Door and Scanner Trapdoor, and the version checker
 with its update notification.
 
----
-
-## V0.7 — Surveillance
-
-Everything that watches and reports. The Portable Radar already covers the "who walked past" case;
-this release adds the rest of the original's detection blocks and the camera system.
-
-| Content | Notes |
-| --- | --- |
-| Security Camera + Camera Monitor | includes the camera entity the player's view is mounted on |
-| Username Logger | |
-| Motion Activated Light | |
-| Block Change Detector | |
-| Projector | |
-| Alarm, Panic Button | |
-| Secure Trading Station | |
-
-**Depends on:** the camera system needs its own view-mounting entity and a packet to enter and leave
-it; that is the bulk of the release.
+**V0.7** — surveillance: the Security Camera and Camera Monitor (with chunk loading, night vision,
+rotation, zooming, redstone module, and player view mounting), the Secure Trading Station, Projector,
+Block Change Detector, Username Logger, Motion Activated Light, Panic Button, and Alarm.
 
 ---
 

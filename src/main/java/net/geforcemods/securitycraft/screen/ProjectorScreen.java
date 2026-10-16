@@ -143,7 +143,7 @@ public class ProjectorScreen extends AbstractContainerScreen<ProjectorMenu> impl
 	public void onClose() {
 		super.onClose();
 
-		if (stateSelector.getState() != null) {
+		if (stateSelector != null && stateSelector.getState() != null) {
 			be.setProjectedState(stateSelector.getState());
 			ClientPlayNetworking.send(SyncProjectorPayload.CHANNEL, new SyncProjectorPayload(be.getBlockPos(), stateSelector.getState()).write());
 		}

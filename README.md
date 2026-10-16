@@ -17,7 +17,7 @@ Redstone_Dubstep, ChainmailPickaxe).
 
 ---
 
-## Status — V0.6
+## Status — V0.7
 
 SecurityCraft is one of the largest Minecraft mods there is, so this port grows a **working core**
 feature by feature rather than dropping a half-compiling copy of everything at once. Every feature
@@ -36,6 +36,13 @@ is measured against the original mod's own branch for the same Minecraft version
 | **Passcode-protected blocks** | keypad, key panel, keypad frame, keypad door, keypad trapdoor, and the passcode chest, barrel, furnace, smoker and blast furnace |
 | **Keycard system** | Keycard Reader and Keycard Lock, keycard levels 1–5, the Limited Use Keycard and Keycard Holder, all with per-owner linking |
 | **Retinal Scanner** | Retinal Scanner, Scanner Door and Scanner Trapdoor — opens for whoever the owner allows, by name |
+| **Security Camera & Camera Monitor** | live camera feeds, zoom, night vision, rotation, redstone activation, chunk loading |
+| **Secure Trading Station** | trade items with players, optional payment storage and reward dispensing |
+| **Projector** | holographic disguise projections with configurable range and dimensions |
+| **Block Change Detector** | logs player block placing and breaking within range |
+| **Username Logger** | logs nearby player names when powered |
+| **Motion Activated Light** | illuminates when players enter its detection radius |
+| **Panic Button & Alarm** | button toggle behavior, siren sound effect and flashing light |
 | **Universal Key Changer** | resets a block's passcode or keycard link |
 | **Codebreaker** | the attacker's side of the passcode and keycard systems, with its cooldown and failure chance |
 | **Laser block** | laser fields, per-side configuration and dyed lenses |

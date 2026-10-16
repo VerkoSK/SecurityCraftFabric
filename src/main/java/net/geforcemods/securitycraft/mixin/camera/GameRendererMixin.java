@@ -67,7 +67,7 @@ public class GameRendererMixin {
 	/**
 	 * Makes sure distortion effects are not rendered in camera feeds
 	 */
-	@ModifyVariable(method = "renderLevel", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/Mth;lerp(FFF)F"), ordinal = 1)
+	@ModifyVariable(method = "renderLevel", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/Mth;lerp(FFF)F"), ordinal = 1, require = 0)
 	private float securitycraft$disableFeedDistortion(float original) {
 		return FrameFeedHandler.isCapturingCamera() ? 0.0F : original;
 	}

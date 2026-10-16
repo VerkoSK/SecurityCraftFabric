@@ -64,7 +64,7 @@ public class LevelRendererMixin {
 	/**
 	 * Sets the correct fog distance for rendering a frame feed, depending on clientside view distance configuration settings.
 	 */
-	@ModifyVariable(method = "renderLevel", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/FogRenderer;setupColor(Lnet/minecraft/client/Camera;FLnet/minecraft/client/multiplayer/ClientLevel;IF)V"), ordinal = 1)
+	@ModifyVariable(method = "renderLevel", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/FogRenderer;setupColor(Lnet/minecraft/client/Camera;FLnet/minecraft/client/multiplayer/ClientLevel;IF)V"), ordinal = 1, require = 0)
 	private float securitycraft$modifyFogRenderDistance(float original) {
 		if (FrameFeedHandler.isCapturingCamera())
 			return FrameFeedHandler.getFrameFeedViewDistance(null) * 16;

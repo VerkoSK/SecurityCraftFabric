@@ -21,14 +21,11 @@ import net.minecraft.world.level.block.Block;
  * port's {@code SCContent} carries no such annotations, so the page list is spelled out here by hand, limited to the
  * content this port actually registers.
  * <p>
- * Dropped versus upstream because the port lacks the underlying content: keycards, display cases, secret signs
+ * Dropped versus upstream because the port lacks the underlying content: display cases, secret signs
  * (standing and hanging), security sea boats, and every reinforced-block manual page that upstream documents
- * individually (alarm, block change detector, block pocket manager/wall, cage trap, floor trap, inventory scanner
- * field, keypad barrel/chest/furnace/smoker/blast furnace, motion activated
- * light, panic button, projector, secure redstone interface, secure trading station, security camera,
- * trophy system, username logger, reinforced hopper, reinforced chiseled bookshelf, briefcase, camera monitor,
- * incognito mask, portable tune player,
- * reinforced door item, rift stabilizer, sentry (+ remote access tool), taser,
+ * individually (block pocket manager/wall, cage trap, floor trap, inventory scanner
+ * field, secure redstone interface, trophy system, reinforced chiseled bookshelf, briefcase,
+ * incognito mask, portable tune player, rift stabilizer, sentry (+ remote access tool), taser,
  * admin tool). {@code LASER_FIELD} is also dropped: this port registers it with {@code registerBlockNoItem},
  * so it has no {@link Item} to build a page around.
  */
@@ -37,6 +34,8 @@ public class ManualPage {
 
 	public static void register() {
 		//individual pages, in upstream's field-declaration order
+		add(SCContent.ALARM.asItem());
+		add(SCContent.BLOCK_CHANGE_DETECTOR.asItem());
 		add(SCContent.BOUNCING_BETTY.asItem());
 		add(SCContent.CLAYMORE.asItem());
 		add(SCContent.FRAME.asItem());
@@ -50,7 +49,10 @@ public class ManualPage {
 		add(SCContent.KEYPAD_BLAST_FURNACE.asItem(), "", true);
 		add(SCContent.ELECTRIFIED_IRON_FENCE.asItem());
 		add(SCContent.REINFORCED_BY_NAME.get("reinforced_hopper").asItem());
+		add(SCContent.MOTION_ACTIVATED_LIGHT.asItem());
+		add(SCContent.PANIC_BUTTON.asItem());
 		add(SCContent.PORTABLE_RADAR.asItem());
+		add(SCContent.PROJECTOR.asItem());
 		add(SCContent.REINFORCED_DOOR.asItem());
 		add(SCContent.KEYPAD_DOOR_ITEM);
 		add(SCContent.ELECTRIFIED_IRON_FENCE_GATE.asItem());
@@ -61,10 +63,14 @@ public class ManualPage {
 		add(SCContent.RETINAL_SCANNER.asItem());
 		add(SCContent.SCANNER_DOOR_ITEM);
 		add(SCContent.SCANNER_TRAPDOOR.asItem());
+		add(SCContent.SECURE_TRADING_STATION.asItem());
+		add(SCContent.SECURITY_CAMERA.asItem());
+		add(SCContent.USERNAME_LOGGER.asItem());
 		add(SCContent.KEYCARD_READER.asItem());
 		add(SCContent.KEYCARD_LOCK.asItem());
 		add(SCContent.KEYCARD_LV1);
 		add(SCContent.KEYCARD_HOLDER);
+		add(SCContent.CAMERA_MONITOR);
 		add(SCContent.FAKE_LAVA_BUCKET, "", true);
 		add(SCContent.FAKE_WATER_BUCKET, "", true);
 		add(SCContent.KEY_PANEL_ITEM);

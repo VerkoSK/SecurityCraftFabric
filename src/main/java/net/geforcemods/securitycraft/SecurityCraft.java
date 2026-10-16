@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.loader.api.FabricLoader;
 import net.geforcemods.securitycraft.commands.SCCommand;
 import net.geforcemods.securitycraft.network.NetworkHandler;
 import net.minecraft.server.MinecraftServer;
@@ -13,11 +14,15 @@ import net.minecraft.server.MinecraftServer;
 /** Common entrypoint. Registers content, networking and the command on both client and server. */
 public class SecurityCraft implements ModInitializer {
 	public static final String MODID = "securitycraft";
-	public static final String VERSION = "1.10.2.1-fabric";
+	public static final String VERSION = FabricLoader.getInstance().getModContainer(MODID).map(c -> c.getMetadata().getVersion().getFriendlyString()).orElse("0.7");
 	public static final Logger LOGGER = LoggerFactory.getLogger(MODID);
 	public static final net.minecraft.util.RandomSource RANDOM = net.minecraft.util.RandomSource.create();
 	/** The currently running server, or null when none is running. Fabric replacement for Forge's {@code ServerLifecycleHooks.getCurrentServer()}. */
 	public static MinecraftServer SERVER;
+
+	public static String getVersion() {
+		return "v" + VERSION;
+	}
 
 	@Override
 	public void onInitialize() {

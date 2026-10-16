@@ -31,20 +31,26 @@ import net.minecraft.world.level.block.state.BlockState;
 public class CameraController {
 	public static CameraType previousCameraType;
 	public static boolean resetOverlaysAfterDismount = false;
-	private static final ViewMovementKeyHandler[] MOVE_KEY_HANDLERS = Util.make(() -> {
-		Minecraft mc = Minecraft.getInstance();
+	private static ViewMovementKeyHandler[] moveKeyHandlers;
 
-		if (mc != null) {
-			return new ViewMovementKeyHandler[] {
-				new ViewMovementKeyHandler(mc.options.keyUp, CameraController::moveViewUp),
-				new ViewMovementKeyHandler(mc.options.keyDown, CameraController::moveViewDown),
-				new ViewMovementKeyHandler(mc.options.keyLeft, cam -> moveViewHorizontally(cam, cam.getYRot() - getMovementSpeed(cam) * cam.getZoomAmount())),
-				new ViewMovementKeyHandler(mc.options.keyRight, cam -> moveViewHorizontally(cam, cam.getYRot() + getMovementSpeed(cam) * cam.getZoomAmount()))
-			};
+	private static ViewMovementKeyHandler[] getMoveKeyHandlers() {
+		if (moveKeyHandlers == null) {
+			Minecraft mc = Minecraft.getInstance();
+
+			if (mc != null && mc.options != null) {
+				moveKeyHandlers = new ViewMovementKeyHandler[] {
+					new ViewMovementKeyHandler(mc.options.keyUp, CameraController::moveViewUp),
+					new ViewMovementKeyHandler(mc.options.keyDown, CameraController::moveViewDown),
+					new ViewMovementKeyHandler(mc.options.keyLeft, cam -> moveViewHorizontally(cam, cam.getYRot() - getMovementSpeed(cam) * cam.getZoomAmount())),
+					new ViewMovementKeyHandler(mc.options.keyRight, cam -> moveViewHorizontally(cam, cam.getYRot() + getMovementSpeed(cam) * cam.getZoomAmount()))
+				};
+			}
+			else
+				return new ViewMovementKeyHandler[0];
 		}
-		else
-			return new ViewMovementKeyHandler[0];
-	});
+
+		return moveKeyHandlers;
+	}
 	private static int screenshotSoundCooldown = 0;
 	private static long lastCameraMountTimestamp = 0;
 
@@ -61,7 +67,7 @@ public class CameraController {
 		if (cameraEntity instanceof SecurityCamera) {
 			Options options = Minecraft.getInstance().options;
 
-			for (ViewMovementKeyHandler handler : MOVE_KEY_HANDLERS) {
+			for (ViewMovementKeyHandler handler : getMoveKeyHandlers()) {
 				handler.tickStart();
 			}
 
@@ -76,7 +82,7 @@ public class CameraController {
 		Entity cameraEntity = Minecraft.getInstance().cameraEntity;
 
 		if (cameraEntity instanceof SecurityCamera cam) {
-			for (ViewMovementKeyHandler handler : MOVE_KEY_HANDLERS) {
+			for (ViewMovementKeyHandler handler : getMoveKeyHandlers()) {
 				handler.tickEnd(cam);
 			}
 

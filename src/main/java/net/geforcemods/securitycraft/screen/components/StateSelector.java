@@ -56,7 +56,7 @@ public class StateSelector extends AbstractContainerEventHandler implements Rend
 	private static final int PAGE_LENGTH = 5;
 	private static final Quaternionf BLOCK_ROTATION = Axis.XP.rotationDegrees(30).mul(Axis.YP.rotationDegrees(225));
 	private final StateSelectorAccessMenu menu;
-	private final int xStart, yStart, slotToCheck;
+	private final int xStart, yStart, slotToCheck, previewXTranslation, previewYTranslation;
 	private final List<Rect2i> extraAreas = new ArrayList<>();
 	private final BlockEntityRenderDelegate renderDelegate = new BlockEntityRenderDelegate();
 	private Block block = Blocks.AIR;
@@ -75,21 +75,23 @@ public class StateSelector extends AbstractContainerEventHandler implements Rend
 	private float dragY = -180.0F;
 
 	public StateSelector(StateSelectorAccessMenu menu, int titleX, int xStart, int yStart, int slotToCheck, int dragX, int dragY) {
-		this(menu, xStart, yStart, slotToCheck, dragX, dragY);
+		this(menu, null, xStart, yStart, slotToCheck, dragX, dragY, 38, 63);
 	}
 
 	public StateSelector(StateSelectorAccessMenu menu, Component title, int xStart, int yStart, int slotToCheck, int dragStartX, int dragStartY, int previewXTranslation, int previewYTranslation) {
-		this(menu, xStart, yStart, slotToCheck, dragStartX, dragStartY);
-	}
-
-	public StateSelector(StateSelectorAccessMenu menu, int xStart, int yStart, int slotToCheck, int dragX, int dragY) {
-		menu.addSlotListener(this);
 		this.menu = menu;
 		this.xStart = xStart;
 		this.yStart = yStart;
 		this.slotToCheck = slotToCheck;
-		this.dragX = dragX;
-		this.dragY = dragY;
+		this.dragX = dragStartX;
+		this.dragY = dragStartY;
+		this.previewXTranslation = previewXTranslation;
+		this.previewYTranslation = previewYTranslation;
+		menu.addSlotListener(this);
+	}
+
+	public StateSelector(StateSelectorAccessMenu menu, int xStart, int yStart, int slotToCheck, int dragX, int dragY) {
+		this(menu, null, xStart, yStart, slotToCheck, dragX, dragY, 38, 63);
 	}
 
 	public void init(Minecraft mc, int width, int height) {
@@ -197,7 +199,7 @@ public class StateSelector extends AbstractContainerEventHandler implements Rend
 
 		guiGraphics.drawString(font, page + "/" + amountOfPages, xStart + 102, yStart + 130, 0x404040, false);
 		pose.pushPose();
-		pose.translate(xStart + 38, yStart + 63, 100);
+		pose.translate(xStart + previewXTranslation, yStart + previewYTranslation, 100);
 		pose.scale(30.0F, -30.0F, 30.0F);
 		pose.mulPose(Axis.XP.rotationDegrees(dragY));
 		pose.mulPose(Axis.YP.rotationDegrees(dragX));
