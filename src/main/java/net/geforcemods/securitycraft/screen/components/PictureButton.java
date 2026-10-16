@@ -12,17 +12,17 @@ import net.minecraft.world.level.block.Block;
 
 /** A vanilla-looking button that draws a GUI sprite, a texture subregion or an item icon on top of the button background. */
 public class PictureButton extends Button {
-	private ItemStack blockToRender = ItemStack.EMPTY;
-	private ItemStack itemToRender = ItemStack.EMPTY;
-	private ResourceLocation sprite;
-	private int u;
-	private int v;
-	private int drawOffsetX;
-	private int drawOffsetY;
-	private int drawWidth;
-	private int drawHeight;
-	private int textureWidth;
-	private int textureHeight;
+	protected ItemStack blockToRender = ItemStack.EMPTY;
+	protected ItemStack itemToRender = ItemStack.EMPTY;
+	protected ResourceLocation sprite;
+	protected int u;
+	protected int v;
+	protected int drawOffsetX;
+	protected int drawOffsetY;
+	protected int drawWidth;
+	protected int drawHeight;
+	protected int textureWidth;
+	protected int textureHeight;
 
 	public PictureButton(int xPos, int yPos, int width, int height, ResourceLocation sprite, int drawOffsetX, int drawOffsetY, int drawWidth, int drawHeight, OnPress onPress) {
 		super(xPos, yPos, width, height, Component.empty(), onPress, DEFAULT_NARRATION);

@@ -102,6 +102,26 @@ public class SecurityCraftClient implements ClientModInitializer {
 				client.setScreen(payload.setup() ? new SetPasscodeScreen(payload.pos(), title) : new CheckPasscodeScreen(payload.pos(), title));
 			});
 		});
+		ClientPlayNetworking.registerGlobalReceiver(net.geforcemods.securitycraft.network.OpenAlarmScreenPayload.CHANNEL, (client, handler, buf, responseSender) -> {
+			net.geforcemods.securitycraft.network.OpenAlarmScreenPayload payload = net.geforcemods.securitycraft.network.OpenAlarmScreenPayload.read(buf);
+
+			client.execute(() -> {
+				if (client.level != null && client.level.getBlockEntity(payload.pos()) instanceof net.geforcemods.securitycraft.blockentities.AlarmBlockEntity be)
+					client.setScreen(new net.geforcemods.securitycraft.screen.AlarmScreen(be, be.getSound().getLocation()));
+			});
+		});
+		ClientPlayNetworking.registerGlobalReceiver(net.geforcemods.securitycraft.network.ToggleAlarmSoundPayload.CHANNEL, (client, handler, buf, responseSender) -> {
+			net.geforcemods.securitycraft.network.ToggleAlarmSoundPayload payload = net.geforcemods.securitycraft.network.ToggleAlarmSoundPayload.read(buf);
+
+			client.execute(() -> {
+				if (client.level != null && client.level.getBlockEntity(payload.bePos()) instanceof net.geforcemods.securitycraft.blockentities.AlarmBlockEntity be) {
+					if (payload.shouldPlay())
+						be.playSound(client.level, payload.getX(), payload.getY(), payload.getZ(), payload.volume(), payload.seed());
+					else
+						be.stopPlayingSound();
+				}
+			});
+		});
 		net.minecraft.client.gui.screens.MenuScreens.register(SCContent.BLOCK_REINFORCER_MENU, net.geforcemods.securitycraft.screen.BlockReinforcerScreen::new);
 		net.minecraft.client.gui.screens.MenuScreens.register(SCContent.LASER_BLOCK_MENU, net.geforcemods.securitycraft.screen.LaserBlockScreen::new);
 		net.minecraft.client.gui.screens.MenuScreens.register(SCContent.DISGUISE_MODULE_MENU, net.geforcemods.securitycraft.screen.DisguiseModuleScreen::new);

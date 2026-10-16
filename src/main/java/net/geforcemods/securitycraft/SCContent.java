@@ -93,6 +93,9 @@ public class SCContent {
 	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.KeycardLockBlockEntity> KEYCARD_LOCK_BLOCK_ENTITY;
 	public static net.geforcemods.securitycraft.blocks.MotionActivatedLightBlock MOTION_ACTIVATED_LIGHT;
 	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.MotionActivatedLightBlockEntity> MOTION_LIGHT_BLOCK_ENTITY;
+	public static net.geforcemods.securitycraft.blocks.AlarmBlock ALARM;
+	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.AlarmBlockEntity> ALARM_BLOCK_ENTITY;
+	public static net.geforcemods.securitycraft.blocks.PanicButtonBlock PANIC_BUTTON;
 	public static net.minecraft.world.inventory.MenuType<net.geforcemods.securitycraft.inventory.KeycardReaderMenu> KEYCARD_READER_MENU;
 	public static net.minecraft.world.inventory.MenuType<net.geforcemods.securitycraft.inventory.KeycardHolderMenu> KEYCARD_HOLDER_MENU;
 	public static Item KEYCARD_LV1;
@@ -800,6 +803,8 @@ public class SCContent {
 		PORTABLE_RADAR = (net.geforcemods.securitycraft.blocks.PortableRadarBlock) register("portable_radar", new net.geforcemods.securitycraft.blocks.PortableRadarBlock(alwaysDrop(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_BLACK).strength(5.0F, Float.MAX_VALUE))));
 		MOTION_ACTIVATED_LIGHT = (net.geforcemods.securitycraft.blocks.MotionActivatedLightBlock) register("motion_activated_light", new net.geforcemods.securitycraft.blocks.MotionActivatedLightBlock(prop(MapColor.NONE, 5.0F).sound(SoundType.GLASS).lightLevel(state -> state.getValue(net.geforcemods.securitycraft.blocks.MotionActivatedLightBlock.LIT) ? 15 : 0)));
 		CUTOUT_BLOCKS.add(MOTION_ACTIVATED_LIGHT);
+		ALARM = (net.geforcemods.securitycraft.blocks.AlarmBlock) register("alarm", new net.geforcemods.securitycraft.blocks.AlarmBlock(prop(MapColor.COLOR_RED, 3.5F).sound(SoundType.METAL).lightLevel(state -> state.getValue(net.geforcemods.securitycraft.blocks.AlarmBlock.LIT) ? 15 : 0)));
+		PANIC_BUTTON = (net.geforcemods.securitycraft.blocks.PanicButtonBlock) register("panic_button", new net.geforcemods.securitycraft.blocks.PanicButtonBlock(prop(3.5F).lightLevel(state -> state.getValue(ButtonBlock.POWERED) ? 4 : 0), BlockSetType.STONE, -1, false));
 		KEY_PANEL = (net.geforcemods.securitycraft.blocks.KeyPanelBlock) registerBlockNoItem("key_panel", new net.geforcemods.securitycraft.blocks.KeyPanelBlock(alwaysDrop(BlockBehaviour.Properties.of().strength(3.5F).sound(SoundType.METAL).noOcclusion())));
 		KEY_PANEL_ITEM = registerItem("keypad_item", new net.geforcemods.securitycraft.items.KeyPanelItem(new Item.Properties()));
 		FRAME = (net.geforcemods.securitycraft.blocks.FrameBlock) register("keypad_frame", new net.geforcemods.securitycraft.blocks.FrameBlock(alwaysDrop(BlockBehaviour.Properties.of().mapColor(net.minecraft.world.level.material.MapColor.METAL).strength(5.0F).sound(SoundType.METAL).noOcclusion())));
@@ -1057,7 +1062,14 @@ public class SCContent {
 		//the door has its own block entity type now; it stays listed here so doors placed by an older build,
 		//whose saved block entity still says "abstract", keep loading with their owner intact
 		abstractBeBlocks.add(REINFORCED_DOOR);
-		ABSTRACT_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("abstract"), FabricBlockEntityTypeBuilder.create((pos, state) -> new net.geforcemods.securitycraft.api.OwnableBlockEntity(ABSTRACT_BLOCK_ENTITY, pos, state), abstractBeBlocks.toArray(new Block[0])).build());
+		abstractBeBlocks.add(PANIC_BUTTON);
+		ABSTRACT_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("abstract"), FabricBlockEntityTypeBuilder.create((pos, state) -> {
+			if (state.is(PANIC_BUTTON))
+				return new net.geforcemods.securitycraft.blockentities.PanicButtonBlockEntity(pos, state);
+
+			return new net.geforcemods.securitycraft.api.OwnableBlockEntity(ABSTRACT_BLOCK_ENTITY, pos, state);
+		}, abstractBeBlocks.toArray(new Block[0])).build());
+		ALARM_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("alarm"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.AlarmBlockEntity::new, ALARM).build());
 		ELECTRIFIED_FENCE_AND_GATE_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("electrified_fence_and_gate"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.ElectrifiedFenceAndGateBlockEntity::new, ELECTRIFIED_IRON_FENCE, ELECTRIFIED_IRON_FENCE_GATE).build());
 		REINFORCED_DOOR_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("reinforced_door"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.ReinforcedDoorBlockEntity::new, REINFORCED_DOOR).build());
 		KEYPAD_DOOR_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("keypad_door"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.KeypadDoorBlockEntity::new, KEYPAD_DOOR).build());

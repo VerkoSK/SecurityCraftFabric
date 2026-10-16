@@ -83,6 +83,11 @@ public final class NetworkHandler {
 
 			server.execute(() -> payload.handle(player));
 		});
+		ServerPlayNetworking.registerGlobalReceiver(SyncAlarmSettingsPayload.CHANNEL, (server, player, handler, buf, sender) -> {
+			SyncAlarmSettingsPayload payload = SyncAlarmSettingsPayload.read(buf);
+
+			server.execute(() -> handleSyncAlarmSettings(player, payload));
+		});
 	}
 
 	private static void handleSyncKeycardSettings(ServerPlayer player, SyncKeycardSettingsPayload payload) {
@@ -214,6 +219,27 @@ public final class NetworkHandler {
 
 		if (held.getItem() instanceof net.geforcemods.securitycraft.items.BlockReinforcerItem item && item.canToggleMode(held))
 			net.geforcemods.securitycraft.items.BlockReinforcerItem.setReinforcing(held, payload.isReinforcing());
+	}
+
+	private static void handleSyncAlarmSettings(ServerPlayer player, SyncAlarmSettingsPayload payload) {
+		ServerLevel level = player.serverLevel();
+
+		if (!player.isSpectator() && inReach(player, payload.pos()) && level.getBlockEntity(payload.pos()) instanceof net.geforcemods.securitycraft.blockentities.AlarmBlockEntity be && be.isOwnedBy(player)) {
+			if (!payload.soundEvent().equals(be.getSound().getLocation()))
+				be.setSound(payload.soundEvent());
+
+			if (payload.pitch() != be.getPitch())
+				be.setPitch(payload.pitch());
+
+			if (payload.soundLength() != be.getSoundLength())
+				be.setSoundLength(payload.soundLength());
+
+			level.sendBlockUpdated(payload.pos(), be.getBlockState(), be.getBlockState(), 3);
+		}
+	}
+
+	public static void openAlarmScreen(ServerPlayer player, BlockPos pos) {
+		ServerPlayNetworking.send(player, OpenAlarmScreenPayload.CHANNEL, new OpenAlarmScreenPayload(pos).write());
 	}
 
 	public static void openKeypadScreen(ServerPlayer player, BlockPos pos, boolean setup, String ownerName) {
