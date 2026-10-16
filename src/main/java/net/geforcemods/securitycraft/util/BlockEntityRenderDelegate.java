@@ -32,6 +32,10 @@ public class BlockEntityRenderDelegate {
 	}
 
 	public void putDelegateFor(BlockEntity originalBlockEntity, BlockState delegateState) {
+		putDelegateFor(originalBlockEntity, delegateState, ItemStack.EMPTY);
+	}
+
+	public void putDelegateFor(BlockEntity originalBlockEntity, BlockState delegateState, ItemStack stack) {
 		if (renderDelegates.containsKey(originalBlockEntity)) {
 			DelegateRendererInfo delegateInfo = renderDelegates.get(originalBlockEntity);
 
@@ -50,6 +54,8 @@ public class BlockEntityRenderDelegate {
 				BlockEntityRenderer<?> delegateBeRenderer;
 
 				delegateBe.setLevel(mc.level);
+				if (stack != null && !stack.isEmpty())
+					Utils.updateBlockEntityWithItemTag(delegateBe, stack);
 				delegateBeRenderer = mc.getBlockEntityRenderDispatcher().getRenderer(delegateBe);
 
 				if (delegateBeRenderer != null)

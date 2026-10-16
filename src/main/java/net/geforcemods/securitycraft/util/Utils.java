@@ -9,6 +9,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
@@ -74,5 +75,21 @@ public class Utils {
 		int dZ = Math.abs(z - centerZ);
 
 		return dX <= viewDistance && dZ <= viewDistance;
+	}
+
+	public static void updateBlockEntityWithItemTag(BlockEntity be, ItemStack stack) {
+		CompoundTag tag = BlockItem.getBlockEntityData(stack);
+
+		if (tag != null) {
+			CompoundTag beData = be.saveWithoutMetadata();
+			CompoundTag dataCopy = beData.copy();
+
+			beData.merge(tag);
+
+			if (!beData.equals(dataCopy)) {
+				be.load(beData);
+				be.setChanged();
+			}
+		}
 	}
 }

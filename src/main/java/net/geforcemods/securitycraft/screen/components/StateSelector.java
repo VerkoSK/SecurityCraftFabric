@@ -78,6 +78,10 @@ public class StateSelector extends AbstractContainerEventHandler implements Rend
 		this(menu, xStart, yStart, slotToCheck, dragX, dragY);
 	}
 
+	public StateSelector(StateSelectorAccessMenu menu, Component title, int xStart, int yStart, int slotToCheck, int dragStartX, int dragStartY, int previewXTranslation, int previewYTranslation) {
+		this(menu, xStart, yStart, slotToCheck, dragStartX, dragStartY);
+	}
+
 	public StateSelector(StateSelectorAccessMenu menu, int xStart, int yStart, int slotToCheck, int dragX, int dragY) {
 		menu.addSlotListener(this);
 		this.menu = menu;
@@ -86,6 +90,10 @@ public class StateSelector extends AbstractContainerEventHandler implements Rend
 		this.slotToCheck = slotToCheck;
 		this.dragX = dragX;
 		this.dragY = dragY;
+	}
+
+	public void init(Minecraft mc, int width, int height) {
+		init();
 	}
 
 	public void init() {

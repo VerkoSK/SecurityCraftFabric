@@ -15,8 +15,8 @@ import net.minecraft.util.Mth;
 public class CallbackSlider extends AbstractSliderButton {
 	private final Component prefix;
 	private final Component suffix;
-	private final double min;
-	private final double max;
+	private double min;
+	private double max;
 	private final double step;
 	private final DecimalFormat format;
 	private final boolean drawString;
@@ -24,6 +24,10 @@ public class CallbackSlider extends AbstractSliderButton {
 
 	public CallbackSlider(int x, int y, int width, int height, double min, double max, double current, double step, Consumer<CallbackSlider> callback) {
 		this(x, y, width, height, Component.empty(), Component.empty(), min, max, current, step, 0, false, callback);
+	}
+
+	public CallbackSlider(int x, int y, int width, int height, Component prefix, Component suffix, double min, double max, double current, boolean drawString, Consumer<CallbackSlider> callback) {
+		this(x, y, width, height, prefix, suffix, min, max, current, 1.0D, 0, drawString, callback);
 	}
 
 	public CallbackSlider(int x, int y, int width, int height, Component prefix, Component suffix, double min, double max, double current, double step, int precision, boolean drawString, Consumer<CallbackSlider> callback) {
@@ -46,6 +50,24 @@ public class CallbackSlider extends AbstractSliderButton {
 		this.format = new DecimalFormat(pattern);
 		updateMessage();
 	}
+
+	public double getMinValue() {
+		return min;
+	}
+
+	public void setMinValue(double min) {
+		this.min = min;
+	}
+
+	public double getMaxValue() {
+		return max;
+	}
+
+	public void setMaxValue(double max) {
+		this.max = max;
+	}
+
+	public void setFGColor(int color) {}
 
 	public double getValue() {
 		double actual = min + value * (max - min);

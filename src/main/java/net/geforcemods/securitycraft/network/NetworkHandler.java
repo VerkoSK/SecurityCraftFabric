@@ -103,6 +103,11 @@ public final class NetworkHandler {
 
 			server.execute(() -> handleSyncBlockChangeDetector(player, payload));
 		});
+		ServerPlayNetworking.registerGlobalReceiver(SyncProjectorPayload.CHANNEL, (server, player, handler, buf, sender) -> {
+			SyncProjectorPayload payload = SyncProjectorPayload.read(buf);
+
+			server.execute(() -> handleSyncProjector(player, payload));
+		});
 	}
 
 	private static void handleSyncKeycardSettings(ServerPlayer player, SyncKeycardSettingsPayload payload) {
@@ -303,6 +308,28 @@ public final class NetworkHandler {
 		be.showHighlights(payload.showHighlights());
 		be.setColor(payload.color());
 		be.setChanged();
+		level.sendBlockUpdated(payload.pos(), state, state, 2);
+	}
+
+	private static void handleSyncProjector(ServerPlayer player, SyncProjectorPayload payload) {
+		ServerLevel level = player.serverLevel();
+
+		if (player.isSpectator() || !inReach(player, payload.pos()) || !(level.getBlockEntity(payload.pos()) instanceof net.geforcemods.securitycraft.blockentities.ProjectorBlockEntity be) || !be.isOwnedBy(player))
+			return;
+
+		BlockState state = level.getBlockState(payload.pos());
+
+		switch (payload.dataType()) {
+			case WIDTH -> be.setProjectionWidth(payload.data());
+			case HEIGHT -> be.setProjectionHeight(payload.data());
+			case RANGE -> be.setProjectionRange(payload.data());
+			case OFFSET -> be.setProjectionOffset(payload.data());
+			case HORIZONTAL -> be.setHorizontal(payload.data() == 1);
+			case OVERRIDING_BLOCKS -> be.setOverridingBlocks(payload.data() == 1);
+			case BLOCK_STATE -> be.setProjectedState(net.minecraft.world.level.block.Block.stateById(payload.data()));
+			case INVALID -> {}
+		}
+
 		level.sendBlockUpdated(payload.pos(), state, state, 2);
 	}
 
