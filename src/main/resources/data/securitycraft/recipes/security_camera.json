@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "G": {
+      "item": "securitycraft:reinforced_glass"
+    },
+    "I": {
+      "tag": "forge:ingots/iron"
+    },
+    "R": {
+      "item": "securitycraft:reinforced_redstone_block"
+    },
+    "S": {
+      "tag": "forge:rods/wooden"
+    }
+  },
+  "pattern": [
+    "III",
+    "GRI",
+    "IIS"
+  ],
+  "result": {
+    "item": "securitycraft:security_camera"
+  },
+  "show_notification": true
+}

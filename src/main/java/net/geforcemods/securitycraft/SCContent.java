@@ -93,6 +93,11 @@ public class SCContent {
 	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.KeycardLockBlockEntity> KEYCARD_LOCK_BLOCK_ENTITY;
 	public static net.geforcemods.securitycraft.blocks.MotionActivatedLightBlock MOTION_ACTIVATED_LIGHT;
 	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.MotionActivatedLightBlockEntity> MOTION_LIGHT_BLOCK_ENTITY;
+	public static net.geforcemods.securitycraft.blocks.SecurityCameraBlock SECURITY_CAMERA;
+	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.SecurityCameraBlockEntity> SECURITY_CAMERA_BLOCK_ENTITY;
+	public static net.minecraft.world.entity.EntityType<net.geforcemods.securitycraft.entity.camera.SecurityCamera> SECURITY_CAMERA_ENTITY;
+	public static Item SECURITY_CAMERA_ITEM;
+	public static Item CAMERA_MONITOR;
 	public static net.geforcemods.securitycraft.blocks.AlarmBlock ALARM;
 	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.AlarmBlockEntity> ALARM_BLOCK_ENTITY;
 	public static net.geforcemods.securitycraft.blocks.PanicButtonBlock PANIC_BUTTON;
@@ -302,6 +307,7 @@ public class SCContent {
 	public static RecipeSerializer<?> BLOCK_UNREINFORCING_SERIALIZER;
 	public static RecipeSerializer<?> LENS_COLORING_SERIALIZER;
 	public static RecipeSerializer<net.geforcemods.securitycraft.recipe.CopyPositionComponentItemRecipe> COPY_MINE_REMOTE_ACCESS_TOOL_RECIPE_SERIALIZER;
+	public static RecipeSerializer<net.geforcemods.securitycraft.recipe.CopyPositionComponentItemRecipe> COPY_CAMERA_MONITOR_RECIPE_SERIALIZER;
 	public static RecipeSerializer<net.geforcemods.securitycraft.recipe.LimitedUseKeycardRecipe> LIMITED_USE_KEYCARD_RECIPE_SERIALIZER;
 	public static net.minecraft.world.inventory.MenuType<net.geforcemods.securitycraft.inventory.BlockReinforcerMenu> BLOCK_REINFORCER_MENU;
 	public static net.minecraft.world.inventory.MenuType<net.geforcemods.securitycraft.inventory.LaserBlockMenu> LASER_BLOCK_MENU;
@@ -814,6 +820,11 @@ public class SCContent {
 		PORTABLE_RADAR = (net.geforcemods.securitycraft.blocks.PortableRadarBlock) register("portable_radar", new net.geforcemods.securitycraft.blocks.PortableRadarBlock(alwaysDrop(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_BLACK).strength(5.0F, Float.MAX_VALUE))));
 		MOTION_ACTIVATED_LIGHT = (net.geforcemods.securitycraft.blocks.MotionActivatedLightBlock) register("motion_activated_light", new net.geforcemods.securitycraft.blocks.MotionActivatedLightBlock(prop(MapColor.NONE, 5.0F).sound(SoundType.GLASS).lightLevel(state -> state.getValue(net.geforcemods.securitycraft.blocks.MotionActivatedLightBlock.LIT) ? 15 : 0)));
 		CUTOUT_BLOCKS.add(MOTION_ACTIVATED_LIGHT);
+		SECURITY_CAMERA = (net.geforcemods.securitycraft.blocks.SecurityCameraBlock) registerBlockNoItem("security_camera", new net.geforcemods.securitycraft.blocks.SecurityCameraBlock(propDisguisable(MapColor.METAL, 5.0F, false).noCollission()));
+		SECURITY_CAMERA_ITEM = registerItem("security_camera", new net.geforcemods.securitycraft.items.SecurityCameraItem(SECURITY_CAMERA, new Item.Properties()));
+		CAMERA_MONITOR = registerItem("camera_monitor", new net.geforcemods.securitycraft.items.CameraMonitorItem(new Item.Properties().stacksTo(1)));
+		TAB_ITEMS.add(SECURITY_CAMERA_ITEM);
+		TAB_ITEMS.add(CAMERA_MONITOR);
 		ALARM = (net.geforcemods.securitycraft.blocks.AlarmBlock) register("alarm", new net.geforcemods.securitycraft.blocks.AlarmBlock(prop(MapColor.COLOR_RED, 3.5F).sound(SoundType.METAL).lightLevel(state -> state.getValue(net.geforcemods.securitycraft.blocks.AlarmBlock.LIT) ? 15 : 0)));
 		PANIC_BUTTON = (net.geforcemods.securitycraft.blocks.PanicButtonBlock) register("panic_button", new net.geforcemods.securitycraft.blocks.PanicButtonBlock(prop(3.5F).lightLevel(state -> state.getValue(ButtonBlock.POWERED) ? 4 : 0), BlockSetType.STONE, -1, false));
 		USERNAME_LOGGER = (net.geforcemods.securitycraft.blocks.UsernameLoggerBlock) register("username_logger", new net.geforcemods.securitycraft.blocks.UsernameLoggerBlock(propDisguisable(3.5F)));
@@ -1063,6 +1074,7 @@ public class SCContent {
 		BLOCK_UNREINFORCING_SERIALIZER = Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, id("block_unreinforcing"), new net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer<>(net.geforcemods.securitycraft.recipe.ReinforcerRecipe.Unreinforcing::new));
 		LENS_COLORING_SERIALIZER = Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, id("lens_coloring"), new net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer<>(net.geforcemods.securitycraft.recipe.LensColoringRecipe::new));
 		COPY_MINE_REMOTE_ACCESS_TOOL_RECIPE_SERIALIZER = Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, id("copy_mine_remote_access_tool_recipe"), new net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer<>(net.geforcemods.securitycraft.recipe.CopyPositionComponentItemRecipe::mineRemoteAccessTool));
+		COPY_CAMERA_MONITOR_RECIPE_SERIALIZER = Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, id("copy_camera_monitor_recipe"), new net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer<>(net.geforcemods.securitycraft.recipe.CopyPositionComponentItemRecipe::cameraMonitor));
 		LIMITED_USE_KEYCARD_RECIPE_SERIALIZER = Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, id("limited_use_keycard_recipe"), new net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer<>(net.geforcemods.securitycraft.recipe.LimitedUseKeycardRecipe::new));
 		BLOCK_REINFORCER_MENU = Registry.register(BuiltInRegistries.MENU, id("block_reinforcer"), new net.minecraft.world.inventory.MenuType<>(net.geforcemods.securitycraft.inventory.BlockReinforcerMenu::new, net.minecraft.world.flag.FeatureFlags.VANILLA_SET));
 
@@ -1130,6 +1142,8 @@ public class SCContent {
 		BRUSHABLE_MINE_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("brushable_mine"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.BrushableMineBlockEntity::new, SUSPICIOUS_SAND_MINE, SUSPICIOUS_GRAVEL_MINE).build());
 		PORTABLE_RADAR_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("portable_radar"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.PortableRadarBlockEntity::new, PORTABLE_RADAR).build());
 		MOTION_LIGHT_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("motion_light"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.MotionActivatedLightBlockEntity::new, MOTION_ACTIVATED_LIGHT).build());
+		SECURITY_CAMERA_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("security_camera"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.SecurityCameraBlockEntity::new, SECURITY_CAMERA).build());
+		SECURITY_CAMERA_ENTITY = Registry.register(BuiltInRegistries.ENTITY_TYPE, id("securitycamera"), FabricEntityTypeBuilder.<net.geforcemods.securitycraft.entity.camera.SecurityCamera>create(MobCategory.MISC, net.geforcemods.securitycraft.entity.camera.SecurityCamera::new).dimensions(EntityDimensions.fixed(0.0001F, 0.0001F)).trackRangeBlocks(256).trackedUpdateRate(20).forceTrackedVelocityUpdates(true).build());
 		BOUNCING_BETTY_ENTITY = Registry.register(BuiltInRegistries.ENTITY_TYPE, id("bouncingbetty"), FabricEntityTypeBuilder.<BouncingBetty>create(MobCategory.MISC, BouncingBetty::new).dimensions(EntityDimensions.fixed(0.5F, 0.2F)).trackRangeBlocks(128).trackedUpdateRate(1).forceTrackedVelocityUpdates(true).build());
 		IMS_BOMB_ENTITY = Registry.register(BuiltInRegistries.ENTITY_TYPE, id("imsbomb"), FabricEntityTypeBuilder.<IMSBomb>create(MobCategory.MISC, IMSBomb::new).dimensions(EntityDimensions.fixed(0.25F, 0.3F)).trackRangeBlocks(256).trackedUpdateRate(1).forceTrackedVelocityUpdates(true).build());
 		CUSTOMIZE_BLOCK_MENU = Registry.register(BuiltInRegistries.MENU, id("customize_block"), new net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType<>((syncId, inv, buf) -> new net.geforcemods.securitycraft.inventory.CustomizeBlockMenu(syncId, inv, buf)));
@@ -1330,6 +1344,8 @@ public class SCContent {
 					output.accept(BLOCK_CHANGE_DETECTOR);
 					output.accept(PROJECTOR);
 					output.accept(MOTION_ACTIVATED_LIGHT);
+					output.accept(SECURITY_CAMERA);
+					output.accept(CAMERA_MONITOR);
 					output.accept(ALARM);
 					output.accept(PANIC_BUTTON);
 					output.accept(MINE_REMOTE_ACCESS_TOOL);

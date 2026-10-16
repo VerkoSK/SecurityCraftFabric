@@ -4,11 +4,14 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.geforcemods.securitycraft.SCContent;
 import net.geforcemods.securitycraft.components.ListModuleData;
 import net.geforcemods.securitycraft.util.PlayerUtils;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -112,6 +115,32 @@ public final class NetworkHandler {
 			RequestSecureTradingStationTransactionsPayload payload = RequestSecureTradingStationTransactionsPayload.read(buf);
 
 			server.execute(() -> handleRequestSecureTradingStationTransactions(player, payload));
+		});
+		ServerPlayNetworking.registerGlobalReceiver(MountCameraPayload.CHANNEL, (server, player, handler, buf, sender) -> {
+			MountCameraPayload payload = MountCameraPayload.read(buf);
+
+			server.execute(() -> handleMountCamera(player, payload));
+		});
+		ServerPlayNetworking.registerGlobalReceiver(DismountCameraPayload.CHANNEL, (server, player, handler, buf, sender) -> {
+			server.execute(() -> handleDismountCamera(player));
+		});
+		ServerPlayNetworking.registerGlobalReceiver(RemoveCameraTagPayload.CHANNEL, (server, player, handler, buf, sender) -> {
+			RemoveCameraTagPayload payload = RemoveCameraTagPayload.read(buf);
+
+			server.execute(() -> handleRemoveCameraTag(player, payload));
+		});
+		ServerPlayNetworking.registerGlobalReceiver(SetCameraPoweredPayload.CHANNEL, (server, player, handler, buf, sender) -> {
+			SetCameraPoweredPayload payload = SetCameraPoweredPayload.read(buf);
+
+			server.execute(() -> handleSetCameraPowered(player, payload));
+		});
+		ServerPlayNetworking.registerGlobalReceiver(SetDefaultCameraViewingDirectionPayload.CHANNEL, (server, player, handler, buf, sender) -> {
+			SetDefaultCameraViewingDirectionPayload payload = SetDefaultCameraViewingDirectionPayload.read(buf);
+
+			server.execute(() -> handleSetDefaultCameraViewingDirection(player, payload));
+		});
+		ServerPlayNetworking.registerGlobalReceiver(ToggleNightVisionPayload.CHANNEL, (server, player, handler, buf, sender) -> {
+			server.execute(() -> handleToggleNightVision(player));
 		});
 	}
 
@@ -393,6 +422,75 @@ public final class NetworkHandler {
 
 		if (!player.isSpectator() && inReach(player, payload.pos()) && level.getBlockEntity(payload.pos()) instanceof net.geforcemods.securitycraft.blockentities.SecureTradingStationBlockEntity be)
 			be.doTransaction(player, payload.requestedTransactions());
+	}
+
+	private static void handleMountCamera(ServerPlayer player, MountCameraPayload payload) {
+		Level level = player.level();
+		BlockPos pos = payload.pos();
+		BlockState state = level.getBlockState(pos);
+
+		if (!player.isSpectator()) {
+			if (level.isLoaded(pos) && state.getBlock() == SCContent.SECURITY_CAMERA && level.getBlockEntity(pos) instanceof net.geforcemods.securitycraft.blockentities.SecurityCameraBlockEntity be && !be.isDisabled() && !be.isShutDown()) {
+				if (be.isOwnedBy(player) || be.isAllowed(player))
+					((net.geforcemods.securitycraft.blocks.SecurityCameraBlock) state.getBlock()).mountCamera(level, pos, player);
+				else
+					PlayerUtils.sendMessageToPlayer(player, net.geforcemods.securitycraft.util.Utils.localize(SCContent.CAMERA_MONITOR.getDescriptionId()), net.geforcemods.securitycraft.util.Utils.localize("messages.securitycraft:notOwned", be.getOwner().getName()), ChatFormatting.RED);
+			}
+			else
+				PlayerUtils.sendMessageToPlayer(player, net.geforcemods.securitycraft.util.Utils.localize(SCContent.CAMERA_MONITOR.getDescriptionId()), net.geforcemods.securitycraft.util.Utils.localize("messages.securitycraft:cameraMonitor.cameraNotAvailable", pos), ChatFormatting.RED);
+		}
+	}
+
+	private static void handleDismountCamera(ServerPlayer player) {
+		if (player.getCamera() instanceof net.geforcemods.securitycraft.entity.camera.SecurityCamera cam)
+			cam.stopViewing(player);
+	}
+
+	private static void handleRemoveCameraTag(ServerPlayer player, RemoveCameraTagPayload payload) {
+		ItemStack monitor = PlayerUtils.getItemStackFromAnyHand(player, SCContent.CAMERA_MONITOR);
+
+		if (!player.isSpectator() && !monitor.isEmpty() && monitor.hasTag())
+			monitor.getTag().remove(net.geforcemods.securitycraft.items.CameraMonitorItem.getTagNameFromPosition(monitor.getTag(), net.geforcemods.securitycraft.items.CameraMonitorItem.getCameraPositions(monitor.getTag()).get(payload.camId() - 1).getLeft()));
+	}
+
+	private static void handleSetCameraPowered(ServerPlayer player, SetCameraPoweredPayload payload) {
+		Level level = player.level();
+		BlockPos pos = payload.pos();
+		BlockEntity be = level.getBlockEntity(pos);
+
+		if (!player.isSpectator() && ((be instanceof net.geforcemods.securitycraft.api.IOwnable ownable && ownable.isOwnedBy(player)) || (be instanceof net.geforcemods.securitycraft.api.IModuleInventory moduleInv && moduleInv.isAllowed(player)))) {
+			BlockState state = level.getBlockState(pos);
+
+			level.setBlockAndUpdate(pos, state.setValue(net.geforcemods.securitycraft.blocks.SecurityCameraBlock.POWERED, payload.powered()));
+			level.updateNeighborsAt(pos.relative(state.getValue(net.geforcemods.securitycraft.blocks.SecurityCameraBlock.FACING), -1), state.getBlock());
+		}
+	}
+
+	private static void handleSetDefaultCameraViewingDirection(ServerPlayer player, SetDefaultCameraViewingDirectionPayload payload) {
+		if (!player.isSpectator() && player.getCamera() instanceof net.geforcemods.securitycraft.entity.camera.SecurityCamera camera && camera.getId() == payload.id() && camera.level().getBlockEntity(camera.blockPosition()) instanceof net.geforcemods.securitycraft.blockentities.SecurityCameraBlockEntity be) {
+			if (!be.isOwnedBy(player)) {
+				player.displayClientMessage(net.geforcemods.securitycraft.util.Utils.localize("messages.securitycraft:security_camera.no_permission"), true);
+				return;
+			}
+
+			if (be.isModuleEnabled(net.geforcemods.securitycraft.misc.ModuleType.SMART)) {
+				be.setDefaultViewingDirection(payload.xRot(), payload.yRot(), payload.zoom());
+				player.displayClientMessage(net.geforcemods.securitycraft.util.Utils.localize("messages.securitycraft:security_camera.direction_set"), true);
+			}
+			else
+				player.displayClientMessage(net.geforcemods.securitycraft.util.Utils.localize("messages.securitycraft:security_camera.smart_module_needed"), true);
+		}
+	}
+
+	private static void handleToggleNightVision(ServerPlayer player) {
+		if (net.geforcemods.securitycraft.ConfigHandler.allowCameraNightVision && PlayerUtils.isPlayerMountedOnCamera(player)) {
+			if (player.hasEffect(MobEffects.NIGHT_VISION)) {
+				if (player.getEffect(MobEffects.NIGHT_VISION) instanceof net.geforcemods.securitycraft.entity.camera.CameraNightVisionEffectInstance)
+					player.removeEffect(MobEffects.NIGHT_VISION);
+			}
+			else
+				player.addEffect(new net.geforcemods.securitycraft.entity.camera.CameraNightVisionEffectInstance());
+		}
 	}
 
 	private static boolean inReach(ServerPlayer player, BlockPos pos) {

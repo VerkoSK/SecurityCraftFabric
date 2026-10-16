@@ -15,6 +15,7 @@ public class SecurityCraft implements ModInitializer {
 	public static final String MODID = "securitycraft";
 	public static final String VERSION = "1.10.2.1-fabric";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MODID);
+	public static final net.minecraft.util.RandomSource RANDOM = net.minecraft.util.RandomSource.create();
 	/** The currently running server, or null when none is running. Fabric replacement for Forge's {@code ServerLifecycleHooks.getCurrentServer()}. */
 	public static MinecraftServer SERVER;
 
