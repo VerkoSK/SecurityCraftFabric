@@ -122,6 +122,22 @@ public class SecurityCraftClient implements ClientModInitializer {
 				}
 			});
 		});
+		ClientPlayNetworking.registerGlobalReceiver(net.geforcemods.securitycraft.network.OpenUsernameLoggerScreenPayload.CHANNEL, (client, handler, buf, responseSender) -> {
+			net.geforcemods.securitycraft.network.OpenUsernameLoggerScreenPayload payload = net.geforcemods.securitycraft.network.OpenUsernameLoggerScreenPayload.read(buf);
+
+			client.execute(() -> {
+				if (client.level != null && client.level.getBlockEntity(payload.pos()) instanceof net.geforcemods.securitycraft.blockentities.UsernameLoggerBlockEntity be)
+					client.setScreen(new net.geforcemods.securitycraft.screen.UsernameLoggerScreen(be));
+			});
+		});
+		ClientPlayNetworking.registerGlobalReceiver(net.geforcemods.securitycraft.network.UpdateLoggerPayload.CHANNEL, (client, handler, buf, responseSender) -> {
+			net.geforcemods.securitycraft.network.UpdateLoggerPayload payload = net.geforcemods.securitycraft.network.UpdateLoggerPayload.read(buf);
+
+			client.execute(() -> {
+				if (client.level != null && client.level.getBlockEntity(payload.pos()) instanceof net.geforcemods.securitycraft.blockentities.UsernameLoggerBlockEntity be)
+					be.getEntries()[payload.index()] = new net.geforcemods.securitycraft.blockentities.UsernameLoggerBlockEntity.UsernameLoggerEntry(payload.username(), payload.uuid(), payload.timestamp());
+			});
+		});
 		net.minecraft.client.gui.screens.MenuScreens.register(SCContent.BLOCK_REINFORCER_MENU, net.geforcemods.securitycraft.screen.BlockReinforcerScreen::new);
 		net.minecraft.client.gui.screens.MenuScreens.register(SCContent.LASER_BLOCK_MENU, net.geforcemods.securitycraft.screen.LaserBlockScreen::new);
 		net.minecraft.client.gui.screens.MenuScreens.register(SCContent.DISGUISE_MODULE_MENU, net.geforcemods.securitycraft.screen.DisguiseModuleScreen::new);
@@ -151,6 +167,7 @@ public class SecurityCraftClient implements ClientModInitializer {
 		net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry.register(SCContent.KEYPAD_BLOCK_ENTITY, net.geforcemods.securitycraft.renderers.DisguisableBlockEntityRenderer::new);
 		net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry.register(SCContent.LASER_BLOCK_BLOCK_ENTITY, net.geforcemods.securitycraft.renderers.DisguisableBlockEntityRenderer::new);
 		net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry.register(SCContent.KEYCARD_READER_BLOCK_ENTITY, net.geforcemods.securitycraft.renderers.DisguisableBlockEntityRenderer::new);
+		net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry.register(SCContent.USERNAME_LOGGER_BLOCK_ENTITY, net.geforcemods.securitycraft.renderers.DisguisableBlockEntityRenderer::new);
 		ClientPlayNetworking.registerGlobalReceiver(net.geforcemods.securitycraft.network.UpdateLaserColorsPayload.CHANNEL, (client, handler, buf, responseSender) -> {
 			net.geforcemods.securitycraft.network.UpdateLaserColorsPayload payload = net.geforcemods.securitycraft.network.UpdateLaserColorsPayload.read(buf);
 
@@ -204,7 +221,7 @@ public class SecurityCraftClient implements ClientModInitializer {
 		BlockRenderLayerMap.INSTANCE.putBlock(SCContent.REINFORCED_DOOR, RenderType.cutout());
 
 		// Disguise: wrap disguisable block models so they can render as the disguised block (from the disguise module).
-		java.util.Set<String> disguisableModelPaths = java.util.Set.of("laser_block", "keypad", "keycard_reader", "retinal_scanner");
+		java.util.Set<String> disguisableModelPaths = java.util.Set.of("laser_block", "keypad", "keycard_reader", "retinal_scanner", "username_logger");
 		net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin.register(pluginContext -> pluginContext.modifyModelAfterBake().register((model, context) -> {
 			net.minecraft.resources.ResourceLocation id = context.id();
 

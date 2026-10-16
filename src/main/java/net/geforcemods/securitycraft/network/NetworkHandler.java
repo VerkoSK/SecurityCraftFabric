@@ -88,6 +88,11 @@ public final class NetworkHandler {
 
 			server.execute(() -> handleSyncAlarmSettings(player, payload));
 		});
+		ServerPlayNetworking.registerGlobalReceiver(ClearLoggerServerPayload.CHANNEL, (server, player, handler, buf, sender) -> {
+			ClearLoggerServerPayload payload = ClearLoggerServerPayload.read(buf);
+
+			server.execute(() -> handleClearLogger(player, payload));
+		});
 	}
 
 	private static void handleSyncKeycardSettings(ServerPlayer player, SyncKeycardSettingsPayload payload) {
@@ -240,6 +245,22 @@ public final class NetworkHandler {
 
 	public static void openAlarmScreen(ServerPlayer player, BlockPos pos) {
 		ServerPlayNetworking.send(player, OpenAlarmScreenPayload.CHANNEL, new OpenAlarmScreenPayload(pos).write());
+	}
+
+	public static void openUsernameLoggerScreen(ServerPlayer player, BlockPos pos) {
+		if (player.level().getBlockEntity(pos) instanceof net.geforcemods.securitycraft.blockentities.UsernameLoggerBlockEntity be)
+			be.syncLoggedPlayersToClient(player);
+		ServerPlayNetworking.send(player, OpenUsernameLoggerScreenPayload.CHANNEL, new OpenUsernameLoggerScreenPayload(pos).write());
+	}
+
+	private static void handleClearLogger(ServerPlayer player, ClearLoggerServerPayload payload) {
+		ServerLevel level = player.serverLevel();
+
+		if (player.isSpectator() || !inReach(player, payload.pos()) || !(level.getBlockEntity(payload.pos()) instanceof net.geforcemods.securitycraft.blockentities.UsernameLoggerBlockEntity be) || !be.isOwnedBy(player))
+			return;
+
+		be.clearEntries();
+		be.getLevel().sendBlockUpdated(be.getBlockPos(), be.getBlockState(), be.getBlockState(), 2);
 	}
 
 	public static void openKeypadScreen(ServerPlayer player, BlockPos pos, boolean setup, String ownerName) {
