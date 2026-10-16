@@ -1,0 +1,56 @@
+package net.geforcemods.securitycraft.blockentities;
+
+import java.util.List;
+
+import net.geforcemods.securitycraft.SCContent;
+import net.geforcemods.securitycraft.api.CustomizableBlockEntity;
+import net.geforcemods.securitycraft.api.Option;
+import net.geforcemods.securitycraft.api.Option.DoubleOption;
+import net.geforcemods.securitycraft.blocks.MotionActivatedLightBlock;
+import net.geforcemods.securitycraft.misc.ModuleType;
+import net.geforcemods.securitycraft.util.ITickingBlockEntity;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
+
+public class MotionActivatedLightBlockEntity extends CustomizableBlockEntity implements ITickingBlockEntity {
+	private static final int TICKS_BETWEEN_ATTACKS = 5;
+	private DoubleOption searchRadiusOption = new DoubleOption("searchRadius", 5.0D, 5.0D, 20.0D, 1.0D);
+	private int attackCooldown = TICKS_BETWEEN_ATTACKS;
+
+	public MotionActivatedLightBlockEntity(BlockPos pos, BlockState state) {
+		super(SCContent.MOTION_LIGHT_BLOCK_ENTITY, pos, state);
+	}
+
+	@Override
+	public void tick(Level level, BlockPos pos, BlockState state) {
+		if (attackCooldown-- > 0)
+			return;
+
+		attackCooldown = TICKS_BETWEEN_ATTACKS;
+
+		double searchRadius = searchRadiusOption.get();
+		List<LivingEntity> entities = level.getEntitiesOfClass(LivingEntity.class, new AABB(pos).inflate(searchRadius), e -> !(e instanceof Player player && (player.isSpectator() || player.isCreative() && isOwnedBy(player))) && !isAllowed(e));
+		boolean shouldBeOn = !entities.isEmpty();
+
+		if (state.getValue(MotionActivatedLightBlock.LIT) != shouldBeOn)
+			level.setBlockAndUpdate(pos, state.setValue(MotionActivatedLightBlock.LIT, shouldBeOn));
+	}
+
+	@Override
+	public ModuleType[] acceptedModules() {
+		return new ModuleType[] {
+				ModuleType.ALLOWLIST
+		};
+	}
+
+	@Override
+	public Option<?>[] customOptions() {
+		return new Option[] {
+				searchRadiusOption
+		};
+	}
+}

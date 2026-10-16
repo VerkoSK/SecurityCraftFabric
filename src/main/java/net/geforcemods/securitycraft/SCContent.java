@@ -91,6 +91,8 @@ public class SCContent {
 	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.KeycardReaderBlockEntity> KEYCARD_READER_BLOCK_ENTITY;
 	public static net.geforcemods.securitycraft.blocks.KeycardLockBlock KEYCARD_LOCK;
 	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.KeycardLockBlockEntity> KEYCARD_LOCK_BLOCK_ENTITY;
+	public static net.geforcemods.securitycraft.blocks.MotionActivatedLightBlock MOTION_ACTIVATED_LIGHT;
+	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.MotionActivatedLightBlockEntity> MOTION_LIGHT_BLOCK_ENTITY;
 	public static net.minecraft.world.inventory.MenuType<net.geforcemods.securitycraft.inventory.KeycardReaderMenu> KEYCARD_READER_MENU;
 	public static net.minecraft.world.inventory.MenuType<net.geforcemods.securitycraft.inventory.KeycardHolderMenu> KEYCARD_HOLDER_MENU;
 	public static Item KEYCARD_LV1;
@@ -792,10 +794,12 @@ public class SCContent {
 	}
 
 	public static void init() {
-		KEYPAD = register("keypad", new KeypadBlock(alwaysDrop(BlockBehaviour.Properties.of().strength(2.0F, 12000.0F))));
-		LASER_BLOCK = (net.geforcemods.securitycraft.blocks.LaserBlock) register("laser_block", new net.geforcemods.securitycraft.blocks.LaserBlock(alwaysDrop(BlockBehaviour.Properties.of().strength(3.5F).sound(SoundType.METAL))));
+		KEYPAD = register("keypad", new KeypadBlock(propDisguisable(MapColor.METAL, 5.0F).sound(SoundType.METAL)));
+		LASER_BLOCK = (net.geforcemods.securitycraft.blocks.LaserBlock) register("laser_block", new net.geforcemods.securitycraft.blocks.LaserBlock(propDisguisable(3.5F).sound(SoundType.METAL)));
 		LASER_FIELD = (net.geforcemods.securitycraft.blocks.LaserFieldBlock) registerBlockNoItem("laser", new net.geforcemods.securitycraft.blocks.LaserFieldBlock(alwaysDrop(BlockBehaviour.Properties.of().mapColor(net.minecraft.world.level.material.MapColor.NONE).strength(-1.0F).noLootTable().noOcclusion())));
 		PORTABLE_RADAR = (net.geforcemods.securitycraft.blocks.PortableRadarBlock) register("portable_radar", new net.geforcemods.securitycraft.blocks.PortableRadarBlock(alwaysDrop(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_BLACK).strength(5.0F, Float.MAX_VALUE))));
+		MOTION_ACTIVATED_LIGHT = (net.geforcemods.securitycraft.blocks.MotionActivatedLightBlock) register("motion_activated_light", new net.geforcemods.securitycraft.blocks.MotionActivatedLightBlock(prop(MapColor.NONE, 5.0F).sound(SoundType.GLASS).lightLevel(state -> state.getValue(net.geforcemods.securitycraft.blocks.MotionActivatedLightBlock.LIT) ? 15 : 0)));
+		CUTOUT_BLOCKS.add(MOTION_ACTIVATED_LIGHT);
 		KEY_PANEL = (net.geforcemods.securitycraft.blocks.KeyPanelBlock) registerBlockNoItem("key_panel", new net.geforcemods.securitycraft.blocks.KeyPanelBlock(alwaysDrop(BlockBehaviour.Properties.of().strength(3.5F).sound(SoundType.METAL).noOcclusion())));
 		KEY_PANEL_ITEM = registerItem("keypad_item", new net.geforcemods.securitycraft.items.KeyPanelItem(new Item.Properties()));
 		FRAME = (net.geforcemods.securitycraft.blocks.FrameBlock) register("keypad_frame", new net.geforcemods.securitycraft.blocks.FrameBlock(alwaysDrop(BlockBehaviour.Properties.of().mapColor(net.minecraft.world.level.material.MapColor.METAL).strength(5.0F).sound(SoundType.METAL).noOcclusion())));
@@ -812,7 +816,7 @@ public class SCContent {
 		CUTOUT_BLOCKS.add(KEYPAD_DOOR);
 		KEYPAD_TRAPDOOR = (net.geforcemods.securitycraft.blocks.KeypadTrapdoorBlock) register("keypad_trapdoor", new net.geforcemods.securitycraft.blocks.KeypadTrapdoorBlock(BlockSetType.IRON, alwaysDrop(BlockBehaviour.Properties.of().mapColor(net.minecraft.world.level.material.MapColor.METAL).strength(5.0F, 12000.0F).sound(SoundType.METAL).noOcclusion())));
 		CUTOUT_BLOCKS.add(KEYPAD_TRAPDOOR);
-		RETINAL_SCANNER = (net.geforcemods.securitycraft.blocks.RetinalScannerBlock) register("retinal_scanner", new net.geforcemods.securitycraft.blocks.RetinalScannerBlock(alwaysDrop(BlockBehaviour.Properties.of().mapColor(net.minecraft.world.level.material.MapColor.STONE).strength(5.0F, 12000.0F).sound(SoundType.STONE).noOcclusion())));
+		RETINAL_SCANNER = (net.geforcemods.securitycraft.blocks.RetinalScannerBlock) register("retinal_scanner", new net.geforcemods.securitycraft.blocks.RetinalScannerBlock(propDisguisable(3.5F)));
 		CUTOUT_BLOCKS.add(RETINAL_SCANNER);
 		SCANNER_DOOR = (net.geforcemods.securitycraft.blocks.ScannerDoorBlock) registerBlockNoItem("scanner_door", new net.geforcemods.securitycraft.blocks.ScannerDoorBlock(BlockSetType.IRON, alwaysDrop(BlockBehaviour.Properties.of().mapColor(net.minecraft.world.level.material.MapColor.METAL).strength(5.0F, 12000.0F).sound(SoundType.METAL).noOcclusion())));
 		SCANNER_DOOR_ITEM = registerItem("scanner_door_item", new net.minecraft.world.item.DoubleHighBlockItem(SCANNER_DOOR, new Item.Properties()));
@@ -820,7 +824,7 @@ public class SCContent {
 		CUTOUT_BLOCKS.add(SCANNER_DOOR);
 		SCANNER_TRAPDOOR = (net.geforcemods.securitycraft.blocks.ScannerTrapdoorBlock) register("scanner_trapdoor", new net.geforcemods.securitycraft.blocks.ScannerTrapdoorBlock(BlockSetType.IRON, alwaysDrop(BlockBehaviour.Properties.of().mapColor(net.minecraft.world.level.material.MapColor.METAL).strength(5.0F, 12000.0F).sound(SoundType.METAL).noOcclusion())));
 		CUTOUT_BLOCKS.add(SCANNER_TRAPDOOR);
-		KEYCARD_READER = (net.geforcemods.securitycraft.blocks.KeycardReaderBlock) register("keycard_reader", new net.geforcemods.securitycraft.blocks.KeycardReaderBlock(alwaysDrop(BlockBehaviour.Properties.of().mapColor(net.minecraft.world.level.material.MapColor.STONE).strength(5.0F, 12000.0F).sound(SoundType.STONE).noOcclusion())));
+		KEYCARD_READER = (net.geforcemods.securitycraft.blocks.KeycardReaderBlock) register("keycard_reader", new net.geforcemods.securitycraft.blocks.KeycardReaderBlock(propDisguisable(3.5F)));
 		CUTOUT_BLOCKS.add(KEYCARD_READER);
 		KEYCARD_LOCK = (net.geforcemods.securitycraft.blocks.KeycardLockBlock) register("keycard_lock", new net.geforcemods.securitycraft.blocks.KeycardLockBlock(alwaysDrop(BlockBehaviour.Properties.of().strength(3.5F).sound(SoundType.METAL).noOcclusion())));
 		CUTOUT_BLOCKS.add(KEYCARD_LOCK);
@@ -1091,6 +1095,7 @@ public class SCContent {
 		TRACK_MINE_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("track_mine"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.TrackMineBlockEntity::new, TRACK_MINE).build());
 		BRUSHABLE_MINE_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("brushable_mine"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.BrushableMineBlockEntity::new, SUSPICIOUS_SAND_MINE, SUSPICIOUS_GRAVEL_MINE).build());
 		PORTABLE_RADAR_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("portable_radar"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.PortableRadarBlockEntity::new, PORTABLE_RADAR).build());
+		MOTION_LIGHT_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("motion_light"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.MotionActivatedLightBlockEntity::new, MOTION_ACTIVATED_LIGHT).build());
 		BOUNCING_BETTY_ENTITY = Registry.register(BuiltInRegistries.ENTITY_TYPE, id("bouncingbetty"), FabricEntityTypeBuilder.<BouncingBetty>create(MobCategory.MISC, BouncingBetty::new).dimensions(EntityDimensions.fixed(0.5F, 0.2F)).trackRangeBlocks(128).trackedUpdateRate(1).forceTrackedVelocityUpdates(true).build());
 		IMS_BOMB_ENTITY = Registry.register(BuiltInRegistries.ENTITY_TYPE, id("imsbomb"), FabricEntityTypeBuilder.<IMSBomb>create(MobCategory.MISC, IMSBomb::new).dimensions(EntityDimensions.fixed(0.25F, 0.3F)).trackRangeBlocks(256).trackedUpdateRate(1).forceTrackedVelocityUpdates(true).build());
 		CUSTOMIZE_BLOCK_MENU = Registry.register(BuiltInRegistries.MENU, id("customize_block"), new net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType<>((syncId, inv, buf) -> new net.geforcemods.securitycraft.inventory.CustomizeBlockMenu(syncId, inv, buf)));
@@ -1101,6 +1106,33 @@ public class SCContent {
 		DISGUISE_MODULE_MENU = Registry.register(BuiltInRegistries.MENU, id("disguise_module"), new net.minecraft.world.inventory.MenuType<>(net.geforcemods.securitycraft.inventory.DisguiseModuleMenu::new, net.minecraft.world.flag.FeatureFlags.VANILLA_SET));
 		net.geforcemods.securitycraft.misc.SCSounds.register();
 		registerCreativeTab();
+	}
+
+	private static BlockBehaviour.Properties prop(float hardness) {
+		return prop(MapColor.STONE, hardness);
+	}
+
+	private static BlockBehaviour.Properties prop(MapColor color, float hardness) {
+		return alwaysDrop(BlockBehaviour.Properties.of().mapColor(color).strength(hardness, Float.MAX_VALUE));
+	}
+
+	private static BlockBehaviour.Properties propDisguisable(float hardness) {
+		return propDisguisable(MapColor.STONE, hardness, true);
+	}
+
+	private static BlockBehaviour.Properties propDisguisable(MapColor color, float hardness) {
+		return propDisguisable(color, hardness, true);
+	}
+
+	private static BlockBehaviour.Properties propDisguisable(MapColor color, float hardness, boolean forceSolidOn) {
+		return propDisguisable(prop(color, hardness), forceSolidOn);
+	}
+
+	private static BlockBehaviour.Properties propDisguisable(BlockBehaviour.Properties properties, boolean forceSolidOn) {
+		if (forceSolidOn)
+			properties.forceSolidOn();
+
+		return properties.noOcclusion().dynamicShape().isRedstoneConductor(net.geforcemods.securitycraft.blocks.DisguisableBlock::isNormalCube).isSuffocating(net.geforcemods.securitycraft.blocks.DisguisableBlock::isSuffocating);
 	}
 
 	private static Block registerBlockNoItem(String name, Block block) {

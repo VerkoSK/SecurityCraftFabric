@@ -29,6 +29,24 @@ public abstract class DisguisableBlock extends OwnableBlock implements SimpleWat
 		super(properties);
 	}
 
+	public static boolean isNormalCube(BlockState state, BlockGetter level, BlockPos pos) {
+		BlockState disguisedState = IDisguisable.getDisguisedStateOrDefault(state, level, pos);
+
+		if (disguisedState.getBlock() != state.getBlock())
+			return disguisedState.isRedstoneConductor(level, pos);
+		else
+			return state.isSolid() && state.isCollisionShapeFullBlock(level, pos);
+	}
+
+	public static boolean isSuffocating(BlockState state, BlockGetter level, BlockPos pos) {
+		BlockState disguisedState = IDisguisable.getDisguisedStateOrDefault(state, level, pos);
+
+		if (disguisedState.getBlock() != state.getBlock())
+			return disguisedState.isSuffocating(level, pos);
+		else
+			return state.blocksMotion() && state.isCollisionShapeFullBlock(level, pos);
+	}
+
 	@Override
 	public float getDestroyProgress(BlockState state, Player player, BlockGetter level, BlockPos pos) {
 		BlockState disguisedState = IDisguisable.getDisguisedStateOrDefault(state, level, pos);

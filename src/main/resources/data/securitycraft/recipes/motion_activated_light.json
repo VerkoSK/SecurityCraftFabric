@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "L": {
+      "item": "minecraft:redstone_lamp"
+    },
+    "R": {
+      "item": "securitycraft:portable_radar"
+    },
+    "S": {
+      "item": "minecraft:stick"
+    }
+  },
+  "pattern": [
+    "L",
+    "R",
+    "S"
+  ],
+  "result": {
+    "item": "securitycraft:motion_activated_light"
+  },
+  "show_notification": true
+}
