@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
+import net.geforcemods.securitycraft.blockentities.DisguisableBlockEntity;
 import net.geforcemods.securitycraft.util.ITickingBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -14,7 +15,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
-public abstract class LinkableBlockEntity extends CustomizableBlockEntity implements ITickingBlockEntity {
+public abstract class LinkableBlockEntity extends DisguisableBlockEntity implements ITickingBlockEntity {
 	private ListTag nbtTagStorage = null;
 
 	protected LinkableBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {

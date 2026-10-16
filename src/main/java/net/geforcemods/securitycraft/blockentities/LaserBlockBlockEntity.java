@@ -293,23 +293,6 @@ public class LaserBlockBlockEntity extends LinkableBlockEntity implements Extend
 		return lenses;
 	}
 
-	/** The block state this laser is disguised as (from an enabled disguise module), or null. */
-	public BlockState getDisguisedState() {
-		if (isModuleEnabled(ModuleType.DISGUISE)) {
-			net.minecraft.world.level.block.Block addon = ModuleItem.getBlockAddon(getModule(ModuleType.DISGUISE));
-
-			if (addon != null && addon != SCContent.LASER_BLOCK)
-				return addon.defaultBlockState();
-		}
-
-		return null;
-	}
-
-	@Override
-	public Object getRenderData() {
-		return getDisguisedState();
-	}
-
 	@Override
 	public ModuleType[] acceptedModules() {
 		return new ModuleType[] {

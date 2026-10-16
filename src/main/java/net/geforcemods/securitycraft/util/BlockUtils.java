@@ -48,4 +48,8 @@ public class BlockUtils {
 			level.updateNeighborsAt(pos.relative(dir), block);
 		}
 	}
+
+	public static boolean areItemsEqual(net.minecraft.world.item.ItemStack firstItemStack, net.minecraft.world.item.ItemStack secondItemStack, boolean exactComponentCheck) {
+		return exactComponentCheck ? net.minecraft.world.item.ItemStack.isSameItemSameTags(firstItemStack, secondItemStack) : firstItemStack.is(secondItemStack.getItem());
+	}
 }

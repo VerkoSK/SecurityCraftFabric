@@ -44,9 +44,8 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
 
-public class LaserBlock extends OwnableBlock implements SimpleWaterloggedBlock {
+public class LaserBlock extends DisguisableBlock {
 	public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
-	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
 	public LaserBlock(BlockBehaviour.Properties properties) {
 		super(properties);

@@ -31,6 +31,7 @@ public class SCJEIPlugin implements IModPlugin {
 	public void registerGuiHandlers(IGuiHandlerRegistration registration) {
 		registration.addGuiContainerHandler(BlockReinforcerScreen.class, new SlotMover<>());
 		registration.addGuiContainerHandler(CustomizeBlockScreen.class, new SlotMover<>());
+		registration.addGuiContainerHandler(net.geforcemods.securitycraft.screen.DisguiseModuleScreen.class, new SlotMover<>());
 	}
 
 	@Override

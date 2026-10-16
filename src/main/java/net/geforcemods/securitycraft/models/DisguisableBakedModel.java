@@ -40,13 +40,16 @@ public class DisguisableBakedModel implements BakedModel, FabricBakedModel {
 	public void emitBlockQuads(BlockAndTintGetter blockView, BlockState state, BlockPos pos, Supplier<RandomSource> randomSupplier, RenderContext context) {
 		Object data = ((FabricBlockView) blockView).getBlockEntityRenderData(pos);
 
-		if (data instanceof BlockState disguised) {
+		if (data instanceof BlockState disguised && !disguised.isAir()) {
 			BakedModel disguiseModel = Minecraft.getInstance().getBlockRenderer().getBlockModelShaper().getBlockModel(disguised);
 
-			((FabricBakedModel) disguiseModel).emitBlockQuads(blockView, disguised, pos, randomSupplier, context);
+			if (disguiseModel != null && disguiseModel != this) {
+				((FabricBakedModel) disguiseModel).emitBlockQuads(blockView, disguised, pos, randomSupplier, context);
+				return;
+			}
 		}
-		else
-			((FabricBakedModel) base).emitBlockQuads(blockView, state, pos, randomSupplier, context);
+
+		((FabricBakedModel) base).emitBlockQuads(blockView, state, pos, randomSupplier, context);
 	}
 
 	@Override

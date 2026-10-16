@@ -1,28 +1,44 @@
 package net.geforcemods.securitycraft.inventory;
 
+import org.lwjgl.glfw.GLFW;
+
 import net.geforcemods.securitycraft.SCContent;
-import net.geforcemods.securitycraft.util.PlayerUtils;
+import net.geforcemods.securitycraft.util.StandingOrWallType;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.nbt.NbtUtils;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 
-/** Container for the disguise module: a single slot holding the block the module disguises as (stored in its CONTAINER component). */
-public class DisguiseModuleMenu extends AbstractContainerMenu {
-	private final ModuleItemContainer inventory;
+public class DisguiseModuleMenu extends StateSelectorAccessMenu {
+	private ModuleItemContainer inventory;
+	private BlockState savedState = Blocks.AIR.defaultBlockState();
+	private StandingOrWallType standingOrWall = StandingOrWallType.NONE;
 
 	public DisguiseModuleMenu(int windowId, Inventory playerInventory) {
-		this(windowId, playerInventory, new ModuleItemContainer(PlayerUtils.getItemStackFromAnyHand(playerInventory.player, SCContent.DISGUISE_MODULE)));
+		this(windowId, playerInventory, new ModuleItemContainer(net.geforcemods.securitycraft.util.PlayerUtils.getItemStackFromAnyHand(playerInventory.player, SCContent.DISGUISE_MODULE)));
+	}
+
+	public DisguiseModuleMenu(int windowId, Inventory playerInventory, FriendlyByteBuf buf) {
+		this(windowId, playerInventory, new ModuleItemContainer(playerInventory.player.getItemInHand(buf.readEnum(net.minecraft.world.InteractionHand.class))));
 	}
 
 	public DisguiseModuleMenu(int windowId, Inventory playerInventory, ModuleItemContainer moduleInventory) {
 		super(SCContent.DISGUISE_MODULE_MENU, windowId);
 		inventory = moduleInventory;
-		moduleInventory.setMenu(this);
-		addSlot(new AddonSlot(inventory, 0, 80, 20));
+		inventory.setMenu(this);
+		addSlot(new AddonSlot(inventory, 0, 79, 20));
+
+		if (inventory.getModule().hasTag()) {
+			savedState = NbtUtils.readBlockState(playerInventory.player.level().holderLookup(Registries.BLOCK), inventory.getModule().getTag().getCompound("SavedState"));
+			standingOrWall = StandingOrWallType.values()[inventory.getModule().getTag().getInt("StandingOrWall")];
+		}
 
 		for (int i = 0; i < 3; i++) {
 			for (int j = 0; j < 9; j++) {
@@ -42,17 +58,16 @@ public class DisguiseModuleMenu extends AbstractContainerMenu {
 
 		if (slot.hasItem()) {
 			ItemStack slotStack = slot.getItem();
-			int size = inventory.getContainerSize();
 
 			slotStackCopy = slotStack.copy();
 
-			if (index < size) {
-				if (!moveItemStackTo(slotStack, size, 37, true))
+			if (index < inventory.getContainerSize()) {
+				if (!moveItemStackTo(slotStack, inventory.getContainerSize(), 37, true))
 					return ItemStack.EMPTY;
 
 				slot.onQuickCraft(slotStack, slotStackCopy);
 			}
-			else if (!moveItemStackTo(slotStack, 0, size, false))
+			else if (index >= inventory.getContainerSize() && !moveItemStackTo(slotStack, 0, inventory.getContainerSize(), false))
 				return ItemStack.EMPTY;
 
 			if (slotStack.getCount() == 0)
@@ -64,7 +79,6 @@ public class DisguiseModuleMenu extends AbstractContainerMenu {
 				return ItemStack.EMPTY;
 
 			slot.onTake(player, slotStack);
-			broadcastChanges();
 		}
 
 		return slotStackCopy;
@@ -72,7 +86,9 @@ public class DisguiseModuleMenu extends AbstractContainerMenu {
 
 	@Override
 	public void clicked(int slot, int dragType, ClickType clickType, Player player) {
-		if (!(slot >= 0 && getSlot(slot) != null && getSlot(slot).getItem().getItem() == SCContent.DISGUISE_MODULE))
+		if (slot >= 0 && getSlot(slot).getItem() == inventory.getModule() || clickType == ClickType.SWAP && dragType == GLFW.GLFW_KEY_1 + player.getInventory().selected && inventory.getModule() == player.getMainHandItem())
+			return;
+		else
 			super.clicked(slot, dragType, clickType, player);
 	}
 
@@ -86,9 +102,18 @@ public class DisguiseModuleMenu extends AbstractContainerMenu {
 	}
 
 	@Override
-	public void removed(Player player) {
-		super.removed(player);
-		inventory.stopOpen(player);
+	public ItemStack getStateStack() {
+		return slots.get(0).getItem();
+	}
+
+	@Override
+	public BlockState getSavedState() {
+		return savedState;
+	}
+
+	@Override
+	public StandingOrWallType getStandingOrWallType() {
+		return standingOrWall;
 	}
 
 	public static class AddonSlot extends Slot {

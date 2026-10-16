@@ -36,7 +36,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
  * it. A correct card/hack pulses redstone. Ported from upstream's {@code KeycardReaderBlockEntity}, minus the
  * disguise module and the Sonic Security System lock (not ported).
  */
-public class KeycardReaderBlockEntity extends CustomizableBlockEntity implements MenuProvider, ExtendedScreenHandlerFactory, Codebreakable, ITickingBlockEntity {
+public class KeycardReaderBlockEntity extends DisguisableBlockEntity implements MenuProvider, ExtendedScreenHandlerFactory, Codebreakable, ITickingBlockEntity {
 	protected boolean[] acceptedLevels = {
 			true, false, false, false, false
 	};
@@ -229,7 +229,7 @@ public class KeycardReaderBlockEntity extends CustomizableBlockEntity implements
 	@Override
 	public ModuleType[] acceptedModules() {
 		return new ModuleType[] {
-				ModuleType.ALLOWLIST, ModuleType.DENYLIST, ModuleType.SMART
+				ModuleType.ALLOWLIST, ModuleType.DENYLIST, ModuleType.DISGUISE, ModuleType.SMART, ModuleType.HARMING
 		};
 	}
 

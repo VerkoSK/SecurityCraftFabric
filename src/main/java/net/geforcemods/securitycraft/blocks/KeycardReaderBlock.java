@@ -42,15 +42,14 @@ import net.minecraft.world.phys.BlockHitResult;
  * redstone. A Codebreaker can hack it directly; a Keycard Holder tries every card inside it. Like every reinforced
  * block it can only be mined by whoever placed it.
  */
-public class KeycardReaderBlock extends Block implements EntityBlock, net.geforcemods.securitycraft.api.IDoorActivator {
+public class KeycardReaderBlock extends DisguisableBlock implements net.geforcemods.securitycraft.api.IDoorActivator {
 	public static final DirectionProperty FACING = BlockStateProperties.FACING;
+	public static final DirectionProperty ROTATION = DirectionProperty.create("rotation", Direction.Plane.HORIZONTAL);
 	public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
-	private final float destroyTimeForOwner;
 
 	public KeycardReaderBlock(BlockBehaviour.Properties properties) {
-		super(OwnableBlock.withReinforcedDestroyTime(properties));
-		destroyTimeForOwner = OwnableBlock.getStoredDestroyTime();
-		registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(POWERED, false));
+		super(properties);
+		registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(ROTATION, Direction.NORTH).setValue(POWERED, false).setValue(WATERLOGGED, false));
 	}
 
 	@Override
@@ -128,23 +127,28 @@ public class KeycardReaderBlock extends Block implements EntityBlock, net.geforc
 
 	@Override
 	public BlockState getStateForPlacement(BlockPlaceContext ctx) {
-		return defaultBlockState().setValue(FACING, ctx.getNearestLookingDirection().getOpposite()).setValue(POWERED, false);
+		Direction facing = ctx.getNearestLookingDirection().getOpposite();
+		BlockState state = super.getStateForPlacement(ctx).setValue(FACING, facing).setValue(POWERED, false);
+
+		if (facing == Direction.UP || facing == Direction.DOWN)
+			return state.setValue(ROTATION, ctx.getHorizontalDirection().getOpposite());
+		else
+			return state.setValue(ROTATION, facing);
 	}
 
 	@Override
-	public float getDestroyProgress(BlockState state, Player player, BlockGetter level, BlockPos pos) {
-		return OwnershipUtils.getDestroyProgress(destroyTimeForOwner, state, player, level, pos);
+	public BlockState rotate(BlockState state, net.minecraft.world.level.block.Rotation rot) {
+		return state.setValue(FACING, rot.rotate(state.getValue(FACING))).setValue(ROTATION, rot.rotate(state.getValue(ROTATION)));
 	}
 
 	@Override
-	public void setPlacedBy(Level level, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
-		super.setPlacedBy(level, pos, state, placer, stack);
-		OwnershipUtils.setPlacedBy(level, pos, placer);
+	public BlockState mirror(BlockState state, net.minecraft.world.level.block.Mirror mirror) {
+		return state.rotate(mirror.getRotation(state.getValue(FACING)));
 	}
 
 	@Override
 	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-		builder.add(FACING, POWERED);
+		builder.add(FACING, ROTATION, POWERED, WATERLOGGED);
 	}
 
 	@Override

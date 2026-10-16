@@ -25,7 +25,7 @@ import net.minecraft.world.level.block.state.BlockState;
  * The keypad block entity: owner + salted passcode + the customizable module/option system (allowlist,
  * denylist, disguise, smart, harming). Drives the redstone pulse on a correct code.
  */
-public class KeypadBlockEntity extends CustomizableBlockEntity implements PasscodeProtected, net.fabricmc.fabric.api.blockview.v2.RenderDataBlockEntity {
+public class KeypadBlockEntity extends DisguisableBlockEntity implements PasscodeProtected {
 	private DisabledOption disabled = new DisabledOption(false);
 	private SignalLengthOption signalLength = new SignalLengthOption(60);
 	private SendAllowlistMessageOption sendAllowlistMessage = new SendAllowlistMessageOption(false);
@@ -66,23 +66,6 @@ public class KeypadBlockEntity extends CustomizableBlockEntity implements Passco
 			BlockUtils.updateIndirectNeighbors(level, worldPosition, state.getBlock());
 			level.scheduleTick(worldPosition, state.getBlock(), getSignalLength());
 		}
-	}
-
-	/** The block state this keypad is disguised as (from an enabled disguise module), or null. */
-	public BlockState getDisguisedState() {
-		if (isModuleEnabled(ModuleType.DISGUISE)) {
-			net.minecraft.world.level.block.Block addon = net.geforcemods.securitycraft.items.ModuleItem.getBlockAddon(getModule(ModuleType.DISGUISE));
-
-			if (addon != null && addon != SCContent.KEYPAD)
-				return addon.defaultBlockState();
-		}
-
-		return null;
-	}
-
-	@Override
-	public Object getRenderData() {
-		return getDisguisedState();
 	}
 
 	@Override

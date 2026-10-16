@@ -99,6 +99,7 @@ public class ModuleItemContainer implements Container {
 		}
 
 		changed = true;
+		save();
 
 		if (menu != null)
 			menu.slotsChanged(this);

@@ -33,6 +33,9 @@ public class RetinalScannerRenderer implements BlockEntityRenderer<RetinalScanne
 
 	@Override
 	public void render(RetinalScannerBlockEntity be, float partialTicks, PoseStack pose, MultiBufferSource buffer, int combinedLight, int combinedOverlay) {
+		if ( net.geforcemods.securitycraft.blockentities.DisguisableBlockEntity.DISGUISED_BLOCK_RENDER_DELEGATE.tryRenderDelegate(be, partialTicks, pose, buffer, combinedLight, combinedOverlay))
+			return;
+
 		BlockState state = be.getBlockState();
 		Direction facing = state.getValue(RetinalScannerBlock.FACING);
 		Direction rotation = state.getValue(RetinalScannerBlock.ROTATION);

@@ -78,6 +78,11 @@ public final class NetworkHandler {
 
 			server.execute(() -> handleSetKeycardUses(player, payload));
 		});
+		ServerPlayNetworking.registerGlobalReceiver(SetStateOnDisguiseModulePayload.CHANNEL, (server, player, handler, buf, sender) -> {
+			SetStateOnDisguiseModulePayload payload = SetStateOnDisguiseModulePayload.read(buf);
+
+			server.execute(() -> payload.handle(player));
+		});
 	}
 
 	private static void handleSyncKeycardSettings(ServerPlayer player, SyncKeycardSettingsPayload payload) {

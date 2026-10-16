@@ -33,22 +33,19 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
  * A wall-mounted eye scanner: when its owner (or an allowlisted player) looks at its front from close range, it emits a
  * redstone pulse. Like every reinforced block it can only be mined by whoever placed it.
  */
-public class RetinalScannerBlock extends Block implements EntityBlock, net.geforcemods.securitycraft.api.IDoorActivator {
+public class RetinalScannerBlock extends DisguisableBlock implements net.geforcemods.securitycraft.api.IDoorActivator {
 	public static final DirectionProperty FACING = BlockStateProperties.FACING;
 	public static final DirectionProperty ROTATION = DirectionProperty.create("rotation", Direction.Plane.HORIZONTAL);
 	public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
-	private final float destroyTimeForOwner;
 
 	public RetinalScannerBlock(BlockBehaviour.Properties properties) {
-		super(OwnableBlock.withReinforcedDestroyTime(properties));
-		destroyTimeForOwner = OwnableBlock.getStoredDestroyTime();
-		registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(ROTATION, Direction.NORTH).setValue(POWERED, false));
+		super(properties);
+		registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(ROTATION, Direction.NORTH).setValue(POWERED, false).setValue(WATERLOGGED, false));
 	}
 
 	@Override
 	public void setPlacedBy(Level level, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
 		super.setPlacedBy(level, pos, state, placer, stack);
-		OwnershipUtils.setPlacedBy(level, pos, placer);
 	}
 
 	@Override
@@ -94,13 +91,8 @@ public class RetinalScannerBlock extends Block implements EntityBlock, net.gefor
 	}
 
 	@Override
-	public float getDestroyProgress(BlockState state, Player player, BlockGetter level, BlockPos pos) {
-		return OwnershipUtils.getDestroyProgress(destroyTimeForOwner, state, player, level, pos);
-	}
-
-	@Override
 	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-		builder.add(FACING, ROTATION, POWERED);
+		builder.add(FACING, ROTATION, POWERED, WATERLOGGED);
 	}
 
 	@Override

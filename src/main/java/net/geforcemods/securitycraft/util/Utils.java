@@ -2,11 +2,14 @@ package net.geforcemods.securitycraft.util;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -56,5 +59,20 @@ public class Utils {
 			return getLanguageKeyDenotation(state.getBlock());
 		else
 			return "";
+	}
+
+	public static ResourceLocation getRegistryName(Block block) {
+		return BuiltInRegistries.BLOCK.getKey(block);
+	}
+
+	public static ResourceLocation getRegistryName(Item item) {
+		return BuiltInRegistries.ITEM.getKey(item);
+	}
+
+	public static boolean isInViewDistance(int centerX, int centerZ, int viewDistance, int x, int z) {
+		int dX = Math.abs(x - centerX);
+		int dZ = Math.abs(z - centerZ);
+
+		return dX <= viewDistance && dZ <= viewDistance;
 	}
 }
