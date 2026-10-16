@@ -104,6 +104,9 @@ public class SCContent {
 	public static net.geforcemods.securitycraft.blocks.ProjectorBlock PROJECTOR;
 	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.ProjectorBlockEntity> PROJECTOR_BLOCK_ENTITY;
 	public static net.minecraft.world.inventory.MenuType<net.geforcemods.securitycraft.inventory.ProjectorMenu> PROJECTOR_MENU;
+	public static net.geforcemods.securitycraft.blocks.SecureTradingStationBlock SECURE_TRADING_STATION;
+	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.SecureTradingStationBlockEntity> SECURE_TRADING_STATION_BLOCK_ENTITY;
+	public static net.minecraft.world.inventory.MenuType<net.geforcemods.securitycraft.inventory.SecureTradingStationMenu> SECURE_TRADING_STATION_MENU;
 	public static net.minecraft.world.inventory.MenuType<net.geforcemods.securitycraft.inventory.KeycardReaderMenu> KEYCARD_READER_MENU;
 	public static net.minecraft.world.inventory.MenuType<net.geforcemods.securitycraft.inventory.KeycardHolderMenu> KEYCARD_HOLDER_MENU;
 	public static Item KEYCARD_LV1;
@@ -816,6 +819,7 @@ public class SCContent {
 		USERNAME_LOGGER = (net.geforcemods.securitycraft.blocks.UsernameLoggerBlock) register("username_logger", new net.geforcemods.securitycraft.blocks.UsernameLoggerBlock(propDisguisable(3.5F)));
 		BLOCK_CHANGE_DETECTOR = (net.geforcemods.securitycraft.blocks.BlockChangeDetectorBlock) register("block_change_detector", new net.geforcemods.securitycraft.blocks.BlockChangeDetectorBlock(propDisguisable(3.5F)));
 		PROJECTOR = (net.geforcemods.securitycraft.blocks.ProjectorBlock) register("projector", new net.geforcemods.securitycraft.blocks.ProjectorBlock(propDisguisable(MapColor.METAL, 5.0F).sound(SoundType.METAL)));
+		SECURE_TRADING_STATION = (net.geforcemods.securitycraft.blocks.SecureTradingStationBlock) register("secure_trading_station", new net.geforcemods.securitycraft.blocks.SecureTradingStationBlock(propDisguisable(MapColor.METAL, 5.0F)));
 		KEY_PANEL = (net.geforcemods.securitycraft.blocks.KeyPanelBlock) registerBlockNoItem("key_panel", new net.geforcemods.securitycraft.blocks.KeyPanelBlock(alwaysDrop(BlockBehaviour.Properties.of().strength(3.5F).sound(SoundType.METAL).noOcclusion())));
 		KEY_PANEL_ITEM = registerItem("keypad_item", new net.geforcemods.securitycraft.items.KeyPanelItem(new Item.Properties()));
 		FRAME = (net.geforcemods.securitycraft.blocks.FrameBlock) register("keypad_frame", new net.geforcemods.securitycraft.blocks.FrameBlock(alwaysDrop(BlockBehaviour.Properties.of().mapColor(net.minecraft.world.level.material.MapColor.METAL).strength(5.0F).sound(SoundType.METAL).noOcclusion())));
@@ -1086,6 +1090,8 @@ public class SCContent {
 		BLOCK_CHANGE_DETECTOR_MENU = Registry.register(BuiltInRegistries.MENU, id("block_change_detector"), new net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType<>((syncId, inv, buf) -> new net.geforcemods.securitycraft.inventory.BlockChangeDetectorMenu(syncId, inv.player.level(), buf.readBlockPos(), inv)));
 		PROJECTOR_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("projector"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.ProjectorBlockEntity::new, PROJECTOR).build());
 		PROJECTOR_MENU = Registry.register(BuiltInRegistries.MENU, id("projector"), new net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType<>((syncId, inv, buf) -> new net.geforcemods.securitycraft.inventory.ProjectorMenu(syncId, inv.player.level(), buf.readBlockPos(), inv)));
+		SECURE_TRADING_STATION_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("secure_trading_station"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.SecureTradingStationBlockEntity::new, SECURE_TRADING_STATION).build());
+		SECURE_TRADING_STATION_MENU = Registry.register(BuiltInRegistries.MENU, id("secure_trading_station"), new net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType<>((syncId, inv, buf) -> new net.geforcemods.securitycraft.inventory.SecureTradingStationMenu(syncId, inv.player.level(), buf.readBlockPos(), inv)));
 		ELECTRIFIED_FENCE_AND_GATE_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("electrified_fence_and_gate"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.ElectrifiedFenceAndGateBlockEntity::new, ELECTRIFIED_IRON_FENCE, ELECTRIFIED_IRON_FENCE_GATE).build());
 		REINFORCED_DOOR_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("reinforced_door"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.ReinforcedDoorBlockEntity::new, REINFORCED_DOOR).build());
 		KEYPAD_DOOR_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("keypad_door"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.KeypadDoorBlockEntity::new, KEYPAD_DOOR).build());
@@ -1318,6 +1324,7 @@ public class SCContent {
 					output.accept(UNIVERSAL_KEY_CHANGER);
 					output.accept(RETINAL_SCANNER);
 					output.accept(LASER_BLOCK);
+					output.accept(SECURE_TRADING_STATION);
 					output.accept(USERNAME_LOGGER);
 					output.accept(PORTABLE_RADAR);
 					output.accept(BLOCK_CHANGE_DETECTOR);

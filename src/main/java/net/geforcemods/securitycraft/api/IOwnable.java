@@ -22,6 +22,9 @@ public interface IOwnable {
 	/** Called when this is validated. */
 	default void onValidate() {}
 
+	/** Called when the owner changes. */
+	default void onOwnerChanged(net.minecraft.world.level.block.state.BlockState state, net.minecraft.world.level.Level level, net.minecraft.core.BlockPos pos, Player player, Owner oldOwner, Owner newOwner) {}
+
 	/** Incognito-mask isn't ported, so {@code ignoreMask} has no effect; kept for upstream-signature parity. */
 	default boolean isOwnedBy(Player player, boolean ignoreMask) {
 		return isOwnedBy(player);

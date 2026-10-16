@@ -108,6 +108,11 @@ public final class NetworkHandler {
 
 			server.execute(() -> handleSyncProjector(player, payload));
 		});
+		ServerPlayNetworking.registerGlobalReceiver(RequestSecureTradingStationTransactionsPayload.CHANNEL, (server, player, handler, buf, sender) -> {
+			RequestSecureTradingStationTransactionsPayload payload = RequestSecureTradingStationTransactionsPayload.read(buf);
+
+			server.execute(() -> handleRequestSecureTradingStationTransactions(player, payload));
+		});
 	}
 
 	private static void handleSyncKeycardSettings(ServerPlayer player, SyncKeycardSettingsPayload payload) {
@@ -381,6 +386,13 @@ public final class NetworkHandler {
 
 	private static boolean validPasscode(String passcode) {
 		return passcode != null && !passcode.isBlank();
+	}
+
+	private static void handleRequestSecureTradingStationTransactions(ServerPlayer player, RequestSecureTradingStationTransactionsPayload payload) {
+		ServerLevel level = player.serverLevel();
+
+		if (!player.isSpectator() && inReach(player, payload.pos()) && level.getBlockEntity(payload.pos()) instanceof net.geforcemods.securitycraft.blockentities.SecureTradingStationBlockEntity be)
+			be.doTransaction(player, payload.requestedTransactions());
 	}
 
 	private static boolean inReach(ServerPlayer player, BlockPos pos) {

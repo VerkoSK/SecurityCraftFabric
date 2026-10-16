@@ -151,6 +151,7 @@ public class SecurityCraftClient implements ClientModInitializer {
 		net.minecraft.client.gui.screens.MenuScreens.register(SCContent.KEYCARD_HOLDER_MENU, net.geforcemods.securitycraft.screen.KeycardHolderScreen::new);
 		net.minecraft.client.gui.screens.MenuScreens.register(SCContent.BLOCK_CHANGE_DETECTOR_MENU, net.geforcemods.securitycraft.screen.BlockChangeDetectorScreen::new);
 		net.minecraft.client.gui.screens.MenuScreens.register(SCContent.PROJECTOR_MENU, net.geforcemods.securitycraft.screen.ProjectorScreen::new);
+		net.minecraft.client.gui.screens.MenuScreens.register(SCContent.SECURE_TRADING_STATION_MENU, net.geforcemods.securitycraft.screen.SecureTradingStationScreen::new);
 		//Without these the claymore's lens slot draws nothing and, worse, spawning a bouncing betty or an IMS bomb
 		//throws because Fabric has no renderer registered for their entity types.
 		net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(SCContent.BOUNCING_BETTY_ENTITY, net.geforcemods.securitycraft.renderers.BouncingBettyRenderer::new);
@@ -172,6 +173,7 @@ public class SecurityCraftClient implements ClientModInitializer {
 		net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry.register(SCContent.USERNAME_LOGGER_BLOCK_ENTITY, net.geforcemods.securitycraft.renderers.DisguisableBlockEntityRenderer::new);
 		net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry.register(SCContent.BLOCK_CHANGE_DETECTOR_BLOCK_ENTITY, net.geforcemods.securitycraft.renderers.DisguisableBlockEntityRenderer::new);
 		net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry.register(SCContent.PROJECTOR_BLOCK_ENTITY, net.geforcemods.securitycraft.renderers.ProjectorRenderer::new);
+		net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry.register(SCContent.SECURE_TRADING_STATION_BLOCK_ENTITY, net.geforcemods.securitycraft.renderers.SecureTradingStationRenderer::new);
 		ClientPlayNetworking.registerGlobalReceiver(net.geforcemods.securitycraft.network.UpdateLaserColorsPayload.CHANNEL, (client, handler, buf, responseSender) -> {
 			net.geforcemods.securitycraft.network.UpdateLaserColorsPayload payload = net.geforcemods.securitycraft.network.UpdateLaserColorsPayload.read(buf);
 
@@ -225,7 +227,7 @@ public class SecurityCraftClient implements ClientModInitializer {
 		BlockRenderLayerMap.INSTANCE.putBlock(SCContent.REINFORCED_DOOR, RenderType.cutout());
 
 		// Disguise: wrap disguisable block models so they can render as the disguised block (from the disguise module).
-		java.util.Set<String> disguisableModelPaths = java.util.Set.of("laser_block", "keypad", "keycard_reader", "retinal_scanner", "username_logger", "block_change_detector", "projector");
+		java.util.Set<String> disguisableModelPaths = java.util.Set.of("laser_block", "keypad", "keycard_reader", "retinal_scanner", "username_logger", "block_change_detector", "projector", "secure_trading_station");
 		net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin.register(pluginContext -> pluginContext.modifyModelAfterBake().register((model, context) -> {
 			net.minecraft.resources.ResourceLocation id = context.id();
 
