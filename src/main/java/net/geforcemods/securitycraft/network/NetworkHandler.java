@@ -93,6 +93,16 @@ public final class NetworkHandler {
 
 			server.execute(() -> handleClearLogger(player, payload));
 		});
+		ServerPlayNetworking.registerGlobalReceiver(ClearChangeDetectorServerPayload.CHANNEL, (server, player, handler, buf, sender) -> {
+			ClearChangeDetectorServerPayload payload = ClearChangeDetectorServerPayload.read(buf);
+
+			server.execute(() -> handleClearChangeDetector(player, payload));
+		});
+		ServerPlayNetworking.registerGlobalReceiver(SyncBlockChangeDetectorPayload.CHANNEL, (server, player, handler, buf, sender) -> {
+			SyncBlockChangeDetectorPayload payload = SyncBlockChangeDetectorPayload.read(buf);
+
+			server.execute(() -> handleSyncBlockChangeDetector(player, payload));
+		});
 	}
 
 	private static void handleSyncKeycardSettings(ServerPlayer player, SyncKeycardSettingsPayload payload) {
@@ -261,6 +271,39 @@ public final class NetworkHandler {
 
 		be.clearEntries();
 		be.getLevel().sendBlockUpdated(be.getBlockPos(), be.getBlockState(), be.getBlockState(), 2);
+	}
+
+	private static void handleClearChangeDetector(ServerPlayer player, ClearChangeDetectorServerPayload payload) {
+		ServerLevel level = player.serverLevel();
+
+		if (player.isSpectator() || !inReach(player, payload.pos()) || !(level.getBlockEntity(payload.pos()) instanceof net.geforcemods.securitycraft.blockentities.BlockChangeDetectorBlockEntity be) || !be.isOwnedBy(player))
+			return;
+
+		BlockState state = be.getBlockState();
+
+		be.getEntries().clear();
+		be.setChanged();
+		level.sendBlockUpdated(payload.pos(), state, state, 2);
+
+		if (state.getValue(net.geforcemods.securitycraft.blocks.BlockChangeDetectorBlock.POWERED)) {
+			level.setBlockAndUpdate(payload.pos(), state.setValue(net.geforcemods.securitycraft.blocks.BlockChangeDetectorBlock.POWERED, false));
+			net.geforcemods.securitycraft.util.BlockUtils.updateIndirectNeighbors(level, payload.pos(), SCContent.BLOCK_CHANGE_DETECTOR, net.geforcemods.securitycraft.blocks.AbstractPanelBlock.getConnectedDirection(state).getOpposite());
+		}
+	}
+
+	private static void handleSyncBlockChangeDetector(ServerPlayer player, SyncBlockChangeDetectorPayload payload) {
+		ServerLevel level = player.serverLevel();
+
+		if (player.isSpectator() || !inReach(player, payload.pos()) || !(level.getBlockEntity(payload.pos()) instanceof net.geforcemods.securitycraft.blockentities.BlockChangeDetectorBlockEntity be) || !be.isOwnedBy(player))
+			return;
+
+		BlockState state = level.getBlockState(payload.pos());
+
+		be.setMode(payload.mode());
+		be.showHighlights(payload.showHighlights());
+		be.setColor(payload.color());
+		be.setChanged();
+		level.sendBlockUpdated(payload.pos(), state, state, 2);
 	}
 
 	public static void openKeypadScreen(ServerPlayer player, BlockPos pos, boolean setup, String ownerName) {

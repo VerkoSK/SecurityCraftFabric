@@ -22,6 +22,9 @@
 	"license": "MIT",
 	"icon": "sc_logo.png",
 	"environment": "*",
+	"mixins": [
+		"securitycraft.mixins.json"
+	],
 	"entrypoints": {
 		"main": [
 			"net.geforcemods.securitycraft.SecurityCraft"

@@ -31,6 +31,10 @@ public class SecurityCraft implements ModInitializer {
 		net.geforcemods.securitycraft.items.CodebreakerItem.registerUseCallback();
 		net.geforcemods.securitycraft.misc.ContainerLockEnforcement.register();
 		net.geforcemods.securitycraft.items.UniversalBlockModifierItem.registerUseCallback();
+		net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents.AFTER.register((level, player, pos, state, blockEntity) -> {
+			if (!level.isClientSide())
+				net.geforcemods.securitycraft.misc.BlockEntityTracker.BLOCK_CHANGE_DETECTOR.getBlockEntitiesInRange(level, pos).forEach(detector -> detector.log(player, net.geforcemods.securitycraft.blockentities.BlockChangeDetectorBlockEntity.DetectionMode.BREAK, pos, state));
+		});
 		ServerLifecycleEvents.SERVER_STARTED.register(server -> SERVER = server);
 		ServerLifecycleEvents.SERVER_STOPPED.register(server -> SERVER = null);
 		LOGGER.info("SecurityCraft (Fabric port) v{} initialized", VERSION);

@@ -26,6 +26,7 @@ public class CollapsibleTextList extends Button {
 	private final BiPredicate<Integer, Integer> extraHoverCheck;
 	private boolean open = true;
 	private boolean isMessageTooLong = false;
+	private int currentHeight, previousHeight;
 
 	public CollapsibleTextList(int xPos, int yPos, int width, Component displayString, List<? extends FormattedText> textLines, OnPress onPress, BiPredicate<Integer, Integer> extraHoverCheck) {
 		super(xPos, yPos, width, 12, displayString, onPress, DEFAULT_NARRATION);
@@ -44,7 +45,19 @@ public class CollapsibleTextList extends Button {
 		}
 
 		maximumHeight = height + amountOfLines * font.lineHeight + textLines.size() * 3;
+		currentHeight = previousHeight = height;
 		this.extraHoverCheck = extraHoverCheck;
+	}
+
+	public void tick() {
+		previousHeight = currentHeight;
+
+		if (open) {
+			if (currentHeight < maximumHeight)
+				currentHeight = Math.min(currentHeight + 40, maximumHeight);
+		}
+		else if (currentHeight > height)
+			currentHeight = Math.max(height, currentHeight - 40);
 	}
 
 	@Override
@@ -126,11 +139,17 @@ public class CollapsibleTextList extends Button {
 
 	@Override
 	public int getHeight() {
-		return open ? maximumHeight : height;
+		return currentHeight;
 	}
 
 	public int getMaximumHeight() {
-		return maximumHeight;
+		return open ? maximumHeight : height;
+	}
+
+	public void setHeight(int height) {
+		this.height = height;
+		this.currentHeight = height;
+		this.previousHeight = height;
 	}
 
 	@Override
@@ -161,7 +180,7 @@ public class CollapsibleTextList extends Button {
 		return open;
 	}
 
-	private void switchOpenStatus() {
+	public void switchOpenStatus() {
 		open = !open;
 		setMessage((open ? MINUS : PLUS).copy().append(originalDisplayString));
 	}

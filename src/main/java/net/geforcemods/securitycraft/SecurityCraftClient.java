@@ -149,6 +149,7 @@ public class SecurityCraftClient implements ClientModInitializer {
 		net.minecraft.client.gui.screens.MenuScreens.register(SCContent.SINGLE_LENS_MENU, net.geforcemods.securitycraft.screen.SingleLensScreen::new);
 		net.minecraft.client.gui.screens.MenuScreens.register(SCContent.KEYCARD_READER_MENU, net.geforcemods.securitycraft.screen.KeycardReaderScreen::new);
 		net.minecraft.client.gui.screens.MenuScreens.register(SCContent.KEYCARD_HOLDER_MENU, net.geforcemods.securitycraft.screen.KeycardHolderScreen::new);
+		net.minecraft.client.gui.screens.MenuScreens.register(SCContent.BLOCK_CHANGE_DETECTOR_MENU, net.geforcemods.securitycraft.screen.BlockChangeDetectorScreen::new);
 		//Without these the claymore's lens slot draws nothing and, worse, spawning a bouncing betty or an IMS bomb
 		//throws because Fabric has no renderer registered for their entity types.
 		net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(SCContent.BOUNCING_BETTY_ENTITY, net.geforcemods.securitycraft.renderers.BouncingBettyRenderer::new);
@@ -168,6 +169,7 @@ public class SecurityCraftClient implements ClientModInitializer {
 		net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry.register(SCContent.LASER_BLOCK_BLOCK_ENTITY, net.geforcemods.securitycraft.renderers.DisguisableBlockEntityRenderer::new);
 		net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry.register(SCContent.KEYCARD_READER_BLOCK_ENTITY, net.geforcemods.securitycraft.renderers.DisguisableBlockEntityRenderer::new);
 		net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry.register(SCContent.USERNAME_LOGGER_BLOCK_ENTITY, net.geforcemods.securitycraft.renderers.DisguisableBlockEntityRenderer::new);
+		net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry.register(SCContent.BLOCK_CHANGE_DETECTOR_BLOCK_ENTITY, net.geforcemods.securitycraft.renderers.DisguisableBlockEntityRenderer::new);
 		ClientPlayNetworking.registerGlobalReceiver(net.geforcemods.securitycraft.network.UpdateLaserColorsPayload.CHANNEL, (client, handler, buf, responseSender) -> {
 			net.geforcemods.securitycraft.network.UpdateLaserColorsPayload payload = net.geforcemods.securitycraft.network.UpdateLaserColorsPayload.read(buf);
 
@@ -221,7 +223,7 @@ public class SecurityCraftClient implements ClientModInitializer {
 		BlockRenderLayerMap.INSTANCE.putBlock(SCContent.REINFORCED_DOOR, RenderType.cutout());
 
 		// Disguise: wrap disguisable block models so they can render as the disguised block (from the disguise module).
-		java.util.Set<String> disguisableModelPaths = java.util.Set.of("laser_block", "keypad", "keycard_reader", "retinal_scanner", "username_logger");
+		java.util.Set<String> disguisableModelPaths = java.util.Set.of("laser_block", "keypad", "keycard_reader", "retinal_scanner", "username_logger", "block_change_detector");
 		net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin.register(pluginContext -> pluginContext.modifyModelAfterBake().register((model, context) -> {
 			net.minecraft.resources.ResourceLocation id = context.id();
 
@@ -230,6 +232,41 @@ public class SecurityCraftClient implements ClientModInitializer {
 
 			return model;
 		}));
+
+		// Block Change Detector: render bounding box highlights around detected block changes
+		net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents.LAST.register(context -> {
+			Minecraft mc = Minecraft.getInstance();
+			net.minecraft.client.multiplayer.ClientLevel level = mc.level;
+
+			if (level == null || mc.player == null)
+				return;
+
+			com.mojang.blaze3d.vertex.PoseStack pose = context.matrixStack();
+			net.minecraft.world.phys.Vec3 camPos = context.camera().getPosition();
+
+			for (net.minecraft.core.BlockPos bcdPos : net.geforcemods.securitycraft.misc.BlockEntityTracker.BLOCK_CHANGE_DETECTOR.getTrackedBlockEntities(level)) {
+				net.minecraft.world.level.block.entity.BlockEntity be = level.getBlockEntity(bcdPos);
+
+				if (be instanceof net.geforcemods.securitycraft.blockentities.BlockChangeDetectorBlockEntity bcd && bcd.isShowingHighlights() && bcd.isOwnedBy(mc.player)) {
+					int packedColor = bcd.getColor();
+					float r = net.minecraft.util.FastColor.ARGB32.red(packedColor) / 255.0F;
+					float g = net.minecraft.util.FastColor.ARGB32.green(packedColor) / 255.0F;
+					float b = net.minecraft.util.FastColor.ARGB32.blue(packedColor) / 255.0F;
+					com.mojang.blaze3d.vertex.VertexConsumer consumer = context.consumers() != null ? context.consumers().getBuffer(RenderType.lines()) : mc.renderBuffers().bufferSource().getBuffer(RenderType.lines());
+
+					for (net.geforcemods.securitycraft.blockentities.BlockChangeDetectorBlockEntity.ChangeEntry changeEntry : bcd.getFilteredEntries()) {
+						net.minecraft.core.BlockPos pos = changeEntry.pos();
+
+						pose.pushPose();
+						pose.translate(pos.getX() - camPos.x, pos.getY() - camPos.y, pos.getZ() - camPos.z);
+						net.minecraft.client.renderer.LevelRenderer.renderLineBox(pose, consumer, 0, 0, 0, 1, 1, 1, r, g, b, 1.0F);
+						pose.popPose();
+					}
+				}
+			}
+
+			mc.renderBuffers().bufferSource().endBatch();
+		});
 
 		// Laser beam: translucent animated texture, tinted at tintindex 0 by the lens colour (red default).
 		BlockRenderLayerMap.INSTANCE.putBlock(SCContent.LASER_FIELD, RenderType.translucent());

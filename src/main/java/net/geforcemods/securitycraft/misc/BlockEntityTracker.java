@@ -17,6 +17,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 public final class BlockEntityTracker<BE extends BlockEntity> {
+	public static final BlockEntityTracker<net.geforcemods.securitycraft.blockentities.BlockChangeDetectorBlockEntity> BLOCK_CHANGE_DETECTOR = new BlockEntityTracker<>(net.geforcemods.securitycraft.blockentities.BlockChangeDetectorBlockEntity::getRange);
 	private final Map<ResourceKey<Level>, Collection<BlockPos>> trackedBlockEntities = new ConcurrentHashMap<>();
 	private final FunctionRange<BE> range;
 
