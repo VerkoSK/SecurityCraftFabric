@@ -35,8 +35,8 @@ public class DisguiseModuleScreen extends AbstractContainerScreen<DisguiseModule
 		super.init();
 
 		leftPos += 90;
-		stateSelector = addRenderableWidget(new StateSelector(menu, titleLabelX, leftPos - 190, topPos + 7, 0, 200, 10));
-		stateSelector.init();
+		stateSelector = addRenderableWidget(new StateSelector(menu, title, leftPos - 190, topPos + 7, 0, 200, 15, 236, 50));
+		stateSelector.init(minecraft, width, height);
 	}
 
 	@Override
@@ -45,8 +45,6 @@ public class DisguiseModuleScreen extends AbstractContainerScreen<DisguiseModule
 
 		if (hoveredSlot != null && !hoveredSlot.getItem().isEmpty())
 			renderTooltip(guiGraphics, mouseX, mouseY);
-
-		stateSelector.renderTooltips(guiGraphics, mouseX, mouseY);
 	}
 
 	@Override

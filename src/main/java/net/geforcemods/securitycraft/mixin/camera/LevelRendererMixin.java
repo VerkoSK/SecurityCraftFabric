@@ -5,13 +5,16 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.fabricmc.loader.api.FabricLoader;
+import net.geforcemods.securitycraft.SecurityCraftClient;
 import net.geforcemods.securitycraft.entity.camera.CameraViewAreaExtension;
 import net.geforcemods.securitycraft.entity.camera.FrameFeedHandler;
 import net.minecraft.client.Camera;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.chunk.ChunkRenderDispatcher;
@@ -20,6 +23,7 @@ import net.minecraft.client.renderer.chunk.ChunkRenderDispatcher.RenderChunk;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
+import net.minecraft.world.entity.Entity;
 
 @Mixin(value = LevelRenderer.class, priority = 1100)
 public class LevelRendererMixin {
@@ -70,5 +74,16 @@ public class LevelRendererMixin {
 			return FrameFeedHandler.getFrameFeedViewDistance(null) * 16;
 
 		return original;
+	}
+
+	/**
+	 * When the player is mounted to a camera, ensures the player entity is rendered instead of being skipped.
+	 */
+	@Redirect(method = "renderLevel", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Camera;getEntity()Lnet/minecraft/world/entity/Entity;", ordinal = 3), require = 0)
+	private Entity securitycraft$renderPlayerWhenMountedOnCamera(Camera camera) {
+		if (SecurityCraftClient.isPlayerMountedOnCamera())
+			return Minecraft.getInstance().player;
+
+		return camera.getEntity();
 	}
 }
