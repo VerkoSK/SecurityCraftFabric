@@ -14,6 +14,8 @@ import net.minecraft.server.MinecraftServer;
 /** Common entrypoint. Registers content, networking and the command on both client and server. */
 public class SecurityCraft implements ModInitializer {
 	public static final String MODID = "securitycraft";
+	public static final String PORT_AUTHOR = "VerkoSK";
+	public static final String PORT_REPO = "https://github.com/VerkoSK/SecurityCraftFabric";
 	public static final String VERSION = FabricLoader.getInstance().getModContainer(MODID).map(c -> c.getMetadata().getVersion().getFriendlyString()).orElse("0.7");
 	public static final Logger LOGGER = LoggerFactory.getLogger(MODID);
 	public static final net.minecraft.util.RandomSource RANDOM = net.minecraft.util.RandomSource.create();
@@ -43,6 +45,10 @@ public class SecurityCraft implements ModInitializer {
 		});
 		ServerLifecycleEvents.SERVER_STARTED.register(server -> SERVER = server);
 		ServerLifecycleEvents.SERVER_STOPPED.register(server -> SERVER = null);
-		LOGGER.info("SecurityCraft (Fabric port) v{} initialized", VERSION);
+		LOGGER.info("==================================================================");
+		LOGGER.info(" SecurityCraft (Fabric port by {}) v{} initialized", PORT_AUTHOR, VERSION);
+		LOGGER.info(" Repository: {}", PORT_REPO);
+		LOGGER.info(" Original Forge mod by Geforce, bl4ckscor3, Redstone_Dubstep, ChainmailPickaxe");
+		LOGGER.info("==================================================================");
 	}
 }

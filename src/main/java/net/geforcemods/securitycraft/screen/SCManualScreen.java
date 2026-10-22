@@ -108,6 +108,7 @@ public class SCManualScreen extends Screen implements StillValid {
 	private List<FormattedCharSequence> intro2;
 	private PatronList patronList;
 	private Button patreonLinkButton;
+	private Button githubLinkButton;
 	private Button nextSubpage;
 	private Button previousSubpage;
 	private boolean explosive, ownable, passcodeProtected, customizable, moduleInventory;
@@ -129,6 +130,10 @@ public class SCManualScreen extends Screen implements StillValid {
 
 		startX = (width - 256) / 2;
 		patreonLinkButton = addRenderableWidget(new HyperlinkButton(startX + 225, 143, 16, 16, Component.empty(), b -> handleComponentClicked(Style.EMPTY.withClickEvent(new ClickEvent(Action.OPEN_URL, "https://www.patreon.com/Geforce")))));
+		githubLinkButton = addRenderableWidget(new HyperlinkButton(startX + 225, 143, 16, 16, Component.empty(), b -> handleComponentClicked(Style.EMPTY.withClickEvent(new ClickEvent(Action.OPEN_URL, SecurityCraft.PORT_REPO)))));
+		githubLinkButton.visible = currentPage == PORT_TITLE_PAGE;
+		patreonLinkButton.visible = currentPage == ORIGINAL_TITLE_PAGE;
+		githubLinkButton.visible = currentPage == PORT_TITLE_PAGE;
 		patronList = addRenderableWidget(new PatronList(112, 90, 90, startX + 130));
 		patronList.fetchPatrons();
 		previousSubpage = addRenderableWidget(new ChangePageButton(startX + 155, startY + 95, false, b -> previousSubpage()));
@@ -211,7 +216,28 @@ public class SCManualScreen extends Screen implements StillValid {
 			String pageNumberText = "1/" + (SCManualItem.PAGES.size() + 2); //+2 because neither title page is in the list
 
 			guiGraphics.drawString(font, portTitle, width / 2 - font.width(portTitle) / 2, 22, 0, false);
-			guiGraphics.drawString(font, portedBy, width / 2 - font.width(portedBy) / 2, 150, 0, false);
+
+			Component authorHeader = Component.literal("Fabric Port Author:").setStyle(Style.EMPTY.withUnderlined(true));
+			Component authorName = Component.literal("VerkoSK").setStyle(Style.EMPTY.withColor(0x1D4ED8).withBold(true));
+			Component repoHeader = Component.literal("Official GitHub Repository:").setStyle(Style.EMPTY.withUnderlined(true));
+			Component repoName = Component.literal("github.com/VerkoSK/SecurityCraftFabric").setStyle(Style.EMPTY.withColor(0x047857));
+			Component origHeader = Component.literal("Original Forge Mod Team:").setStyle(Style.EMPTY.withUnderlined(true));
+			Component orig1 = Component.literal("Geforce, bl4ckscor3,").setStyle(Style.EMPTY.withColor(0x374151));
+			Component orig2 = Component.literal("Redstone_Dubstep, ChainmailPickaxe").setStyle(Style.EMPTY.withColor(0x374151));
+
+			guiGraphics.drawString(font, authorHeader, width / 2 - font.width(authorHeader) / 2, 45, 0, false);
+			guiGraphics.drawString(font, authorName, width / 2 - font.width(authorName) / 2, 58, 0, false);
+
+			guiGraphics.drawString(font, repoHeader, width / 2 - font.width(repoHeader) / 2, 78, 0, false);
+			guiGraphics.drawString(font, repoName, width / 2 - font.width(repoName) / 2, 91, 0, false);
+
+			guiGraphics.drawString(font, origHeader, width / 2 - font.width(origHeader) / 2, 114, 0, false);
+			guiGraphics.drawString(font, orig1, width / 2 - font.width(orig1) / 2, 127, 0, false);
+			guiGraphics.drawString(font, orig2, width / 2 - font.width(orig2) / 2, 137, 0, false);
+
+			Component openGithub = Component.literal("Open GitHub ->").setStyle(Style.EMPTY.withColor(0x1E40AF));
+			guiGraphics.drawString(font, openGithub, startX + 220 - font.width(openGithub), 147, 0, false);
+
 			guiGraphics.drawString(font, pageNumberText, startX + 240 - font.width(pageNumberText), 182, 0x8E8270, false);
 		}
 		else { //the original's own title page, at the back of the book
@@ -346,6 +372,7 @@ public class SCManualScreen extends Screen implements StillValid {
 		currentSubpage = 0;
 		hoverCheckers.clear();
 		patreonLinkButton.visible = currentPage == ORIGINAL_TITLE_PAGE;
+		githubLinkButton.visible = currentPage == PORT_TITLE_PAGE;
 
 		if (currentPage < 0) {
 			for (IngredientDisplay display : displays) {

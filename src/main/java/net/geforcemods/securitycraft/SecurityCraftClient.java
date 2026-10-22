@@ -500,5 +500,6 @@ public class SecurityCraftClient implements ClientModInitializer {
 			net.geforcemods.securitycraft.entity.camera.CameraClientChunkCacheExtension.clear();
 			net.geforcemods.securitycraft.entity.camera.CameraViewAreaExtension.clear();
 		});
+		SecurityCraft.LOGGER.info("SecurityCraft Client (Fabric port by {}) v{} initialized", SecurityCraft.PORT_AUTHOR, SecurityCraft.VERSION);
 	}
 }
