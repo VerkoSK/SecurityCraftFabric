@@ -79,7 +79,7 @@ public class PortableRadarBlockEntity extends CustomizableBlockEntity implements
 				if (sendToTeamMembersOption.get())
 					messageReceivers = TeamUtils.getOnlinePlayersFromOwner(level.getServer(), getOwner());
 				else
-					messageReceivers = PlayerUtils.getPlayerListFromOwner(getOwner());
+					messageReceivers = PlayerUtils.getPlayerListFromOwner(level.getServer(), getOwner());
 
 				for (Player closebyPlayer : closebyPlayers) {
 					if (shouldSendMessage(closebyPlayer)) {
@@ -107,6 +107,14 @@ public class PortableRadarBlockEntity extends CustomizableBlockEntity implements
 
 		if (module == ModuleType.REDSTONE)
 			PortableRadarBlock.togglePowerOutput(level, worldPosition, false);
+	}
+
+	@Override
+	public <T> void onOptionChanged(Option<T> option) {
+		if (option == disabled && disabled.get() && level != null)
+			PortableRadarBlock.togglePowerOutput(level, worldPosition, false);
+
+		super.onOptionChanged(option);
 	}
 
 	@Override

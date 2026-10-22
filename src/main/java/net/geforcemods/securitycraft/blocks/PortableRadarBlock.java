@@ -123,7 +123,7 @@ public class PortableRadarBlock extends OwnableBlock implements SimpleWaterlogge
 	public static void togglePowerOutput(Level level, BlockPos pos, boolean shouldPower) {
 		BlockState state = level.getBlockState(pos);
 
-		if (shouldPower != state.getValue(POWERED)) {
+		if (state.is(SCContent.PORTABLE_RADAR) && shouldPower != state.getValue(POWERED)) {
 			level.setBlockAndUpdate(pos, state.setValue(POWERED, shouldPower));
 			BlockUtils.updateIndirectNeighbors(level, pos, SCContent.PORTABLE_RADAR, state.getValue(PortableRadarBlock.FACING).getOpposite());
 		}
@@ -136,7 +136,7 @@ public class PortableRadarBlock extends OwnableBlock implements SimpleWaterlogge
 
 	@Override
 	public int getSignal(BlockState state, BlockGetter level, BlockPos pos, Direction side) {
-		if (state.getValue(POWERED) && ((IModuleInventory) level.getBlockEntity(pos)).isModuleEnabled(ModuleType.REDSTONE))
+		if (state.getValue(POWERED) && level.getBlockEntity(pos) instanceof IModuleInventory inv && inv.isModuleEnabled(ModuleType.REDSTONE))
 			return 15;
 		else
 			return 0;
@@ -144,7 +144,7 @@ public class PortableRadarBlock extends OwnableBlock implements SimpleWaterlogge
 
 	@Override
 	public int getDirectSignal(BlockState state, BlockGetter level, BlockPos pos, Direction side) {
-		return state.getValue(POWERED) && ((IModuleInventory) level.getBlockEntity(pos)).isModuleEnabled(ModuleType.REDSTONE) && state.getValue(FACING) == side ? 15 : 0;
+		return state.getValue(POWERED) && level.getBlockEntity(pos) instanceof IModuleInventory inv && inv.isModuleEnabled(ModuleType.REDSTONE) && state.getValue(FACING) == side ? 15 : 0;
 	}
 
 	@Override

@@ -79,7 +79,7 @@ public class TeamUtils {
 			}
 		}
 
-		return PlayerUtils.getPlayerListFromOwner(owner);
+		return PlayerUtils.getPlayerListFromOwner(server, owner);
 	}
 
 	public record TeamRepresentation(String name, int color) {}

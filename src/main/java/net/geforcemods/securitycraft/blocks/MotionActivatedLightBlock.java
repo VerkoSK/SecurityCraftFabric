@@ -11,11 +11,13 @@ import net.minecraft.core.Direction.Axis;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.SimpleWaterloggedBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -25,22 +27,24 @@ import net.minecraft.world.level.block.state.StateDefinition.Builder;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
-import net.minecraft.world.phys.shapes.BooleanOp;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-public class MotionActivatedLightBlock extends OwnableBlock {
+public class MotionActivatedLightBlock extends OwnableBlock implements SimpleWaterloggedBlock {
 	public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
 	public static final BooleanProperty LIT = BlockStateProperties.LIT;
-	private static final VoxelShape SHAPE_NORTH = Shapes.joinUnoptimized(Block.box(6, 3, 13, 10, 4, 14), Shapes.joinUnoptimized(Block.box(6, 6, 13, 10, 9, 14), Block.box(7, 3, 14, 9, 8, 16), BooleanOp.OR), BooleanOp.OR);
-	private static final VoxelShape SHAPE_EAST = Shapes.joinUnoptimized(Block.box(2, 3, 6, 3, 4, 10), Shapes.joinUnoptimized(Block.box(2, 6, 6, 3, 9, 10), Block.box(0, 3, 7, 2, 8, 9), BooleanOp.OR), BooleanOp.OR);
-	private static final VoxelShape SHAPE_SOUTH = Shapes.joinUnoptimized(Block.box(6, 3, 2, 10, 4, 3), Shapes.joinUnoptimized(Block.box(6, 6, 2, 10, 9, 3), Block.box(7, 3, 0, 9, 8, 2), BooleanOp.OR), BooleanOp.OR);
-	private static final VoxelShape SHAPE_WEST = Shapes.joinUnoptimized(Block.box(13, 3, 6, 14, 4, 10), Shapes.joinUnoptimized(Block.box(13, 6, 6, 14, 9, 10), Block.box(14, 3, 7, 16, 8, 9), BooleanOp.OR), BooleanOp.OR);
+	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
+	private static final VoxelShape SHAPE_NORTH = Shapes.or(Block.box(5, 3, 15, 11, 10, 16), Block.box(6, 5, 13, 10, 9, 15));
+	private static final VoxelShape SHAPE_EAST = Shapes.or(Block.box(0, 3, 5, 1, 10, 11), Block.box(1, 5, 6, 3, 9, 10));
+	private static final VoxelShape SHAPE_SOUTH = Shapes.or(Block.box(5, 3, 0, 11, 10, 1), Block.box(6, 5, 1, 10, 9, 3));
+	private static final VoxelShape SHAPE_WEST = Shapes.or(Block.box(15, 3, 5, 16, 10, 11), Block.box(13, 5, 6, 15, 9, 10));
 
 	public MotionActivatedLightBlock(BlockBehaviour.Properties properties) {
 		super(properties);
-		registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(LIT, false));
+		registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(LIT, false).setValue(WATERLOGGED, false));
 	}
 
 	@Override
@@ -67,7 +71,20 @@ public class MotionActivatedLightBlock extends OwnableBlock {
 		BlockPos pos = ctx.getClickedPos();
 		Direction facing = ctx.getClickedFace();
 
-		return facing != Direction.UP && facing != Direction.DOWN && BlockUtils.isSideSolid(level, pos.relative(facing.getOpposite()), facing) ? defaultBlockState().setValue(FACING, facing) : null;
+		return facing != Direction.UP && facing != Direction.DOWN && BlockUtils.isSideSolid(level, pos.relative(facing.getOpposite()), facing) ? defaultBlockState().setValue(FACING, facing).setValue(WATERLOGGED, level.getFluidState(pos).getType() == Fluids.WATER) : null;
+	}
+
+	@Override
+	public BlockState updateShape(BlockState state, Direction facing, BlockState facingState, LevelAccessor level, BlockPos currentPos, BlockPos facingPos) {
+		if (state.getValue(WATERLOGGED))
+			level.scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
+
+		return super.updateShape(state, facing, facingState, level, currentPos, facingPos);
+	}
+
+	@Override
+	public FluidState getFluidState(BlockState state) {
+		return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(state);
 	}
 
 	@Override
@@ -78,7 +95,7 @@ public class MotionActivatedLightBlock extends OwnableBlock {
 
 	@Override
 	protected void createBlockStateDefinition(Builder<Block, BlockState> builder) {
-		builder.add(FACING, LIT);
+		builder.add(FACING, LIT, WATERLOGGED);
 	}
 
 	@Override

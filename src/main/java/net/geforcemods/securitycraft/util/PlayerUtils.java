@@ -3,6 +3,7 @@ package net.geforcemods.securitycraft.util;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.UUID;
 
 import net.geforcemods.securitycraft.SecurityCraft;
 import net.geforcemods.securitycraft.api.Owner;
@@ -64,16 +65,42 @@ public class PlayerUtils {
 	}
 
 	/**
+	 * @param server The server to look up players on
 	 * @param owner The owner whose player to look up
 	 * @return A collection containing the owner's player if they are online, an empty collection otherwise
 	 */
-	public static Collection<ServerPlayer> getPlayerListFromOwner(Owner owner) {
-		ServerPlayer player = getPlayerFromName(owner.getName());
+	public static Collection<ServerPlayer> getPlayerListFromOwner(MinecraftServer server, Owner owner) {
+		if (owner == null)
+			return new ArrayList<>();
+
+		if (server == null)
+			server = SecurityCraft.SERVER;
+
+		if (server == null)
+			return new ArrayList<>();
+
+		ServerPlayer player = null;
+		if (owner.getUUID() != null && !owner.getUUID().isEmpty()) {
+			try {
+				player = server.getPlayerList().getPlayer(UUID.fromString(owner.getUUID()));
+			} catch (IllegalArgumentException ignored) {}
+		}
+		if (player == null && owner.getName() != null && !owner.getName().isEmpty()) {
+			player = server.getPlayerList().getPlayerByName(owner.getName());
+		}
 
 		if (player != null)
 			return Arrays.asList(player);
 
 		return new ArrayList<>();
+	}
+
+	/**
+	 * @param owner The owner whose player to look up
+	 * @return A collection containing the owner's player if they are online, an empty collection otherwise
+	 */
+	public static Collection<ServerPlayer> getPlayerListFromOwner(Owner owner) {
+		return getPlayerListFromOwner(SecurityCraft.SERVER, owner);
 	}
 
 	public static void sendMessageToPlayer(Player player, MutableComponent title, MutableComponent message, ChatFormatting color) {
