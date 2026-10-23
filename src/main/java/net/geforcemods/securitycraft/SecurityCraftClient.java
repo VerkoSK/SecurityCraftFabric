@@ -46,6 +46,9 @@ public class SecurityCraftClient implements ClientModInitializer {
 			new CameraKeyInfoEntry(() -> true, $ -> SMART_MODULE_NOTE, be -> be.isModuleEnabled(net.geforcemods.securitycraft.misc.ModuleType.SMART))
 	};
 	private static float cameraInfoMessageTime;
+	private static long cameraLastDayTime = -1;
+	private static long cameraLastGameTime = -1;
+	private static long cameraSimulatedOffset = 0;
 
 	public static boolean isPlayerMountedOnCamera() {
 		return Minecraft.getInstance().cameraEntity instanceof net.geforcemods.securitycraft.entity.camera.SecurityCamera;
@@ -112,10 +115,38 @@ public class SecurityCraftClient implements ClientModInitializer {
 		net.minecraft.client.gui.Font font = mc.font;
 		net.minecraft.client.Options options = mc.options;
 		net.minecraft.world.level.block.state.BlockState state = level.getBlockState(pos);
-		long dayTime = level.getDayTime();
-		int hours24 = (int) ((float) dayTime / 1000L + 6L) % 24;
+		long rawDayTime = level.getDayTime();
+		long gameTime = level.getGameTime();
+		long dayTime;
+
+		if (level.getGameRules().getBoolean(net.minecraft.world.level.GameRules.RULE_DAYLIGHT)) {
+			cameraLastDayTime = rawDayTime;
+			cameraLastGameTime = gameTime;
+			cameraSimulatedOffset = 0;
+			dayTime = rawDayTime;
+		}
+		else {
+			if (rawDayTime != cameraLastDayTime || gameTime < cameraLastGameTime || cameraLastGameTime == -1) {
+				cameraLastDayTime = rawDayTime;
+				cameraLastGameTime = gameTime;
+				cameraSimulatedOffset = 0;
+			}
+			else {
+				long elapsed = gameTime - cameraLastGameTime;
+
+				if (elapsed > 0) {
+					cameraSimulatedOffset += elapsed;
+					cameraLastGameTime = gameTime;
+				}
+			}
+
+			dayTime = rawDayTime + cameraSimulatedOffset;
+		}
+
+		long normalizedDayTime = Math.floorMod(dayTime, 24000L);
+		int hours24 = (int) ((normalizedDayTime / 1000L + 6L) % 24L);
 		int hours = hours24 % 12;
-		int minutes = (int) (dayTime / 16.666666F % 60.0F);
+		int minutes = (int) ((normalizedDayTime % 1000L) * 60L / 1000L);
 		String time = String.format("%02d:%02d %s", Integer.valueOf(hours < 1 ? 12 : hours), Integer.valueOf(minutes), hours24 < 12 ? "AM" : "PM");
 		int timeY = 25;
 
