@@ -5,5 +5,5 @@
 		{ "item": "securitycraft:reinforced_iron_door" },
 		{ "item": "securitycraft:keypad" }
 	],
-	"result": { "item": "securitycraft:keypad_door_item", "count": 1 }
+	"result": { "item": "securitycraft:keypad_door", "count": 1 }
 }

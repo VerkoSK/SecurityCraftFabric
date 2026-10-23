@@ -540,7 +540,18 @@ public class SecurityCraftClient implements ClientModInitializer {
 
 		net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry.register(SCContent.SECURITY_CAMERA_BLOCK_ENTITY, net.geforcemods.securitycraft.renderers.SecurityCameraRenderer::new);
 
+		net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry.INSTANCE.register(SCContent.SECURITY_CAMERA_ITEM, new net.geforcemods.securitycraft.renderers.SecurityCameraItemRenderer());
+		net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry.INSTANCE.register(SCContent.SECURITY_CAMERA, new net.geforcemods.securitycraft.renderers.SecurityCameraItemRenderer());
+
+		net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry.register(SCContent.KEYPAD_BLOCK_ENTITY, net.geforcemods.securitycraft.renderers.DisguisableBlockEntityRenderer::new);
+		net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry.register(SCContent.LASER_BLOCK_BLOCK_ENTITY, net.geforcemods.securitycraft.renderers.DisguisableBlockEntityRenderer::new);
+		net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry.register(SCContent.KEYCARD_READER_BLOCK_ENTITY, net.geforcemods.securitycraft.renderers.DisguisableBlockEntityRenderer::new);
+		net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry.register(SCContent.USERNAME_LOGGER_BLOCK_ENTITY, net.geforcemods.securitycraft.renderers.DisguisableBlockEntityRenderer::new);
+		net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry.register(SCContent.BLOCK_CHANGE_DETECTOR_BLOCK_ENTITY, net.geforcemods.securitycraft.renderers.DisguisableBlockEntityRenderer::new);
+
 		net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry.register(SCContent.PROJECTOR_BLOCK_ENTITY, net.geforcemods.securitycraft.renderers.ProjectorRenderer::new);
+
+		net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry.register(SCContent.SECURE_TRADING_STATION_BLOCK_ENTITY, net.geforcemods.securitycraft.renderers.SecureTradingStationRenderer::new);
 
 		ClientPlayNetworking.registerGlobalReceiver(net.geforcemods.securitycraft.network.UpdateLaserColorsPayload.TYPE, (payload, context) -> context.client().execute(() -> {
 
@@ -564,12 +575,19 @@ public class SecurityCraftClient implements ClientModInitializer {
 
 			Minecraft mc = context.client();
 
-			if (mc.level != null && mc.level.getEntity(payload.id()) instanceof net.geforcemods.securitycraft.entity.camera.SecurityCamera cam) {
+			if (mc.level == null)
+				return;
 
-				mc.setCameraEntity(cam);
+			net.minecraft.world.entity.Entity entity = mc.level.getEntity(payload.id());
+			boolean isMountingCamera = entity instanceof net.geforcemods.securitycraft.entity.camera.SecurityCamera;
 
-				resetCameraInfoMessageTime();
+			if (isMountingCamera || entity instanceof net.minecraft.world.entity.player.Player) {
+				mc.setCameraEntity(entity);
 
+				if (isMountingCamera) {
+					net.geforcemods.securitycraft.entity.camera.CameraController.setCameraMountedTimestamp();
+					resetCameraInfoMessageTime();
+				}
 			}
 
 		}));

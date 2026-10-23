@@ -1170,5 +1170,7 @@
   "module.securitycraft.security_camera.smart_module.description": "Adding the smart module to a camera will allow the owner to set a default viewing direction by the press of a button. This is the direction that a player will look towards, when they start viewing a camera.",
   "module.securitycraft.security_camera.whitelist_module.description": "Adding the allowlist module to a camera will allow listed players to access the camera.",
   "tooltip.securitycraft:camera": "Camera",
-  "tooltip.securitycraft:cameraMonitor": "# of cameras bound: %s"
+  "tooltip.securitycraft:cameraMonitor": "# of cameras bound: %s",
+  "item.securitycraft.keypad_door": "Keypad Door",
+  "item.securitycraft.scanner_door": "Scanner Door"
 }

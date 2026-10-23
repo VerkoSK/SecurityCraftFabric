@@ -5,5 +5,5 @@
 		{ "item": "securitycraft:reinforced_iron_door" },
 		{ "item": "securitycraft:retinal_scanner" }
 	],
-	"result": { "item": "securitycraft:scanner_door_item", "count": 1 }
+	"result": { "item": "securitycraft:scanner_door", "count": 1 }
 }

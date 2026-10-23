@@ -20,7 +20,7 @@
               }
             }
           ],
-          "name": "securitycraft:scanner_door_item"
+          "name": "securitycraft:scanner_door"
         }
       ],
       "rolls": 1.0
