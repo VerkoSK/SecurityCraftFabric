@@ -5,12 +5,6 @@ accessWidener	v2	named
 accessible	field	net/minecraft/client/gui/components/EditBox	value	Ljava/lang/String;
 extendable	method	net/minecraft/client/gui/components/EditBox	scrollTo	(I)V
 
-# BaseFullMineBlock#wasExploded compares its position against the explosion's center. Forge patches in
-# Explosion#getPosition(), vanilla keeps x/y/z private.
-accessible	field	net/minecraft/world/level/Explosion	x	D
-accessible	field	net/minecraft/world/level/Explosion	y	D
-accessible	field	net/minecraft/world/level/Explosion	z	D
-
 # BrushableMineBlockEntity re-implements BrushableBlockEntity#brush/#checkReset on top of vanilla's private brushing
 # state. Upstream gets the same access from Forge's access transformers.
 # Do NOT widen BrushableBlockEntity#brushingCompleted: `accessible` makes a private method final, which would clash
@@ -64,3 +58,30 @@ accessible	method	net/minecraft/client/renderer/blockentity/SignRenderer	transla
 accessible	method	net/minecraft/client/renderer/blockentity/SignRenderer	renderSign	(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;IILnet/minecraft/world/level/block/state/properties/WoodType;Lnet/minecraft/client/model/Model;)V
 accessible	method	net/minecraft/client/renderer/blockentity/SignRenderer	renderSignText	(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/entity/SignText;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;IIIZ)V
 accessible	method	net/minecraft/client/renderer/blockentity/HangingSignRenderer	translateSign	(Lcom/mojang/blaze3d/vertex/PoseStack;FLnet/minecraft/world/level/block/state/BlockState;)V
+
+# ReinforcedLayeredCauldronBlock lowers the fill level when an entity on fire steps in, the same way vanilla's
+# own water/powder snow cauldrons put a fire out. Vanilla keeps that hook private; upstream reaches it through
+# a Forge access transformer.
+extendable	method	net/minecraft/world/level/block/LayeredCauldronBlock	handleEntityOnFireInside	(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)V
+# on the extracted SignRenderState instead, which needs no widened access.
+
+# The secret signs, reinforced hopper/lectern/chiseled bookshelf, and the brushable + creaking heart mines
+# subclass a vanilla block entity whose 2-arg constructor hard-codes the vanilla BlockEntityType. MC 1.21.2+
+# validates the block state against that type in the BlockEntity constructor, so SecurityCraft merges its blocks
+# into the vanilla type's valid-block set at registration - which needs that set writable.
+accessible	field	net/minecraft/world/level/block/entity/BlockEntityType	validBlocks	Ljava/util/Set;
+mutable	field	net/minecraft/world/level/block/entity/BlockEntityType	validBlocks	Ljava/util/Set;
+accessible	field	net/minecraft/world/level/Explosion	x	D
+accessible	field	net/minecraft/world/level/Explosion	y	D
+accessible	field	net/minecraft/world/level/Explosion	z	D
+accessible	field	net/minecraft/world/item/StandingAndWallBlockItem	wallBlock	Lnet/minecraft/world/level/block/Block;
+accessible	field	net/minecraft/world/level/block/state/StateHolder	PROPERTY_ENTRY_TO_STRING_FUNCTION	Ljava/util/function/Function;
+accessible	field	net/minecraft/client/renderer/RenderType	sortOnUpload	Z
+accessible	field	net/minecraft/client/gui/components/Button	DEFAULT_NARRATION	Lnet/minecraft/client/gui/components/Button$CreateNarration;
+accessible	method	net/minecraft/client/gui/components/Button	<init>	(IIIILnet/minecraft/network/chat/Component;Lnet/minecraft/client/gui/components/Button$OnPress;Lnet/minecraft/client/gui/components/Button$CreateNarration;)V
+accessible	field	net/minecraft/server/level/ServerPlayer	camera	Lnet/minecraft/world/entity/Entity;
+accessible	field	net/minecraft/client/player/LocalPlayer	yRotLast	F
+accessible	field	net/minecraft/client/player/LocalPlayer	xRotLast	F
+accessible	class	net/minecraft/server/level/ChunkMap$TrackedEntity
+accessible	class	net/minecraft/client/multiplayer/ClientChunkCache$Storage
+accessible	method	net/minecraft/client/multiplayer/ClientChunkCache$Storage	inRange	(II)Z

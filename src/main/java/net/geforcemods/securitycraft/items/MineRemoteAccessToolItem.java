@@ -1,14 +1,13 @@
 package net.geforcemods.securitycraft.items;
 
 import java.util.List;
-import java.util.Optional;
 
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.geforcemods.securitycraft.SCContent;
 import net.geforcemods.securitycraft.SecurityCraftClient;
 import net.geforcemods.securitycraft.api.IExplosive;
 import net.geforcemods.securitycraft.api.IOwnable;
-import net.geforcemods.securitycraft.components.BoundMines;
+import net.geforcemods.securitycraft.components.GlobalPositions;
 import net.geforcemods.securitycraft.util.PlayerUtils;
 import net.geforcemods.securitycraft.util.Utils;
 import net.minecraft.ChatFormatting;
@@ -27,8 +26,8 @@ import net.minecraft.world.level.Level;
 
 /** The mine remote access tool. 1:1 with the upstream class of the same name. */
 public class MineRemoteAccessToolItem extends Item {
-	public static final int MAX_MINES = BoundMines.MAX_MINES;
-	public static final BoundMines DEFAULT_POSITIONS = BoundMines.EMPTY;
+	public static final int MAX_MINES = 6;
+	public static final GlobalPositions DEFAULT_POSITIONS = GlobalPositions.sized(MAX_MINES);
 
 	public MineRemoteAccessToolItem(Item.Properties properties) {
 		super(properties);
@@ -78,14 +77,14 @@ public class MineRemoteAccessToolItem extends Item {
 			if (level.getBlockEntity(pos) instanceof IOwnable ownable && !ownable.isOwnedBy(player))
 				return InteractionResult.SUCCESS;
 
-			BoundMines positions = stack.get(SCContent.BOUND_MINES);
+			GlobalPositions positions = stack.get(SCContent.BOUND_MINES);
 
 			if (positions != null) {
 				GlobalPos globalPos = new GlobalPos(level.dimension(), pos);
 
-				if (positions.remove(stack, globalPos))
+				if (positions.remove(SCContent.BOUND_MINES, stack, globalPos))
 					PlayerUtils.sendMessageToPlayer(player, Utils.localize(SCContent.MINE_REMOTE_ACCESS_TOOL.getDescriptionId()), Utils.localize("messages.securitycraft:mrat.unbound", Utils.getFormattedCoordinates(pos)), ChatFormatting.RED);
-				else if (positions.add(stack, globalPos))
+				else if (positions.add(SCContent.BOUND_MINES, stack, globalPos))
 					PlayerUtils.sendMessageToPlayer(player, Utils.localize(SCContent.MINE_REMOTE_ACCESS_TOOL.getDescriptionId()), Utils.localize("messages.securitycraft:mrat.bound", Utils.getFormattedCoordinates(pos)), ChatFormatting.GREEN);
 				else {
 					PlayerUtils.sendMessageToPlayer(player, Utils.localize(SCContent.MINE_REMOTE_ACCESS_TOOL.getDescriptionId()), Utils.localize("messages.securitycraft:mrat.noSlots"), ChatFormatting.RED);
@@ -101,18 +100,18 @@ public class MineRemoteAccessToolItem extends Item {
 
 	@Override
 	public void appendHoverText(ItemStack stack, TooltipContext ctx, List<Component> list, TooltipFlag flag) {
-		BoundMines positions = stack.get(SCContent.BOUND_MINES);
+		GlobalPositions positions = stack.get(SCContent.BOUND_MINES);
 
 		if (positions != null && !positions.isEmpty()) {
-			List<Optional<GlobalPos>> globalPositions = positions.positions();
+			List<GlobalPos> globalPositions = positions.positions();
 
 			for (int i = 0; i < globalPositions.size(); i++) {
-				Optional<GlobalPos> globalPos = globalPositions.get(i);
+				GlobalPos globalPos = globalPositions.get(i);
 
-				if (globalPos.isEmpty())
+				if (globalPos == null)
 					list.add(Component.literal(ChatFormatting.GRAY + "---"));
 				else
-					list.add(Utils.localize("tooltip.securitycraft:mine", i, Utils.getFormattedCoordinates(globalPos.get().pos())).setStyle(Utils.GRAY_STYLE));
+					list.add(Utils.localize("tooltip.securitycraft:mine", i, Utils.getFormattedCoordinates(globalPos.pos())).setStyle(Utils.GRAY_STYLE));
 			}
 		}
 	}

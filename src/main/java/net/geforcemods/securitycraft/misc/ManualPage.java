@@ -52,14 +52,14 @@ public class ManualPage {
 		add(SCContent.REINFORCED_BY_NAME.get("reinforced_hopper").asItem());
 		add(SCContent.PORTABLE_RADAR.asItem());
 		add(SCContent.REINFORCED_DOOR.asItem());
-		add(SCContent.KEYPAD_DOOR_ITEM);
+		add(SCContent.KEYPAD_DOOR.asItem());
 		add(SCContent.ELECTRIFIED_IRON_FENCE_GATE.asItem());
 		add(SCContent.TRACK_MINE.asItem());
 		add(SCContent.REINFORCED_BY_NAME.get("reinforced_lever").asItem());
 		add(SCContent.REINFORCED_BY_NAME.get("reinforced_iron_trapdoor").asItem(), "", true);
 		add(SCContent.KEYPAD_TRAPDOOR.asItem());
 		add(SCContent.RETINAL_SCANNER.asItem());
-		add(SCContent.SCANNER_DOOR_ITEM);
+		add(SCContent.SCANNER_DOOR.asItem());
 		add(SCContent.SCANNER_TRAPDOOR.asItem());
 		add(SCContent.KEYCARD_READER.asItem());
 		add(SCContent.KEYCARD_LOCK.asItem());

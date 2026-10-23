@@ -4,7 +4,7 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.geforcemods.securitycraft.SCContent;
 import net.geforcemods.securitycraft.api.IExplosive;
 import net.geforcemods.securitycraft.api.IOwnable;
-import net.geforcemods.securitycraft.components.BoundMines;
+import net.geforcemods.securitycraft.components.GlobalPositions;
 import net.geforcemods.securitycraft.misc.StillValid;
 import net.geforcemods.securitycraft.network.RemoteControlMinePayload;
 import net.geforcemods.securitycraft.network.RemoteControlMinePayload.Action;
@@ -34,7 +34,7 @@ public class MineRemoteAccessToolScreen extends Screen implements StillValid {
 	private static final int DEFUSE = 0, ACTIVATE = 1, DETONATE = 2, UNBIND = 3;
 	private ItemStack mrat;
 	private Button[][] guiButtons = new Button[6][4]; //6 mines, 4 actions (defuse, prime, detonate, unbind)
-	private int xSize = 256, ySize = 184, leftPos, topPos;
+	private int xSize = 256, ySize = 184;
 	private final Component notBound = Utils.localize("gui.securitycraft:mrat.notBound");
 	private final Component[] lines = new Component[6];
 	private final int[] lengths = new int[6];
@@ -48,20 +48,20 @@ public class MineRemoteAccessToolScreen extends Screen implements StillValid {
 	@Override
 	public void init() {
 		super.init();
-		leftPos = (width - xSize) / 2;
-		topPos = (height - ySize) / 2;
 
 		int padding = 25;
 		int y = 50;
 		int id = 0;
+		int startX = (width - xSize) / 2;
+		int startY = (height - ySize) / 2;
 
 		for (int i = 0; i < 6; i++) {
 			y += 25;
 
 			// initialize buttons
 			for (int j = 0; j < 4; j++) {
-				int btnX = leftPos + j * padding + 154;
-				int btnY = topPos + y - 48;
+				int btnX = startX + j * padding + 154;
+				int btnY = startY + y - 48;
 				int mine = id / 4;
 				int action = id % 4;
 
@@ -89,20 +89,18 @@ public class MineRemoteAccessToolScreen extends Screen implements StillValid {
 				addRenderableWidget(guiButtons[i][j]);
 			}
 
-			GlobalPos globalPos = getMineCoordinates(i);
+			Level level = minecraft.level;
+			BlockPos minePos = getMineCoordinates(i);
 			boolean foundMine = false;
 
-			if (globalPos != null) {
-				Level level = minecraft.level;
-				BlockPos minePos = globalPos.pos();
-
+			if (minePos != null) {
 				guiButtons[i][UNBIND].active = true;
-				//Upstream passes the BlockPos straight in, which only reads well because Forge keeps the mapped class
+				//Upstream passes the BlockPos straight in, which only reads well because NeoForge keeps the mapped class
 				//name; in a remapped Fabric jar BlockPos#toString prints "class_2338{x=..}", so format it like the
 				//tool's chat messages do instead.
 				lines[i] = Utils.localize("gui.securitycraft:mrat.mineLocations", Utils.getFormattedCoordinates(minePos));
 
-				if (globalPos.dimension().equals(level.dimension()) && level.isLoaded(minePos)) {
+				if (level.isLoaded(minePos)) {
 					Block block = level.getBlockState(minePos).getBlock();
 
 					if (block instanceof IExplosive explosive && (!(level.getBlockEntity(minePos) instanceof IOwnable ownable) || ownable.isOwnedBy(minecraft.player))) {
@@ -138,26 +136,32 @@ public class MineRemoteAccessToolScreen extends Screen implements StillValid {
 
 	@Override
 	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+		int startX = (width - xSize) / 2;
+		int startY = (height - ySize) / 2;
+
+		//render() calls this.renderBackground(...) internally, so drawing the panel from here as well as from
+		//the override below drew it twice and let the default renderBackground's blur paint over it afterwards
 		super.render(guiGraphics, mouseX, mouseY, partialTicks);
-		guiGraphics.drawString(font, title, leftPos + xSize / 2 - font.width(title) / 2, topPos + 6, 0xFF404040, false);
+		guiGraphics.drawString(font, title, startX + xSize / 2 - font.width(title) / 2, startY + 6, 0xFF404040, false);
 
 		for (int i = 0; i < 6; i++) {
-			guiGraphics.drawString(font, lines[i], leftPos + xSize / 2 - lengths[i] + 25, topPos + i * 25 + 33, 0xFF404040, false);
+			guiGraphics.drawString(font, lines[i], startX + xSize / 2 - lengths[i] + 25, startY + i * 25 + 33, 0xFF404040, false);
 		}
 	}
 
 	@Override
 	public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+		//the default renderBackground blurs the world and draws vanilla's in-world-menu vignette texture over it,
+		//meant for menu-style screens; this is an in-hand item screen, so it needs the plain transparent
+		//background the way CheckPasscodeScreen and SetPasscodeScreen already do it, with the panel drawn on top
 		renderTransparentBackground(guiGraphics);
-		guiGraphics.blit(TEXTURE, leftPos, topPos, 0, 0, xSize, ySize);
+		guiGraphics.blit(TEXTURE, (width - xSize) / 2, (height - ySize) / 2, 0, 0, xSize, ySize);
 	}
 
 	private void buttonClicked(int mine, int action) {
-		GlobalPos globalPos = getMineCoordinates(mine);
+		BlockPos pos = getMineCoordinates(mine);
 
-		if (globalPos != null) {
-			BlockPos pos = globalPos.pos();
-
+		if (pos != null) {
 			switch (action) {
 				case DEFUSE:
 					((IExplosive) Minecraft.getInstance().player.level().getBlockState(pos).getBlock()).defuseMine(Minecraft.getInstance().player.level(), pos);
@@ -175,7 +179,7 @@ public class MineRemoteAccessToolScreen extends Screen implements StillValid {
 					break;
 				case DETONATE:
 					ClientPlayNetworking.send(new RemoteControlMinePayload(pos, Action.DETONATE));
-					removeMineFromToolAndUpdate(mrat, globalPos);
+					removeMineFromToolAndUpdate(mrat, pos);
 
 					for (int i = 0; i < 4; i++) {
 						guiButtons[mine][i].active = false;
@@ -183,7 +187,7 @@ public class MineRemoteAccessToolScreen extends Screen implements StillValid {
 
 					break;
 				case UNBIND:
-					removeMineFromToolAndUpdate(mrat, globalPos);
+					removeMineFromToolAndUpdate(mrat, pos);
 
 					for (int i = 0; i < 4; i++) {
 						guiButtons[mine][i].active = false;
@@ -199,22 +203,30 @@ public class MineRemoteAccessToolScreen extends Screen implements StillValid {
 	/**
 	 * @param mine 0 based
 	 */
-	private GlobalPos getMineCoordinates(int mine) {
+	private BlockPos getMineCoordinates(int mine) {
 		if (mrat.getItem() == SCContent.MINE_REMOTE_ACCESS_TOOL) {
-			BoundMines positions = mrat.get(SCContent.BOUND_MINES);
+			GlobalPositions positions = mrat.get(SCContent.BOUND_MINES);
 
-			if (positions != null)
-				return positions.get(mine);
+			if (positions != null && mine < positions.positions().size()) {
+				GlobalPos globalPos = positions.positions().get(mine);
+
+				if (globalPos != null)
+					return globalPos.pos();
+			}
 		}
 
 		return null;
 	}
 
-	private void removeMineFromToolAndUpdate(ItemStack stack, GlobalPos globalPos) {
-		BoundMines positions = stack.get(SCContent.BOUND_MINES);
+	private void removeMineFromToolAndUpdate(ItemStack stack, BlockPos pos) {
+		GlobalPositions positions = stack.get(SCContent.BOUND_MINES);
 
-		if (positions != null && positions.remove(stack, globalPos))
-			ClientPlayNetworking.send(new RemoveMineFromMRATPayload(globalPos));
+		if (positions != null) {
+			GlobalPos globalPos = new GlobalPos(minecraft.level.dimension(), pos);
+
+			if (positions.remove(SCContent.BOUND_MINES, stack, globalPos))
+				ClientPlayNetworking.send(new RemoveMineFromMRATPayload(globalPos));
+		}
 	}
 
 	@Override

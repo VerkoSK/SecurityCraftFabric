@@ -1,0 +1,23 @@
+{
+    "required": true,
+    "minVersion": "0.8",
+    "package": "net.geforcemods.securitycraft.mixin",
+    "compatibilityLevel": "JAVA_21",
+    "mixins": [
+        "BlockItemMixin",
+        "camera.ChunkMapMixin",
+        "camera.PlayerListMixin",
+        "camera.ServerPlayerMixin",
+        "camera.TrackedEntityMixin"
+    ],
+    "client": [
+        "camera.ClientChunkCacheMixin",
+        "camera.GameRendererMixin",
+        "camera.GuiCameraMixin",
+        "camera.ItemInHandRendererMixin",
+        "camera.LevelRendererMixin",
+        "camera.LocalPlayerMixin",
+        "camera.MinecraftMixin",
+        "camera.ViewAreaMixin"
+    ]
+}
