@@ -541,7 +541,6 @@ public class SecurityCraftClient implements ClientModInitializer {
 		net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry.register(SCContent.SECURITY_CAMERA_BLOCK_ENTITY, net.geforcemods.securitycraft.renderers.SecurityCameraRenderer::new);
 
 		net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry.INSTANCE.register(SCContent.SECURITY_CAMERA_ITEM, new net.geforcemods.securitycraft.renderers.SecurityCameraItemRenderer());
-		net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry.INSTANCE.register(SCContent.SECURITY_CAMERA, new net.geforcemods.securitycraft.renderers.SecurityCameraItemRenderer());
 
 		net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry.register(SCContent.KEYPAD_BLOCK_ENTITY, net.geforcemods.securitycraft.renderers.DisguisableBlockEntityRenderer::new);
 		net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry.register(SCContent.LASER_BLOCK_BLOCK_ENTITY, net.geforcemods.securitycraft.renderers.DisguisableBlockEntityRenderer::new);
