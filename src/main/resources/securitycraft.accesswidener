@@ -71,3 +71,17 @@ extendable	method	net/minecraft/world/level/block/LayeredCauldronBlock	handleEnt
 # into the vanilla type's valid-block set at registration - which needs that set writable.
 accessible	field	net/minecraft/world/level/block/entity/BlockEntityType	validBlocks	Ljava/util/Set;
 mutable	field	net/minecraft/world/level/block/entity/BlockEntityType	validBlocks	Ljava/util/Set;
+accessible	field	net/minecraft/world/level/Explosion	x	D
+accessible	field	net/minecraft/world/level/Explosion	y	D
+accessible	field	net/minecraft/world/level/Explosion	z	D
+accessible	field	net/minecraft/world/item/StandingAndWallBlockItem	wallBlock	Lnet/minecraft/world/level/block/Block;
+accessible	field	net/minecraft/world/level/block/state/StateHolder	PROPERTY_ENTRY_TO_STRING_FUNCTION	Ljava/util/function/Function;
+accessible	field	net/minecraft/client/renderer/RenderType	sortOnUpload	Z
+accessible	field	net/minecraft/client/gui/components/Button	DEFAULT_NARRATION	Lnet/minecraft/client/gui/components/Button$CreateNarration;
+accessible	method	net/minecraft/client/gui/components/Button	<init>	(IIIILnet/minecraft/network/chat/Component;Lnet/minecraft/client/gui/components/Button$OnPress;Lnet/minecraft/client/gui/components/Button$CreateNarration;)V
+accessible	field	net/minecraft/server/level/ServerPlayer	camera	Lnet/minecraft/world/entity/Entity;
+accessible	field	net/minecraft/client/player/LocalPlayer	yRotLast	F
+accessible	field	net/minecraft/client/player/LocalPlayer	xRotLast	F
+accessible	class	net/minecraft/server/level/ChunkMap$TrackedEntity
+accessible	class	net/minecraft/client/multiplayer/ClientChunkCache$Storage
+accessible	method	net/minecraft/client/multiplayer/ClientChunkCache$Storage	inRange	(II)Z

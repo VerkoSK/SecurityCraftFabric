@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": {
+      "item": "securitycraft:reinforced_iron_block"
+    },
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "L": {
+      "item": "securitycraft:reinforced_redstone_lamp"
+    },
+    "P": {
+      "item": "securitycraft:reinforced_glass_pane"
+    }
+  },
+  "pattern": [
+    "III",
+    "BLP",
+    "I I"
+  ],
+  "result": {
+    "id": "securitycraft:projector"
+  },
+  "show_notification": true
+}
