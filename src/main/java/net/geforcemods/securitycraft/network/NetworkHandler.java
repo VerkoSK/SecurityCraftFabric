@@ -516,6 +516,10 @@ public final class NetworkHandler {
 	private static void handleDismountCamera(ServerPlayer player) {
 		if (player.getCamera() instanceof net.geforcemods.securitycraft.entity.camera.SecurityCamera cam)
 			cam.stopViewing(player);
+		else {
+			player.camera = player;
+			ServerPlayNetworking.send(player, new SetCameraViewPayload(player.getId()));
+		}
 	}
 
 	private static void handleRemoveCameraTag(ServerPlayer player, RemoveCameraTagPayload payload) {
