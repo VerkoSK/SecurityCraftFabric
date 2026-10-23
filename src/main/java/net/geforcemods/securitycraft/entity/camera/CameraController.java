@@ -114,6 +114,10 @@ public class CameraController {
 
 	private static void dismount() {
 		ClientPlayNetworking.send(new DismountCameraPayload());
+		net.minecraft.client.player.LocalPlayer player = net.minecraft.client.Minecraft.getInstance().player;
+		if (player != null) {
+			net.minecraft.client.Minecraft.getInstance().setCameraEntity(player);
+		}
 	}
 
 	public static void moveViewUp(SecurityCamera cam) {

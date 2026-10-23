@@ -1359,7 +1359,7 @@ public class SCContent {
 
 	private static Block register(String name, Block block) {
 		Registry.register(BuiltInRegistries.BLOCK, id(name), block);
-		BlockItem item = new BlockItem(block, new Item.Properties());
+		BlockItem item = block instanceof net.minecraft.world.level.block.DoorBlock ? new net.minecraft.world.item.DoubleHighBlockItem(block, new Item.Properties()) : new BlockItem(block, new Item.Properties());
 		Registry.register(BuiltInRegistries.ITEM, id(name), item);
 		TAB_ITEMS.add(item);
 		return block;
