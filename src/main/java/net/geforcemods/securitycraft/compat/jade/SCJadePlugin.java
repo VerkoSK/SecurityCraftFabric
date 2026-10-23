@@ -1,22 +1,30 @@
 package net.geforcemods.securitycraft.compat.jade;
 
 import net.geforcemods.securitycraft.SecurityCraft;
+import net.geforcemods.securitycraft.SecurityCraftClient;
 import net.geforcemods.securitycraft.api.IModuleInventory;
 import net.geforcemods.securitycraft.api.IOwnable;
 import net.geforcemods.securitycraft.api.Owner;
+import net.geforcemods.securitycraft.blocks.FakeLavaBlock;
+import net.geforcemods.securitycraft.blocks.FakeWaterBlock;
+import net.geforcemods.securitycraft.compat.IOverlayDisplay;
 import net.geforcemods.securitycraft.misc.ContainerLockData;
 import net.geforcemods.securitycraft.misc.ModuleType;
 import net.geforcemods.securitycraft.util.PlayerUtils;
 import net.geforcemods.securitycraft.util.Utils;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Nameable;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import snownee.jade.api.BlockAccessor;
 import snownee.jade.api.IBlockComponentProvider;
 import snownee.jade.api.IServerDataProvider;
@@ -56,6 +64,32 @@ public final class SCJadePlugin implements IWailaPlugin, IBlockComponentProvider
 		registration.addConfig(SHOW_MODULES, true);
 		registration.addConfig(SHOW_CUSTOM_NAME, true);
 		registration.registerBlockComponent(this, Block.class);
+
+		// Suppress Jade tooltips when viewing through a security camera
+		registration.addBeforeRenderCallback((tooltip, rect, guiGraphics, accessor, color) -> SecurityCraftClient.isPlayerMountedOnCamera());
+		registration.addRayTraceCallback((hit, accessor, original) -> {
+			if (SecurityCraftClient.isPlayerMountedOnCamera())
+				return null;
+
+			if (accessor instanceof BlockAccessor blockAccessor) {
+				Block block = blockAccessor.getBlock();
+
+				if (block instanceof IOverlayDisplay overlayDisplay) {
+					Level level = blockAccessor.getLevel();
+					BlockState state = blockAccessor.getBlockState();
+					BlockPos pos = blockAccessor.getPosition();
+
+					if (!overlayDisplay.shouldShowSCInfo(level, state, pos))
+						return registration.blockAccessor().from(blockAccessor).fakeBlock(overlayDisplay.getDisplayStack(level, state, pos)).build();
+				}
+				else if (block instanceof FakeWaterBlock)
+					return registration.blockAccessor().from(blockAccessor).blockState(Blocks.WATER.defaultBlockState()).build();
+				else if (block instanceof FakeLavaBlock)
+					return registration.blockAccessor().from(blockAccessor).blockState(Blocks.LAVA.defaultBlockState()).build();
+			}
+
+			return accessor;
+		});
 	}
 
 	/** Server side: does this generic Key Panel lock cover the position being looked at, and if so, by whom? */
