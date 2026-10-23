@@ -1,6 +1,7 @@
 package net.geforcemods.securitycraft.util;
 
 import java.util.function.BiPredicate;
+import net.minecraft.world.item.ItemStack;
 
 import net.geforcemods.securitycraft.ConfigHandler;
 import net.minecraft.core.BlockPos;
@@ -47,5 +48,8 @@ public class BlockUtils {
 		for (Direction dir : directions) {
 			level.updateNeighborsAt(pos.relative(dir), block);
 		}
+	}
+	public static boolean areItemsEqual(ItemStack firstItemStack, ItemStack secondItemStack, boolean exactComponentCheck) {
+		return exactComponentCheck ? ItemStack.isSameItemSameComponents(firstItemStack, secondItemStack) : firstItemStack.is(secondItemStack.getItem());
 	}
 }

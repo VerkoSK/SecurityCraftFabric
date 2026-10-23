@@ -116,4 +116,16 @@ public class PlayerUtils {
 
 		return ItemStack.EMPTY;
 	}
+
+	public static boolean isPlayerMountedOnCamera(net.minecraft.world.entity.LivingEntity entity) {
+		if (!(entity instanceof Player player))
+			return false;
+
+		if (player.level().isClientSide)
+			return net.fabricmc.api.EnvType.CLIENT == net.fabricmc.loader.api.FabricLoader.getInstance().getEnvironmentType() && net.geforcemods.securitycraft.SecurityCraftClient.isPlayerMountedOnCamera();
+		else if (player instanceof ServerPlayer serverPlayer)
+			return serverPlayer.getCamera() instanceof net.geforcemods.securitycraft.entity.camera.SecurityCamera;
+		else
+			return false;
+	}
 }

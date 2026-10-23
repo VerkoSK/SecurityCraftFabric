@@ -12,6 +12,10 @@ public class ColorChooserButton extends Button {
 	private final ColorChooser colorChooser;
 	private final Runnable onToggle;
 
+	public ColorChooserButton(int x, int y, int width, int height, ColorChooser colorChooser) {
+		this(x, y, width, height, colorChooser, () -> {});
+	}
+
 	public ColorChooserButton(int x, int y, int width, int height, ColorChooser colorChooser, Runnable onToggle) {
 		super(x, y, width, height, Component.empty(), b -> {}, DEFAULT_NARRATION);
 		this.colorChooser = colorChooser;

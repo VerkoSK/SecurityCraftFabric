@@ -1,0 +1,35 @@
+package net.geforcemods.securitycraft.misc;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import net.geforcemods.securitycraft.blockentities.AlarmBlockEntity;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.client.resources.sounds.SoundInstance;
+import net.minecraft.core.Holder;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.Level;
+
+public final class AlarmSoundHandler {
+	private static final Map<AlarmBlockEntity, SoundInstance> SOUND_STORAGE = new HashMap<>();
+
+	private AlarmSoundHandler() {}
+
+	public static void playSound(AlarmBlockEntity be, Level level, double x, double y, double z, Holder<SoundEvent> sound, SoundSource source, float volume, float pitch, long seed) {
+		SoundInstance soundInstance = new SimpleSoundInstance(sound.value(), source, volume, pitch, RandomSource.create(seed), x, y, z);
+
+		stopCurrentSound(be);
+		Minecraft.getInstance().getSoundManager().play(soundInstance);
+		SOUND_STORAGE.put(be, soundInstance);
+	}
+
+	public static void stopCurrentSound(AlarmBlockEntity be) {
+		SoundInstance soundInstance = SOUND_STORAGE.remove(be);
+
+		if (soundInstance != null)
+			Minecraft.getInstance().getSoundManager().stop(soundInstance);
+	}
+}
