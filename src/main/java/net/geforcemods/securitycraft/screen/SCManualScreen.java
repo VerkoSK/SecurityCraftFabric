@@ -737,19 +737,31 @@ public class SCManualScreen extends Screen implements StillValid {
 	}
 
 	static class ChangePageButton extends Button {
-		private final int textureY;
+		private static final ResourceLocation PAGE_FORWARD_HIGHLIGHTED_SPRITE = new ResourceLocation("widget/page_forward_highlighted");
+		private static final ResourceLocation PAGE_FORWARD_SPRITE = new ResourceLocation("widget/page_forward");
+		private static final ResourceLocation PAGE_BACKWARD_HIGHLIGHTED_SPRITE = new ResourceLocation("widget/page_backward_highlighted");
+		private static final ResourceLocation PAGE_BACKWARD_SPRITE = new ResourceLocation("widget/page_backward");
+		private final boolean forward;
 
 		public ChangePageButton(int xPos, int yPos, boolean forward, OnPress onPress) {
 			super(xPos, yPos, 23, 13, Component.empty(), onPress, DEFAULT_NARRATION);
-			textureY = forward ? 192 : 205;
+			this.forward = forward;
 		}
 
 		@Override
 		public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
 			if (visible) {
 				isHovered = mouseX >= getX() && mouseY >= getY() && mouseX < getX() + width && mouseY < getY() + height;
-				guiGraphics.blit(VANILLA_BOOK, getX(), getY(), isHoveredOrFocused() ? 23 : 0, textureY, 23, 13);
+				ResourceLocation sprite = forward
+					? (isHoveredOrFocused() ? PAGE_FORWARD_HIGHLIGHTED_SPRITE : PAGE_FORWARD_SPRITE)
+					: (isHoveredOrFocused() ? PAGE_BACKWARD_HIGHLIGHTED_SPRITE : PAGE_BACKWARD_SPRITE);
+				guiGraphics.blitSprite(sprite, getX(), getY(), 23, 13);
 			}
+		}
+
+		@Override
+		public void playDownSound(net.minecraft.client.sounds.SoundManager soundManager) {
+			soundManager.play(net.minecraft.client.resources.sounds.SimpleSoundInstance.forUI(net.minecraft.sounds.SoundEvents.BOOK_PAGE_TURN, 1.0F));
 		}
 	}
 
