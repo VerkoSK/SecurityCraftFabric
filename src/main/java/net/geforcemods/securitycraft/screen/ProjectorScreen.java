@@ -66,7 +66,7 @@ public class ProjectorScreen extends AbstractContainerScreen<ProjectorMenu> impl
 		projectionOffsetSlider.setFGColor(14737632);
 		projectionOffsetSlider.setTooltip(Tooltip.create(Utils.localize("gui.securitycraft:projector.offset.description")));
 
-		horizontalToggleButton = addRenderableWidget(new TogglePictureButton(left + sliderWidth - 20, topPos + 36, 20, 20, 2, 16, 16, 2, button -> {
+		horizontalToggleButton = addRenderableWidget(new TogglePictureButton(left + sliderWidth - 20, topPos + 36, 20, 20, TEXTURE, new int[]{176, 192}, new int[]{0, 0}, 2, 2, button -> {
 			boolean horizontal = !be.isHorizontal();
 			double oldValue = projectionRangeSlider.getValue();
 
@@ -77,7 +77,7 @@ public class ProjectorScreen extends AbstractContainerScreen<ProjectorMenu> impl
 			projectionRangeSlider.setValue(oldValue - (horizontal ? 16 : -16));
 			applySliderValue(projectionRangeSlider);
 			ClientPlayNetworking.send(new SyncProjectorPayload(be.getBlockPos(), be.isHorizontal() ? 1 : 0, DataType.HORIZONTAL));
-		}, SCContent.id("projector/vertical"), SCContent.id("projector/horizontal")));
+		}));
 		horizontalToggleButton.setCurrentIndex(be.isHorizontal() ? 1 : 0);
 		updateHorizontalToggleButtonTooltip();
 
@@ -104,6 +104,7 @@ public class ProjectorScreen extends AbstractContainerScreen<ProjectorMenu> impl
 
 	@Override
 	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+		renderBackground(guiGraphics, mouseX, mouseY, partialTicks);
 		super.render(guiGraphics, mouseX, mouseY, partialTicks);
 
 		renderTooltip(guiGraphics, mouseX, mouseY);

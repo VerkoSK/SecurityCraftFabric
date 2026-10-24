@@ -13,11 +13,42 @@ import net.minecraft.resources.ResourceLocation;
 public class TogglePictureButton extends Button implements IToggleableButton {
 	private static final WidgetSprites BUTTON_SPRITES = new WidgetSprites(new ResourceLocation("widget/button"), new ResourceLocation("widget/button_disabled"), new ResourceLocation("widget/button_highlighted"));
 	private final ResourceLocation[] sprites;
+	private final ResourceLocation textureLocation;
+	private final int[] u;
+	private final int[] v;
+	private final int uWidth;
+	private final int vHeight;
+	private final int textureWidth;
+	private final int textureHeight;
 	private final int toggleCount;
 	private final int drawOffset;
 	private final int drawWidth;
 	private final int drawHeight;
 	private int currentIndex = 0;
+
+	public TogglePictureButton(int xPos, int yPos, int width, int height, ResourceLocation texture, int[] textureX, int[] textureY, int drawOffset, int toggleCount, OnPress onPress) {
+		this(xPos, yPos, width, height, texture, textureX, textureY, drawOffset, 16, 16, 16, 16, 256, 256, toggleCount, onPress);
+	}
+
+	public TogglePictureButton(int xPos, int yPos, int width, int height, ResourceLocation texture, int[] textureX, int[] textureY, int drawOffset, int drawWidth, int drawHeight, int uWidth, int vHeight, int textureWidth, int textureHeight, int toggleCount, OnPress onPress) {
+		super(xPos, yPos, width, height, Component.empty(), onPress, DEFAULT_NARRATION);
+
+		if (textureX.length != toggleCount || textureY.length != toggleCount)
+			throw new IllegalArgumentException("TogglePictureButton was set up incorrectly. Array lengths must match toggleCount!");
+
+		this.textureLocation = texture;
+		this.u = textureX;
+		this.v = textureY;
+		this.toggleCount = toggleCount;
+		this.textureWidth = textureWidth;
+		this.textureHeight = textureHeight;
+		this.drawOffset = drawOffset;
+		this.drawWidth = drawWidth;
+		this.drawHeight = drawHeight;
+		this.uWidth = uWidth;
+		this.vHeight = vHeight;
+		this.sprites = null;
+	}
 
 	public TogglePictureButton(int xPos, int yPos, int width, int height, int drawOffset, int drawWidth, int drawHeight, int toggleCount, OnPress onPress, ResourceLocation... sprites) {
 		super(xPos, yPos, width, height, Component.empty(), onPress, DEFAULT_NARRATION);
@@ -30,6 +61,13 @@ public class TogglePictureButton extends Button implements IToggleableButton {
 		this.drawOffset = drawOffset;
 		this.drawWidth = drawWidth;
 		this.drawHeight = drawHeight;
+		this.textureLocation = null;
+		this.u = null;
+		this.v = null;
+		this.uWidth = 0;
+		this.vHeight = 0;
+		this.textureWidth = 0;
+		this.textureHeight = 0;
 	}
 
 	public TogglePictureButton(int xPos, int yPos, int width, int height, int drawOffsetX, int drawOffsetY, int drawWidth, int drawHeight, ResourceLocation offSprite, ResourceLocation onSprite, boolean initiallyOn, java.util.function.Consumer<Boolean> onToggle) {
@@ -45,19 +83,31 @@ public class TogglePictureButton extends Button implements IToggleableButton {
 		this.drawWidth = drawWidth;
 		this.drawHeight = drawHeight;
 		this.currentIndex = initiallyOn ? 1 : 0;
+		this.textureLocation = null;
+		this.u = null;
+		this.v = null;
+		this.uWidth = 0;
+		this.vHeight = 0;
+		this.textureWidth = 0;
+		this.textureHeight = 0;
 	}
 
 	@Override
 	public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
 		if (visible) {
-			ResourceLocation sprite = getCurrentSprite();
-
 			RenderSystem.setShader(GameRenderer::getPositionTexShader);
 			isHovered = mouseX >= getX() && mouseY >= getY() && mouseX < getX() + width && mouseY < getY() + height;
 			guiGraphics.blitSprite(BUTTON_SPRITES.get(active, isHoveredOrFocused()), getX(), getY(), getWidth(), getHeight());
 
-			if (sprite != null)
-				guiGraphics.blitSprite(sprite, getX() + drawOffset, getY() + drawOffset, drawWidth, drawHeight);
+			if (sprites != null && sprites.length > 0) {
+				ResourceLocation sprite = getCurrentSprite();
+
+				if (sprite != null)
+					guiGraphics.blitSprite(sprite, getX() + drawOffset, getY() + drawOffset, drawWidth, drawHeight);
+			}
+			else if (textureLocation != null && u != null && v != null) {
+				guiGraphics.blit(textureLocation, getX() + drawOffset, getY() + drawOffset, u[currentIndex], v[currentIndex], drawWidth, drawHeight, textureWidth, textureHeight);
+			}
 		}
 	}
 
@@ -89,6 +139,6 @@ public class TogglePictureButton extends Button implements IToggleableButton {
 	}
 
 	public ResourceLocation getCurrentSprite() {
-		return sprites[getCurrentIndex()];
+		return sprites != null && currentIndex < sprites.length ? sprites[getCurrentIndex()] : null;
 	}
 }

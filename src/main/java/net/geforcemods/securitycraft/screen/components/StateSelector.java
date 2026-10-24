@@ -8,7 +8,6 @@ import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
-import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 
@@ -61,9 +60,9 @@ public class StateSelector extends Screen implements GuiEventListener, Narratabl
 	private static final int PAGE_LENGTH = 5;
 	private static final float ROTATION_SENSITIVITY = 0.1F;
 	private static final Vector3f Y_DRAG_ROTATION_VECTOR = new Vector3f((float) (1.0D / Math.sqrt(2)), 0, (float) (1.0D / Math.sqrt(2)));
-	private static final Quaternionf DEFAULT_ROTATION = ClientUtils.fromXYZDegrees(15.0F, -135.0F, 0.0F).rotateAxis(30.0F * ((float) Math.PI / 180.0F), Y_DRAG_ROTATION_VECTOR).mul(Axis.YP.rotationDegrees(-180.0F));
+	private static final Quaternionf DEFAULT_ROTATION_1 = ClientUtils.fromXYZDegrees(15.0F, -135.0F, 0.0F);
+	private static final Matrix4f DEFAULT_ROTATION_2 = new Matrix4f().rotate(30.0F * ((float) Math.PI / 180.0F), Y_DRAG_ROTATION_VECTOR).rotate(Axis.YP.rotationDegrees(-180.0F));
 	private static final EnumProperty<StandingOrWallType> STANDING_OR_WALL_TYPE_PROPERTY = EnumProperty.create("standing_or_wall", StandingOrWallType.class);
-	private static final Vector3f Y_AXIS = new Vector3f(0.0F, 1.0F, 0.0F);
 	private final StateSelectorAccessMenu menu;
 	private final int xStart, yStart, slotToCheck;
 	private final int previewXTranslation, previewYTranslation;
@@ -79,10 +78,7 @@ public class StateSelector extends Screen implements GuiEventListener, Narratabl
 	private List<BlockStatePropertyButton<?>> propertyButtons = new ArrayList<>();
 	private int page, amountOfPages;
 	private Button previousPageButton, nextPageButton;
-	private Quaternionf dragRotation = new Quaternionf();
-	private Quaternionf rotation = new Quaternionf();
-	private Vector3f xRotationVector = new Vector3f();
-	private Vector3f yRotationVector = new Vector3f();
+	private Matrix4f dragRotation = new Matrix4f();
 	private boolean clickedInDragRegion = false;
 	private StandingOrWallType standingOrWallType = StandingOrWallType.NONE;
 
@@ -134,7 +130,6 @@ public class StateSelector extends Screen implements GuiEventListener, Narratabl
 		BufferSource bufferSource = minecraft.renderBuffers().bufferSource();
 		PoseStack pose = guiGraphics.pose();
 
-		DEFAULT_ROTATION.mul(dragRotation, rotation);
 		guiGraphics.blit(TEXTURE, xStart, yStart, 0, 0, 193, 150);
 		super.render(guiGraphics, mouseX, mouseY, partialTick);
 		previousPageButton.render(guiGraphics, mouseX, mouseY, partialTick);
@@ -143,17 +138,17 @@ public class StateSelector extends Screen implements GuiEventListener, Narratabl
 		pose.translate(xStart + previewXTranslation, yStart + previewYTranslation, 100);
 		pose.scale(-24.0F, -24.0F, -24.0F);
 		pose.translate(0.5F, 0.5F, 0.5F);
-		pose.mulPose(rotation.rotateY((float) Math.toRadians(-90.0D)));
+		pose.mulPose(DEFAULT_ROTATION_1);
+		mulPoseMatrix(pose, DEFAULT_ROTATION_2);
+		mulPoseMatrix(pose, dragRotation);
 		pose.translate(-0.5F, -0.5F, -0.5F);
-		Lighting.setupForEntityInInventory(rotation);
 		renderBlockModel(state, pose, bufferSource);
 
 		if (beRenderer != null)
 			beRenderer.render(be, partialTick, pose, bufferSource, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
 
+		bufferSource.endBatch();
 		pose.popPose();
-		guiGraphics.flush();
-		Lighting.setupFor3DItems();
 
 		for (int i = 0; i < propertyButtons.size(); i++) {
 			String propertyName = propertyButtons.get(i).getProperty().getName();
@@ -162,6 +157,11 @@ public class StateSelector extends Screen implements GuiEventListener, Narratabl
 		}
 
 		guiGraphics.drawString(font, page + "/" + amountOfPages, xStart + 100, yStart + 130, 0x404040, false);
+	}
+
+	private void mulPoseMatrix(PoseStack pose, Matrix4f matrix) {
+		pose.last().pose().mul(matrix);
+		pose.last().normal().mul(new org.joml.Matrix3f(matrix));
 	}
 
 	public void updateButtons(boolean updateInfo, boolean slotChanged) {
@@ -276,10 +276,10 @@ public class StateSelector extends Screen implements GuiEventListener, Narratabl
 	@Override
 	public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
 		if (button == 0 && clickedInDragRegion) {
-			Quaternionf inverted = new Quaternionf(dragRotation).invert();
-
-			dragRotation.mul(new Quaternionf().fromAxisAngleRad(Y_AXIS.rotate(inverted, xRotationVector), (float) dragX * ROTATION_SENSITIVITY));
-			dragRotation.mul(new Quaternionf().fromAxisAngleRad(Y_DRAG_ROTATION_VECTOR.rotate(inverted, yRotationVector), (float) -dragY * ROTATION_SENSITIVITY));
+			dragRotation.transpose();
+			dragRotation.mul(new Matrix4f().set(Axis.YN.rotation((float) dragX * ROTATION_SENSITIVITY)));
+			dragRotation.mul(new Matrix4f().set(new Quaternionf().fromAxisAngleRad(Y_DRAG_ROTATION_VECTOR, (float) dragY * ROTATION_SENSITIVITY)));
+			dragRotation.transpose();
 			return true;
 		}
 
