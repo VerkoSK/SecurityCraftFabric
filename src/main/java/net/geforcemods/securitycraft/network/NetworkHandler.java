@@ -53,6 +53,7 @@ public final class NetworkHandler {
 		PayloadTypeRegistry.playC2S().register(RequestSecureTradingStationTransactionsPayload.TYPE, RequestSecureTradingStationTransactionsPayload.CODEC);
 		PayloadTypeRegistry.playC2S().register(SetStateOnDisguiseModulePayload.TYPE, SetStateOnDisguiseModulePayload.CODEC);
 		PayloadTypeRegistry.playS2C().register(RefreshDisguisableModelPayload.TYPE, RefreshDisguisableModelPayload.CODEC);
+		PayloadTypeRegistry.playS2C().register(SyncLockedContainersPayload.TYPE, SyncLockedContainersPayload.CODEC);
 	}
 
 	/** Registers the server-side handlers for the client -> server passcode packets. */
