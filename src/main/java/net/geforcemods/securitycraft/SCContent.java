@@ -888,6 +888,10 @@ public class SCContent {
 		BLOCK_CHANGE_DETECTOR = register("block_change_detector", new net.geforcemods.securitycraft.blocks.BlockChangeDetectorBlock(propDisguisable(3.5F).sound(SoundType.STONE)));
 		PROJECTOR = register("projector", new net.geforcemods.securitycraft.blocks.ProjectorBlock(propDisguisable(3.5F).sound(SoundType.STONE)));
 		SECURE_TRADING_STATION = register("secure_trading_station", new net.geforcemods.securitycraft.blocks.SecureTradingStationBlock(prop(3.5F).sound(SoundType.WOOD)));
+		CUTOUT_BLOCKS.add(PROJECTOR);
+
+		CUTOUT_BLOCKS.add(SECURE_TRADING_STATION);
+
 		SECURITY_CAMERA = registerBlockNoItem("security_camera", new net.geforcemods.securitycraft.blocks.SecurityCameraBlock(prop(MapColor.METAL, 5.0F).sound(SoundType.METAL)));
 		CUTOUT_BLOCKS.add(SECURITY_CAMERA);
 		SECURITY_CAMERA_ITEM = registerItem("security_camera", new net.geforcemods.securitycraft.items.SecurityCameraItem(SECURITY_CAMERA, new Item.Properties()));
@@ -1070,7 +1074,9 @@ public class SCContent {
 		BOUNCING_BETTY = register("bouncing_betty", new net.geforcemods.securitycraft.blocks.mines.BouncingBettyBlock(mineProp(MapColor.METAL, 3.5F).sound(SoundType.METAL).forceSolidOn().pushReaction(PushReaction.NORMAL)));
 		CLAYMORE = register("claymore", new net.geforcemods.securitycraft.blocks.mines.ClaymoreBlock(mineProp(MapColor.TERRACOTTA_GREEN, 3.5F).sound(SoundType.METAL).forceSolidOn().pushReaction(PushReaction.NORMAL)));
 		IMS = register("ims", new net.geforcemods.securitycraft.blocks.mines.IMSBlock(mineProp(MapColor.TERRACOTTA_GREEN, 3.5F).sound(SoundType.METAL)));
-		TRACK_MINE = register("track_mine", new net.geforcemods.securitycraft.blocks.mines.TrackMineBlock(mineProp(MapColor.METAL, 0.7F).noCollission().sound(SoundType.METAL)));
+		TRACK_MINE = register("track_mine", new net.geforcemods.securitycraft.blocks.mines.TrackMineBlock(mineProp(MapColor.METAL, 0.7F).noCollission().sound(SoundType.METAL)));
+
+		CUTOUT_BLOCKS.add(TRACK_MINE);
 		STONE_MINE = register("stone_mine", new BaseFullMineBlock(reinforcedCopy(Blocks.STONE), Blocks.STONE));
 		DEEPSLATE_MINE = register("deepslate_mine", new DeepslateMineBlock(reinforcedCopy(Blocks.DEEPSLATE), Blocks.DEEPSLATE));
 		COBBLED_DEEPSLATE_MINE = register("cobbled_deepslate_mine", new BaseFullMineBlock(reinforcedCopy(Blocks.COBBLED_DEEPSLATE), Blocks.COBBLED_DEEPSLATE));

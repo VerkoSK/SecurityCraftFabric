@@ -696,6 +696,9 @@ public class SecurityCraftClient implements ClientModInitializer {
 
 			BlockRenderLayerMap.INSTANCE.putBlock(glass, RenderType.translucent());
 
+		BlockRenderLayerMap.INSTANCE.putBlock(SCContent.REINFORCED_BY_NAME.get("reinforced_glass"), RenderType.cutout());
+		BlockRenderLayerMap.INSTANCE.putBlock(SCContent.REINFORCED_BY_NAME.get("reinforced_glass_pane"), RenderType.cutoutMipped());
+
 
 
 		for (Block cutout : SCContent.CUTOUT_BLOCKS)
@@ -715,6 +718,12 @@ public class SecurityCraftClient implements ClientModInitializer {
 		BlockRenderLayerMap.INSTANCE.putBlock(SCContent.ALARM, RenderType.cutout());
 
 		BlockRenderLayerMap.INSTANCE.putBlock(SCContent.MOTION_ACTIVATED_LIGHT, RenderType.cutout());
+
+		BlockRenderLayerMap.INSTANCE.putBlock(SCContent.PROJECTOR, RenderType.cutout());
+
+		BlockRenderLayerMap.INSTANCE.putBlock(SCContent.SECURE_TRADING_STATION, RenderType.cutout());
+
+		BlockRenderLayerMap.INSTANCE.putBlock(SCContent.TRACK_MINE, RenderType.cutout());
 
 
 
