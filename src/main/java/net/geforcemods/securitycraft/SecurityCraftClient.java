@@ -331,6 +331,11 @@ public class SecurityCraftClient implements ClientModInitializer {
 			});
 		});
 		net.minecraft.client.gui.screens.MenuScreens.register(SCContent.BLOCK_REINFORCER_MENU, net.geforcemods.securitycraft.screen.BlockReinforcerScreen::new);
+		ClientPlayNetworking.registerGlobalReceiver(net.geforcemods.securitycraft.network.SyncLockedContainersPayload.CHANNEL, (client, handler, buf, responseSender) -> {
+			net.geforcemods.securitycraft.network.SyncLockedContainersPayload payload = net.geforcemods.securitycraft.network.SyncLockedContainersPayload.read(buf);
+			client.execute(() -> net.geforcemods.securitycraft.misc.ClientContainerLocks.handle(payload.clearExisting(), payload.locked(), payload.unlocked()));
+		});
+		net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> net.geforcemods.securitycraft.misc.ClientContainerLocks.clear());
 		net.minecraft.client.gui.screens.MenuScreens.register(SCContent.LASER_BLOCK_MENU, net.geforcemods.securitycraft.screen.LaserBlockScreen::new);
 		net.minecraft.client.gui.screens.MenuScreens.register(SCContent.DISGUISE_MODULE_MENU, net.geforcemods.securitycraft.screen.DisguiseModuleScreen::new);
 		net.minecraft.client.gui.screens.MenuScreens.register(SCContent.CUSTOMIZE_BLOCK_MENU, net.geforcemods.securitycraft.screen.CustomizeBlockScreen::new);

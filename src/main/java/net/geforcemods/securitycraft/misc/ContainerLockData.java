@@ -7,8 +7,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.geforcemods.securitycraft.api.Owner;
 import net.geforcemods.securitycraft.api.PasscodeProtected;
+import net.geforcemods.securitycraft.network.SyncLockedContainersPayload;
 import net.geforcemods.securitycraft.util.PasscodeUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -44,9 +47,16 @@ import net.minecraft.world.phys.Vec3;
  */
 public class ContainerLockData extends SavedData {
 	private final Map<Long, LockedContainer> locks = new HashMap<>();
+	private ServerLevel level;
 
 	public static ContainerLockData get(ServerLevel level) {
-		return level.getDataStorage().computeIfAbsent(ContainerLockData::load, ContainerLockData::new, "securitycraft_container_locks");
+		ContainerLockData data = level.getDataStorage().computeIfAbsent(ContainerLockData::load, ContainerLockData::new, "securitycraft_container_locks");
+		data.level = level;
+		return data;
+	}
+
+	public List<BlockPos> getAllLockedPositions() {
+		return locks.keySet().stream().map(BlockPos::of).toList();
 	}
 
 	public static ContainerLockData load(CompoundTag tag) {
@@ -135,9 +145,24 @@ public class ContainerLockData extends SavedData {
 		}
 
 		setDirty();
+
+		if (level instanceof ServerLevel serverLevel) {
+			SyncLockedContainersPayload payload = new SyncLockedContainersPayload(false, positions, List.of());
+
+			for (ServerPlayer player : PlayerLookup.world(serverLevel)) {
+				ServerPlayNetworking.send(player, SyncLockedContainersPayload.CHANNEL, payload.write());
+			}
+		}
 	}
 
 	/** Unlocks {@code pos} and, if it was locked together with another half, that position too. */
+	public void unlock(Level level, BlockPos pos) {
+		if (level instanceof ServerLevel serverLevel)
+			this.level = serverLevel;
+
+		unlock(pos);
+	}
+
 	public void unlock(BlockPos pos) {
 		LockedContainer entry = locks.remove(pos.asLong());
 
@@ -149,6 +174,14 @@ public class ContainerLockData extends SavedData {
 		}
 
 		setDirty();
+
+		if (level != null) {
+			SyncLockedContainersPayload payload = new SyncLockedContainersPayload(false, List.of(), entry.positions);
+
+			for (ServerPlayer player : PlayerLookup.world(level)) {
+				ServerPlayNetworking.send(player, SyncLockedContainersPayload.CHANNEL, payload.write());
+			}
+		}
 	}
 
 	/** A same-block horizontal neighbour that also holds an inventory, i.e. likely the other half of a double container. */
