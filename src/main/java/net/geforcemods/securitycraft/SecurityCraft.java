@@ -38,6 +38,15 @@ public class SecurityCraft implements ModInitializer {
 		net.geforcemods.securitycraft.items.UniversalKeyChangerItem.registerUseCallback();
 		net.geforcemods.securitycraft.items.CodebreakerItem.registerUseCallback();
 		net.geforcemods.securitycraft.misc.ContainerLockEnforcement.register();
+		net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
+			net.minecraft.server.level.ServerLevel level = handler.player.serverLevel();
+			net.geforcemods.securitycraft.misc.ContainerLockData data = net.geforcemods.securitycraft.misc.ContainerLockData.get(level);
+			net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.send(handler.player, new net.geforcemods.securitycraft.network.SyncLockedContainersPayload(true, data.getAllLockedPositions(), java.util.List.of()));
+		});
+		net.fabricmc.fabric.api.entity.event.v1.ServerEntityWorldChangeEvents.AFTER_PLAYER_CHANGE_WORLD.register((player, origin, destination) -> {
+			net.geforcemods.securitycraft.misc.ContainerLockData data = net.geforcemods.securitycraft.misc.ContainerLockData.get(destination);
+			net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.send(player, new net.geforcemods.securitycraft.network.SyncLockedContainersPayload(true, data.getAllLockedPositions(), java.util.List.of()));
+		});
 		net.geforcemods.securitycraft.items.UniversalBlockModifierItem.registerUseCallback();
 		net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents.AFTER.register((level, player, pos, state, blockEntity) -> {
 			if (!level.isClientSide())
