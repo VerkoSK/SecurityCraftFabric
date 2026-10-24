@@ -1778,6 +1778,10 @@ public class SCContent {
 
 		SECURE_TRADING_STATION = register("secure_trading_station", new net.geforcemods.securitycraft.blocks.SecureTradingStationBlock(prop(3.5F).sound(SoundType.WOOD)));
 
+		CUTOUT_BLOCKS.add(PROJECTOR);
+
+		CUTOUT_BLOCKS.add(SECURE_TRADING_STATION);
+
 		SECURITY_CAMERA = registerBlockNoItem("security_camera", new net.geforcemods.securitycraft.blocks.SecurityCameraBlock(prop(MapColor.METAL, 5.0F).sound(SoundType.METAL)));
 
 		CUTOUT_BLOCKS.add(SECURITY_CAMERA);
@@ -2143,6 +2147,8 @@ public class SCContent {
 		IMS = register("ims", new net.geforcemods.securitycraft.blocks.mines.IMSBlock(mineProp(MapColor.TERRACOTTA_GREEN, 3.5F).sound(SoundType.METAL)));
 
 		TRACK_MINE = register("track_mine", new net.geforcemods.securitycraft.blocks.mines.TrackMineBlock(mineProp(MapColor.METAL, 0.7F).noCollission().sound(SoundType.METAL)));
+
+		CUTOUT_BLOCKS.add(TRACK_MINE);
 
 		STONE_MINE = register("stone_mine", new BaseFullMineBlock(reinforcedCopy(Blocks.STONE), Blocks.STONE));
 
