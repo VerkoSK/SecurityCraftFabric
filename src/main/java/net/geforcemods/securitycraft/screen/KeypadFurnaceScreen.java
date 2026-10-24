@@ -16,6 +16,6 @@ public class KeypadFurnaceScreen extends AbstractFurnaceScreen<KeypadFurnaceMenu
 	private static final ResourceLocation BURN_PROGRESS_SPRITE = ResourceLocation.withDefaultNamespace("container/furnace/burn_progress");
 
 	public KeypadFurnaceScreen(KeypadFurnaceMenu menu, Inventory inv, Component title) {
-		super(menu, new SmeltingRecipeBookComponent(), inv, ThreadLocalRandom.current().nextInt(100) < 5 ? Component.literal("Keypad Gurnace") : (menu.be.getCustomName() != null ? menu.be.getCustomName() : title), LIT_PROGRESS_SPRITE, BURN_PROGRESS_SPRITE, TEXTURE);
+		super(menu, new SmeltingRecipeBookComponent(), inv, ThreadLocalRandom.current().nextInt(100) < 5 ? Component.literal("Keypad Gurnace") : (menu.be.getCustomName() != null ? menu.be.getCustomName() : title), TEXTURE, LIT_PROGRESS_SPRITE, BURN_PROGRESS_SPRITE);
 	}
 }
