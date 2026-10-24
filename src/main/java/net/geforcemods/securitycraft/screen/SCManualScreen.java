@@ -762,6 +762,11 @@ public class SCManualScreen extends Screen implements StillValid {
 
 			guiGraphics.blitSprite(net.minecraft.client.renderer.RenderType::guiTextured, sprite, getX(), getY(), 23, 13);
 		}
+
+		@Override
+		public void playDownSound(net.minecraft.client.sounds.SoundManager soundManager) {
+			soundManager.play(net.minecraft.client.resources.sounds.SimpleSoundInstance.forUI(net.minecraft.sounds.SoundEvents.BOOK_PAGE_TURN, 1.0F));
+		}
 	}
 
 	static class HyperlinkButton extends Button {
