@@ -127,6 +127,11 @@ public class StateSelector extends Screen implements GuiEventListener, Narratabl
 	}
 
 	@Override
+	public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+		// No-op: StateSelector is an embedded component of a container screen; the parent screen renders the background.
+	}
+
+	@Override
 	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
 		BufferSource bufferSource = minecraft.renderBuffers().bufferSource();
 		PoseStack pose = guiGraphics.pose();
