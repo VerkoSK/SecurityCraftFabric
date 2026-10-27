@@ -12,6 +12,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.Level.ExplosionInteraction;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -63,5 +64,9 @@ public class BlockUtils {
 		for (Direction dir : directions) {
 			level.updateNeighborsAt(pos.relative(dir), block);
 		}
+	}
+
+	public static boolean areItemsEqual(ItemStack firstItemStack, ItemStack secondItemStack, boolean exactComponentCheck) {
+		return exactComponentCheck ? ItemStack.isSameItemSameComponents(firstItemStack, secondItemStack) : firstItemStack.is(secondItemStack.getItem());
 	}
 }

@@ -2,17 +2,17 @@
 	"type": "minecraft:crafting_shaped",
 	"category": "misc",
 	"group": "securitycraft:lens",
+	"key": {
+		"P": "securitycraft:reinforced_glass_pane"
+	},
 	"pattern": [
 		" P",
 		"P ",
 		" P"
 	],
-	"key": {
-		"P": "securitycraft:reinforced_glass_pane"
-	},
 	"result": {
-		"id": "securitycraft:lens",
-		"count": 6
+		"count": 6,
+		"id": "securitycraft:lens"
 	},
 	"show_notification": true
 }

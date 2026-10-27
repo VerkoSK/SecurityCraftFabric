@@ -1,10 +1,26 @@
 {
-	"required": true,
-	"minVersion": "0.8",
-	"package": "net.geforcemods.securitycraft.mixin",
-	"compatibilityLevel": "JAVA_21",
-	"client": [],
-	"injectors": {
-		"defaultRequire": 1
-	}
+    "required": true,
+    "minVersion": "0.8",
+    "package": "net.geforcemods.securitycraft.mixin",
+    "plugin": "net.geforcemods.securitycraft.mixin.SecurityCraftMixinPlugin",
+    "compatibilityLevel": "JAVA_21",
+    "mixins": [
+        "BlockItemMixin",
+        "camera.ChunkMapMixin",
+        "camera.PlayerListMixin",
+        "camera.ServerPlayerMixin",
+        "camera.TrackedEntityMixin"
+    ],
+    "client": [
+        "ItemModelResolverMixin",
+        "camera.ClientChunkCacheMixin",
+        "camera.GameRendererMixin",
+        "camera.GuiCameraMixin",
+        "camera.ItemInHandRendererMixin",
+        "camera.LevelRendererMixin",
+        "camera.LocalPlayerMixin",
+        "camera.MinecraftMixin",
+        "camera.ViewAreaMixin",
+        "compat.starhud.TargetedCrosshairHUDMixin"
+    ]
 }

@@ -5,9 +5,8 @@ accessWidener	v2	named
 accessible	field	net/minecraft/client/gui/components/EditBox	value	Ljava/lang/String;
 extendable	method	net/minecraft/client/gui/components/EditBox	scrollTo	(I)V
 
-# BrushableMineBlockEntity re-implements BrushableBlockEntity#brush/#checkReset on top of vanilla's private brushing.
-# Do NOT widen BrushableBlockEntity#brushingCompleted: `accessible` makes a private method final, which would clash
-# with BrushableMineBlockEntity's own same-named method.
+# BrushableMineBlockEntity re-implements BrushableBlockEntity#brush/#checkReset on top of vanilla's private brushing
+# state. Upstream gets the same access from NeoForge's access transformers.
 accessible	field	net/minecraft/world/level/block/entity/BrushableBlockEntity	brushCount	I
 accessible	field	net/minecraft/world/level/block/entity/BrushableBlockEntity	brushCountResetsAtTick	J
 accessible	field	net/minecraft/world/level/block/entity/BrushableBlockEntity	coolDownEndsAtTick	J
@@ -54,22 +53,27 @@ accessible	field	net/minecraft/world/level/block/state/BlockBehaviour$Properties
 # its text-drawing hook private in this version, so SecretSignRenderer/SecretHangingSignRenderer blank the text
 # on the extracted SignRenderState instead, which needs no widened access.
 
-# The secret signs, reinforced hopper/lectern/chiseled bookshelf, and the brushable + creaking heart mines
-# subclass a vanilla block entity whose 2-arg constructor hard-codes the vanilla BlockEntityType. MC 1.21.2+
-# validates the block state against that type in the BlockEntity constructor, so SecurityCraft merges its blocks
-# into the vanilla type's valid-block set at registration - which needs that set writable.
+# The secret signs, reinforced hopper/lectern/chiseled bookshelf, and the brushable mines subclass a vanilla
+# block entity whose 2-arg constructor hard-codes the vanilla BlockEntityType. MC 1.21.2+ validates the block
+# state against that type in the BlockEntity constructor, so SecurityCraft merges its blocks into the vanilla
+# type's valid-block set at registration - which needs that set writable.
 accessible	field	net/minecraft/world/level/block/entity/BlockEntityType	validBlocks	Ljava/util/Set;
 mutable	field	net/minecraft/world/level/block/entity/BlockEntityType	validBlocks	Ljava/util/Set;
+accessible	field	net/minecraft/world/item/StandingAndWallBlockItem	wallBlock	Lnet/minecraft/world/level/block/Block;
+accessible	field	net/minecraft/world/level/block/state/StateHolder	PROPERTY_ENTRY_TO_STRING_FUNCTION	Ljava/util/function/Function;
+accessible	field	net/minecraft/client/gui/components/Button	DEFAULT_NARRATION	Lnet/minecraft/client/gui/components/Button$CreateNarration;
+accessible	method	net/minecraft/client/gui/components/Button	<init>	(IIIILnet/minecraft/network/chat/Component;Lnet/minecraft/client/gui/components/Button$OnPress;Lnet/minecraft/client/gui/components/Button$CreateNarration;)V
+accessible	field	net/minecraft/server/level/ServerPlayer	camera	Lnet/minecraft/world/entity/Entity;
+accessible	field	net/minecraft/client/player/LocalPlayer	yRotLast	F
+accessible	field	net/minecraft/client/player/LocalPlayer	xRotLast	F
+accessible	class	net/minecraft/server/level/ChunkMap$TrackedEntity
+accessible	class	net/minecraft/client/multiplayer/ClientChunkCache$Storage
+accessible	method	net/minecraft/client/multiplayer/ClientChunkCache$Storage	inRange	(II)Z
 
-# MC 1.21.6 dropped Fabric's BlockRenderLayerMap and vanilla's model "render_type" field. The reinforced doors,
-# trapdoors, furnace windows, electrified fences, reinforced glass, laser fields and fake water set their terrain
-# render layer straight on these two maps instead.
 accessible	field	net/minecraft/client/renderer/ItemBlockRenderTypes	TYPE_BY_BLOCK	Ljava/util/Map;
 accessible	field	net/minecraft/client/renderer/ItemBlockRenderTypes	LAYER_BY_FLUID	Ljava/util/Map;
 
-# The keypad chest reuses vanilla's ChestRenderer but has to swap in its own atlas material, which means
-# reaching the renderer's baked models and material set. Upstream gets these from a Forge access transformer.
+accessible	field	net/minecraft/client/renderer/blockentity/ChestRenderer	materials	Lnet/minecraft/client/resources/model/MaterialSet;
 accessible	field	net/minecraft/client/renderer/blockentity/ChestRenderer	singleModel	Lnet/minecraft/client/model/object/chest/ChestModel;
 accessible	field	net/minecraft/client/renderer/blockentity/ChestRenderer	doubleLeftModel	Lnet/minecraft/client/model/object/chest/ChestModel;
 accessible	field	net/minecraft/client/renderer/blockentity/ChestRenderer	doubleRightModel	Lnet/minecraft/client/model/object/chest/ChestModel;
-accessible	field	net/minecraft/client/renderer/blockentity/ChestRenderer	materials	Lnet/minecraft/client/resources/model/MaterialSet;
