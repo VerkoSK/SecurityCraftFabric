@@ -42,6 +42,8 @@ import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.language.I18n;
+import net.minecraft.core.NonNullList;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.ClickEvent.Action;
@@ -57,6 +59,10 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.ShapedRecipe;
+import net.minecraft.world.item.crafting.ShapelessRecipe;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 
@@ -149,7 +155,7 @@ public class SCManualScreen extends Screen implements StillValid {
 
 	@Override
 	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
-		//1.21.6 moved the renderBackground call into Screen#renderWithTooltip; calling it again here blurs twice and crashes
+		renderBackground(guiGraphics, mouseX, mouseY, partialTicks);
 		guiGraphics.blit(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, currentPage < 0 ? TITLE_PAGE : (recipe != null && !recipe.isEmpty() ? PAGE : PAGE_WITH_SCROLL), startX, 5, 0, 0, 256, 250, 256, 256);
 
 		for (Renderable renderable : renderables) {
@@ -160,14 +166,14 @@ public class SCManualScreen extends Screen implements StillValid {
 			String pageNumberText = (currentPage + 2) + "/" + (SCManualItem.PAGES.size() + 2); //+2 because neither title page is in the list
 
 			if (subpages.size() > 1)
-				guiGraphics.drawString(font, (currentSubpage + 1) + "/" + subpages.size(), startX + 205, 100, 0xFF8E8270, false);
+				guiGraphics.drawString(font, (currentSubpage + 1) + "/" + subpages.size(), startX + 205, 100, 0x8E8270, false);
 
 			if (designedBy != null)
-				guiGraphics.drawWordWrap(font, designedBy, startX + 18, 150, 75, 0xFF000000, false);
+				guiGraphics.drawWordWrap(font, designedBy, startX + 18, 150, 75, 0);
 
-			guiGraphics.drawString(font, pageTitle, startX + 39, 27, 0xFF000000, false);
-			guiGraphics.drawWordWrap(font, subpages.get(currentSubpage), startX + 18, 45, 225, 0xFF000000, false);
-			guiGraphics.drawString(font, pageNumberText, startX + 240 - font.width(pageNumberText), 182, 0xFF8E8270, false);
+			guiGraphics.drawString(font, pageTitle, startX + 39, 27, 0, false);
+			guiGraphics.drawWordWrap(font, subpages.get(currentSubpage), startX + 18, 45, 225, 0);
+			guiGraphics.drawString(font, pageNumberText, startX + 240 - font.width(pageNumberText), 182, 0x8E8270, false);
 
 			if (ownable)
 				guiGraphics.blit(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, ICONS, startX + 29, 118, 1, 1, 16, 16, 256, 256);
@@ -205,29 +211,29 @@ public class SCManualScreen extends Screen implements StillValid {
 		else if (currentPage == PORT_TITLE_PAGE) {
 			String pageNumberText = "1/" + (SCManualItem.PAGES.size() + 2); //+2 because neither title page is in the list
 
-			guiGraphics.drawString(font, portTitle, width / 2 - font.width(portTitle) / 2, 22, 0xFF000000, false);
-			guiGraphics.drawString(font, portedBy, width / 2 - font.width(portedBy) / 2, 150, 0xFF000000, false);
-			guiGraphics.drawString(font, pageNumberText, startX + 240 - font.width(pageNumberText), 182, 0xFF8E8270, false);
+			guiGraphics.drawString(font, portTitle, width / 2 - font.width(portTitle) / 2, 22, 0, false);
+			guiGraphics.drawString(font, portedBy, width / 2 - font.width(portedBy) / 2, 150, 0, false);
+			guiGraphics.drawString(font, pageNumberText, startX + 240 - font.width(pageNumberText), 182, 0x8E8270, false);
 		}
 		else { //the original's own title page, at the back of the book
 			String pageNumberText = (SCManualItem.PAGES.size() + 2) + "/" + (SCManualItem.PAGES.size() + 2);
 
-			guiGraphics.drawString(font, intro1, width / 2 - font.width(intro1) / 2, 22, 0xFF000000, false);
+			guiGraphics.drawString(font, intro1, width / 2 - font.width(intro1) / 2, 22, 0, false);
 
 			for (int i = 0; i < intro2.size(); i++) {
 				FormattedCharSequence text = intro2.get(i);
 
-				guiGraphics.drawString(font, text, width / 2 - font.width(text) / 2, 150 + 10 * i, 0xFF000000, false);
+				guiGraphics.drawString(font, text, width / 2 - font.width(text) / 2, 150 + 10 * i, 0, false);
 			}
 
 			for (int i = 0; i < author.size(); i++) {
 				FormattedCharSequence text = author.get(i);
 
-				guiGraphics.drawString(font, text, width / 2 - font.width(text) / 2, 180 + 10 * i, 0xFF000000, false);
+				guiGraphics.drawString(font, text, width / 2 - font.width(text) / 2, 180 + 10 * i, 0, false);
 			}
 
-			guiGraphics.drawString(font, pageNumberText, startX + 240 - font.width(pageNumberText), 182, 0xFF8E8270, false);
-			guiGraphics.drawString(font, ourPatrons, width / 2 - font.width(ourPatrons) / 2 + 34, 40, 0xFF000000, false);
+			guiGraphics.drawString(font, pageNumberText, startX + 240 - font.width(pageNumberText), 182, 0x8E8270, false);
+			guiGraphics.drawString(font, ourPatrons, width / 2 - font.width(ourPatrons) / 2 + 34, 40, 0, false);
 		}
 	}
 
@@ -668,10 +674,10 @@ public class SCManualScreen extends Screen implements StillValid {
 					if (rowTop + ROW_HEIGHT < getY() || rowTop > getY() + height)
 						continue;
 
-					guiGraphics.drawString(font, patron, getX() + 2, rowTop + 2, 0xFF000000, false);
+					guiGraphics.drawString(font, patron, getX() + 2, rowTop + 2, 0, false);
 
 					if (mouseX >= getX() && mouseX < getX() + width - 6 && mouseY >= rowTop && mouseY < rowTop + ROW_HEIGHT && font.width(patron) >= width - 6)
-						guiGraphics.setTooltipForNextFrame(font, List.<Component>of(Component.literal(patron)), Optional.empty(), mouseX, rowTop);
+						guiGraphics.setTooltipForNextFrame(font, Component.literal(patron), mouseX, rowTop);
 				}
 
 				guiGraphics.disableScissor();
@@ -694,7 +700,7 @@ public class SCManualScreen extends Screen implements StillValid {
 				}
 			}
 			else
-				guiGraphics.drawString(font, loadingText, getX() + width / 2 - font.width(loadingText) / 2, getY() + 30, 0xFF000000, false);
+				guiGraphics.drawString(font, loadingText, getX() + width / 2 - font.width(loadingText) / 2, getY() + 30, 0, false);
 		}
 
 		@Override
@@ -749,14 +755,17 @@ public class SCManualScreen extends Screen implements StillValid {
 		}
 
 		@Override
-		public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
-			if (visible) {
-				isHovered = mouseX >= getX() && mouseY >= getY() && mouseX < getX() + width && mouseY < getY() + height;
+		protected void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+			isHovered = mouseX >= getX() && mouseY >= getY() && mouseX < getX() + width && mouseY < getY() + height;
 
-				ResourceLocation sprite = isHoveredOrFocused() ? (forward ? FORWARD_HIGHLIGHTED : BACKWARD_HIGHLIGHTED) : (forward ? FORWARD : BACKWARD);
+			ResourceLocation sprite = isHoveredOrFocused() ? (forward ? FORWARD_HIGHLIGHTED : BACKWARD_HIGHLIGHTED) : (forward ? FORWARD : BACKWARD);
 
-				guiGraphics.blitSprite(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, sprite, getX(), getY(), 23, 13);
-			}
+			guiGraphics.blitSprite(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, sprite, getX(), getY(), 23, 13);
+		}
+
+		@Override
+		public void playDownSound(net.minecraft.client.sounds.SoundManager soundManager) {
+			soundManager.play(net.minecraft.client.resources.sounds.SimpleSoundInstance.forUI(net.minecraft.sounds.SoundEvents.BOOK_PAGE_TURN, 1.0F));
 		}
 	}
 

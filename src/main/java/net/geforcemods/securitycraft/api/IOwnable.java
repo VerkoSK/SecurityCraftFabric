@@ -22,6 +22,18 @@ public interface IOwnable {
 	/** Called when this is validated. */
 	default void onValidate() {}
 
+	default void onOwnerChanged(net.minecraft.world.level.block.state.BlockState state, net.minecraft.world.level.Level level, net.minecraft.core.BlockPos pos, Player player, Owner oldOwner, Owner newOwner) {
+		if (needsValidation()) {
+			getOwner().setValidated(false);
+
+			if (player != null)
+				net.geforcemods.securitycraft.util.PlayerUtils.sendMessageToPlayer(player, net.geforcemods.securitycraft.util.Utils.localize(net.geforcemods.securitycraft.SCContent.UNIVERSAL_OWNER_CHANGER.getDescriptionId()), net.geforcemods.securitycraft.util.Utils.localize("messages.securitycraft:universalOwnerChanger.ownerInvalidated"), net.minecraft.ChatFormatting.GREEN);
+		}
+
+		if (this instanceof net.minecraft.world.level.block.entity.BlockEntity be)
+			be.setChanged();
+	}
+
 	/** Incognito-mask isn't ported, so {@code ignoreMask} has no effect; kept for upstream-signature parity. */
 	default boolean isOwnedBy(Player player, boolean ignoreMask) {
 		return isOwnedBy(player);
@@ -42,6 +54,6 @@ public interface IOwnable {
 
 	/** Whether an ownable entity (e.g. a tamed pet) belongs to the same owner as this. */
 	default boolean allowsOwnableEntity(OwnableEntity entity) {
-		return entity.getOwnerReference() != null && entity.getOwnerReference().getUUID().toString().equals(getOwner().getUUID());
+		return entity.getOwnerReference() != null && entity.getOwnerReference().getUUID() != null && entity.getOwnerReference().getUUID().toString().equals(getOwner().getUUID());
 	}
 }
