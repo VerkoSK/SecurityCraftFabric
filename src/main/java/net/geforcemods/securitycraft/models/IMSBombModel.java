@@ -15,6 +15,10 @@ public class IMSBombModel extends EntityModel<EntityRenderState> {
 		super(modelPart);
 	}
 
+	public static LayerDefinition createBodyLayer() {
+		return createLayer();
+	}
+
 	public static LayerDefinition createLayer() {
 		MeshDefinition meshDefinition = new MeshDefinition();
 		PartDefinition partDefinition = meshDefinition.getRoot();

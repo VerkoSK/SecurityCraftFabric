@@ -1,11 +1,9 @@
 package net.geforcemods.securitycraft.misc;
 
-import java.net.URI;
 import java.util.function.Consumer;
 
 import net.fabricmc.loader.api.FabricLoader;
 import net.geforcemods.securitycraft.SecurityCraft;
-import net.geforcemods.securitycraft.util.Utils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
@@ -14,9 +12,7 @@ import net.minecraft.network.chat.Style;
 
 /**
  * Client-side "thanks for using SecurityCraft" chat message shown once per session on world join, matching
- * upstream's {@code Tips} class. Trimmed to what applies to this port (no Patreon, no official server, no
- * {@code /sc help} command to point at), and with a bug-report line pointing at this port's own Discord channel
- * instead of upstream's - not part of upstream.
+ * upstream's {@code Tips} class. Includes Fabric port authorship and official repository links.
  */
 public final class WelcomeMessage {
 	private static final String DISCORD_URL = "https://discord.com/channels/798455990341206056/1222259012310007828";
@@ -31,11 +27,12 @@ public final class WelcomeMessage {
 
 		shown = true;
 
-		String version = FabricLoader.getInstance().getModContainer(SecurityCraft.MODID).map(c -> c.getMetadata().getVersion().getFriendlyString()).orElse("0");
+		String version = FabricLoader.getInstance().getModContainer(SecurityCraft.MODID).map(c -> c.getMetadata().getVersion().getFriendlyString()).orElse("0.7");
 		MutableComponent prefix = Component.literal("[").append(Component.literal("SecurityCraft").withStyle(ChatFormatting.GOLD)).append(Component.literal("] "));
-		MutableComponent discordLink = Component.literal("Discord").withStyle(Style.EMPTY.withColor(ChatFormatting.AQUA).withUnderlined(true).withClickEvent(new ClickEvent.OpenUrl(URI.create(DISCORD_URL))));
+		MutableComponent discordLink = Component.literal("Discord").withStyle(Style.EMPTY.withColor(ChatFormatting.AQUA).withUnderlined(true).withClickEvent(new ClickEvent.OpenUrl(java.net.URI.create(DISCORD_URL))));
+		MutableComponent githubLink = Component.literal("GitHub").withStyle(Style.EMPTY.withColor(ChatFormatting.AQUA).withUnderlined(true).withClickEvent(new ClickEvent.OpenUrl(java.net.URI.create(SecurityCraft.PORT_REPO))));
 
-		messageSink.accept(prefix.copy().append(Utils.localize("messages.securitycraft:thanks", version)));
-		messageSink.accept(prefix.copy().append(Utils.localize("messages.securitycraft:bugReport", discordLink)));
+		messageSink.accept(prefix.copy().append(Component.literal("Fabric port by ").withStyle(ChatFormatting.YELLOW)).append(Component.literal(SecurityCraft.PORT_AUTHOR).withStyle(ChatFormatting.GREEN).withStyle(ChatFormatting.BOLD)).append(Component.literal(" v" + version).withStyle(ChatFormatting.GRAY)));
+		messageSink.accept(prefix.copy().append(Component.literal("Source & Issues: ").withStyle(ChatFormatting.GRAY)).append(githubLink).append(Component.literal(" | ").withStyle(ChatFormatting.DARK_GRAY)).append(discordLink));
 	}
 }

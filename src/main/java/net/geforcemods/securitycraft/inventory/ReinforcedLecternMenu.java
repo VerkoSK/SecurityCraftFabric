@@ -16,6 +16,10 @@ public class ReinforcedLecternMenu extends LecternMenu {
 		this(id, (ReinforcedLecternBlockEntity) inventory.player.level().getBlockEntity(buf.readBlockPos()));
 	}
 
+	public ReinforcedLecternMenu(int id, net.minecraft.world.level.Level level, net.minecraft.core.BlockPos pos, Inventory inventory) {
+		this(id, (ReinforcedLecternBlockEntity) level.getBlockEntity(pos));
+	}
+
 	public ReinforcedLecternMenu(int id, ReinforcedLecternBlockEntity be) {
 		super(id, be.bookAccess, be.dataAccess);
 		this.be = be;

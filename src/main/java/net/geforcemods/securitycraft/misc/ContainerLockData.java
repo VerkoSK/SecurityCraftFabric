@@ -160,6 +160,10 @@ public class ContainerLockData extends SavedData {
 		setDirty();
 	}
 
+	public List<BlockPos> getAllLockedPositions() {
+		return locks.keySet().stream().map(BlockPos::of).toList();
+	}
+
 	/** A same-block horizontal neighbour that also holds an inventory, i.e. likely the other half of a double container. */
 	private static BlockPos findPartner(Level level, BlockPos pos) {
 		Block block = level.getBlockState(pos).getBlock();

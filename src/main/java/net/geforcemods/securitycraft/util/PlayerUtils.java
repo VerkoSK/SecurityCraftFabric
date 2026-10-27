@@ -42,6 +42,28 @@ public class PlayerUtils {
 	}
 
 	/**
+	 * Resolves a player name to a UUID even when that player is offline, by falling back to the server's
+	 * {@link net.minecraft.server.players.GameProfileCache} (the same lookup vanilla commands like {@code /whitelist
+	 * add} use). Online players are checked first to avoid an unnecessary cache/Mojang lookup.
+	 *
+	 * @param name The player name to resolve
+	 * @return The player's UUID as a string, or empty if the name doesn't belong to a real account
+	 */
+	public static java.util.Optional<String> resolveUUID(String name) {
+		ServerPlayer online = getPlayerFromName(name);
+
+		if (online != null)
+			return java.util.Optional.of(online.getUUID().toString());
+
+		MinecraftServer server = SecurityCraft.SERVER;
+
+		if (server == null)
+			return java.util.Optional.empty();
+
+		return server.getProfileCache().get(name).map(profile -> profile.getId().toString());
+	}
+
+	/**
 	 * @param owner The owner whose player to look up
 	 * @return A collection containing the owner's player if they are online, an empty collection otherwise
 	 */
@@ -55,11 +77,21 @@ public class PlayerUtils {
 	}
 
 	public static void sendMessageToPlayer(Player player, MutableComponent title, MutableComponent message, ChatFormatting color) {
-		//only the name in the brackets carries the colour; the message itself stays white, like upstream.
-		//withStyle on the whole component would tint the message too, which is what this used to do.
-		MutableComponent line = Component.literal("[").append(title.setStyle(Style.EMPTY.withColor(color))).append(Component.literal("] ")).setStyle(Style.EMPTY.withColor(ChatFormatting.WHITE)).append(message);
+		sendMessageToPlayer(player, title, message, color, false);
+	}
 
-		player.displayClientMessage(line, false);
+	/**
+	 * Sends a chat message from one side only, matching upstream. Callers like the mine remote access tool run on both
+	 * the client and the server, so without this check the same message would be printed to chat twice.
+	 */
+	public static void sendMessageToPlayer(Player player, MutableComponent title, MutableComponent message, ChatFormatting color, boolean shouldSendFromClient) {
+		if (player != null && player.level().isClientSide == shouldSendFromClient) {
+			//only the name in the brackets carries the colour; the message itself stays white, like upstream.
+			//withStyle on the whole component would tint the message too, which is what this used to do.
+			MutableComponent line = Component.literal("[").append(title.setStyle(Style.EMPTY.withColor(color))).append(Component.literal("] ")).setStyle(Style.EMPTY.withColor(ChatFormatting.WHITE)).append(message);
+
+			player.displayClientMessage(line, false);
+		}
 	}
 
 	/**
@@ -85,26 +117,15 @@ public class PlayerUtils {
 		return ItemStack.EMPTY;
 	}
 
-	/**
-	 * Resolves a player name to a UUID even when that player is offline, by falling back to the server's
-	 * {@link net.minecraft.server.players.GameProfileCache} (the same lookup vanilla commands like {@code /whitelist
-	 * add} use). Online players are checked first to avoid an unnecessary cache/Mojang lookup.
-	 *
-	 * @param name The player name to resolve
-	 * @return The player's UUID as a string, or empty if the name doesn't belong to a real account
-	 */
-	public static java.util.Optional<String> resolveUUID(String name) {
-		ServerPlayer online = getPlayerFromName(name);
+	public static boolean isPlayerMountedOnCamera(net.minecraft.world.entity.LivingEntity entity) {
+		if (!(entity instanceof Player player))
+			return false;
 
-		if (online != null)
-			return java.util.Optional.of(online.getUUID().toString());
-
-		MinecraftServer server = SecurityCraft.SERVER;
-
-		if (server == null)
-			return java.util.Optional.empty();
-
-		return server.getProfileCache().get(name).map(profile -> profile.getId().toString());
+		if (player.level().isClientSide)
+			return net.fabricmc.api.EnvType.CLIENT == net.fabricmc.loader.api.FabricLoader.getInstance().getEnvironmentType() && net.geforcemods.securitycraft.SecurityCraftClient.isPlayerMountedOnCamera();
+		else if (player instanceof ServerPlayer serverPlayer)
+			return serverPlayer.getCamera() instanceof net.geforcemods.securitycraft.entity.camera.SecurityCamera;
+		else
+			return false;
 	}
 }
-
