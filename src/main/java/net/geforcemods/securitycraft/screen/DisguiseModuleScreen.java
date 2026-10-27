@@ -1,35 +1,96 @@
 package net.geforcemods.securitycraft.screen;
 
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.renderer.RenderType;
+
+import java.util.List;
+
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.geforcemods.securitycraft.SCContent;
+import net.geforcemods.securitycraft.components.SavedBlockState;
 import net.geforcemods.securitycraft.inventory.DisguiseModuleMenu;
+import net.geforcemods.securitycraft.network.SetStateOnDisguiseModulePayload;
+import net.geforcemods.securitycraft.screen.components.StateSelector;
+import net.geforcemods.securitycraft.util.IHasExtraAreas;
+import net.geforcemods.securitycraft.util.StandingOrWallType;
+import net.geforcemods.securitycraft.util.Utils;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.renderer.Rect2i;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 
-public class DisguiseModuleScreen extends AbstractContainerScreen<DisguiseModuleMenu> {
+public class DisguiseModuleScreen extends AbstractContainerScreen<DisguiseModuleMenu> implements IHasExtraAreas {
+	private static final ResourceLocation TEXTURE = SCContent.id("textures/gui/container/customize1.png");
+	private StateSelector stateSelector;
+
 	public DisguiseModuleScreen(DisguiseModuleMenu menu, Inventory inv, Component title) {
-		super(menu, inv, title);
-		imageHeight = 166;
-		inventoryLabelY = imageHeight - 94;
+		super(menu, inv, Utils.localize("item.securitycraft.disguise_module"));
 	}
 
 	@Override
-	protected void renderBg(GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
-		guiGraphics.fill(leftPos, topPos, leftPos + imageWidth, topPos + imageHeight, 0xFFC6C6C6);
+	protected void init() {
+		super.init();
 
-		for (Slot slot : menu.slots) {
-			int sx = leftPos + slot.x;
-			int sy = topPos + slot.y;
-
-			guiGraphics.fill(sx - 1, sy - 1, sx + 17, sy + 17, 0xFF373737);
-			guiGraphics.fill(sx, sy, sx + 16, sy + 16, 0xFF8B8B8B);
-		}
+		leftPos += 90;
+		stateSelector = addRenderableWidget(new StateSelector(menu, title, leftPos - 190, topPos + 7, 0, 200, 15, 236, 50));
+		stateSelector.init(minecraft, width, height);
 	}
 
 	@Override
 	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
 		super.render(guiGraphics, mouseX, mouseY, partialTicks);
-		renderTooltip(guiGraphics, mouseX, mouseY);
+
+		if (hoveredSlot != null && !hoveredSlot.getItem().isEmpty())
+			renderTooltip(guiGraphics, mouseX, mouseY);
+	}
+
+	@Override
+	protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+		guiGraphics.drawString(font, title, imageWidth / 2 - font.width(title) / 2, 6, 0x404040, false);
+	}
+
+	@Override
+	protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int mouseX, int mouseY) {
+		guiGraphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight, 256, 256);
+	}
+
+	@Override
+	public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+		if (stateSelector != null && stateSelector.mouseDragged(mouseX, mouseY, button, dragX, dragY))
+			return true;
+
+		return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+	}
+
+	@Override
+	public void onClose() {
+		super.onClose();
+
+		ItemStack module = menu.getInventory().getModule();
+		BlockState state = Blocks.AIR.defaultBlockState();
+		StandingOrWallType standingOrWall = StandingOrWallType.NONE;
+
+		if (!menu.getSlot(0).getItem().isEmpty() && stateSelector != null && stateSelector.getState() != null) {
+			state = stateSelector.getState();
+			standingOrWall = stateSelector.getStandingOrWallType();
+		}
+
+		module.set(SCContent.SAVED_BLOCK_STATE, new SavedBlockState(state, standingOrWall));
+		ClientPlayNetworking.send(new SetStateOnDisguiseModulePayload(state, standingOrWall));
+	}
+
+	@Override
+	public List<Rect2i> getExtraAreas() {
+		if (stateSelector != null)
+			return stateSelector.getGuiExtraAreas();
+		else
+			return List.of();
 	}
 }
