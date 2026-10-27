@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "G": {
+      "item": "securitycraft:reinforced_glass"
+    },
+    "N": {
+      "item": "minecraft:note_block"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    }
+  },
+  "pattern": [
+    "GGG",
+    "GNG",
+    "GRG"
+  ],
+  "result": {
+    "id": "securitycraft:alarm"
+  },
+  "show_notification": true
+}

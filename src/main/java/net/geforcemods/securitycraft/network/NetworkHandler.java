@@ -2,6 +2,7 @@ package net.geforcemods.securitycraft.network;
 
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.geforcemods.securitycraft.SCContent;
 import net.geforcemods.securitycraft.blockentities.KeypadBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -10,6 +11,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 
 /** Registers SecurityCraft's payload types and the server-side receivers. */
 public final class NetworkHandler {
@@ -27,11 +29,31 @@ public final class NetworkHandler {
 		PayloadTypeRegistry.playS2C().register(UpdateLaserColorsPayload.TYPE, UpdateLaserColorsPayload.CODEC);
 		PayloadTypeRegistry.playC2S().register(SetListModuleDataPayload.TYPE, SetListModuleDataPayload.CODEC);
 		PayloadTypeRegistry.playC2S().register(RemoteControlMinePayload.TYPE, RemoteControlMinePayload.CODEC);
+		PayloadTypeRegistry.playC2S().register(RemoveMineFromMRATPayload.TYPE, RemoveMineFromMRATPayload.CODEC);
 		PayloadTypeRegistry.playC2S().register(SetOptionPayload.TYPE, SetOptionPayload.CODEC);
 		PayloadTypeRegistry.playC2S().register(ToggleModulePayload.TYPE, ToggleModulePayload.CODEC);
-		PayloadTypeRegistry.playC2S().register(RemoveMineFromMRATPayload.TYPE, RemoveMineFromMRATPayload.CODEC);
 		PayloadTypeRegistry.playC2S().register(SyncKeycardSettingsPayload.TYPE, SyncKeycardSettingsPayload.CODEC);
 		PayloadTypeRegistry.playC2S().register(SetKeycardUsesPayload.TYPE, SetKeycardUsesPayload.CODEC);
+		PayloadTypeRegistry.playS2C().register(OpenAlarmScreenPayload.TYPE, OpenAlarmScreenPayload.CODEC);
+		PayloadTypeRegistry.playC2S().register(SyncAlarmSettingsPayload.TYPE, SyncAlarmSettingsPayload.CODEC);
+		PayloadTypeRegistry.playS2C().register(ToggleAlarmSoundPayload.TYPE, ToggleAlarmSoundPayload.CODEC);
+		PayloadTypeRegistry.playS2C().register(OpenUsernameLoggerScreenPayload.TYPE, OpenUsernameLoggerScreenPayload.CODEC);
+		PayloadTypeRegistry.playS2C().register(UpdateLoggerPayload.TYPE, UpdateLoggerPayload.CODEC);
+		PayloadTypeRegistry.playC2S().register(ClearLoggerServerPayload.TYPE, ClearLoggerServerPayload.CODEC);
+		PayloadTypeRegistry.playC2S().register(ClearChangeDetectorServerPayload.TYPE, ClearChangeDetectorServerPayload.CODEC);
+		PayloadTypeRegistry.playC2S().register(SyncBlockChangeDetectorPayload.TYPE, SyncBlockChangeDetectorPayload.CODEC);
+		PayloadTypeRegistry.playC2S().register(MountCameraPayload.TYPE, MountCameraPayload.CODEC);
+		PayloadTypeRegistry.playC2S().register(DismountCameraPayload.TYPE, DismountCameraPayload.CODEC);
+		PayloadTypeRegistry.playC2S().register(RemoveCameraTagPayload.TYPE, RemoveCameraTagPayload.CODEC);
+		PayloadTypeRegistry.playC2S().register(SetCameraPoweredPayload.TYPE, SetCameraPoweredPayload.CODEC);
+		PayloadTypeRegistry.playC2S().register(SetDefaultCameraViewingDirectionPayload.TYPE, SetDefaultCameraViewingDirectionPayload.CODEC);
+		PayloadTypeRegistry.playC2S().register(ToggleNightVisionPayload.TYPE, ToggleNightVisionPayload.CODEC);
+		PayloadTypeRegistry.playS2C().register(SetCameraViewPayload.TYPE, SetCameraViewPayload.CODEC);
+		PayloadTypeRegistry.playC2S().register(SyncProjectorPayload.TYPE, SyncProjectorPayload.CODEC);
+		PayloadTypeRegistry.playC2S().register(RequestSecureTradingStationTransactionsPayload.TYPE, RequestSecureTradingStationTransactionsPayload.CODEC);
+		PayloadTypeRegistry.playC2S().register(SetStateOnDisguiseModulePayload.TYPE, SetStateOnDisguiseModulePayload.CODEC);
+		PayloadTypeRegistry.playS2C().register(RefreshDisguisableModelPayload.TYPE, RefreshDisguisableModelPayload.CODEC);
+		PayloadTypeRegistry.playS2C().register(SyncLockedContainersPayload.TYPE, SyncLockedContainersPayload.CODEC);
 	}
 
 	/** Registers the server-side handlers for the client -> server passcode packets. */
@@ -78,6 +100,13 @@ public final class NetworkHandler {
 			if (server != null)
 				server.execute(() -> handleRemoteControlMine(player, payload));
 		});
+		ServerPlayNetworking.registerGlobalReceiver(RemoveMineFromMRATPayload.TYPE, (payload, context) -> {
+			ServerPlayer player = context.player();
+			MinecraftServer server = player.getServer();
+
+			if (server != null)
+				server.execute(() -> handleRemoveMineFromMRAT(player, payload));
+		});
 		ServerPlayNetworking.registerGlobalReceiver(SetOptionPayload.TYPE, (payload, context) -> {
 			ServerPlayer player = context.player();
 			MinecraftServer server = player.getServer();
@@ -92,13 +121,6 @@ public final class NetworkHandler {
 			if (server != null)
 				server.execute(() -> handleToggleModule(player, payload));
 		});
-		ServerPlayNetworking.registerGlobalReceiver(RemoveMineFromMRATPayload.TYPE, (payload, context) -> {
-			ServerPlayer player = context.player();
-			MinecraftServer server = player.getServer();
-
-			if (server != null)
-				server.execute(() -> handleRemoveMineFromMRAT(player, payload));
-		});
 		ServerPlayNetworking.registerGlobalReceiver(SyncKeycardSettingsPayload.TYPE, (payload, context) -> {
 			ServerPlayer player = context.player();
 			MinecraftServer server = player.getServer();
@@ -112,6 +134,97 @@ public final class NetworkHandler {
 
 			if (server != null)
 				server.execute(() -> handleSetKeycardUses(player, payload));
+		});
+		ServerPlayNetworking.registerGlobalReceiver(ClearChangeDetectorServerPayload.TYPE, (payload, context) -> {
+			ServerPlayer player = context.player();
+			MinecraftServer server = player.getServer();
+
+			if (server != null)
+				server.execute(() -> handleClearChangeDetector(player, payload));
+		});
+		ServerPlayNetworking.registerGlobalReceiver(ClearLoggerServerPayload.TYPE, (payload, context) -> {
+			ServerPlayer player = context.player();
+			MinecraftServer server = player.getServer();
+
+			if (server != null)
+				server.execute(() -> handleClearLogger(player, payload));
+		});
+		ServerPlayNetworking.registerGlobalReceiver(MountCameraPayload.TYPE, (payload, context) -> {
+			ServerPlayer player = context.player();
+			MinecraftServer server = player.getServer();
+
+			if (server != null)
+				server.execute(() -> handleMountCamera(player, payload));
+		});
+		ServerPlayNetworking.registerGlobalReceiver(DismountCameraPayload.TYPE, (payload, context) -> {
+			ServerPlayer player = context.player();
+			MinecraftServer server = player.getServer();
+
+			if (server != null)
+				server.execute(() -> handleDismountCamera(player));
+		});
+		ServerPlayNetworking.registerGlobalReceiver(RemoveCameraTagPayload.TYPE, (payload, context) -> {
+			ServerPlayer player = context.player();
+			MinecraftServer server = player.getServer();
+
+			if (server != null)
+				server.execute(() -> handleRemoveCameraTag(player, payload));
+		});
+		ServerPlayNetworking.registerGlobalReceiver(SetCameraPoweredPayload.TYPE, (payload, context) -> {
+			ServerPlayer player = context.player();
+			MinecraftServer server = player.getServer();
+
+			if (server != null)
+				server.execute(() -> handleSetCameraPowered(player, payload));
+		});
+		ServerPlayNetworking.registerGlobalReceiver(SetDefaultCameraViewingDirectionPayload.TYPE, (payload, context) -> {
+			ServerPlayer player = context.player();
+			MinecraftServer server = player.getServer();
+
+			if (server != null)
+				server.execute(() -> handleSetDefaultCameraViewingDirection(player, payload));
+		});
+		ServerPlayNetworking.registerGlobalReceiver(ToggleNightVisionPayload.TYPE, (payload, context) -> {
+			ServerPlayer player = context.player();
+			MinecraftServer server = player.getServer();
+
+			if (server != null)
+				server.execute(() -> handleToggleNightVision(player));
+		});
+		ServerPlayNetworking.registerGlobalReceiver(SyncAlarmSettingsPayload.TYPE, (payload, context) -> {
+			ServerPlayer player = context.player();
+			MinecraftServer server = player.getServer();
+
+			if (server != null)
+				server.execute(() -> handleSyncAlarmSettings(player, payload));
+		});
+		ServerPlayNetworking.registerGlobalReceiver(SyncBlockChangeDetectorPayload.TYPE, (payload, context) -> {
+			ServerPlayer player = context.player();
+			MinecraftServer server = player.getServer();
+
+			if (server != null)
+				server.execute(() -> handleSyncBlockChangeDetector(player, payload));
+		});
+		ServerPlayNetworking.registerGlobalReceiver(SyncProjectorPayload.TYPE, (payload, context) -> {
+			ServerPlayer player = context.player();
+			MinecraftServer server = player.getServer();
+
+			if (server != null)
+				server.execute(() -> handleSyncProjector(player, payload));
+		});
+		ServerPlayNetworking.registerGlobalReceiver(RequestSecureTradingStationTransactionsPayload.TYPE, (payload, context) -> {
+			ServerPlayer player = context.player();
+			MinecraftServer server = player.getServer();
+
+			if (server != null)
+				server.execute(() -> handleRequestSecureTradingStationTransactions(player, payload));
+		});
+		ServerPlayNetworking.registerGlobalReceiver(SetStateOnDisguiseModulePayload.TYPE, (payload, context) -> {
+			ServerPlayer player = context.player();
+			MinecraftServer server = player.getServer();
+
+			if (server != null)
+				server.execute(() -> payload.handle(player));
 		});
 	}
 
@@ -161,7 +274,7 @@ public final class NetworkHandler {
 				linkable.propagate(new net.geforcemods.securitycraft.api.ILinkedAction.ModuleRemoved(payload.moduleType(), true), linkable);
 		}
 		else {
-			ItemStack stack = moduleInv.getModule(payload.moduleType());
+			net.minecraft.world.item.ItemStack stack = moduleInv.getModule(payload.moduleType());
 
 			moduleInv.insertModule(stack, true);
 
@@ -207,11 +320,11 @@ public final class NetworkHandler {
 	private static void handleRemoveMineFromMRAT(ServerPlayer player, RemoveMineFromMRATPayload payload) {
 		net.minecraft.world.item.ItemStack stack = net.geforcemods.securitycraft.util.PlayerUtils.getItemStackFromAnyHand(player, net.geforcemods.securitycraft.SCContent.MINE_REMOTE_ACCESS_TOOL);
 
-		if (!player.isSpectator() && !stack.isEmpty() && payload.mineIndex() >= 0 && payload.mineIndex() < net.geforcemods.securitycraft.components.BoundMines.MAX_MINES) {
-			net.geforcemods.securitycraft.components.BoundMines boundMines = stack.get(net.geforcemods.securitycraft.SCContent.BOUND_MINES);
+		if (!player.isSpectator() && !stack.isEmpty()) {
+			net.geforcemods.securitycraft.components.GlobalPositions mines = stack.get(net.geforcemods.securitycraft.SCContent.BOUND_MINES);
 
-			if (boundMines != null)
-				stack.set(net.geforcemods.securitycraft.SCContent.BOUND_MINES, boundMines.with(payload.mineIndex(), null));
+			if (mines != null)
+				mines.remove(net.geforcemods.securitycraft.SCContent.BOUND_MINES, stack, payload.globalPos());
 		}
 	}
 
@@ -290,6 +403,175 @@ public final class NetworkHandler {
 			return net.geforcemods.securitycraft.misc.ContainerLockData.get(serverLevel).get(pos);
 
 		return null;
+	}
+
+	public static void openAlarmScreen(ServerPlayer player, BlockPos pos) {
+		ServerLevel level = player.serverLevel();
+
+		if (level.getBlockEntity(pos) instanceof net.geforcemods.securitycraft.blockentities.AlarmBlockEntity be) {
+			ServerPlayNetworking.send(player, new OpenAlarmScreenPayload(pos));
+		}
+	}
+
+	public static void openUsernameLoggerScreen(ServerPlayer player, BlockPos pos) {
+		ServerLevel level = player.serverLevel();
+
+		if (level.getBlockEntity(pos) instanceof net.geforcemods.securitycraft.blockentities.UsernameLoggerBlockEntity be) {
+			ServerPlayNetworking.send(player, new OpenUsernameLoggerScreenPayload(pos));
+		}
+	}
+
+	private static void handleClearChangeDetector(ServerPlayer player, ClearChangeDetectorServerPayload payload) {
+		ServerLevel level = player.serverLevel();
+
+		if (!player.isSpectator() && inReach(player, payload.pos()) && level.getBlockEntity(payload.pos()) instanceof net.geforcemods.securitycraft.blockentities.BlockChangeDetectorBlockEntity be && be.isOwnedBy(player)) {
+			BlockState state = be.getBlockState();
+
+			be.getEntries().clear();
+			be.setChanged();
+			level.sendBlockUpdated(payload.pos(), state, state, 2);
+
+			if (state.getValue(net.geforcemods.securitycraft.blocks.BlockChangeDetectorBlock.POWERED)) {
+				level.setBlockAndUpdate(payload.pos(), state.setValue(net.geforcemods.securitycraft.blocks.BlockChangeDetectorBlock.POWERED, false));
+				net.geforcemods.securitycraft.util.BlockUtils.updateIndirectNeighbors(level, payload.pos(), SCContent.BLOCK_CHANGE_DETECTOR, net.geforcemods.securitycraft.blocks.AbstractPanelBlock.getConnectedDirection(state).getOpposite());
+			}
+		}
+	}
+
+	private static void handleClearLogger(ServerPlayer player, ClearLoggerServerPayload payload) {
+		ServerLevel level = player.serverLevel();
+
+		if (!player.isSpectator() && inReach(player, payload.pos()) && level.getBlockEntity(payload.pos()) instanceof net.geforcemods.securitycraft.blockentities.UsernameLoggerBlockEntity be && be.isOwnedBy(player)) {
+			be.clearEntries();
+			level.sendBlockUpdated(payload.pos(), be.getBlockState(), be.getBlockState(), 2);
+		}
+	}
+
+	private static void handleSyncAlarmSettings(ServerPlayer player, SyncAlarmSettingsPayload payload) {
+		ServerLevel level = player.serverLevel();
+
+		if (!player.isSpectator() && inReach(player, payload.pos()) && level.getBlockEntity(payload.pos()) instanceof net.geforcemods.securitycraft.blockentities.AlarmBlockEntity be && be.isOwnedBy(player)) {
+			be.setSound(payload.soundEvent());
+			be.setPitch(payload.pitch());
+			be.setSoundLength(payload.soundLength());
+			level.sendBlockUpdated(payload.pos(), be.getBlockState(), be.getBlockState(), 2);
+		}
+	}
+
+	private static void handleSyncBlockChangeDetector(ServerPlayer player, SyncBlockChangeDetectorPayload payload) {
+		ServerLevel level = player.serverLevel();
+
+		if (!player.isSpectator() && inReach(player, payload.pos()) && level.getBlockEntity(payload.pos()) instanceof net.geforcemods.securitycraft.blockentities.BlockChangeDetectorBlockEntity be && be.isOwnedBy(player)) {
+			be.setMode(payload.mode());
+			be.setColor(payload.color());
+			be.showHighlights(payload.showHighlights());
+			level.sendBlockUpdated(payload.pos(), be.getBlockState(), be.getBlockState(), 2);
+		}
+	}
+
+	private static void handleSyncProjector(ServerPlayer player, SyncProjectorPayload payload) {
+		ServerLevel level = player.serverLevel();
+
+		if (!player.isSpectator() && level.isLoaded(payload.pos()) && level.getBlockEntity(payload.pos()) instanceof net.geforcemods.securitycraft.blockentities.ProjectorBlockEntity be && be.isOwnedBy(player)) {
+			BlockState state = level.getBlockState(payload.pos());
+
+			switch (payload.dataType()) {
+				case WIDTH -> be.setProjectionWidth(payload.data());
+				case HEIGHT -> be.setProjectionHeight(payload.data());
+				case RANGE -> be.setProjectionRange(payload.data());
+				case OFFSET -> be.setProjectionOffset(payload.data());
+				case HORIZONTAL -> be.setHorizontal(payload.data() == 1);
+				case OVERRIDING_BLOCKS -> be.setOverridingBlocks(payload.data() == 1);
+				case BLOCK_STATE -> be.setProjectedState(net.minecraft.world.level.block.Block.stateById(payload.data()));
+				case INVALID -> throw new UnsupportedOperationException("Invalid sync projector payload received!");
+			}
+
+			level.sendBlockUpdated(payload.pos(), state, state, 2);
+		}
+	}
+
+	private static void handleRequestSecureTradingStationTransactions(ServerPlayer player, RequestSecureTradingStationTransactionsPayload payload) {
+		ServerLevel level = player.serverLevel();
+
+		if (!player.isSpectator() && inReach(player, payload.pos()) && level.getBlockEntity(payload.pos()) instanceof net.geforcemods.securitycraft.blockentities.SecureTradingStationBlockEntity be)
+			be.doTransaction(player, payload.requestedTransactions());
+	}
+
+	private static void handleMountCamera(ServerPlayer player, MountCameraPayload payload) {
+		ServerLevel level = player.serverLevel();
+		BlockPos pos = payload.pos();
+		BlockState state = level.getBlockState(pos);
+
+		if (!player.isSpectator()) {
+			if (level.isLoaded(pos) && state.getBlock() == SCContent.SECURITY_CAMERA && level.getBlockEntity(pos) instanceof net.geforcemods.securitycraft.blockentities.SecurityCameraBlockEntity be && !be.isDisabled() && !be.isShutDown()) {
+				if (be.isOwnedBy(player) || be.isAllowed(player))
+					((net.geforcemods.securitycraft.blocks.SecurityCameraBlock) state.getBlock()).mountCamera(level, pos, player);
+				else
+					net.geforcemods.securitycraft.util.PlayerUtils.sendMessageToPlayer(player, net.geforcemods.securitycraft.util.Utils.localize(SCContent.CAMERA_MONITOR.getDescriptionId()), net.geforcemods.securitycraft.util.Utils.localize("messages.securitycraft:notOwned", be.getOwner().getName()), net.minecraft.ChatFormatting.RED);
+			}
+			else
+				net.geforcemods.securitycraft.util.PlayerUtils.sendMessageToPlayer(player, net.geforcemods.securitycraft.util.Utils.localize(SCContent.CAMERA_MONITOR.getDescriptionId()), net.geforcemods.securitycraft.util.Utils.localize("messages.securitycraft:cameraMonitor.cameraNotAvailable", pos), net.minecraft.ChatFormatting.RED);
+		}
+	}
+
+	private static void handleDismountCamera(ServerPlayer player) {
+		if (player.getCamera() instanceof net.geforcemods.securitycraft.entity.camera.SecurityCamera cam)
+			cam.stopViewing(player);
+		else {
+			player.camera = player;
+			ServerPlayNetworking.send(player, new SetCameraViewPayload(player.getId()));
+		}
+	}
+
+	private static void handleRemoveCameraTag(ServerPlayer player, RemoveCameraTagPayload payload) {
+		ItemStack monitor = net.geforcemods.securitycraft.util.PlayerUtils.getItemStackFromAnyHand(player, SCContent.CAMERA_MONITOR);
+
+		if (!player.isSpectator() && !monitor.isEmpty()) {
+			net.geforcemods.securitycraft.components.NamedPositions cameras = monitor.get(SCContent.BOUND_CAMERAS);
+
+			if (cameras != null)
+				cameras.remove(() -> SCContent.BOUND_CAMERAS, monitor, payload.globalPos());
+		}
+	}
+
+	private static void handleSetCameraPowered(ServerPlayer player, SetCameraPoweredPayload payload) {
+		ServerLevel level = player.serverLevel();
+		BlockPos pos = payload.pos();
+		BlockEntity be = level.getBlockEntity(pos);
+
+		if (!player.isSpectator() && ((be instanceof net.geforcemods.securitycraft.api.IOwnable ownable && ownable.isOwnedBy(player)) || (be instanceof net.geforcemods.securitycraft.api.IModuleInventory moduleInv && moduleInv.isAllowed(player)))) {
+			BlockState state = level.getBlockState(pos);
+
+			level.setBlockAndUpdate(pos, state.setValue(net.geforcemods.securitycraft.blocks.SecurityCameraBlock.POWERED, payload.powered()));
+			level.updateNeighborsAt(pos.relative(state.getValue(net.geforcemods.securitycraft.blocks.SecurityCameraBlock.FACING), -1), state.getBlock());
+		}
+	}
+
+	private static void handleSetDefaultCameraViewingDirection(ServerPlayer player, SetDefaultCameraViewingDirectionPayload payload) {
+		if (!player.isSpectator() && player.getCamera() instanceof net.geforcemods.securitycraft.entity.camera.SecurityCamera camera && camera.getId() == payload.id() && camera.level().getBlockEntity(camera.blockPosition()) instanceof net.geforcemods.securitycraft.blockentities.SecurityCameraBlockEntity be) {
+			if (!be.isOwnedBy(player)) {
+				player.displayClientMessage(net.geforcemods.securitycraft.util.Utils.localize("messages.securitycraft:security_camera.no_permission"), true);
+				return;
+			}
+
+			if (be.isModuleEnabled(net.geforcemods.securitycraft.misc.ModuleType.SMART)) {
+				be.setDefaultViewingDirection(payload.xRot(), payload.yRot(), payload.zoom());
+				player.displayClientMessage(net.geforcemods.securitycraft.util.Utils.localize("messages.securitycraft:security_camera.direction_set"), true);
+			}
+			else
+				player.displayClientMessage(net.geforcemods.securitycraft.util.Utils.localize("messages.securitycraft:security_camera.smart_module_needed"), true);
+		}
+	}
+
+	private static void handleToggleNightVision(ServerPlayer player) {
+		if (net.geforcemods.securitycraft.ConfigHandler.allowCameraNightVision && net.geforcemods.securitycraft.util.PlayerUtils.isPlayerMountedOnCamera(player)) {
+			if (player.hasEffect(net.minecraft.world.effect.MobEffects.NIGHT_VISION)) {
+				if (player.getEffect(net.minecraft.world.effect.MobEffects.NIGHT_VISION) instanceof net.geforcemods.securitycraft.entity.camera.CameraNightVisionEffectInstance)
+					player.removeEffect(net.minecraft.world.effect.MobEffects.NIGHT_VISION);
+			}
+			else
+				player.addEffect(new net.geforcemods.securitycraft.entity.camera.CameraNightVisionEffectInstance());
+		}
 	}
 
 	private static boolean validPasscode(String passcode) {

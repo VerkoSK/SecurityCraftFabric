@@ -7,14 +7,12 @@ extendable	method	net/minecraft/client/gui/components/EditBox	scrollTo	(I)V
 
 # BrushableMineBlockEntity re-implements BrushableBlockEntity#brush/#checkReset on top of vanilla's private brushing
 # state. Upstream gets the same access from NeoForge's access transformers.
-# Do NOT widen BrushableBlockEntity#brushingCompleted: `accessible` makes a private method final, which would clash
-# with BrushableMineBlockEntity's own same-named method.
 accessible	field	net/minecraft/world/level/block/entity/BrushableBlockEntity	brushCount	I
 accessible	field	net/minecraft/world/level/block/entity/BrushableBlockEntity	brushCountResetsAtTick	J
 accessible	field	net/minecraft/world/level/block/entity/BrushableBlockEntity	coolDownEndsAtTick	J
 accessible	field	net/minecraft/world/level/block/entity/BrushableBlockEntity	hitDirection	Lnet/minecraft/core/Direction;
-accessible	method	net/minecraft/world/level/block/entity/BrushableBlockEntity	dropContent	(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/item/ItemStack;)V
 accessible	method	net/minecraft/world/level/block/entity/BrushableBlockEntity	unpackLootTable	(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/item/ItemStack;)V
+accessible	method	net/minecraft/world/level/block/entity/BrushableBlockEntity	dropContent	(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/item/ItemStack;)V
 accessible	method	net/minecraft/world/level/block/entity/BrushableBlockEntity	getCompletionState	()I
 
 # OwnableBlock registers reinforced blocks as unbreakable and hands the real destroy time back only to the
@@ -51,13 +49,29 @@ extendable	method	net/minecraft/client/gui/screens/inventory/BookViewScreen	upda
 # setter that turns it on.
 accessible	field	net/minecraft/world/level/block/state/BlockBehaviour$Properties	requiresCorrectToolForDrops	Z
 
-# The secret signs draw their text only for the players allowed to read it. Vanilla's SignRenderer no longer
-# exposes a text-drawing hook to override in this version, so SecretSignRenderer/SecretHangingSignRenderer
-# instead swap SignBlockEntity's frontText/backText fields directly through reflection for the render call.
+# The secret signs draw their text only for the players allowed to read it, which means overriding the one method
+# vanilla's sign renderer routes everything through, and calling the three helpers it uses. All four are
+# package-private; upstream reaches them through Forge's access transformers.
+extendable	method	net/minecraft/client/renderer/blockentity/AbstractSignRenderer	renderSignWithText	(Lnet/minecraft/world/level/block/entity/SignBlockEntity;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;IILnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/block/SignBlock;Lnet/minecraft/world/level/block/state/properties/WoodType;Lnet/minecraft/client/model/Model;)V
+accessible	method	net/minecraft/client/renderer/blockentity/SignRenderer	translateSign	(Lcom/mojang/blaze3d/vertex/PoseStack;FLnet/minecraft/world/level/block/state/BlockState;)V
+accessible	method	net/minecraft/client/renderer/blockentity/AbstractSignRenderer	renderSign	(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;IILnet/minecraft/world/level/block/state/properties/WoodType;Lnet/minecraft/client/model/Model;)V
+accessible	method	net/minecraft/client/renderer/blockentity/AbstractSignRenderer	renderSignText	(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/entity/SignText;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;IIIZ)V
+accessible	method	net/minecraft/client/renderer/blockentity/HangingSignRenderer	translateSign	(Lcom/mojang/blaze3d/vertex/PoseStack;FLnet/minecraft/world/level/block/state/BlockState;)V
 
-# The secret signs, reinforced hopper/lectern/chiseled bookshelf, the brushable mines and the creaking heart
-# mine subclass a vanilla block entity whose 2-arg constructor hard-codes the vanilla BlockEntityType. MC 1.21.2+
-# validates the block state against that type in the BlockEntity constructor, so SecurityCraft merges its blocks
-# into the vanilla type's valid-block set at registration - which needs that set writable.
+# The secret signs, reinforced hopper/lectern/chiseled bookshelf, and the brushable mines subclass a vanilla
+# block entity whose 2-arg constructor hard-codes the vanilla BlockEntityType. MC 1.21.2+ validates the block
+# state against that type in the BlockEntity constructor, so SecurityCraft merges its blocks into the vanilla
+# type's valid-block set at registration - which needs that set writable.
 accessible	field	net/minecraft/world/level/block/entity/BlockEntityType	validBlocks	Ljava/util/Set;
 mutable	field	net/minecraft/world/level/block/entity/BlockEntityType	validBlocks	Ljava/util/Set;
+accessible	field	net/minecraft/world/item/StandingAndWallBlockItem	wallBlock	Lnet/minecraft/world/level/block/Block;
+accessible	field	net/minecraft/world/level/block/state/StateHolder	PROPERTY_ENTRY_TO_STRING_FUNCTION	Ljava/util/function/Function;
+accessible	field	net/minecraft/client/renderer/RenderType	sortOnUpload	Z
+accessible	field	net/minecraft/client/gui/components/Button	DEFAULT_NARRATION	Lnet/minecraft/client/gui/components/Button$CreateNarration;
+accessible	method	net/minecraft/client/gui/components/Button	<init>	(IIIILnet/minecraft/network/chat/Component;Lnet/minecraft/client/gui/components/Button$OnPress;Lnet/minecraft/client/gui/components/Button$CreateNarration;)V
+accessible	field	net/minecraft/server/level/ServerPlayer	camera	Lnet/minecraft/world/entity/Entity;
+accessible	field	net/minecraft/client/player/LocalPlayer	yRotLast	F
+accessible	field	net/minecraft/client/player/LocalPlayer	xRotLast	F
+accessible	class	net/minecraft/server/level/ChunkMap$TrackedEntity
+accessible	class	net/minecraft/client/multiplayer/ClientChunkCache$Storage
+accessible	method	net/minecraft/client/multiplayer/ClientChunkCache$Storage	inRange	(II)Z

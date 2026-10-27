@@ -42,6 +42,8 @@ import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.language.I18n;
+import net.minecraft.core.NonNullList;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.ClickEvent.Action;
@@ -57,6 +59,10 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.ShapedRecipe;
+import net.minecraft.world.item.crafting.ShapelessRecipe;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 
@@ -163,10 +169,10 @@ public class SCManualScreen extends Screen implements StillValid {
 				guiGraphics.drawString(font, (currentSubpage + 1) + "/" + subpages.size(), startX + 205, 100, 0x8E8270, false);
 
 			if (designedBy != null)
-				guiGraphics.drawWordWrap(font, designedBy, startX + 18, 150, 75, 0, false);
+				guiGraphics.drawWordWrap(font, designedBy, startX + 18, 150, 75, 0);
 
 			guiGraphics.drawString(font, pageTitle, startX + 39, 27, 0, false);
-			guiGraphics.drawWordWrap(font, subpages.get(currentSubpage), startX + 18, 45, 225, 0, false);
+			guiGraphics.drawWordWrap(font, subpages.get(currentSubpage), startX + 18, 45, 225, 0);
 			guiGraphics.drawString(font, pageNumberText, startX + 240 - font.width(pageNumberText), 182, 0x8E8270, false);
 
 			if (ownable)
@@ -749,14 +755,17 @@ public class SCManualScreen extends Screen implements StillValid {
 		}
 
 		@Override
-		public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
-			if (visible) {
-				isHovered = mouseX >= getX() && mouseY >= getY() && mouseX < getX() + width && mouseY < getY() + height;
+		protected void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+			isHovered = mouseX >= getX() && mouseY >= getY() && mouseX < getX() + width && mouseY < getY() + height;
 
-				ResourceLocation sprite = isHoveredOrFocused() ? (forward ? FORWARD_HIGHLIGHTED : BACKWARD_HIGHLIGHTED) : (forward ? FORWARD : BACKWARD);
+			ResourceLocation sprite = isHoveredOrFocused() ? (forward ? FORWARD_HIGHLIGHTED : BACKWARD_HIGHLIGHTED) : (forward ? FORWARD : BACKWARD);
 
-				guiGraphics.blitSprite(net.minecraft.client.renderer.RenderType::guiTextured, sprite, getX(), getY(), 23, 13);
-			}
+			guiGraphics.blitSprite(net.minecraft.client.renderer.RenderType::guiTextured, sprite, getX(), getY(), 23, 13);
+		}
+
+		@Override
+		public void playDownSound(net.minecraft.client.sounds.SoundManager soundManager) {
+			soundManager.play(net.minecraft.client.resources.sounds.SimpleSoundInstance.forUI(net.minecraft.sounds.SoundEvents.BOOK_PAGE_TURN, 1.0F));
 		}
 	}
 

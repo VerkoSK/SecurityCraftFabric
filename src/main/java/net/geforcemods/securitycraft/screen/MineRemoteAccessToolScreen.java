@@ -1,10 +1,12 @@
 package net.geforcemods.securitycraft.screen;
 
+import net.minecraft.client.renderer.RenderType;
+
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.geforcemods.securitycraft.SCContent;
 import net.geforcemods.securitycraft.api.IExplosive;
 import net.geforcemods.securitycraft.api.IOwnable;
-import net.geforcemods.securitycraft.components.BoundMines;
+import net.geforcemods.securitycraft.components.GlobalPositions;
 import net.geforcemods.securitycraft.misc.StillValid;
 import net.geforcemods.securitycraft.network.RemoteControlMinePayload;
 import net.geforcemods.securitycraft.network.RemoteControlMinePayload.Action;
@@ -17,7 +19,6 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.network.chat.Component;
@@ -31,14 +32,14 @@ import net.minecraft.world.level.block.Block;
 /** The mine remote access tool's screen. 1:1 with the upstream class of the same name. */
 public class MineRemoteAccessToolScreen extends Screen implements StillValid {
 	private static final ResourceLocation TEXTURE = SCContent.id("textures/gui/container/mrat.png");
-	private static final ResourceLocation EXPLOSIVE_SPRITE = SCContent.id("sc_manual/explosive_highlighted"); //for the explosion icon
+	private static final ResourceLocation INFO_BOOK_ICONS = SCContent.id("textures/gui/info_book_icons.png"); //for the explosion icon
 	private static final int DEFUSE = 0, ACTIVATE = 1, DETONATE = 2, UNBIND = 3;
 	private ItemStack mrat;
-	private Button[][] guiButtons = new Button[BoundMines.MAX_MINES][4]; //6 mines, 4 actions (defuse, prime, detonate, unbind)
+	private Button[][] guiButtons = new Button[6][4]; //6 mines, 4 actions (defuse, prime, detonate, unbind)
 	private int xSize = 256, ySize = 184;
 	private final Component notBound = Utils.localize("gui.securitycraft:mrat.notBound");
-	private final Component[] lines = new Component[BoundMines.MAX_MINES];
-	private final int[] lengths = new int[BoundMines.MAX_MINES];
+	private final Component[] lines = new Component[6];
+	private final int[] lengths = new int[6];
 
 	public MineRemoteAccessToolScreen(ItemStack item) {
 		super(item.getHoverName());
@@ -56,7 +57,7 @@ public class MineRemoteAccessToolScreen extends Screen implements StillValid {
 		int startX = (width - xSize) / 2;
 		int startY = (height - ySize) / 2;
 
-		for (int i = 0; i < BoundMines.MAX_MINES; i++) {
+		for (int i = 0; i < 6; i++) {
 			y += 25;
 
 			// initialize buttons
@@ -76,10 +77,10 @@ public class MineRemoteAccessToolScreen extends Screen implements StillValid {
 						guiButtons[i][j] = new PictureButton(btnX, btnY, 20, 20, new ItemStack(Items.FLINT_AND_STEEL), b -> buttonClicked(mine, action));
 						break;
 					case DETONATE:
-						guiButtons[i][j] = new PictureButton(btnX, btnY, 20, 20, EXPLOSIVE_SPRITE, 0, 1, 18, 18, b -> buttonClicked(mine, action));
+						guiButtons[i][j] = new PictureButton(btnX, btnY, 20, 20, INFO_BOOK_ICONS, 54, 1, 0, 1, 18, 18, 256, 256, b -> buttonClicked(mine, action));
 						break;
 					case UNBIND:
-						//upstream uses Button's protected constructor (widened by a NeoForge AT); the vanilla builder is the Fabric-side equivalent
+						//upstream uses Button's protected constructor (widened by a Forge AT); the vanilla builder is the Fabric-side equivalent
 						guiButtons[i][j] = Button.builder(Component.literal("X"), b -> buttonClicked(mine, action)).bounds(btnX, btnY, 20, 20).build();
 						break;
 					default:
@@ -136,22 +137,27 @@ public class MineRemoteAccessToolScreen extends Screen implements StillValid {
 	}
 
 	@Override
-	public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-		renderTransparentBackground(guiGraphics);
-		guiGraphics.blit(RenderType::guiTextured, TEXTURE, (width - xSize) / 2, (height - ySize) / 2, 0, 0, xSize, ySize, 256, 256);
-	}
-
-	@Override
 	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
 		int startX = (width - xSize) / 2;
 		int startY = (height - ySize) / 2;
 
+		//render() calls this.renderBackground(...) internally, so drawing the panel from here as well as from
+		//the override below drew it twice and let the default renderBackground's blur paint over it afterwards
 		super.render(guiGraphics, mouseX, mouseY, partialTicks);
 		guiGraphics.drawString(font, title, startX + xSize / 2 - font.width(title) / 2, startY + 6, 0xFF404040, false);
 
-		for (int i = 0; i < BoundMines.MAX_MINES; i++) {
+		for (int i = 0; i < 6; i++) {
 			guiGraphics.drawString(font, lines[i], startX + xSize / 2 - lengths[i] + 25, startY + i * 25 + 33, 0xFF404040, false);
 		}
+	}
+
+	@Override
+	public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+		//the default renderBackground blurs the world and draws vanilla's in-world-menu vignette texture over it,
+		//meant for menu-style screens; this is an in-hand item screen, so it needs the plain transparent
+		//background the way CheckPasscodeScreen and SetPasscodeScreen already do it, with the panel drawn on top
+		renderTransparentBackground(guiGraphics);
+		guiGraphics.blit(RenderType::guiTextured, TEXTURE, (width - xSize) / 2, (height - ySize) / 2, 0, 0, xSize, ySize, 256, 256);
 	}
 
 	private void buttonClicked(int mine, int action) {
@@ -175,7 +181,7 @@ public class MineRemoteAccessToolScreen extends Screen implements StillValid {
 					break;
 				case DETONATE:
 					ClientPlayNetworking.send(new RemoteControlMinePayload(pos, Action.DETONATE));
-					unbindAndUpdate(mine);
+					removeMineFromToolAndUpdate(mrat, pos);
 
 					for (int i = 0; i < 4; i++) {
 						guiButtons[mine][i].active = false;
@@ -183,7 +189,7 @@ public class MineRemoteAccessToolScreen extends Screen implements StillValid {
 
 					break;
 				case UNBIND:
-					unbindAndUpdate(mine);
+					removeMineFromToolAndUpdate(mrat, pos);
 
 					for (int i = 0; i < 4; i++) {
 						guiButtons[mine][i].active = false;
@@ -201,10 +207,10 @@ public class MineRemoteAccessToolScreen extends Screen implements StillValid {
 	 */
 	private BlockPos getMineCoordinates(int mine) {
 		if (mrat.getItem() == SCContent.MINE_REMOTE_ACCESS_TOOL) {
-			BoundMines boundMines = mrat.get(SCContent.BOUND_MINES);
+			GlobalPositions positions = mrat.get(SCContent.BOUND_MINES);
 
-			if (boundMines != null) {
-				GlobalPos globalPos = boundMines.get(mine);
+			if (positions != null && mine < positions.positions().size()) {
+				GlobalPos globalPos = positions.positions().get(mine);
 
 				if (globalPos != null)
 					return globalPos.pos();
@@ -214,12 +220,14 @@ public class MineRemoteAccessToolScreen extends Screen implements StillValid {
 		return null;
 	}
 
-	private void unbindAndUpdate(int mine) {
-		BoundMines boundMines = mrat.get(SCContent.BOUND_MINES);
+	private void removeMineFromToolAndUpdate(ItemStack stack, BlockPos pos) {
+		GlobalPositions positions = stack.get(SCContent.BOUND_MINES);
 
-		if (boundMines != null && boundMines.get(mine) != null) {
-			mrat.set(SCContent.BOUND_MINES, boundMines.with(mine, null));
-			ClientPlayNetworking.send(new RemoveMineFromMRATPayload(mine));
+		if (positions != null) {
+			GlobalPos globalPos = new GlobalPos(minecraft.level.dimension(), pos);
+
+			if (positions.remove(SCContent.BOUND_MINES, stack, globalPos))
+				ClientPlayNetworking.send(new RemoveMineFromMRATPayload(globalPos));
 		}
 	}
 
@@ -230,7 +238,7 @@ public class MineRemoteAccessToolScreen extends Screen implements StillValid {
 
 	@Override
 	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-		//upstream calls the NeoForge-added KeyMapping#isActiveAndMatches; vanilla's matches(int, int) is the equivalent (see LaserBlockScreen)
+		//upstream calls the Forge-added KeyMapping#isActiveAndMatches; vanilla's matches(int, int) is the equivalent (see LaserBlockScreen)
 		if (minecraft.options.keyInventory.matches(keyCode, scanCode)) {
 			onClose();
 			return true;
