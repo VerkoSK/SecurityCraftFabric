@@ -23,7 +23,7 @@ import net.minecraft.world.level.block.entity.ChestBlockEntity;
  * (its models, animation and extraction) and only overrides {@link #submit} to pick a SecurityCraft chest material
  * off the chest atlas instead of the vanilla one. Upstream reaches the same result through a Forge access transformer.
  */
-public class KeypadChestRenderer extends ChestRenderer<ChestBlockEntity> {
+public class KeypadChestRenderer extends ChestRenderer<net.geforcemods.securitycraft.blockentities.KeypadChestBlockEntity> {
 	private static final Material INACTIVE = chestMaterial("inactive");
 	private static final Material ACTIVE = chestMaterial("active");
 	private static final Material LEFT_INACTIVE = chestMaterial("left_inactive");
