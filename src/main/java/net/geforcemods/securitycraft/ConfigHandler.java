@@ -45,6 +45,14 @@ public final class ConfigHandler {
 	public static double codebreakerChance = 0.33;
 	/** Should the Codebreaker item be usable at all? (upstream default true) */
 	public static boolean allowCodebreakerItem = true;
+	/** Volume multiplier for the Alarm block sound. (upstream default 1.0, range 0.0-5.0) */
+	public static double alarmSoundVolume = 1.0;
+	/** Maximum range (in blocks) of the Alarm block sound. (upstream default 100, range 1-1000) */
+	public static int maxAlarmRange = 100;
+	/** Should players be able to activate night vision while viewing a Security Camera? (upstream default true) */
+	public static boolean allowCameraNightVision = true;
+	/** Should the Retinal Scanner display the owner's face on its front? (upstream default true) */
+	public static boolean retinalScannerFace = true;
 
 	private ConfigHandler() {}
 
@@ -98,6 +106,17 @@ public final class ConfigHandler {
 				if (json.has("allow_codebreaker_item"))
 					allowCodebreakerItem = json.get("allow_codebreaker_item").getAsBoolean();
 
+				if (json.has("alarm_sound_volume"))
+					alarmSoundVolume = Math.max(0.0, Math.min(5.0, json.get("alarm_sound_volume").getAsDouble()));
+
+				if (json.has("max_alarm_range"))
+					maxAlarmRange = Math.max(1, Math.min(1000, json.get("max_alarm_range").getAsInt()));
+
+				if (json.has("allow_camera_night_vision"))
+					allowCameraNightVision = json.get("allow_camera_night_vision").getAsBoolean();
+
+				if (json.has("retinal_scanner_face"))
+					retinalScannerFace = json.get("retinal_scanner_face").getAsBoolean();
 			}
 			else
 				save();
@@ -125,6 +144,10 @@ public final class ConfigHandler {
 		json.addProperty("allow_block_claim", allowBlockClaim);
 		json.addProperty("codebreaker_chance", codebreakerChance);
 		json.addProperty("allow_codebreaker_item", allowCodebreakerItem);
+		json.addProperty("alarm_sound_volume", alarmSoundVolume);
+		json.addProperty("max_alarm_range", maxAlarmRange);
+		json.addProperty("allow_camera_night_vision", allowCameraNightVision);
+		json.addProperty("retinal_scanner_face", retinalScannerFace);
 
 		try {
 			Files.writeString(FILE, new GsonBuilder().setPrettyPrinting().create().toJson(json));

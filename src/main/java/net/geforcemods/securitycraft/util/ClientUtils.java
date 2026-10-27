@@ -47,9 +47,27 @@ public class ClientUtils {
 		});
 	}
 
+	/** Forces a single block's chunk section to rebuild. */
+	public static void recompileChunk(net.minecraft.core.BlockPos pos) {
+		Minecraft.getInstance().levelRenderer.setBlocksDirty(pos.getX(), pos.getY(), pos.getZ(), pos.getX(), pos.getY(), pos.getZ());
+	}
+
 	/** Forces every rendered chunk to rebuild, so a live tint change is reflected immediately. */
 	public static void recompileAllChunksInRange() {
 		Minecraft.getInstance().levelRenderer.allChanged();
+	}
+
+	public static org.joml.Quaternionf fromXYZDegrees(float x, float y, float z) {
+		return fromXYZ((float) Math.toRadians(x), (float) Math.toRadians(y), (float) Math.toRadians(z));
+	}
+
+	public static org.joml.Quaternionf fromXYZ(float x, float y, float z) {
+		org.joml.Quaternionf quaternion = new org.joml.Quaternionf();
+
+		quaternion.mul(new org.joml.Quaternionf((float) Math.sin(x / 2.0F), 0.0F, 0.0F, (float) Math.cos(x / 2.0F)));
+		quaternion.mul(new org.joml.Quaternionf(0.0F, (float) Math.sin(y / 2.0F), 0.0F, (float) Math.cos(y / 2.0F)));
+		quaternion.mul(new org.joml.Quaternionf(0.0F, 0.0F, (float) Math.sin(z / 2.0F), (float) Math.cos(z / 2.0F)));
+		return quaternion;
 	}
 
 	/** Fills a rectangle with a left-to-right colour gradient (ARGB), drawn as 1px vertical strips. */

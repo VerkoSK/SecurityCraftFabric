@@ -14,8 +14,8 @@ import com.mojang.serialization.ListBuilder;
 import com.mojang.serialization.codecs.ListCodec;
 
 /**
- * Copied from {@link ListCodec} so that the list it creates can contain nullable elements. 1:1 with the upstream
- * {@code util.NullableListCodec}.
+ * Copied from {@link ListCodec} so that the list it creates can contain nullable elements. 1:1 with the upstream class
+ * of the same name.
  */
 public record NullableListCodec<E>(Codec<E> elementCodec, int minSize, int maxSize) implements Codec<List<E>> {
 	private <R> DataResult<R> createTooShortError(final int size) {
@@ -90,7 +90,7 @@ public record NullableListCodec<E>(Codec<E> elementCodec, int minSize, int maxSi
 				return createTooShortError(elements.size());
 
 			final T errors = ops.createList(failed.build());
-			final Pair<List<E>, T> pair = Pair.of(new ArrayList<>(elements), errors); //upstream changed List.copyOf to new ArrayList<> in this line
+			final Pair<List<E>, T> pair = Pair.of(new ArrayList<>(elements), errors); //changed List.copyOf to new ArrayList<> in this line
 
 			if (totalCount > maxSize)
 				result = createTooLongError(totalCount);

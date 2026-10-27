@@ -33,9 +33,8 @@ public class MineRemoteAccessToolItem extends Item {
 	}
 
 	/**
-	 * Fabric stand-in for Forge's {@code IForgeItem#onItemUseFirst}: {@link UseBlockCallback} runs before the clicked
-	 * block's own interaction, which is what makes binding work on mines that open a GUI (furnace mine, redstone ore
-	 * mine). Must be called from the mod initializer, or nothing ever binds.
+	 * Fabric stand-in for Forge's {@code IForgeItem#onItemUseFirst}: {@link UseBlockCallback} runs before the clicked block's
+	 * {@code use}, which is what makes binding work on mines that open a GUI (furnace mine, redstone ore mine).
 	 */
 	public static void registerBindingCallback() {
 		UseBlockCallback.EVENT.register((player, level, hand, hitResult) -> {
@@ -111,7 +110,7 @@ public class MineRemoteAccessToolItem extends Item {
 				if (globalPos == null)
 					list.add(Component.literal(ChatFormatting.GRAY + "---"));
 				else
-					list.add(Utils.localize("tooltip.securitycraft:mine", i + 1, Utils.getFormattedCoordinates(globalPos.pos())).setStyle(Utils.GRAY_STYLE));
+					list.add(Utils.localize("tooltip.securitycraft:mine", i, Utils.getFormattedCoordinates(globalPos.pos())).setStyle(Utils.GRAY_STYLE));
 			}
 		}
 	}
