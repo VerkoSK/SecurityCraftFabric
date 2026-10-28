@@ -353,7 +353,7 @@ public class ProjectorBlockEntity extends DisguisableBlockEntity implements Cont
 		super.setLevel(level);
 
 		if (level != null && level.isClientSide && !projectedBlock.isEmpty())
-			PROJECTOR_RENDER_DELEGATE.putDelegateFor(this, level);
+			PROJECTOR_RENDER_DELEGATE.putDelegateFor(this, projectedState, projectedBlock);
 	}
 
 	@Override
