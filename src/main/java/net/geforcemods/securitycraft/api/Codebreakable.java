@@ -56,8 +56,10 @@ public interface Codebreakable {
 		boolean isSuccessful = canBypass || player.getRandom().nextDouble() < ConfigHandler.codebreakerChance;
 
 		if (!canBypass) {
+		if (!canBypass) {
 			codebreaker.hurtAndBreak(1, player, hand);
-			CodebreakerItem.markUsed(codebreaker);
+			CodebreakerItem.markUsed(codebreaker, isSuccessful);
+		}
 		}
 
 		if (isSuccessful)
