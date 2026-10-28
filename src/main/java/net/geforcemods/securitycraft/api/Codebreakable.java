@@ -57,7 +57,7 @@ public interface Codebreakable {
 
 		if (!canBypass) {
 			codebreaker.hurtAndBreak(1, player, hand);
-			CodebreakerItem.markUsed(codebreaker);
+			CodebreakerItem.markUsed(codebreaker, isSuccessful);
 		}
 
 		if (isSuccessful)

@@ -119,6 +119,7 @@ public class SCContent {
 	public static Item UNIVERSAL_KEY_CHANGER;
 	public static Item CODEBREAKER;
 	public static net.minecraft.core.component.DataComponentType<Long> CODEBREAKER_LAST_USED;
+	public static net.minecraft.core.component.DataComponentType<net.geforcemods.securitycraft.components.CodebreakerData> CODEBREAKER_DATA;
 	public static Item SC_MANUAL;
 	/** The secret sign items, in registration order, for the creative tab. */
 	public static final List<ItemLike> SECRET_SIGN_ITEMS = new ArrayList<>();
@@ -1141,6 +1142,7 @@ public class SCContent {
 
 		UNREINFORCING = Registry.register(BuiltInRegistries.DATA_COMPONENT_TYPE, id("unreinforcing"), net.minecraft.core.component.DataComponentType.<net.minecraft.util.Unit>builder().persistent(com.mojang.serialization.MapCodec.unitCodec(net.minecraft.util.Unit.INSTANCE)).networkSynchronized(net.minecraft.network.codec.StreamCodec.unit(net.minecraft.util.Unit.INSTANCE)).build());
 		CODEBREAKER_LAST_USED = Registry.register(BuiltInRegistries.DATA_COMPONENT_TYPE, id("codebreaker_last_used"), net.minecraft.core.component.DataComponentType.<Long>builder().persistent(com.mojang.serialization.Codec.LONG).networkSynchronized(net.minecraft.network.codec.ByteBufCodecs.VAR_LONG).build());
+		CODEBREAKER_DATA = Registry.register(BuiltInRegistries.DATA_COMPONENT_TYPE, id("codebreaker_data"), net.minecraft.core.component.DataComponentType.<net.geforcemods.securitycraft.components.CodebreakerData>builder().persistent(net.geforcemods.securitycraft.components.CodebreakerData.CODEC).networkSynchronized(net.geforcemods.securitycraft.components.CodebreakerData.STREAM_CODEC).build());
 		KEYCARD_DATA = Registry.register(BuiltInRegistries.DATA_COMPONENT_TYPE, id("keycard_data"), net.minecraft.core.component.DataComponentType.<net.geforcemods.securitycraft.components.KeycardData>builder().persistent(net.geforcemods.securitycraft.components.KeycardData.CODEC).networkSynchronized(net.geforcemods.securitycraft.components.KeycardData.STREAM_CODEC).cacheEncoding().build());
 		KEYCARD_HOLDER_DATA = Registry.register(BuiltInRegistries.DATA_COMPONENT_TYPE, id("keycard_holder_data"), net.minecraft.core.component.DataComponentType.<net.geforcemods.securitycraft.components.KeycardHolderData>builder().persistent(net.geforcemods.securitycraft.components.KeycardHolderData.codec(net.geforcemods.securitycraft.items.KeycardHolderItem.SLOTS)).networkSynchronized(net.geforcemods.securitycraft.components.KeycardHolderData.streamCodec(net.geforcemods.securitycraft.items.KeycardHolderItem.SLOTS)).cacheEncoding().build());
 		BLOCK_REINFORCING_SERIALIZER = Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, id("block_reinforcing"), new net.minecraft.world.item.crafting.CustomRecipe.Serializer<>(net.geforcemods.securitycraft.recipe.ReinforcerRecipe.Reinforcing::new));
