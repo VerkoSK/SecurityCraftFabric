@@ -284,21 +284,47 @@ public class StateSelector extends Screen implements GuiEventListener, Narratabl
 	}
 
 	@Override
+	public boolean isMouseOver(double mouseX, double mouseY) {
+		return (mouseX >= xStart && mouseX < xStart + 193 && mouseY >= yStart && mouseY < yStart + 150)
+				|| (dragHoverChecker != null && dragHoverChecker.checkHover(mouseX, mouseY));
+	}
+
+	@Override
 	public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
 		for (int i = 0; i < propertyButtons.size(); i++) {
 			if (propertyButtons.get(i).mouseClicked(event, doubleClick))
-				break;
+				return true;
 		}
 
-		previousPageButton.mouseClicked(event, doubleClick);
-		nextPageButton.mouseClicked(event, doubleClick);
-		clickedInDragRegion = dragHoverChecker.checkHover((int) event.x(), (int) event.y());
-		return false;
+		if (previousPageButton != null && previousPageButton.mouseClicked(event, doubleClick))
+			return true;
+
+		if (nextPageButton != null && nextPageButton.mouseClicked(event, doubleClick))
+			return true;
+
+		if (dragHoverChecker != null && dragHoverChecker.checkHover((int) event.x(), (int) event.y())) {
+			clickedInDragRegion = true;
+			return true;
+		}
+
+		return event.x() >= xStart && event.x() < xStart + 193 && event.y() >= yStart && event.y() < yStart + 150;
 	}
 
 	@Override
 	public boolean mouseReleased(MouseButtonEvent event) {
 		clickedInDragRegion = false;
+
+		for (int i = 0; i < propertyButtons.size(); i++) {
+			if (propertyButtons.get(i).mouseReleased(event))
+				return true;
+		}
+
+		if (previousPageButton != null && previousPageButton.mouseReleased(event))
+			return true;
+
+		if (nextPageButton != null && nextPageButton.mouseReleased(event))
+			return true;
+
 		return false;
 	}
 
@@ -306,7 +332,7 @@ public class StateSelector extends Screen implements GuiEventListener, Narratabl
 	public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
 		for (int i = 0; i < propertyButtons.size(); i++) {
 			if (propertyButtons.get(i).mouseScrolled(mouseX, mouseY, scrollX, scrollY))
-				break;
+				return true;
 		}
 
 		return false;
