@@ -15,6 +15,7 @@ import com.llamalad7.mixinextras.sugar.Local;
 import net.geforcemods.securitycraft.blockentities.SecurityCameraBlockEntity;
 import net.geforcemods.securitycraft.entity.camera.SecurityCamera;
 import net.geforcemods.securitycraft.misc.BlockEntityTracker;
+import net.minecraft.server.level.ChunkHolder;
 import net.minecraft.server.level.ChunkMap;
 import net.minecraft.server.level.ChunkTrackingView;
 import net.minecraft.server.level.ServerPlayer;
@@ -91,7 +92,7 @@ public abstract class ChunkMapMixin {
 	 * the camera feed in a frame.
 	 */
 	@Inject(method = "onChunkReadyToSend", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;getChunkTrackingView()Lnet/minecraft/server/level/ChunkTrackingView;"))
-	private void securitycraft$sendChunksToCameras(LevelChunk chunk, CallbackInfo ci, @Local ServerPlayer player) {
+	private void securitycraft$sendChunksToCameras(ChunkHolder chunkHolder, LevelChunk chunk, CallbackInfo ci, @Local ServerPlayer player) {
 		ChunkPos pos = chunk.getPos();
 
 		if ((player.getCamera() instanceof SecurityCamera camera && camera.getCameraChunks().contains(pos)) || !BlockEntityTracker.FRAME_VIEWED_SECURITY_CAMERAS.getBlockEntitiesWithCondition(player.level(), camera -> camera.shouldKeepChunkTracked(player, pos.x, pos.z)).isEmpty())
