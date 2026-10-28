@@ -68,9 +68,9 @@ public class SecurityCameraBlock extends DisguisableBlock implements SimpleWater
 	@Override
 	protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
 		if (stack.is(SCContent.CAMERA_MONITOR))
-			return InteractionResult.TRY_WITH_EMPTY_HAND;
+			return InteractionResult.PASS;
 
-		return InteractionResult.PASS;
+		return InteractionResult.TRY_WITH_EMPTY_HAND;
 	}
 
 	@Override
