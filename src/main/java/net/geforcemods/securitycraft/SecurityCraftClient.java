@@ -446,6 +446,10 @@ public class SecurityCraftClient implements ClientModInitializer {
 	@Override
 
 	public void onInitializeClient() {
+		net.geforcemods.securitycraft.items.properties.HitCheck.bootstrap();
+		net.minecraft.client.renderer.item.properties.select.SelectItemModelProperties.ID_MAPPER.put(SCContent.id("block_linked"), net.geforcemods.securitycraft.items.properties.BlockLinked.TYPE);
+		net.minecraft.client.renderer.item.properties.select.SelectItemModelProperties.ID_MAPPER.put(SCContent.id("codebreaker_state"), net.geforcemods.securitycraft.items.properties.CodebreakerState.TYPE);
+		net.minecraft.client.renderer.item.properties.numeric.RangeSelectItemModelProperties.ID_MAPPER.put(SCContent.id("keycard_count"), net.geforcemods.securitycraft.items.properties.KeycardCount.MAP_CODEC);
 
 		SCClientConfig.load();
 
