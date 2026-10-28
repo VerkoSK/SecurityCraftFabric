@@ -1137,6 +1137,7 @@
   "module.securitycraft.secure_trading_station.storage_module.description": "Adding a storage module to a secure trading station will allow the block to store received payment items in its inventory. Additionally, the station will be able to give reward items to paying players, which are drawn from the block's inventory.",
   "module.securitycraft.secure_trading_station.whitelist_module.description": "Adding an allowlist module to a secure trading station will allow listed players to submit transactions without needing to supply payment items.",
   "block.securitycraft.security_camera": "Security Camera",
+  "item.securitycraft.security_camera": "Security Camera",
   "gui.securitycraft:camera.activateNightVision": "%s - Activate night vision",
   "gui.securitycraft:camera.exit": "%s - Exit Camera",
   "gui.securitycraft:camera.lookAround": "%1$s%2$s%3$s%4$s - Look around",

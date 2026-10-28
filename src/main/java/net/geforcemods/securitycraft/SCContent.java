@@ -867,7 +867,7 @@ public class SCContent {
 		LASER_BLOCK = (net.geforcemods.securitycraft.blocks.LaserBlock) register("laser_block", key -> new net.geforcemods.securitycraft.blocks.LaserBlock(propDisguisable(3.5F).sound(SoundType.METAL).setId(key)));
 		LASER_FIELD = (net.geforcemods.securitycraft.blocks.LaserFieldBlock) registerBlockNoItem("laser", key -> new net.geforcemods.securitycraft.blocks.LaserFieldBlock(alwaysDrop(BlockBehaviour.Properties.of().mapColor(net.minecraft.world.level.material.MapColor.NONE).strength(-1.0F).noLootTable().noOcclusion()).setId(key)));
 		PORTABLE_RADAR = (net.geforcemods.securitycraft.blocks.PortableRadarBlock) register("portable_radar", key -> new net.geforcemods.securitycraft.blocks.PortableRadarBlock(alwaysDrop(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_BLACK).strength(5.0F, Float.MAX_VALUE)).setId(key)));
-		MOTION_ACTIVATED_LIGHT = register("motion_activated_light", key -> new net.geforcemods.securitycraft.blocks.MotionActivatedLightBlock(alwaysDrop(BlockBehaviour.Properties.of().strength(3.0F).sound(SoundType.METAL)).setId(key)));
+		MOTION_ACTIVATED_LIGHT = register("motion_activated_light", key -> new net.geforcemods.securitycraft.blocks.MotionActivatedLightBlock(alwaysDrop(BlockBehaviour.Properties.of().strength(3.0F).sound(SoundType.GLASS).lightLevel(state -> state.getValue(net.geforcemods.securitycraft.blocks.MotionActivatedLightBlock.LIT) ? 15 : 0)).setId(key)));
 		CUTOUT_BLOCKS.add(MOTION_ACTIVATED_LIGHT);
 		PANIC_BUTTON = register("panic_button", key -> new net.geforcemods.securitycraft.blocks.PanicButtonBlock(BlockBehaviour.Properties.of().noCollission().strength(0.5F).sound(SoundType.STONE).pushReaction(PushReaction.DESTROY).setId(key)));
 		ALARM = register("alarm", key -> new net.geforcemods.securitycraft.blocks.AlarmBlock(prop(MapColor.COLOR_RED, 3.5F).sound(SoundType.METAL).lightLevel(state -> state.getValue(net.geforcemods.securitycraft.blocks.AlarmBlock.LIT) ? 15 : 0).setId(key)));
@@ -880,7 +880,8 @@ public class SCContent {
 		CUTOUT_BLOCKS.add(SECURE_TRADING_STATION);
 		SECURITY_CAMERA = registerBlockNoItem("security_camera", key -> new net.geforcemods.securitycraft.blocks.SecurityCameraBlock(prop(MapColor.METAL, 5.0F).sound(SoundType.METAL).setId(key)));
 		CUTOUT_BLOCKS.add(SECURITY_CAMERA);
-		SECURITY_CAMERA_ITEM = registerItem("security_camera", new net.geforcemods.securitycraft.items.SecurityCameraItem(SECURITY_CAMERA, new Item.Properties().setId(ResourceKey.create(Registries.ITEM, id("security_camera")))));
+		SECURITY_CAMERA_ITEM = registerItem("security_camera", new net.geforcemods.securitycraft.items.SecurityCameraItem(SECURITY_CAMERA, new Item.Properties().useBlockDescriptionPrefix().setId(ResourceKey.create(Registries.ITEM, id("security_camera")))));
+		((BlockItem) SECURITY_CAMERA_ITEM).registerBlocks(Item.BY_BLOCK, SECURITY_CAMERA_ITEM);
 
 		KEY_PANEL = (net.geforcemods.securitycraft.blocks.KeyPanelBlock) registerBlockNoItem("key_panel", key -> new net.geforcemods.securitycraft.blocks.KeyPanelBlock(alwaysDrop(BlockBehaviour.Properties.of().strength(3.5F).sound(SoundType.METAL).noOcclusion()).setId(key)));
 		KEY_PANEL_ITEM = registerItem("keypad_item", new net.geforcemods.securitycraft.items.KeyPanelItem(new Item.Properties().setId(ResourceKey.create(Registries.ITEM, id("keypad_item")))));
@@ -1420,7 +1421,7 @@ public class SCContent {
 
 	private static void registerCreativeTab() {
 		CreativeModeTab technical = FabricItemGroup.builder()
-				.icon(() -> new ItemStack(KEYPAD))
+				.icon(() -> new ItemStack(USERNAME_LOGGER))
 				.title(Component.translatable("itemGroup.securitycraft.technical"))
 				//upstream's SCCreativeModeTabs order, with the entries whose blocks this port does not have yet left out
 				.displayItems((params, output) -> {
