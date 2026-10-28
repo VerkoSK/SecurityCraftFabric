@@ -55,13 +55,18 @@ public class CodebreakerItem extends Item {
 	}
 
 	public static boolean wasRecentlyUsed(ItemStack codebreaker) {
-		Long lastUsed = codebreaker.get(SCContent.CODEBREAKER_LAST_USED);
+		net.geforcemods.securitycraft.components.CodebreakerData data = codebreaker.get(SCContent.CODEBREAKER_DATA);
 
-		return lastUsed != null && System.currentTimeMillis() - lastUsed < COOLDOWN_MS;
+		return data != null && data.wasRecentlyUsed();
+	}
+
+	public static void markUsed(ItemStack codebreaker, boolean isSuccessful) {
+		codebreaker.set(SCContent.CODEBREAKER_DATA, new net.geforcemods.securitycraft.components.CodebreakerData(System.currentTimeMillis(), isSuccessful));
+		codebreaker.set(SCContent.CODEBREAKER_LAST_USED, System.currentTimeMillis());
 	}
 
 	public static void markUsed(ItemStack codebreaker) {
-		codebreaker.set(SCContent.CODEBREAKER_LAST_USED, System.currentTimeMillis());
+		markUsed(codebreaker, true);
 	}
 
 	@Override

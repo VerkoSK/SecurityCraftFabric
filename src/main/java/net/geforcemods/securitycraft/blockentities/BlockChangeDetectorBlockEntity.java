@@ -230,7 +230,7 @@ public class BlockChangeDetectorBlockEntity extends DisguisableBlockEntity imple
 
 	@Override
 	public int getContainerSize() {
-		return 1;
+		return 37;
 	}
 
 	@Override
@@ -296,7 +296,7 @@ public class BlockChangeDetectorBlockEntity extends DisguisableBlockEntity imple
 		if (slot >= 100)
 			return getModuleInSlot(slot);
 		else
-			return slot == 36 ? filter : ItemStack.EMPTY;
+			return slot == 36 || slot == 0 ? filter : ItemStack.EMPTY;
 	}
 
 	public void showHighlights(boolean showHighlights) {

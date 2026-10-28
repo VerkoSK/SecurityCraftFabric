@@ -57,7 +57,7 @@ public interface Codebreakable {
 
 		if (!canBypass) {
 			codebreaker.hurtAndBreak(1, player, net.minecraft.world.entity.LivingEntity.getSlotForHand(hand));
-			CodebreakerItem.markUsed(codebreaker);
+			CodebreakerItem.markUsed(codebreaker, isSuccessful);
 		}
 
 		if (isSuccessful)
