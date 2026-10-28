@@ -289,21 +289,47 @@ public class StateSelector extends Screen implements GuiEventListener, Narratabl
 	}
 
 	@Override
+	public boolean isMouseOver(double mouseX, double mouseY) {
+		return (mouseX >= xStart && mouseX < xStart + 193 && mouseY >= yStart && mouseY < yStart + 150)
+				|| (dragHoverChecker != null && dragHoverChecker.checkHover(mouseX, mouseY));
+	}
+
+	@Override
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {
 		for (int i = 0; i < propertyButtons.size(); i++) {
 			if (propertyButtons.get(i).mouseClicked(mouseX, mouseY, button))
-				break;
+				return true;
 		}
 
-		previousPageButton.mouseClicked(mouseX, mouseY, button);
-		nextPageButton.mouseClicked(mouseX, mouseY, button);
-		clickedInDragRegion = dragHoverChecker.checkHover(mouseX, mouseY);
-		return false;
+		if (previousPageButton != null && previousPageButton.mouseClicked(mouseX, mouseY, button))
+			return true;
+
+		if (nextPageButton != null && nextPageButton.mouseClicked(mouseX, mouseY, button))
+			return true;
+
+		if (dragHoverChecker != null && dragHoverChecker.checkHover(mouseX, mouseY)) {
+			clickedInDragRegion = true;
+			return true;
+		}
+
+		return mouseX >= xStart && mouseX < xStart + 193 && mouseY >= yStart && mouseY < yStart + 150;
 	}
 
 	@Override
 	public boolean mouseReleased(double mouseX, double mouseY, int button) {
 		clickedInDragRegion = false;
+
+		for (int i = 0; i < propertyButtons.size(); i++) {
+			if (propertyButtons.get(i).mouseReleased(mouseX, mouseY, button))
+				return true;
+		}
+
+		if (previousPageButton != null && previousPageButton.mouseReleased(mouseX, mouseY, button))
+			return true;
+
+		if (nextPageButton != null && nextPageButton.mouseReleased(mouseX, mouseY, button))
+			return true;
+
 		return false;
 	}
 
@@ -311,7 +337,7 @@ public class StateSelector extends Screen implements GuiEventListener, Narratabl
 	public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
 		for (int i = 0; i < propertyButtons.size(); i++) {
 			if (propertyButtons.get(i).mouseScrolled(mouseX, mouseY, scrollX, scrollY))
-				break;
+				return true;
 		}
 
 		return false;
