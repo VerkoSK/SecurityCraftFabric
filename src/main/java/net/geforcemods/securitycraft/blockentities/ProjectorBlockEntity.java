@@ -21,6 +21,7 @@ import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -260,6 +261,10 @@ public class ProjectorBlockEntity extends DisguisableBlockEntity implements Cont
 	public void clearContent() {
 		projectedBlock = ItemStack.EMPTY;
 		resetSavedState();
+		setChanged();
+
+		if (level != null && !level.isClientSide())
+			level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
 	}
 
 	@Override
@@ -269,6 +274,11 @@ public class ProjectorBlockEntity extends DisguisableBlockEntity implements Cont
 		if (count >= 1) {
 			projectedBlock = ItemStack.EMPTY;
 			resetSavedState();
+			setChanged();
+
+			if (level != null && !level.isClientSide())
+				level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
+
 			return stack;
 		}
 
@@ -277,7 +287,7 @@ public class ProjectorBlockEntity extends DisguisableBlockEntity implements Cont
 
 	@Override
 	public int getContainerSize() {
-		return ProjectorMenu.SIZE;
+		return 37;
 	}
 
 	@Override
@@ -287,7 +297,7 @@ public class ProjectorBlockEntity extends DisguisableBlockEntity implements Cont
 
 	@Override
 	public ItemStack getStackInSlot(int slot) {
-		return slot >= 100 ? getModuleInSlot(slot) : (slot == 36 ? projectedBlock : ItemStack.EMPTY);
+		return slot >= 100 ? getModuleInSlot(slot) : (slot == 36 || slot == 0 ? projectedBlock : ItemStack.EMPTY);
 	}
 
 	@Override
@@ -311,6 +321,11 @@ public class ProjectorBlockEntity extends DisguisableBlockEntity implements Cont
 
 		projectedBlock = ItemStack.EMPTY;
 		resetSavedState();
+		setChanged();
+
+		if (level != null && !level.isClientSide())
+			level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
+
 		return stack;
 	}
 
@@ -325,6 +340,19 @@ public class ProjectorBlockEntity extends DisguisableBlockEntity implements Cont
 
 		if (old.getItem() != projectedBlock.getItem())
 			resetSavedState();
+
+		setChanged();
+
+		if (level != null && !level.isClientSide())
+			level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
+	}
+
+	@Override
+	public void setLevel(Level level) {
+		super.setLevel(level);
+
+		if (level != null && level.isClientSide)
+			PROJECTOR_RENDER_DELEGATE.putDelegateFor(this, projectedState, projectedBlock);
 	}
 
 	@Override
