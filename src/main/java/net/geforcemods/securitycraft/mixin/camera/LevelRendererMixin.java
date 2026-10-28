@@ -77,4 +77,15 @@ public class LevelRendererMixin {
 				cir.setReturnValue(true);
 		}
 	}
+
+	/**
+	 * When the player is mounted to a camera, ensures the player entity is rendered instead of being skipped.
+	 */
+	@org.spongepowered.asm.mixin.injection.Redirect(method = "extractVisibleEntities", at = @org.spongepowered.asm.mixin.injection.At(value = "INVOKE", target = "Lnet/minecraft/client/Camera;entity()Lnet/minecraft/world/entity/Entity;", ordinal = 3), require = 0)
+	private net.minecraft.world.entity.Entity securitycraft$renderPlayerWhenMountedOnCamera(Camera camera) {
+		if (net.geforcemods.securitycraft.SecurityCraftClient.isPlayerMountedOnCamera())
+			return Minecraft.getInstance().player;
+
+		return camera.entity();
+	}
 }
