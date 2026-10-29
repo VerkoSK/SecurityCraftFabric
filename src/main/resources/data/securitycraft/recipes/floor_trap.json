@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "O": {
+      "item": "securitycraft:reinforced_obsidian"
+    },
+    "P": {
+      "item": "minecraft:ender_pearl"
+    },
+    "R": {
+      "item": "minecraft:redstone_block"
+    }
+  },
+  "pattern": [
+    "III",
+    "RPR",
+    "OOO"
+  ],
+  "result": {
+    "item": "securitycraft:floor_trap"
+  },
+  "show_notification": true
+}

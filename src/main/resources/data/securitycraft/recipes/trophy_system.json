@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": {
+      "item": "securitycraft:reinforced_iron_block"
+    },
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "S": {
+      "item": "securitycraft:sentry"
+    }
+  },
+  "pattern": [
+    " S ",
+    " B ",
+    "III"
+  ],
+  "result": {
+    "item": "securitycraft:trophy_system"
+  },
+  "show_notification": true
+}

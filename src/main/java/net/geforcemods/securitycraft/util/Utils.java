@@ -9,6 +9,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -19,13 +20,19 @@ import net.minecraft.world.level.block.state.BlockState;
 /** Small shared helpers ported from the original SecurityCraft {@code util.Utils}. */
 public class Utils {
 	public static final Style GRAY_STYLE = Style.EMPTY.withColor(ChatFormatting.GRAY);
+	public static final Component INVENTORY_TEXT = Component.translatable("container.inventory");
 	/** NBT key holding a lens's dyed colour (0xRRGGBB) — replaces the 1.20.5+ {@code dyed_color} data component on MC 1.20.1. */
 	public static final String LENS_COLOR_KEY = "dyed_color";
 
 	private Utils() {}
 
-	public static MutableComponent localize(String key, Object... args) {
-		return Component.translatable(key, args);
+	public static MutableComponent localize(String key, Object... params) {
+		for (int i = 0; i < params.length; i++) {
+			if (params[i] instanceof BlockPos pos)
+				params[i] = getFormattedCoordinates(pos);
+		}
+
+		return Component.translatable(key, params);
 	}
 
 	public static Component getFormattedCoordinates(BlockPos pos) {
@@ -68,6 +75,10 @@ public class Utils {
 
 	public static ResourceLocation getRegistryName(Item item) {
 		return BuiltInRegistries.ITEM.getKey(item);
+	}
+
+	public static ResourceLocation getRegistryName(EntityType<?> entityType) {
+		return BuiltInRegistries.ENTITY_TYPE.getKey(entityType);
 	}
 
 	public static boolean isInViewDistance(int centerX, int centerZ, int viewDistance, int x, int z) {

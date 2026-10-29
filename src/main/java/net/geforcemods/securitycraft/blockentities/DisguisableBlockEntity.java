@@ -1,8 +1,10 @@
 package net.geforcemods.securitycraft.blockentities;
 
 import net.fabricmc.fabric.api.blockview.v2.RenderDataBlockEntity;
+import net.geforcemods.securitycraft.SCContent;
 import net.geforcemods.securitycraft.api.CustomizableBlockEntity;
 import net.geforcemods.securitycraft.api.IDisguisable;
+import net.geforcemods.securitycraft.api.Option;
 import net.geforcemods.securitycraft.misc.ModuleType;
 import net.geforcemods.securitycraft.util.BlockEntityRenderDelegate;
 import net.minecraft.core.BlockPos;
@@ -11,10 +13,14 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
-public abstract class DisguisableBlockEntity extends CustomizableBlockEntity implements RenderDataBlockEntity {
+public class DisguisableBlockEntity extends CustomizableBlockEntity implements RenderDataBlockEntity {
 	public static final BlockEntityRenderDelegate DISGUISED_BLOCK_RENDER_DELEGATE = new BlockEntityRenderDelegate();
 
-	protected DisguisableBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
+	public DisguisableBlockEntity(BlockPos pos, BlockState state) {
+		this(SCContent.DISGUISABLE_BLOCK_ENTITY, pos, state);
+	}
+
+	public DisguisableBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
 		super(type, pos, state);
 	}
 
@@ -76,5 +82,17 @@ public abstract class DisguisableBlockEntity extends CustomizableBlockEntity imp
 	private void refreshModel() {
 		if (level != null && level.isClientSide)
 			level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 8);
+	}
+
+	@Override
+	public ModuleType[] acceptedModules() {
+		return new ModuleType[] {
+				ModuleType.DISGUISE
+		};
+	}
+
+	@Override
+	public Option<?>[] customOptions() {
+		return new Option[0];
 	}
 }

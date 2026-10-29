@@ -1,0 +1,164 @@
+package net.geforcemods.securitycraft.blocks;
+
+import net.geforcemods.securitycraft.SCContent;
+import net.geforcemods.securitycraft.blockentities.CageTrapBlockEntity;
+import net.geforcemods.securitycraft.blockentities.DisguisableBlockEntity;
+import net.geforcemods.securitycraft.items.ModuleItem;
+import net.geforcemods.securitycraft.misc.ModuleType;
+import net.geforcemods.securitycraft.util.LevelUtils;
+import net.geforcemods.securitycraft.util.PlayerUtils;
+import net.geforcemods.securitycraft.util.Utils;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.OwnableEntity;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.EntityCollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
+
+public class CageTrapBlock extends DisguisableBlock {
+	public static final BooleanProperty DEACTIVATED = BooleanProperty.create("deactivated");
+
+	public CageTrapBlock(BlockBehaviour.Properties properties) {
+		super(properties);
+		registerDefaultState(stateDefinition.any().setValue(DEACTIVATED, false).setValue(WATERLOGGED, false));
+	}
+
+	@Override
+	public VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext collisionContext) {
+		if (level.getBlockEntity(pos) instanceof CageTrapBlockEntity be) {
+			if (collisionContext instanceof EntityCollisionContext ctx && ctx.getEntity() != null) {
+				Entity entity = ctx.getEntity();
+
+				if (be.isDisabled())
+					return getCorrectShape(state, level, pos, ctx, be);
+				else if (entity instanceof Player player && ((be.isOwnedBy(player) && be.ignoresOwner()) || be.isAllowed(player)) || entity instanceof OwnableEntity ownableEntity && be.allowsOwnableEntity(ownableEntity))
+					return getCorrectShape(state, level, pos, collisionContext, be);
+				if (entity instanceof Mob && !state.getValue(DEACTIVATED))
+					return be.capturesMobs() ? Shapes.empty() : getCorrectShape(state, level, pos, collisionContext, be);
+				else if (entity instanceof ItemEntity)
+					return getCorrectShape(state, level, pos, collisionContext, be);
+			}
+
+			return state.getValue(DEACTIVATED) ? getCorrectShape(state, level, pos, collisionContext, be) : Shapes.empty();
+		}
+		else
+			return Shapes.empty(); //shouldn't happen
+	}
+
+	private VoxelShape getCorrectShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext ctx, DisguisableBlockEntity disguisableTe) {
+		if (disguisableTe.isModuleEnabled(ModuleType.DISGUISE)) {
+			ItemStack moduleStack = disguisableTe.getModule(ModuleType.DISGUISE);
+
+			if (!moduleStack.isEmpty() && ModuleItem.getBlockAddon(moduleStack) != null)
+				return super.getCollisionShape(state, level, pos, ctx);
+		}
+
+		return Shapes.block();
+	}
+
+	@Override
+	public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
+		if (!level.isClientSide() && level.getBlockEntity(pos) instanceof CageTrapBlockEntity cageTrap) {
+			if (cageTrap.isDisabled())
+				return;
+
+			String ownerName = cageTrap.getOwner().getName();
+			boolean isPlayer = entity instanceof Player;
+
+			if (isPlayer || (entity instanceof Mob && cageTrap.capturesMobs())) {
+				if (!getShape(state, level, pos, CollisionContext.of(entity)).bounds().move(pos).intersects(entity.getBoundingBox()))
+					return;
+
+				if ((isPlayer && cageTrap.isOwnedBy(entity)) && cageTrap.ignoresOwner() || entity instanceof OwnableEntity ownableEntity && cageTrap.allowsOwnableEntity(ownableEntity))
+					return;
+
+				if (state.getValue(DEACTIVATED))
+					return;
+
+				cageTrap.assembleIronBars();
+
+				if (isPlayer && PlayerUtils.isPlayerOnline(ownerName))
+					PlayerUtils.sendMessageToPlayer(PlayerUtils.getPlayerFromName(ownerName), Utils.localize(SCContent.CAGE_TRAP.getDescriptionId()), Utils.localize("messages.securitycraft:cageTrap.captured", ((Player) entity).getName(), Utils.getFormattedCoordinates(pos)), ChatFormatting.BLACK);
+			}
+		}
+	}
+
+	@Override
+	public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+		ItemStack stack = player.getItemInHand(hand);
+
+		if (stack.getItem() == SCContent.WIRE_CUTTERS) {
+			if (!state.getValue(DEACTIVATED)) {
+				level.setBlockAndUpdate(pos, state.setValue(DEACTIVATED, true));
+
+				if (!player.isCreative())
+					stack.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(hand));
+
+				level.playSound(null, pos, SoundEvents.SHEEP_SHEAR, SoundSource.BLOCKS, 1.0F, 1.0F);
+				return InteractionResult.SUCCESS;
+			}
+		}
+		else if (stack.getItem() == Items.REDSTONE && state.getValue(DEACTIVATED)) {
+			level.setBlockAndUpdate(pos, state.setValue(DEACTIVATED, false));
+
+			if (!player.isCreative())
+				stack.shrink(1);
+
+			level.playSound(null, pos, SoundEvents.TRIPWIRE_CLICK_ON, SoundSource.BLOCKS, 1.0F, 1.0F);
+			return InteractionResult.SUCCESS;
+		}
+
+		return InteractionResult.PASS;
+	}
+
+	@Override
+	public BlockState getStateForPlacement(BlockPlaceContext ctx) {
+		return super.getStateForPlacement(ctx).setValue(DEACTIVATED, false);
+	}
+
+	@Override
+	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+		builder.add(DEACTIVATED, WATERLOGGED);
+	}
+
+	@Override
+	public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+		return new CageTrapBlockEntity(pos, state);
+	}
+
+	@Override
+	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
+		return !level.isClientSide() ? createTickerHelper(type, SCContent.CAGE_TRAP_BLOCK_ENTITY, LevelUtils::blockEntityTicker) : null;
+	}
+
+	@Override
+	public void playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
+		if (!level.isClientSide() && level.getBlockEntity(pos) instanceof CageTrapBlockEntity be)
+			be.disassembleIronBars();
+
+		super.playerWillDestroy(level, pos, state, player);
+	}
+}

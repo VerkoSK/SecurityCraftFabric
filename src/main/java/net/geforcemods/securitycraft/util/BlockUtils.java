@@ -52,4 +52,15 @@ public class BlockUtils {
 	public static boolean areItemsEqual(net.minecraft.world.item.ItemStack firstItemStack, net.minecraft.world.item.ItemStack secondItemStack, boolean exactComponentCheck) {
 		return exactComponentCheck ? net.minecraft.world.item.ItemStack.isSameItemSameTags(firstItemStack, secondItemStack) : firstItemStack.is(secondItemStack.getItem());
 	}
+
+	public static boolean isInsideUnownedReinforcedBlocks(Level level, net.minecraft.world.entity.player.Player player, net.minecraft.world.phys.Vec3 pos, float entityWidth) {
+		float width = entityWidth * 0.8F;
+		net.minecraft.world.phys.AABB inWallArea = net.minecraft.world.phys.AABB.ofSize(pos, width, 1.0E-6, width);
+
+		return BlockPos.betweenClosedStream(inWallArea).anyMatch(testPos -> {
+			BlockState wallState = level.getBlockState(testPos);
+
+			return wallState.getBlock() instanceof net.geforcemods.securitycraft.api.IReinforcedBlock && wallState.isSuffocating(level, testPos) && (!(level.getBlockEntity(testPos) instanceof net.geforcemods.securitycraft.api.IOwnable ownable) || !ownable.isOwnedBy(player)) && net.minecraft.world.phys.shapes.Shapes.joinIsNotEmpty(wallState.getCollisionShape(level, testPos).move(testPos.getX(), testPos.getY(), testPos.getZ()), net.minecraft.world.phys.shapes.Shapes.create(inWallArea), net.minecraft.world.phys.shapes.BooleanOp.AND);
+		});
+	}
 }

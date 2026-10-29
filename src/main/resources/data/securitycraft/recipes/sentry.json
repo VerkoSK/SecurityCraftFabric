@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": {
+      "item": "securitycraft:reinforced_iron_block"
+    },
+    "D": {
+      "item": "minecraft:dispenser"
+    },
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    },
+    "S": {
+      "item": "securitycraft:retinal_scanner"
+    }
+  },
+  "pattern": [
+    "RDR",
+    "ISI",
+    "BBB"
+  ],
+  "result": {
+    "item": "securitycraft:sentry"
+  },
+  "show_notification": true
+}

@@ -26,10 +26,15 @@ public class SecurityCraft implements ModInitializer {
 		return "v" + VERSION;
 	}
 
+	public static net.minecraft.resources.ResourceLocation resLoc(String name) {
+		return new net.minecraft.resources.ResourceLocation(MODID, name);
+	}
+
 	@Override
 	public void onInitialize() {
 		ConfigHandler.load();
 		SCContent.init();
+		net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry.register(SCContent.SENTRY_ENTITY, net.minecraft.world.entity.Mob.createMobAttributes());
 		NetworkHandler.registerPayloads();
 		NetworkHandler.registerServerReceivers();
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> SCCommand.register(dispatcher));
@@ -48,6 +53,39 @@ public class SecurityCraft implements ModInitializer {
 			net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.send(player, net.geforcemods.securitycraft.network.SyncLockedContainersPayload.CHANNEL, new net.geforcemods.securitycraft.network.SyncLockedContainersPayload(true, data.getAllLockedPositions(), java.util.List.of()).write());
 		});
 		net.geforcemods.securitycraft.items.UniversalBlockModifierItem.registerUseCallback();
+		net.fabricmc.fabric.api.event.player.UseBlockCallback.EVENT.register((player, level, hand, hitResult) -> {
+			if (player.isSpectator())
+				return net.minecraft.world.InteractionResult.PASS;
+
+			java.util.List<net.geforcemods.securitycraft.entity.sentry.Sentry> sentries = level.getEntitiesOfClass(net.geforcemods.securitycraft.entity.sentry.Sentry.class, new net.minecraft.world.phys.AABB(hitResult.getBlockPos()));
+
+			if (!sentries.isEmpty() && sentries.get(0).mobInteract(player, hand) == net.minecraft.world.InteractionResult.SUCCESS)
+				return net.minecraft.world.InteractionResult.SUCCESS;
+
+			return net.minecraft.world.InteractionResult.PASS;
+		});
+		net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents.BEFORE.register((level, player, pos, state, blockEntity) -> {
+			if (player.isCreative() && !level.getEntitiesOfClass(net.geforcemods.securitycraft.entity.sentry.Sentry.class, new net.minecraft.world.phys.AABB(pos)).isEmpty())
+				return false;
+
+			return true;
+		});
+		net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents.ALLOW_DAMAGE.register((entity, damageSource, amount) -> {
+			if (entity instanceof net.minecraft.server.level.ServerPlayer player) {
+				net.minecraft.world.level.Level level = player.level();
+
+				if (!player.isCreative() && damageSource.equals(level.damageSources().inWall()) && !player.isInvulnerableTo(damageSource) && net.geforcemods.securitycraft.util.BlockUtils.isInsideUnownedReinforcedBlocks(level, player, player.getEyePosition(), player.getBbWidth())) {
+					int reinforcedSuffocationDamage = ConfigHandler.reinforcedSuffocationDamage;
+
+					if (reinforcedSuffocationDamage != -1) {
+						player.hurt(net.geforcemods.securitycraft.misc.CustomDamageSources.inReinforcedWall(level.registryAccess()), reinforcedSuffocationDamage);
+						return false;
+					}
+				}
+			}
+
+			return true;
+		});
 		net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents.AFTER.register((level, player, pos, state, blockEntity) -> {
 			if (!level.isClientSide())
 				net.geforcemods.securitycraft.misc.BlockEntityTracker.BLOCK_CHANGE_DETECTOR.getBlockEntitiesInRange(level, pos).forEach(detector -> detector.log(player, net.geforcemods.securitycraft.blockentities.BlockChangeDetectorBlockEntity.DetectionMode.BREAK, pos, state));

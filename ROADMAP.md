@@ -42,23 +42,11 @@ with its update notification.
 rotation, zooming, redstone module, and player view mounting), the Secure Trading Station, Projector,
 Block Change Detector, Username Logger, Motion Activated Light, Panic Button, and Alarm.
 
----
-
-## V0.8 — Defence
-
-The blocks that shoot back.
-
-| Content | Notes |
-| --- | --- |
-| Sentry + Sentry Remote Access Tool | its own entity, targeting modes, disguise, three sentry modes |
-| Taser (and the powered variant) | plus the bullet entity |
-| Trophy System | shoots projectiles down |
-| Protecto | |
-| Floor Trap, Cage Trap | |
-| Rift Stabilizer | |
-| Inventory Scanner + scanner field | its prohibited-item list and the storage mode |
-
-**Depends on:** V0.7's module and targeting groundwork.
+**V0.8** — defence: the Sentry and Sentry Remote Access Tool (with targeting modes, disguise, and
+three sentry modes), the Taser and Powered Taser (plus the bullet entity), the Trophy System,
+Protecto, Floor Trap, Cage Trap (with Horizontal Reinforced Iron Bars), Rift Stabilizer, and the
+Inventory Scanner + scanner field (with prohibited-item list, confiscation storage, redstone output,
+and JEI drag-and-drop).
 
 ---
 
@@ -82,7 +70,6 @@ What is left of the original's own blocks once the reinforced set is complete.
 | Security Sea Boats (9 types) | |
 | Briefcase | its own passcode and inventory |
 | Incognito Mask, Admin Tool | |
-| Horizontal reinforced iron bars | |
 
 Then: bring V1.0 to all 16 supported Minecraft versions, and a full pass comparing this port's
 behaviour against the original's branch for each of them.
@@ -112,5 +99,3 @@ They get folded into whichever release touches the same area.
 - **Lens colouring on 1.20.6** — the recipe does not apply the dye there.
 - **Module automation** — the original lets hoppers insert modules through a Forge capability. Fabric's
   equivalent is the Transfer API; nothing in the port exposes one yet.
-- **Disguise module** — works on the keypad and laser block. Every further disguisable block added
-  from V0.6 onwards has to be wired into the same baked-model wrapper.

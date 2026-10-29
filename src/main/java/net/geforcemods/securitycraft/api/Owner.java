@@ -1,6 +1,9 @@
 package net.geforcemods.securitycraft.api;
 
+import net.geforcemods.securitycraft.SCContent;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.EntityDataSerializer;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 
 /**
@@ -27,6 +30,13 @@ public class Owner {
 	public Owner(String name, String uuid, boolean validated) {
 		set(name, uuid);
 		this.validated = validated;
+	}
+
+	public Owner(Entity entity) {
+		if (entity instanceof Player player)
+			set(player.getName().getString(), player.getGameProfile().getId().toString());
+		else if (entity != null)
+			set(entity.getName().getString(), entity.getStringUUID());
 	}
 
 	public Owner(Player player) {
@@ -76,7 +86,7 @@ public class Owner {
 
 	/**
 	 * Whether the other owner should be treated as the same owner as this one. Matched by UUID, falling
-	 * back to name when either side has no UUID. (The upstream also considers teams; teams aren't ported.)
+	 * back to name when either side has no UUID.
 	 */
 	public boolean isTreatedTheSameAs(Owner otherOwner) {
 		String selfUUID = getUUID();
@@ -89,8 +99,6 @@ public class Owner {
 		if (otherName != null && (selfUUID.equals(DEFAULT_OWNER_UUID) || otherUUID.equals(DEFAULT_OWNER_UUID)) && otherName.equals(getName()))
 			return true;
 
-		//two different players still count as the same owner while they share a scoreboard team, if the server
-		//turned that on; TeamUtils returns false outright when the option is off, so this costs nothing otherwise
 		return net.geforcemods.securitycraft.util.TeamUtils.areOnSameTeam(this, otherOwner);
 	}
 
@@ -142,6 +150,10 @@ public class Owner {
 			owner.load(tag);
 
 		return owner;
+	}
+
+	public static EntityDataSerializer<Owner> getSerializer() {
+		return SCContent.OWNER_SERIALIZER;
 	}
 
 	@Override

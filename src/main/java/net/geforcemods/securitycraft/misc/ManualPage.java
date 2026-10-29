@@ -20,14 +20,6 @@ import net.minecraft.world.level.block.Block;
  * {@code @HasManualPage}-annotated {@code SCContent} fields (see {@code SecurityCraft#collectSCContentData}); this
  * port's {@code SCContent} carries no such annotations, so the page list is spelled out here by hand, limited to the
  * content this port actually registers.
- * <p>
- * Dropped versus upstream because the port lacks the underlying content: display cases, secret signs
- * (standing and hanging), security sea boats, and every reinforced-block manual page that upstream documents
- * individually (block pocket manager/wall, cage trap, floor trap, inventory scanner
- * field, secure redstone interface, trophy system, reinforced chiseled bookshelf, briefcase,
- * incognito mask, portable tune player, rift stabilizer, sentry (+ remote access tool), taser,
- * admin tool). {@code LASER_FIELD} is also dropped: this port registers it with {@code registerBlockNoItem},
- * so it has no {@link Item} to build a page around.
  */
 public class ManualPage {
 	private ManualPage() {}
@@ -37,9 +29,12 @@ public class ManualPage {
 		add(SCContent.ALARM.asItem());
 		add(SCContent.BLOCK_CHANGE_DETECTOR.asItem());
 		add(SCContent.BOUNCING_BETTY.asItem());
+		add(SCContent.CAGE_TRAP.asItem());
 		add(SCContent.CLAYMORE.asItem());
+		add(SCContent.FLOOR_TRAP.asItem());
 		add(SCContent.FRAME.asItem());
 		add(SCContent.IMS.asItem());
+		add(SCContent.INVENTORY_SCANNER.asItem());
 		//the key panel gets one page, for its item; SCContent.KEY_PANEL is the block, which has no item of its own
 		add(SCContent.KEYPAD.asItem(), "", true);
 		add(SCContent.KEYPAD_CHEST.asItem(), "", true);
@@ -47,12 +42,14 @@ public class ManualPage {
 		add(SCContent.KEYPAD_FURNACE.asItem(), "", true);
 		add(SCContent.KEYPAD_SMOKER.asItem(), "", true);
 		add(SCContent.KEYPAD_BLAST_FURNACE.asItem(), "", true);
+		add(SCContent.LASER_BLOCK.asItem());
 		add(SCContent.ELECTRIFIED_IRON_FENCE.asItem());
 		add(SCContent.REINFORCED_BY_NAME.get("reinforced_hopper").asItem());
 		add(SCContent.MOTION_ACTIVATED_LIGHT.asItem());
 		add(SCContent.PANIC_BUTTON.asItem());
 		add(SCContent.PORTABLE_RADAR.asItem());
 		add(SCContent.PROJECTOR.asItem());
+		add(SCContent.PROTECTO.asItem());
 		add(SCContent.REINFORCED_DOOR.asItem());
 		add(SCContent.KEYPAD_DOOR_ITEM);
 		add(SCContent.ELECTRIFIED_IRON_FENCE_GATE.asItem());
@@ -65,7 +62,9 @@ public class ManualPage {
 		add(SCContent.SCANNER_TRAPDOOR.asItem());
 		add(SCContent.SECURE_TRADING_STATION.asItem());
 		add(SCContent.SECURITY_CAMERA.asItem());
+		add(SCContent.TROPHY_SYSTEM.asItem());
 		add(SCContent.USERNAME_LOGGER.asItem());
+		add(SCContent.MINE.asItem());
 		add(SCContent.KEYCARD_READER.asItem());
 		add(SCContent.KEYCARD_LOCK.asItem());
 		add(SCContent.KEYCARD_LV1);
@@ -76,7 +75,11 @@ public class ManualPage {
 		add(SCContent.KEY_PANEL_ITEM);
 		add(SCContent.LENS);
 		add(SCContent.MINE_REMOTE_ACCESS_TOOL);
+		add(SCContent.REMOTE_ACCESS_SENTRY);
+		add(SCContent.RIFT_STABILIZER_ITEM);
 		add(SCContent.SC_MANUAL);
+		add(SCContent.SENTRY, "Henzoid", false);
+		add(SCContent.TASER);
 		add(SCContent.UNIVERSAL_BLOCK_MODIFIER);
 		add(SCContent.UNIVERSAL_BLOCK_REMOVER);
 		add(SCContent.UNIVERSAL_OWNER_CHANGER);

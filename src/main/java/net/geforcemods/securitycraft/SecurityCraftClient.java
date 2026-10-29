@@ -30,6 +30,8 @@ public class SecurityCraftClient implements ClientModInitializer {
 	}
 
 	public static final net.minecraft.client.model.geom.ModelLayerLocation SECURITY_CAMERA_LOCATION = new net.minecraft.client.model.geom.ModelLayerLocation(SCContent.id("security_camera"), "main");
+	public static final net.minecraft.client.model.geom.ModelLayerLocation BULLET_LOCATION = new net.minecraft.client.model.geom.ModelLayerLocation(SCContent.id("bullet"), "main");
+	public static final net.minecraft.client.model.geom.ModelLayerLocation SENTRY_LOCATION = new net.minecraft.client.model.geom.ModelLayerLocation(SCContent.id("sentry"), "main");
 	public static final net.minecraft.resources.ResourceLocation CAMERA_DASHBOARD = SCContent.id("textures/gui/camera/camera_dashboard.png");
 	public static final net.minecraft.resources.ResourceLocation NIGHT_VISION = new net.minecraft.resources.ResourceLocation("textures/mob_effect/night_vision.png");
 	public static final float EMPTY_STATE = 0.0F, UNKNOWN_STATE = 0.25F, NOT_LINKED_STATE = 0.5F, LINKED_STATE = 0.75F;
@@ -262,6 +264,39 @@ public class SecurityCraftClient implements ClientModInitializer {
 		return 0xFFFFFFFF;
 	}
 
+	private static int inventoryScannerFieldColor(net.minecraft.world.level.block.state.BlockState state, net.minecraft.world.level.BlockAndTintGetter view, net.minecraft.core.BlockPos pos, int tintIndex) {
+		if (tintIndex != 0)
+			return -1;
+
+		if (view != null && pos != null && state.hasProperty(net.geforcemods.securitycraft.blocks.InventoryScannerFieldBlock.FACING)) {
+			net.minecraft.core.Direction axis = state.getValue(net.geforcemods.securitycraft.blocks.InventoryScannerFieldBlock.FACING);
+
+			for (net.minecraft.core.Direction dir : new net.minecraft.core.Direction[] {
+					axis, axis.getOpposite()
+			}) {
+				for (int i = 1; i <= ConfigHandler.inventoryScannerRange; i++) {
+					net.minecraft.core.BlockPos offsetPos = pos.relative(dir, i);
+
+					if (view.getBlockEntity(offsetPos) instanceof net.geforcemods.securitycraft.blockentities.InventoryScannerBlockEntity scanner) {
+						net.minecraft.world.item.ItemStack lens = scanner.getLensContainer().getItem(0);
+
+						if (net.geforcemods.securitycraft.util.Utils.hasLensColor(lens))
+							return 0xFF000000 | net.geforcemods.securitycraft.util.Utils.getLensColor(lens);
+
+						return 0xFFFFFFFF;
+					}
+
+					net.minecraft.world.level.block.state.BlockState offsetState = view.getBlockState(offsetPos);
+
+					if (offsetState.getBlock() != SCContent.INVENTORY_SCANNER_FIELD && !offsetState.isAir())
+						break;
+				}
+			}
+		}
+
+		return 0xFFFFFFFF;
+	}
+
 	/**
 	 * Vanilla's sign renderers are typed to the vanilla sign block entity, so a renderer extending one cannot also
 	 * declare itself a renderer of the secret sign's own block entity. Upstream never has to say so, because Forge's
@@ -349,12 +384,45 @@ public class SecurityCraftClient implements ClientModInitializer {
 		net.minecraft.client.gui.screens.MenuScreens.register(SCContent.BLOCK_CHANGE_DETECTOR_MENU, net.geforcemods.securitycraft.screen.BlockChangeDetectorScreen::new);
 		net.minecraft.client.gui.screens.MenuScreens.register(SCContent.PROJECTOR_MENU, net.geforcemods.securitycraft.screen.ProjectorScreen::new);
 		net.minecraft.client.gui.screens.MenuScreens.register(SCContent.SECURE_TRADING_STATION_MENU, net.geforcemods.securitycraft.screen.SecureTradingStationScreen::new);
+		net.minecraft.client.gui.screens.MenuScreens.register(SCContent.INVENTORY_SCANNER_MENU, net.geforcemods.securitycraft.screen.InventoryScannerScreen::new);
+		net.minecraft.client.gui.screens.MenuScreens.register(SCContent.TROPHY_SYSTEM_MENU, net.geforcemods.securitycraft.screen.TrophySystemScreen::new);
+		ClientPlayNetworking.registerGlobalReceiver(net.geforcemods.securitycraft.network.OpenRiftStabilizerScreenPayload.CHANNEL, (client, handler, buf, responseSender) -> {
+			net.geforcemods.securitycraft.network.OpenRiftStabilizerScreenPayload payload = net.geforcemods.securitycraft.network.OpenRiftStabilizerScreenPayload.read(buf);
+
+			client.execute(() -> {
+				if (client.level != null && client.level.getBlockEntity(payload.pos()) instanceof net.geforcemods.securitycraft.blockentities.RiftStabilizerBlockEntity be)
+					client.setScreen(new net.geforcemods.securitycraft.screen.RiftStabilizerScreen(be));
+			});
+		});
+		ClientPlayNetworking.registerGlobalReceiver(net.geforcemods.securitycraft.network.OpenSRATScreenPayload.CHANNEL, (client, handler, buf, responseSender) -> {
+			net.geforcemods.securitycraft.network.OpenSRATScreenPayload.read(buf);
+
+			client.execute(() -> {
+				if (client.player != null) {
+					net.minecraft.world.item.ItemStack stack = net.geforcemods.securitycraft.util.PlayerUtils.getItemStackFromAnyHand(client.player, SCContent.REMOTE_ACCESS_SENTRY);
+
+					if (!stack.isEmpty())
+						client.setScreen(new net.geforcemods.securitycraft.screen.SentryRemoteAccessToolScreen(stack));
+				}
+			});
+		});
+		ClientPlayNetworking.registerGlobalReceiver(net.geforcemods.securitycraft.network.SetTrophySystemTargetPayload.TYPE, (payload, player, responseSender) -> {
+			if (player.level() != null && player.level().getBlockEntity(payload.pos()) instanceof net.geforcemods.securitycraft.blockentities.TrophySystemBlockEntity be) {
+				net.minecraft.world.entity.Entity entity = player.level().getEntity(payload.targetID());
+
+				be.setTarget(entity instanceof net.minecraft.world.entity.projectile.Projectile projectile ? projectile : null);
+			}
+		});
 		//Without these the claymore's lens slot draws nothing and, worse, spawning a bouncing betty or an IMS bomb
 		//throws because Fabric has no renderer registered for their entity types.
 		net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(SCContent.BOUNCING_BETTY_ENTITY, net.geforcemods.securitycraft.renderers.BouncingBettyRenderer::new);
 		//IMSBombRenderer bakes this layer in its constructor, so it has to be registered or the bake throws.
 		net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry.registerModelLayer(net.geforcemods.securitycraft.renderers.IMSBombRenderer.IMS_BOMB_LOCATION, net.geforcemods.securitycraft.models.IMSBombModel::createLayer);
 		net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(SCContent.IMS_BOMB_ENTITY, net.geforcemods.securitycraft.renderers.IMSBombRenderer::new);
+		net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry.registerModelLayer(BULLET_LOCATION, net.geforcemods.securitycraft.models.BulletModel::createLayer);
+		net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(SCContent.BULLET_ENTITY, net.geforcemods.securitycraft.renderers.BulletRenderer::new);
+		net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry.registerModelLayer(SENTRY_LOCATION, net.geforcemods.securitycraft.models.SentryModel::createLayer);
+		net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(SCContent.SENTRY_ENTITY, net.geforcemods.securitycraft.renderers.SentryRenderer::new);
 		//the chest's block model is empty, so both the placed block and the item are drawn by its own renderer
 		//the secret signs draw their text only for the players allowed to read it
 		registerSignRenderer(SCContent.SECRET_SIGN_BLOCK_ENTITY, net.geforcemods.securitycraft.renderers.SecretSignRenderer::new);
@@ -369,8 +437,16 @@ public class SecurityCraftClient implements ClientModInitializer {
 		net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry.register(SCContent.KEYCARD_READER_BLOCK_ENTITY, net.geforcemods.securitycraft.renderers.DisguisableBlockEntityRenderer::new);
 		net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry.register(SCContent.USERNAME_LOGGER_BLOCK_ENTITY, net.geforcemods.securitycraft.renderers.DisguisableBlockEntityRenderer::new);
 		net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry.register(SCContent.BLOCK_CHANGE_DETECTOR_BLOCK_ENTITY, net.geforcemods.securitycraft.renderers.DisguisableBlockEntityRenderer::new);
+		net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry.register(SCContent.CAGE_TRAP_BLOCK_ENTITY, net.geforcemods.securitycraft.renderers.DisguisableBlockEntityRenderer::new);
+		net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry.register(SCContent.FLOOR_TRAP_BLOCK_ENTITY, net.geforcemods.securitycraft.renderers.DisguisableBlockEntityRenderer::new);
+		net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry.register(SCContent.INVENTORY_SCANNER_BLOCK_ENTITY, net.geforcemods.securitycraft.renderers.DisguisableBlockEntityRenderer::new);
+		net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry.register(SCContent.PROTECTO_BLOCK_ENTITY, net.geforcemods.securitycraft.renderers.DisguisableBlockEntityRenderer::new);
+		net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry.register(SCContent.RIFT_STABILIZER_BLOCK_ENTITY, net.geforcemods.securitycraft.renderers.DisguisableBlockEntityRenderer::new);
+		net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry.register(SCContent.DISGUISABLE_BLOCK_ENTITY, net.geforcemods.securitycraft.renderers.DisguisableBlockEntityRenderer::new);
 		net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry.register(SCContent.PROJECTOR_BLOCK_ENTITY, net.geforcemods.securitycraft.renderers.ProjectorRenderer::new);
 		net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry.register(SCContent.SECURE_TRADING_STATION_BLOCK_ENTITY, net.geforcemods.securitycraft.renderers.SecureTradingStationRenderer::new);
+		net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry.register(SCContent.TROPHY_SYSTEM_BLOCK_ENTITY, net.geforcemods.securitycraft.renderers.TrophySystemRenderer::new);
+		net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry.getInstance().register(SCContent.FLOOR_TRAP_CLOUD, net.geforcemods.securitycraft.particle.FloorTrapCloudParticle.Provider::new);
 		net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry.registerModelLayer(SECURITY_CAMERA_LOCATION, net.geforcemods.securitycraft.models.SecurityCameraModel::createLayer);
 		net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(SCContent.SECURITY_CAMERA_ENTITY, net.minecraft.client.renderer.entity.NoopRenderer::new);
 		net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry.register(SCContent.SECURITY_CAMERA_BLOCK_ENTITY, net.geforcemods.securitycraft.renderers.SecurityCameraRenderer::new);
@@ -393,6 +469,7 @@ public class SecurityCraftClient implements ClientModInitializer {
 
 		Block[] reinforced = tinted.toArray(new Block[0]);
 		ColorProviderRegistry.BLOCK.register((state, view, pos, tintIndex) -> tintIndex == 0 ? reinforcedTint() : -1, reinforced);
+		ColorProviderRegistry.BLOCK.register((state, view, pos, tintIndex) -> tintIndex == 0 ? reinforcedTint() : -1, SCContent.HORIZONTAL_REINFORCED_IRON_BARS);
 
 		//reinforced grass block: tint the grass overlay (tintindex 1) with the biome grass colour x the reinforced tint
 		ColorProviderRegistry.BLOCK.register((state, view, pos, tintIndex) -> {
@@ -428,7 +505,7 @@ public class SecurityCraftClient implements ClientModInitializer {
 		BlockRenderLayerMap.INSTANCE.putBlock(SCContent.REINFORCED_DOOR, RenderType.cutout());
 
 		// Disguise: wrap disguisable block models so they can render as the disguised block (from the disguise module).
-		java.util.Set<String> disguisableModelPaths = java.util.Set.of("laser_block", "keypad", "keycard_reader", "retinal_scanner", "username_logger", "block_change_detector", "projector", "secure_trading_station", "security_camera");
+		java.util.Set<String> disguisableModelPaths = java.util.Set.of("laser_block", "keypad", "keycard_reader", "retinal_scanner", "username_logger", "block_change_detector", "projector", "secure_trading_station", "security_camera", "cage_trap", "floor_trap", "inventory_scanner", "protecto", "rift_stabilizer", "sentry_disguise", "trophy_system");
 		net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin.register(pluginContext -> pluginContext.modifyModelAfterBake().register((model, context) -> {
 			net.minecraft.resources.ResourceLocation id = context.id();
 
@@ -476,6 +553,9 @@ public class SecurityCraftClient implements ClientModInitializer {
 		// Laser beam: translucent animated texture, tinted at tintindex 0 by the lens colour (red default).
 		BlockRenderLayerMap.INSTANCE.putBlock(SCContent.LASER_FIELD, RenderType.translucent());
 		ColorProviderRegistry.BLOCK.register(SecurityCraftClient::laserFieldColor, SCContent.LASER_FIELD);
+		BlockRenderLayerMap.INSTANCE.putBlock(SCContent.INVENTORY_SCANNER_FIELD, RenderType.translucent());
+		ColorProviderRegistry.BLOCK.register(SecurityCraftClient::inventoryScannerFieldColor, SCContent.INVENTORY_SCANNER_FIELD);
+		BlockRenderLayerMap.INSTANCE.putBlock(SCContent.FLOOR_TRAP, RenderType.translucent());
 
 		//the fake liquids have no textures of their own: they borrow water's and lava's, which is what makes them
 		//indistinguishable from the real thing until something walks into them
@@ -510,6 +590,37 @@ public class SecurityCraftClient implements ClientModInitializer {
 			}
 			else
 				return linkingState;
+		});
+
+		net.minecraft.client.renderer.item.ItemProperties.register(SCContent.REMOTE_ACCESS_SENTRY, SCContent.id("linking_state"), (stack, level, entity, id) -> {
+			if (!(entity instanceof net.minecraft.world.entity.player.Player))
+				return EMPTY_STATE;
+
+			if (Minecraft.getInstance().crosshairPickEntity instanceof net.geforcemods.securitycraft.entity.sentry.Sentry sentry) {
+				net.minecraft.core.BlockPos pos = sentry.blockPosition();
+				net.minecraft.nbt.CompoundTag tag = stack.getOrCreateTag();
+				float linkingState = NOT_LINKED_STATE;
+
+				for (int i = 1; i <= 12; i++) {
+					int[] coords = tag.getIntArray("sentry" + i);
+
+					if (coords.length == 3 && coords[0] == pos.getX() && coords[1] == pos.getY() && coords[2] == pos.getZ()) {
+						linkingState = LINKED_STATE;
+						break;
+					}
+				}
+
+				if (!net.geforcemods.securitycraft.items.SentryRemoteAccessToolItem.hasSentryAdded(stack.getTag())) {
+					if (linkingState == NOT_LINKED_STATE)
+						return NOT_LINKED_STATE;
+					else
+						return EMPTY_STATE;
+				}
+				else
+					return linkingState;
+			}
+			else
+				return net.geforcemods.securitycraft.items.SentryRemoteAccessToolItem.hasSentryAdded(stack.getTag()) ? UNKNOWN_STATE : EMPTY_STATE;
 		});
 
 		ClientPlayNetworking.registerGlobalReceiver(net.geforcemods.securitycraft.network.SetCameraViewPayload.CHANNEL, (client, handler, buf, responseSender) -> {

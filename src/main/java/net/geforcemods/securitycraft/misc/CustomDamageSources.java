@@ -6,6 +6,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
+import net.minecraft.world.entity.Entity;
 
 /** Custom damage types. The type itself is defined by the datapack JSON in {@code data/securitycraft/damage_type/}. */
 public class CustomDamageSources {
@@ -13,6 +14,8 @@ public class CustomDamageSources {
 	public static final ResourceKey<DamageType> ELECTRICITY = ResourceKey.create(Registries.DAMAGE_TYPE, SCContent.id("electricity"));
 	public static final ResourceKey<DamageType> FAKE_WATER = ResourceKey.create(Registries.DAMAGE_TYPE, SCContent.id("fake_water"));
 	public static final ResourceKey<DamageType> INCORRECT_PASSCODE = ResourceKey.create(Registries.DAMAGE_TYPE, SCContent.id("incorrect_passcode"));
+	public static final ResourceKey<DamageType> TASER = ResourceKey.create(Registries.DAMAGE_TYPE, SCContent.id("taser"));
+	public static final ResourceKey<DamageType> IN_REINFORCED_WALL = ResourceKey.create(Registries.DAMAGE_TYPE, SCContent.id("in_reinforced_wall"));
 
 	private CustomDamageSources() {}
 
@@ -30,5 +33,13 @@ public class CustomDamageSources {
 
 	public static DamageSource incorrectPasscode(RegistryAccess registryAccess) {
 		return new DamageSource(registryAccess.registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(INCORRECT_PASSCODE));
+	}
+
+	public static DamageSource taser(Entity shooter) {
+		return new DamageSource(shooter.level().registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(TASER), shooter);
+	}
+
+	public static DamageSource inReinforcedWall(RegistryAccess registryAccess) {
+		return new DamageSource(registryAccess.registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(IN_REINFORCED_WALL));
 	}
 }

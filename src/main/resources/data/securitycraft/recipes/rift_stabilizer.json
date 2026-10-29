@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "E": {
+      "item": "minecraft:ender_eye"
+    },
+    "O": {
+      "item": "securitycraft:reinforced_obsidian"
+    },
+    "P": {
+      "tag": "securitycraft:reinforced/stone_pressure_plates"
+    },
+    "S": {
+      "tag": "securitycraft:reinforced/stone_crafting_materials"
+    }
+  },
+  "pattern": [
+    " P ",
+    "SES",
+    "OOO"
+  ],
+  "result": {
+    "item": "securitycraft:rift_stabilizer"
+  },
+  "show_notification": true
+}

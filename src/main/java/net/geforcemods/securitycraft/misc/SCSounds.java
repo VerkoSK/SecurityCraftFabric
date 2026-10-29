@@ -14,6 +14,7 @@ public enum SCSounds {
 	ALARM("alarm"),
 	CAMERAZOOMIN("camerazoomin"),
 	CAMERASNAP("camerasnap"),
+	TASERFIRED("taserfire"),
 	ELECTRIFIED("electrified"),
 	LOCK("lock"),
 	PING("ping"),

@@ -17,7 +17,7 @@ Redstone_Dubstep, ChainmailPickaxe).
 
 ---
 
-## Status — V0.7
+## Status — V0.8
 
 SecurityCraft is one of the largest Minecraft mods there is, so this port grows a **working core**
 feature by feature rather than dropping a half-compiling copy of everything at once. Every feature
@@ -28,7 +28,7 @@ is measured against the original mod's own branch for the same Minecraft version
 
 | | |
 | --- | --- |
-| **Reinforced blocks** | the complete set — every block the original reinforces on this Minecraft version, including the carpets, glazed terracotta, ladder, lanterns, chain, end rod, cobweb, scaffolding, lever, and the functional ones: hopper, dispenser, dropper, observer, pistons, cauldrons, lectern, chiseled bookshelf |
+| **Reinforced blocks** | the complete set — every block the original reinforces on this Minecraft version, including the carpets, glazed terracotta, ladder, lanterns, chain, end rod, cobweb, scaffolding, lever, horizontal reinforced iron bars, and the functional ones: hopper, dispenser, dropper, observer, pistons, cauldrons, lectern, chiseled bookshelf |
 | **Ownership** | every owned block remembers who placed it and can only be broken by them, with team ownership, variable break time and the Universal Owner Changer |
 | **Universal Block Reinforcer / Remover** | all three reinforcer levels, with their colour chooser |
 | **Universal Block Modifier** | the full Customize screen: module slots, per-block options, and enabling or disabling a module without taking it out |
@@ -43,6 +43,13 @@ is measured against the original mod's own branch for the same Minecraft version
 | **Username Logger** | logs nearby player names when powered |
 | **Motion Activated Light** | illuminates when players enter its detection radius |
 | **Panic Button & Alarm** | button toggle behavior, siren sound effect and flashing light |
+| **Sentry & Sentry Remote Access Tool** | autonomous turret with multiple targeting modes, disguise support, and remote control |
+| **Taser** | standard and powered variants |
+| **Trophy System** | intercepts incoming projectiles, with configurable entity type filters |
+| **Protecto** | strikes nearby intruders with lightning during thunderstorms |
+| **Floor Trap & Cage Trap** | vanishing floor trap and instant reinforced iron bar cage trap |
+| **Rift Stabilizer** | blocks and logs nearby teleportation attempts (ender pearls, chorus fruit, endermen, shulkers, modded teleports) |
+| **Inventory Scanner** | scans players passing through its field for prohibited items, with optional confiscation storage and redstone output |
 | **Universal Key Changer** | resets a block's passcode or keycard link |
 | **Codebreaker** | the attacker's side of the passcode and keycard systems, with its cooldown and failure chance |
 | **Laser block** | laser fields, per-side configuration and dyed lenses |

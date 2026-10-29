@@ -6,12 +6,18 @@
 	"compatibilityLevel": "JAVA_17",
 	"mixins": [
 		"BlockItemMixin",
+		"ChorusFruitItemMixin",
+		"EnderManMixin",
+		"MobMixin",
+		"ShulkerMixin",
+		"ThrownEnderpearlMixin",
 		"camera.ChunkMapMixin",
 		"camera.PlayerListMixin",
 		"camera.ServerPlayerMixin",
 		"camera.TrackedEntityMixin"
 	],
 	"client": [
+		"HumanoidModelMixin",
 		"camera.ClientChunkCacheMixin",
 		"camera.GameRendererMixin",
 		"camera.GuiCameraMixin",

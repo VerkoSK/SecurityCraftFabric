@@ -42,6 +42,10 @@ public class PlayerUtils {
 		return null;
 	}
 
+	public static boolean isPlayerOnline(String name) {
+		return getPlayerFromName(name) != null;
+	}
+
 	/**
 	 * Resolves a player name to a UUID even when that player is offline, by falling back to the server's
 	 * {@link net.minecraft.server.players.GameProfileCache} (the same lookup vanilla commands like {@code /whitelist

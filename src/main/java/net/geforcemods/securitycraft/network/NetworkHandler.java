@@ -142,6 +142,15 @@ public final class NetworkHandler {
 		ServerPlayNetworking.registerGlobalReceiver(ToggleNightVisionPayload.CHANNEL, (server, player, handler, buf, sender) -> {
 			server.execute(() -> handleToggleNightVision(player));
 		});
+		ServerPlayNetworking.registerGlobalReceiver(SyncTrophySystemPayload.TYPE, (payload, player, responseSender) -> handleSyncTrophySystem(player, payload));
+		ServerPlayNetworking.registerGlobalReceiver(SyncRiftStabilizerPayload.TYPE, (payload, player, responseSender) -> handleSyncRiftStabilizer(player, payload));
+		ServerPlayNetworking.registerGlobalReceiver(SetSentryModePayload.TYPE, (payload, player, responseSender) -> handleSetSentryMode(player, payload));
+		ServerPlayNetworking.registerGlobalReceiver(RemoveSentryFromSRATPayload.TYPE, (payload, player, responseSender) -> handleRemoveSentryFromSRAT(player, payload));
+		ServerPlayNetworking.registerGlobalReceiver(SetGhostSlotPayload.CHANNEL, (server, player, handler, buf, sender) -> {
+			SetGhostSlotPayload payload = SetGhostSlotPayload.read(buf);
+
+			server.execute(() -> payload.handle(player));
+		});
 	}
 
 	private static void handleSyncKeycardSettings(ServerPlayer player, SyncKeycardSettingsPayload payload) {
@@ -495,5 +504,80 @@ public final class NetworkHandler {
 
 	private static boolean inReach(ServerPlayer player, BlockPos pos) {
 		return pos.closerThan(player.blockPosition(), REACH);
+	}
+
+	public static void sendToServer(SCPayload payload) {
+		net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking.send(payload);
+	}
+
+	public static void sendToTracking(ServerLevel level, BlockPos pos, SCPayload payload) {
+		for (ServerPlayer player : net.fabricmc.fabric.api.networking.v1.PlayerLookup.tracking(level, pos)) {
+			ServerPlayNetworking.send(player, payload);
+		}
+	}
+
+	public static void openRiftStabilizerScreen(ServerPlayer player, BlockPos pos) {
+		ServerPlayNetworking.send(player, OpenRiftStabilizerScreenPayload.CHANNEL, new OpenRiftStabilizerScreenPayload(pos).write());
+	}
+
+	public static void openSRATScreen(ServerPlayer player) {
+		ServerPlayNetworking.send(player, OpenSRATScreenPayload.CHANNEL, new OpenSRATScreenPayload().write());
+	}
+
+	private static void handleSyncTrophySystem(ServerPlayer player, SyncTrophySystemPayload payload) {
+		Level level = player.level();
+		BlockPos pos = payload.pos();
+
+		if (!player.isSpectator() && payload.projectileType() != net.minecraft.world.entity.EntityType.PLAYER && level.getBlockEntity(pos) instanceof net.geforcemods.securitycraft.blockentities.TrophySystemBlockEntity be && be.isOwnedBy(player)) {
+			BlockState state = level.getBlockState(pos);
+
+			be.setFilter(payload.projectileType(), payload.allowed());
+			level.sendBlockUpdated(pos, state, state, 2);
+		}
+	}
+
+	private static void handleSyncRiftStabilizer(ServerPlayer player, SyncRiftStabilizerPayload payload) {
+		if (!player.isSpectator() && payload.teleportationType() != null) {
+			Level level = player.level();
+			BlockPos pos = payload.pos();
+
+			if (level.getBlockEntity(pos) instanceof net.geforcemods.securitycraft.blockentities.RiftStabilizerBlockEntity be && be.isOwnedBy(player)) {
+				BlockState state = level.getBlockState(pos);
+
+				be.setFilter(payload.teleportationType(), payload.allowed());
+				level.sendBlockUpdated(pos, state, state, 2);
+
+				net.geforcemods.securitycraft.blockentities.RiftStabilizerBlockEntity connectedBlockEntity = net.geforcemods.securitycraft.blocks.RiftStabilizerBlock.getConnectedBlockEntity(level, pos);
+
+				if (connectedBlockEntity != null)
+					level.sendBlockUpdated(connectedBlockEntity.getBlockPos(), connectedBlockEntity.getBlockState(), connectedBlockEntity.getBlockState(), 2);
+			}
+		}
+	}
+
+	private static void handleSetSentryMode(ServerPlayer player, SetSentryModePayload payload) {
+		if (!player.isSpectator()) {
+			Level level = player.level();
+
+			for (SetSentryModePayload.Info info : payload.sentries()) {
+				if (level.isLoaded(info.pos())) {
+					java.util.List<net.geforcemods.securitycraft.entity.sentry.Sentry> sentries = level.<net.geforcemods.securitycraft.entity.sentry.Sentry>getEntitiesOfClass(net.geforcemods.securitycraft.entity.sentry.Sentry.class, new net.minecraft.world.phys.AABB(info.pos()));
+
+					if (!sentries.isEmpty() && sentries.get(0).isOwnedBy(player))
+						sentries.get(0).toggleMode(player, info.mode(), false);
+				}
+			}
+		}
+	}
+
+	private static void handleRemoveSentryFromSRAT(ServerPlayer player, RemoveSentryFromSRATPayload payload) {
+		if (!player.isSpectator()) {
+			ItemStack stack = PlayerUtils.getItemStackFromAnyHand(player, SCContent.REMOTE_ACCESS_SENTRY);
+
+			if (!stack.isEmpty() && stack.hasTag()) {
+				stack.getTag().remove("sentry" + payload.sentryIndex());
+				stack.getTag().remove("sentry" + payload.sentryIndex() + "_name");
+			}
+		}
 	}
 }

@@ -76,3 +76,9 @@ accessible	class	net/minecraft/server/level/ChunkMap$TrackedEntity
 accessible	class	net/minecraft/client/multiplayer/ClientChunkCache$Storage
 accessible	method	net/minecraft/client/multiplayer/ClientChunkCache$Storage	inRange	(II)Z
 
+# V0.8 Sentry, Inventory Scanner, Taser
+accessible	method	net/minecraft/world/level/block/DispenserBlock	getDispenseMethod	(Lnet/minecraft/world/item/ItemStack;)Lnet/minecraft/core/dispenser/DispenseItemBehavior;
+accessible	method	net/minecraft/core/dispenser/AbstractProjectileDispenseBehavior	getProjectile	(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/Position;Lnet/minecraft/world/item/ItemStack;)Lnet/minecraft/world/entity/projectile/Projectile;
+accessible	method	net/minecraft/core/dispenser/AbstractProjectileDispenseBehavior	playSound	(Lnet/minecraft/core/BlockSource;)V
+accessible	field	net/minecraft/world/entity/animal/horse/AbstractHorse	inventory	Lnet/minecraft/world/SimpleContainer;
+accessible	class	net/minecraft/client/renderer/ItemInHandRenderer$HandRenderSelection

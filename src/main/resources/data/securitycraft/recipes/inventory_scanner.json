@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "item": "minecraft:ender_chest"
+    },
+    "L": {
+      "item": "securitycraft:laser_block"
+    },
+    "S": {
+      "tag": "securitycraft:reinforced/stone_crafting_materials"
+    }
+  },
+  "pattern": [
+    "SSS",
+    "SLS",
+    "SCS"
+  ],
+  "result": {
+    "item": "securitycraft:inventory_scanner"
+  },
+  "show_notification": true
+}

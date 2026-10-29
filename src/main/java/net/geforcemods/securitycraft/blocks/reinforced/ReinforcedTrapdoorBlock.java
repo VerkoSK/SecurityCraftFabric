@@ -2,6 +2,7 @@ package net.geforcemods.securitycraft.blocks.reinforced;
 
 import net.geforcemods.securitycraft.api.IDoorActivator;
 import net.geforcemods.securitycraft.api.IReinforcedBlock;
+import net.geforcemods.securitycraft.blockentities.InventoryScannerBlockEntity;
 import net.geforcemods.securitycraft.blocks.OwnableBlock;
 import net.geforcemods.securitycraft.util.OwnershipUtils;
 import net.minecraft.core.BlockPos;
@@ -48,10 +49,15 @@ public class ReinforcedTrapdoorBlock extends TrapDoorBlock implements IReinforce
 
 	private static boolean hasActiveDoorActivatorNextTo(Level level, BlockPos pos) {
 		for (Direction dir : Direction.values()) {
-			BlockState neighbor = level.getBlockState(pos.relative(dir));
+			BlockPos neighborPos = pos.relative(dir);
+			BlockState neighbor = level.getBlockState(neighborPos);
 
-			if (neighbor.getBlock() instanceof IDoorActivator && neighbor.getValue(BlockStateProperties.POWERED))
-				return true;
+			if (neighbor.getBlock() instanceof IDoorActivator) {
+				if (neighbor.hasProperty(BlockStateProperties.POWERED) && neighbor.getValue(BlockStateProperties.POWERED))
+					return true;
+				else if (level.getBlockEntity(neighborPos) instanceof InventoryScannerBlockEntity scannerBe && scannerBe.isProvidingPower())
+					return true;
+			}
 		}
 
 		return false;

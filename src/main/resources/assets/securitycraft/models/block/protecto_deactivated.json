@@ -1,0 +1,7 @@
+{
+	"parent": "securitycraft:block/base_protecto",
+	"textures": {
+		"protecto": "securitycraft:block/protecto_deactivated",
+		"particle": "securitycraft:block/protecto_deactivated_particle"
+	}
+}

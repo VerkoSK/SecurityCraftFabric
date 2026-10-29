@@ -1,0 +1,262 @@
+package net.geforcemods.securitycraft.blocks;
+
+import java.util.List;
+
+import net.geforcemods.securitycraft.SCContent;
+import net.geforcemods.securitycraft.api.OwnableBlockEntity;
+import net.geforcemods.securitycraft.blockentities.InventoryScannerBlockEntity;
+import net.geforcemods.securitycraft.misc.ModuleType;
+import net.geforcemods.securitycraft.util.BlockUtils;
+import net.geforcemods.securitycraft.util.InventoryUtils;
+import net.geforcemods.securitycraft.util.InventoryUtils.ItemAccess;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.animal.horse.AbstractChestedHorse;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.vehicle.ContainerEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.SimpleWaterloggedBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition.Builder;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.EntityCollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
+
+public class InventoryScannerFieldBlock extends OwnableBlock implements SimpleWaterloggedBlock {
+	public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+	public static final BooleanProperty HORIZONTAL = BooleanProperty.create("horizontal");
+	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
+	private static final VoxelShape SHAPE_EW = Block.box(0, 0, 6, 16, 16, 10);
+	private static final VoxelShape SHAPE_NS = Block.box(6, 0, 0, 10, 16, 16);
+	private static final VoxelShape HORIZONTAL_SHAPE = Block.box(0, 6, 0, 16, 10, 16);
+
+	public InventoryScannerFieldBlock(BlockBehaviour.Properties properties) {
+		super(properties);
+		registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(HORIZONTAL, false).setValue(WATERLOGGED, false));
+	}
+
+	@Override
+	public VoxelShape getCollisionShape(BlockState state, BlockGetter blockGetter, BlockPos pos, CollisionContext collisionContext) {
+		if (!(collisionContext instanceof EntityCollisionContext ctx) || ctx.getEntity() == null)
+			return Shapes.empty();
+
+		Entity entity = ctx.getEntity();
+		Level level = entity.getCommandSenderWorld();
+		InventoryScannerBlockEntity connectedScanner = InventoryScannerBlock.getConnectedInventoryScanner(level, pos);
+
+		if (connectedScanner != null && connectedScanner.doesFieldSolidify() && scanEntity(entity, connectedScanner, false))
+			return getShape(state, blockGetter, pos, ctx);
+
+		return Shapes.empty();
+	}
+
+	@Override
+	public BlockState updateShape(BlockState state, Direction facing, BlockState facingState, LevelAccessor level, BlockPos currentPos, BlockPos facingPos) {
+		if (state.getValue(WATERLOGGED))
+			level.scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
+
+		return super.updateShape(state, facing, facingState, level, currentPos, facingPos);
+	}
+
+	@Override
+	public FluidState getFluidState(BlockState state) {
+		return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(state);
+	}
+
+	@Override
+	public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
+		if (!getShape(state, level, pos, CollisionContext.of(entity)).bounds().move(pos).intersects(entity.getBoundingBox()))
+			return;
+
+		InventoryScannerBlockEntity connectedScanner = InventoryScannerBlock.getConnectedInventoryScanner(level, pos);
+
+		if (connectedScanner == null || connectedScanner.doesFieldSolidify())
+			return;
+
+		scanEntity(entity, connectedScanner, true);
+	}
+
+	public static boolean scanEntity(Entity entity, InventoryScannerBlockEntity be, boolean allowInteraction) {
+		if (entity instanceof LivingEntity living && !be.isConsideredInvisible(living) && !be.isAllowed(entity)) {
+			boolean foundItem;
+
+			if (living instanceof Player player && (!be.isOwnedBy(player) || !be.ignoresOwner())) {
+				if (player instanceof net.minecraft.server.level.ServerPlayer serverPlayer)
+					serverPlayer.closeContainer(); //Fixes item smuggling using nearby containers
+				else if (player.level().isClientSide && net.fabricmc.api.EnvType.CLIENT == net.fabricmc.loader.api.FabricLoader.getInstance().getEnvironmentType())
+					net.geforcemods.securitycraft.util.ClientUtils.closePlayerScreen();
+
+				foundItem = checkInventory(ItemAccess.forContainer(player.getInventory()), be, allowInteraction);
+				return foundItem;
+			}
+
+			foundItem = checkInventory(ItemAccess.forEntityEquipment(living), be, allowInteraction);
+
+			if (living instanceof AbstractChestedHorse horse)
+				foundItem |= checkInventory(ItemAccess.forContainer(horse.inventory), be, allowInteraction);
+
+			return foundItem;
+		}
+		else if (entity instanceof ContainerEntity containerEntity)
+			return checkInventory(ItemAccess.forContainer(containerEntity), be, allowInteraction);
+		else if (entity instanceof ItemEntity item)
+			return checkItemEntity(item, be, allowInteraction);
+
+		return false;
+	}
+
+	public static boolean checkInventory(ItemAccess inventoryAccess, InventoryScannerBlockEntity be, boolean allowInteraction) {
+		boolean hasSmartModule = be.isModuleEnabled(ModuleType.SMART);
+		boolean hasStorageModule = allowInteraction && be.isModuleEnabled(ModuleType.STORAGE);
+		boolean hasRedstoneModule = allowInteraction && be.isModuleEnabled(ModuleType.REDSTONE);
+		List<ItemStack> prohibitedItems = be.getAllProhibitedItems();
+
+		if (prohibitedItems.isEmpty() || (!hasRedstoneModule && !hasStorageModule && allowInteraction))
+			return false;
+
+		for (ItemStack prohibitedStack : prohibitedItems) {
+			int removeInventoryItems = InventoryUtils.checkInventoryForItem(inventoryAccess, prohibitedStack, Integer.MAX_VALUE, hasSmartModule, hasStorageModule, stack -> addItemToStorage(stack, be), inventoryAccess::set);
+
+			if (removeInventoryItems < Integer.MAX_VALUE) {
+				if (hasRedstoneModule)
+					updateInventoryScannerPower(be);
+
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	public static boolean checkItemEntity(ItemEntity entity, InventoryScannerBlockEntity be, boolean allowInteraction) {
+		boolean hasSmartModule = be.isModuleEnabled(ModuleType.SMART);
+		boolean hasStorageModule = allowInteraction && be.isModuleEnabled(ModuleType.STORAGE);
+		boolean hasRedstoneModule = allowInteraction && be.isModuleEnabled(ModuleType.REDSTONE);
+		List<ItemStack> prohibitedItems = be.getAllProhibitedItems();
+
+		if (prohibitedItems.isEmpty() || (!hasRedstoneModule && !hasStorageModule && allowInteraction))
+			return false;
+
+		for (ItemStack prohibitedStack : prohibitedItems) {
+			int removeItems = InventoryUtils.checkItemsInInventorySlot(entity.getItem(), 0, prohibitedStack, Integer.MAX_VALUE, hasSmartModule, hasStorageModule, stack -> addItemToStorage(stack, be), (i, stack) -> {
+				if (stack.isEmpty())
+					entity.discard();
+			});
+
+			if (removeItems < Integer.MAX_VALUE) {
+				if (hasRedstoneModule)
+					updateInventoryScannerPower(be);
+
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private static void addItemToStorage(ItemStack stack, InventoryScannerBlockEntity be) {
+		ItemStack remainder = InventoryUtils.addItemToStorage(ItemAccess.forContainer(be), 10, be.getContents().size() - 1, stack);
+
+		if (!remainder.isEmpty())
+			Block.popResource(be.getLevel(), be.getBlockPos(), remainder.copy());
+	}
+
+	private static void updateInventoryScannerPower(InventoryScannerBlockEntity be) {
+		if (!be.isProvidingPower() || be.getSignalLength() == 0) {
+			InventoryScannerBlockEntity connectedScanner = InventoryScannerBlock.getConnectedInventoryScanner(be.getLevel(), be.getBlockPos());
+
+			if (connectedScanner == null)
+				return;
+
+			be.togglePowerOutput();
+			connectedScanner.togglePowerOutput();
+		}
+	}
+
+	/**
+	 * See {@link ItemStack#matches(ItemStack, ItemStack)} but without size restriction
+	 */
+	public static boolean areItemStacksEqual(ItemStack stack1, ItemStack stack2) {
+		ItemStack s1 = stack1.copy();
+		ItemStack s2 = stack2.copy();
+
+		s1.setCount(1);
+		s2.setCount(1);
+		return ItemStack.matches(s1, s2);
+	}
+
+	@Override
+	public void destroy(LevelAccessor level, BlockPos pos, BlockState state) {
+		if (!level.isClientSide()) {
+			Direction facing = state.getValue(FACING);
+
+			BlockUtils.removeInSequence((direction, stateToCheck) -> {
+				if (stateToCheck.getBlock() != SCContent.INVENTORY_SCANNER_FIELD)
+					return false;
+
+				Direction stateToCheckFacing = stateToCheck.getValue(FACING);
+
+				return stateToCheckFacing == direction || stateToCheckFacing == direction.getOpposite();
+			}, level, pos, facing, facing.getOpposite());
+		}
+	}
+
+	@Override
+	public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext ctx) {
+		if (state.getValue(HORIZONTAL))
+			return HORIZONTAL_SHAPE;
+
+		Direction facing = state.getValue(FACING);
+
+		if (facing == Direction.EAST || facing == Direction.WEST)
+			return SHAPE_EW; //ew
+		else if (facing == Direction.NORTH || facing == Direction.SOUTH)
+			return SHAPE_NS; //ns
+
+		return Shapes.block();
+	}
+
+	@Override
+	protected void createBlockStateDefinition(Builder<Block, BlockState> builder) {
+		builder.add(FACING, HORIZONTAL, WATERLOGGED);
+	}
+
+	@Override
+	public ItemStack getCloneItemStack(BlockGetter level, BlockPos pos, BlockState state) {
+		return ItemStack.EMPTY;
+	}
+
+	@Override
+	public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+		return new OwnableBlockEntity(SCContent.ABSTRACT_BLOCK_ENTITY, pos, state);
+	}
+
+	@Override
+	public boolean skipRendering(BlockState state, BlockState adjacentBlockState, Direction side) {
+		if ((side == Direction.UP || side == Direction.DOWN) && state.getBlock() == adjacentBlockState.getBlock())
+			return true;
+
+		return super.skipRendering(state, adjacentBlockState, side);
+	}
+
+	@Override
+	public BlockState mirror(BlockState state, Mirror mirror) {
+		return state.rotate(mirror.getRotation(state.getValue(FACING)));
+	}
+}

@@ -5,6 +5,7 @@ import java.util.function.Predicate;
 import net.geforcemods.securitycraft.SCContent;
 import net.geforcemods.securitycraft.items.CameraMonitorItem;
 import net.geforcemods.securitycraft.items.MineRemoteAccessToolItem;
+import net.geforcemods.securitycraft.items.SentryRemoteAccessToolItem;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
@@ -31,6 +32,10 @@ public class CopyPositionComponentItemRecipe extends CombineRecipe {
 
 	public static CopyPositionComponentItemRecipe mineRemoteAccessTool(ResourceLocation id, CraftingBookCategory craftingBookCategory) {
 		return new CopyPositionComponentItemRecipe(id, craftingBookCategory, SCContent.MINE_REMOTE_ACCESS_TOOL, MineRemoteAccessToolItem::hasMineAdded, SCContent.COPY_MINE_REMOTE_ACCESS_TOOL_RECIPE_SERIALIZER);
+	}
+
+	public static CopyPositionComponentItemRecipe sentryRemoteAccessTool(ResourceLocation id, CraftingBookCategory craftingBookCategory) {
+		return new CopyPositionComponentItemRecipe(id, craftingBookCategory, SCContent.REMOTE_ACCESS_SENTRY, SentryRemoteAccessToolItem::hasSentryAdded, SCContent.COPY_SENTRY_REMOTE_ACCESS_TOOL_RECIPE_SERIALIZER);
 	}
 
 	@Override

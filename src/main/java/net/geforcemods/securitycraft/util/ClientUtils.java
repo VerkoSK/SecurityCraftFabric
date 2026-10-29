@@ -56,6 +56,11 @@ public class ClientUtils {
 		Minecraft.getInstance().levelRenderer.allChanged();
 	}
 
+	public static void closePlayerScreen() {
+		if (Minecraft.getInstance().player != null)
+			Minecraft.getInstance().player.closeContainer();
+	}
+
 	public static org.joml.Quaternionf fromXYZDegrees(float x, float y, float z) {
 		return fromXYZ((float) Math.toRadians(x), (float) Math.toRadians(y), (float) Math.toRadians(z));
 	}

@@ -2,8 +2,11 @@ package net.geforcemods.securitycraft;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -15,6 +18,47 @@ import net.fabricmc.loader.api.FabricLoader;
  */
 public final class ConfigHandler {
 	private static final Path FILE = FabricLoader.getInstance().getConfigDir().resolve("securitycraft-server.json");
+	public static final Server SERVER = new Server();
+
+	public static final class Server {
+		public final IntValue inventoryScannerRange = new IntValue(() -> ConfigHandler.inventoryScannerRange);
+		public final DoubleValue taserDamage = new DoubleValue(() -> ConfigHandler.taserDamage);
+		public final DoubleValue poweredTaserDamage = new DoubleValue(() -> ConfigHandler.poweredTaserDamage);
+		public final DoubleValue sentryBulletDamage = new DoubleValue(() -> ConfigHandler.sentryBulletDamage);
+		public final BooleanValue allowBlockClaim = new BooleanValue(() -> ConfigHandler.allowBlockClaim);
+		public final BooleanValue trickScannersWithPlayerHeads = new BooleanValue(() -> ConfigHandler.trickScannersWithPlayerHeads);
+		public final BooleanValue respectInvisibility = new BooleanValue(() -> ConfigHandler.respectInvisibility);
+		public final BooleanValue vanillaToolBlockBreaking = new BooleanValue(() -> ConfigHandler.vanillaToolBlockBreaking);
+		public final ConfigListValue sentryAttackableEntitiesAllowlist = new ConfigListValue(() -> ConfigHandler.sentryAttackableEntitiesAllowlist);
+		public final ConfigListValue sentryAttackableEntitiesDenylist = new ConfigListValue(() -> ConfigHandler.sentryAttackableEntitiesDenylist);
+		public final ConfigListValue taserEffects = new ConfigListValue(() -> ConfigHandler.taserEffects);
+		public final ConfigListValue poweredTaserEffects = new ConfigListValue(() -> ConfigHandler.poweredTaserEffects);
+	}
+
+	public record IntValue(java.util.function.IntSupplier getter) {
+		public int get() {
+			return getter.getAsInt();
+		}
+	}
+
+	public record DoubleValue(java.util.function.DoubleSupplier getter) {
+		public double get() {
+			return getter.getAsDouble();
+		}
+	}
+
+	public record BooleanValue(java.util.function.BooleanSupplier getter) {
+		public boolean get() {
+			return getter.getAsBoolean();
+		}
+	}
+
+	public record ConfigListValue(java.util.function.Supplier<List<String>> getter) {
+		public List<? extends String> get() {
+			return getter.get();
+		}
+	}
+
 	/** At most from how many blocks away can a laser block connect to another laser block? (upstream default 5) */
 	public static int laserBlockRange = 5;
 	/** Damage inflicted to an entity passing through a laser with an installed harming module. (upstream default 10.0) */
@@ -31,7 +75,6 @@ public final class ConfigHandler {
 	public static boolean mineExplosionsBreakBlocks = true;
 	/** Set this to true to enable every player on a scoreboard team to own the blocks of every other player on the same team. (upstream default false) */
 	public static boolean enableTeamOwnership = false;
-	/** Should players be able to break blocks owned by somebody else? (upstream default false) */
 	/** 1:1 with upstream's always_drop: SecurityCraft's blocks drop themselves no matter which tool was used. */
 	public static boolean alwaysDrop = true;
 	public static boolean allowBreakingNonOwnedBlocks = false;
@@ -53,6 +96,20 @@ public final class ConfigHandler {
 	public static boolean allowCameraNightVision = true;
 	/** Should the Retinal Scanner display the owner's face on its front? (upstream default true) */
 	public static boolean retinalScannerFace = true;
+	public static boolean trickScannersWithPlayerHeads = false;
+	public static boolean respectInvisibility = false;
+	public static boolean vanillaToolBlockBreaking = true;
+	public static int reinforcedSuffocationDamage = 10;
+
+	// --- V0.8 (Sentry, Taser, Inventory Scanner) ---
+	public static int inventoryScannerRange = 2;
+	public static double taserDamage = 1.0D;
+	public static double poweredTaserDamage = 2.0D;
+	public static double sentryBulletDamage = 2.0D;
+	public static List<String> sentryAttackableEntitiesAllowlist = List.of();
+	public static List<String> sentryAttackableEntitiesDenylist = List.of();
+	public static List<String> taserEffects = List.of("minecraft:weakness|1|200", "minecraft:nausea|1|200", "minecraft:slowness|1|200");
+	public static List<String> poweredTaserEffects = List.of("minecraft:weakness|3|400", "minecraft:nausea|3|400", "minecraft:slowness|3|400");
 
 	private ConfigHandler() {}
 
@@ -117,6 +174,30 @@ public final class ConfigHandler {
 
 				if (json.has("retinal_scanner_face"))
 					retinalScannerFace = json.get("retinal_scanner_face").getAsBoolean();
+
+				if (json.has("inventory_scanner_range"))
+					inventoryScannerRange = Math.max(0, json.get("inventory_scanner_range").getAsInt());
+
+				if (json.has("taser_damage"))
+					taserDamage = Math.max(0.0, json.get("taser_damage").getAsDouble());
+
+				if (json.has("powered_taser_damage"))
+					poweredTaserDamage = Math.max(0.0, json.get("powered_taser_damage").getAsDouble());
+
+				if (json.has("sentry_bullet_damage"))
+					sentryBulletDamage = Math.max(0.0, json.get("sentry_bullet_damage").getAsDouble());
+
+				if (json.has("sentry_attackable_entities_allowlist") && json.get("sentry_attackable_entities_allowlist").isJsonArray())
+					sentryAttackableEntitiesAllowlist = readStringList(json.getAsJsonArray("sentry_attackable_entities_allowlist"));
+
+				if (json.has("sentry_attackable_entities_denylist") && json.get("sentry_attackable_entities_denylist").isJsonArray())
+					sentryAttackableEntitiesDenylist = readStringList(json.getAsJsonArray("sentry_attackable_entities_denylist"));
+
+				if (json.has("taser_effects") && json.get("taser_effects").isJsonArray())
+					taserEffects = readStringList(json.getAsJsonArray("taser_effects"));
+
+				if (json.has("powered_taser_effects") && json.get("powered_taser_effects").isJsonArray())
+					poweredTaserEffects = readStringList(json.getAsJsonArray("powered_taser_effects"));
 			}
 			else
 				save();
@@ -124,6 +205,26 @@ public final class ConfigHandler {
 		catch (Exception e) {
 			SecurityCraft.LOGGER.warn("Couldn't read securitycraft-server.json, using defaults", e);
 		}
+	}
+
+	private static List<String> readStringList(JsonArray array) {
+		java.util.ArrayList<String> list = new java.util.ArrayList<>(array.size());
+
+		for (JsonElement el : array) {
+			list.add(el.getAsString());
+		}
+
+		return List.copyOf(list);
+	}
+
+	private static JsonArray toJsonArray(List<String> list) {
+		JsonArray array = new JsonArray();
+
+		for (String s : list) {
+			array.add(s);
+		}
+
+		return array;
 	}
 
 	public static void save() {
@@ -148,6 +249,14 @@ public final class ConfigHandler {
 		json.addProperty("max_alarm_range", maxAlarmRange);
 		json.addProperty("allow_camera_night_vision", allowCameraNightVision);
 		json.addProperty("retinal_scanner_face", retinalScannerFace);
+		json.addProperty("inventory_scanner_range", inventoryScannerRange);
+		json.addProperty("taser_damage", taserDamage);
+		json.addProperty("powered_taser_damage", poweredTaserDamage);
+		json.addProperty("sentry_bullet_damage", sentryBulletDamage);
+		json.add("sentry_attackable_entities_allowlist", toJsonArray(sentryAttackableEntitiesAllowlist));
+		json.add("sentry_attackable_entities_denylist", toJsonArray(sentryAttackableEntitiesDenylist));
+		json.add("taser_effects", toJsonArray(taserEffects));
+		json.add("powered_taser_effects", toJsonArray(poweredTaserEffects));
 
 		try {
 			Files.writeString(FILE, new GsonBuilder().setPrettyPrinting().create().toJson(json));

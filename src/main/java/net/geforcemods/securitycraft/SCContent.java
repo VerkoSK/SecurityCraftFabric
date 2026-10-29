@@ -308,10 +308,41 @@ public class SCContent {
 	public static RecipeSerializer<?> LENS_COLORING_SERIALIZER;
 	public static RecipeSerializer<net.geforcemods.securitycraft.recipe.CopyPositionComponentItemRecipe> COPY_MINE_REMOTE_ACCESS_TOOL_RECIPE_SERIALIZER;
 	public static RecipeSerializer<net.geforcemods.securitycraft.recipe.CopyPositionComponentItemRecipe> COPY_CAMERA_MONITOR_RECIPE_SERIALIZER;
+	public static RecipeSerializer<net.geforcemods.securitycraft.recipe.CopyPositionComponentItemRecipe> COPY_SENTRY_REMOTE_ACCESS_TOOL_RECIPE_SERIALIZER;
 	public static RecipeSerializer<net.geforcemods.securitycraft.recipe.LimitedUseKeycardRecipe> LIMITED_USE_KEYCARD_RECIPE_SERIALIZER;
 	public static net.minecraft.world.inventory.MenuType<net.geforcemods.securitycraft.inventory.BlockReinforcerMenu> BLOCK_REINFORCER_MENU;
 	public static net.minecraft.world.inventory.MenuType<net.geforcemods.securitycraft.inventory.LaserBlockMenu> LASER_BLOCK_MENU;
 	public static net.minecraft.world.inventory.MenuType<net.geforcemods.securitycraft.inventory.DisguiseModuleMenu> DISGUISE_MODULE_MENU;
+	public static net.minecraft.network.syncher.EntityDataSerializer<net.geforcemods.securitycraft.api.Owner> OWNER_SERIALIZER;
+	public static net.minecraft.world.level.storage.loot.predicates.LootItemConditionType BLOCK_ENTITY_NBT_LOOT_CONDITION;
+	public static net.minecraft.core.particles.SimpleParticleType FLOOR_TRAP_CLOUD;
+	public static net.geforcemods.securitycraft.blocks.CageTrapBlock CAGE_TRAP;
+	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.CageTrapBlockEntity> CAGE_TRAP_BLOCK_ENTITY;
+	public static net.geforcemods.securitycraft.blocks.FloorTrapBlock FLOOR_TRAP;
+	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.FloorTrapBlockEntity> FLOOR_TRAP_BLOCK_ENTITY;
+	public static net.geforcemods.securitycraft.blocks.InventoryScannerBlock INVENTORY_SCANNER;
+	public static net.geforcemods.securitycraft.blocks.InventoryScannerFieldBlock INVENTORY_SCANNER_FIELD;
+	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.InventoryScannerBlockEntity> INVENTORY_SCANNER_BLOCK_ENTITY;
+	public static net.minecraft.world.inventory.MenuType<net.geforcemods.securitycraft.inventory.InventoryScannerMenu> INVENTORY_SCANNER_MENU;
+	public static net.geforcemods.securitycraft.blocks.ProtectoBlock PROTECTO;
+	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.ProtectoBlockEntity> PROTECTO_BLOCK_ENTITY;
+	public static net.geforcemods.securitycraft.blocks.RiftStabilizerBlock RIFT_STABILIZER;
+	public static Item RIFT_STABILIZER_ITEM;
+	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.RiftStabilizerBlockEntity> RIFT_STABILIZER_BLOCK_ENTITY;
+	public static net.geforcemods.securitycraft.blocks.TrophySystemBlock TROPHY_SYSTEM;
+	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.TrophySystemBlockEntity> TROPHY_SYSTEM_BLOCK_ENTITY;
+	public static net.minecraft.world.inventory.MenuType<net.geforcemods.securitycraft.inventory.TrophySystemMenu> TROPHY_SYSTEM_MENU;
+	public static net.geforcemods.securitycraft.blocks.reinforced.ReinforcedIronBarsBlock REINFORCED_IRON_BARS;
+	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.ReinforcedIronBarsBlockEntity> REINFORCED_IRON_BARS_BLOCK_ENTITY;
+	public static net.geforcemods.securitycraft.blocks.reinforced.HorizontalReinforcedIronBars HORIZONTAL_REINFORCED_IRON_BARS;
+	public static net.geforcemods.securitycraft.blocks.SometimesVisibleBlock SENTRY_DISGUISE;
+	public static BlockEntityType<net.geforcemods.securitycraft.blockentities.DisguisableBlockEntity> DISGUISABLE_BLOCK_ENTITY;
+	public static Item SENTRY;
+	public static Item REMOTE_ACCESS_SENTRY;
+	public static Item TASER;
+	public static Item TASER_POWERED;
+	public static EntityType<net.geforcemods.securitycraft.entity.sentry.Sentry> SENTRY_ENTITY;
+	public static EntityType<net.geforcemods.securitycraft.entity.sentry.Bullet> BULLET_ENTITY;
 
 	/**
 	 * The reinforced blocks whose properties are copied straight off their vanilla counterpart, the way upstream's
@@ -814,6 +845,11 @@ public class SCContent {
 	}
 
 	public static void init() {
+		OWNER_SERIALIZER = new net.geforcemods.securitycraft.misc.OwnerDataSerializer();
+		net.minecraft.network.syncher.EntityDataSerializers.registerSerializer(OWNER_SERIALIZER);
+		BLOCK_ENTITY_NBT_LOOT_CONDITION = Registry.register(BuiltInRegistries.LOOT_CONDITION_TYPE, id("tile_entity_nbt"), new net.minecraft.world.level.storage.loot.predicates.LootItemConditionType(new net.geforcemods.securitycraft.misc.BlockEntityNBTCondition.ConditionSerializer()));
+		FLOOR_TRAP_CLOUD = Registry.register(BuiltInRegistries.PARTICLE_TYPE, id("floor_trap_cloud"), net.fabricmc.fabric.api.particle.v1.FabricParticleTypes.simple());
+
 		KEYPAD = register("keypad", new KeypadBlock(propDisguisable(MapColor.METAL, 5.0F).sound(SoundType.METAL)));
 		LASER_BLOCK = (net.geforcemods.securitycraft.blocks.LaserBlock) register("laser_block", new net.geforcemods.securitycraft.blocks.LaserBlock(propDisguisable(3.5F).sound(SoundType.METAL)));
 		LASER_FIELD = (net.geforcemods.securitycraft.blocks.LaserFieldBlock) registerBlockNoItem("laser", new net.geforcemods.securitycraft.blocks.LaserFieldBlock(alwaysDrop(BlockBehaviour.Properties.of().mapColor(net.minecraft.world.level.material.MapColor.NONE).strength(-1.0F).noLootTable().noOcclusion())));
@@ -835,6 +871,27 @@ public class SCContent {
 		CUTOUT_BLOCKS.add(PROJECTOR);
 		SECURE_TRADING_STATION = (net.geforcemods.securitycraft.blocks.SecureTradingStationBlock) register("secure_trading_station", new net.geforcemods.securitycraft.blocks.SecureTradingStationBlock(propDisguisable(MapColor.METAL, 5.0F)));
 		CUTOUT_BLOCKS.add(SECURE_TRADING_STATION);
+		CAGE_TRAP = (net.geforcemods.securitycraft.blocks.CageTrapBlock) register("cage_trap", new net.geforcemods.securitycraft.blocks.CageTrapBlock(propDisguisable(MapColor.METAL, 5.0F).sound(SoundType.METAL).noCollission()));
+		CUTOUT_BLOCKS.add(CAGE_TRAP);
+		FLOOR_TRAP = (net.geforcemods.securitycraft.blocks.FloorTrapBlock) register("floor_trap", new net.geforcemods.securitycraft.blocks.FloorTrapBlock(propDisguisable(MapColor.METAL, 5.0F).sound(SoundType.METAL)));
+		INVENTORY_SCANNER = (net.geforcemods.securitycraft.blocks.InventoryScannerBlock) register("inventory_scanner", new net.geforcemods.securitycraft.blocks.InventoryScannerBlock(propDisguisable(3.5F)));
+		INVENTORY_SCANNER_FIELD = (net.geforcemods.securitycraft.blocks.InventoryScannerFieldBlock) registerBlockNoItem("inventory_scanner_field", new net.geforcemods.securitycraft.blocks.InventoryScannerFieldBlock(prop(MapColor.NONE, -1.0F).noLootTable().noOcclusion()));
+		PROTECTO = (net.geforcemods.securitycraft.blocks.ProtectoBlock) register("protecto", new net.geforcemods.securitycraft.blocks.ProtectoBlock(propDisguisable(MapColor.METAL, 10.0F).sound(SoundType.METAL).lightLevel(state -> 7)));
+		RIFT_STABILIZER = (net.geforcemods.securitycraft.blocks.RiftStabilizerBlock) registerBlockNoItem("rift_stabilizer", new net.geforcemods.securitycraft.blocks.RiftStabilizerBlock(propDisguisable(MapColor.METAL, 5.0F).sound(SoundType.METAL)));
+		RIFT_STABILIZER_ITEM = registerItem("rift_stabilizer", new net.minecraft.world.item.DoubleHighBlockItem(RIFT_STABILIZER, new Item.Properties()));
+		TAB_ITEMS.add(RIFT_STABILIZER_ITEM);
+		TROPHY_SYSTEM = (net.geforcemods.securitycraft.blocks.TrophySystemBlock) register("trophy_system", new net.geforcemods.securitycraft.blocks.TrophySystemBlock(propDisguisable(MapColor.METAL, 5.0F, false).sound(SoundType.METAL)));
+		CUTOUT_BLOCKS.add(TROPHY_SYSTEM);
+		HORIZONTAL_REINFORCED_IRON_BARS = (net.geforcemods.securitycraft.blocks.reinforced.HorizontalReinforcedIronBars) registerBlockNoItem("horizontal_reinforced_iron_bars", new net.geforcemods.securitycraft.blocks.reinforced.HorizontalReinforcedIronBars(reinforcedCopy(Blocks.IRON_BARS).noLootTable()));
+		CUTOUT_BLOCKS.add(HORIZONTAL_REINFORCED_IRON_BARS);
+		SENTRY_DISGUISE = (net.geforcemods.securitycraft.blocks.SometimesVisibleBlock) registerBlockNoItem("sentry_disguise", new net.geforcemods.securitycraft.blocks.SometimesVisibleBlock(propDisguisable(-1.0F).noLootTable().pushReaction(PushReaction.BLOCK)));
+		SENTRY = registerItem("sentry", new net.geforcemods.securitycraft.items.SentryItem(new Item.Properties()));
+		REMOTE_ACCESS_SENTRY = registerItem("remote_access_sentry", new net.geforcemods.securitycraft.items.SentryRemoteAccessToolItem(new Item.Properties().stacksTo(1)));
+		TASER = registerItem("taser", new net.geforcemods.securitycraft.items.TaserItem(new Item.Properties().defaultDurability(151), false));
+		TASER_POWERED = registerItem("taser_powered", new net.geforcemods.securitycraft.items.TaserItem(new Item.Properties().defaultDurability(151), true));
+		TAB_ITEMS.add(SENTRY);
+		TAB_ITEMS.add(REMOTE_ACCESS_SENTRY);
+		TAB_ITEMS.add(TASER);
 		KEY_PANEL = (net.geforcemods.securitycraft.blocks.KeyPanelBlock) registerBlockNoItem("key_panel", new net.geforcemods.securitycraft.blocks.KeyPanelBlock(alwaysDrop(BlockBehaviour.Properties.of().strength(3.5F).sound(SoundType.METAL).noOcclusion())));
 		KEY_PANEL_ITEM = registerItem("keypad_item", new net.geforcemods.securitycraft.items.KeyPanelItem(new Item.Properties()));
 		FRAME = (net.geforcemods.securitycraft.blocks.FrameBlock) register("keypad_frame", new net.geforcemods.securitycraft.blocks.FrameBlock(alwaysDrop(BlockBehaviour.Properties.of().mapColor(net.minecraft.world.level.material.MapColor.METAL).strength(5.0F).sound(SoundType.METAL).noOcclusion())));
@@ -1080,6 +1137,7 @@ public class SCContent {
 		LENS_COLORING_SERIALIZER = Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, id("lens_coloring"), new net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer<>(net.geforcemods.securitycraft.recipe.LensColoringRecipe::new));
 		COPY_MINE_REMOTE_ACCESS_TOOL_RECIPE_SERIALIZER = Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, id("copy_mine_remote_access_tool_recipe"), new net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer<>(net.geforcemods.securitycraft.recipe.CopyPositionComponentItemRecipe::mineRemoteAccessTool));
 		COPY_CAMERA_MONITOR_RECIPE_SERIALIZER = Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, id("copy_camera_monitor_recipe"), new net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer<>(net.geforcemods.securitycraft.recipe.CopyPositionComponentItemRecipe::cameraMonitor));
+		COPY_SENTRY_REMOTE_ACCESS_TOOL_RECIPE_SERIALIZER = Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, id("copy_sentry_remote_access_tool_recipe"), new net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer<>(net.geforcemods.securitycraft.recipe.CopyPositionComponentItemRecipe::sentryRemoteAccessTool));
 		LIMITED_USE_KEYCARD_RECIPE_SERIALIZER = Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, id("limited_use_keycard_recipe"), new net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer<>(net.geforcemods.securitycraft.recipe.LimitedUseKeycardRecipe::new));
 		BLOCK_REINFORCER_MENU = Registry.register(BuiltInRegistries.MENU, id("block_reinforcer"), new net.minecraft.world.inventory.MenuType<>(net.geforcemods.securitycraft.inventory.BlockReinforcerMenu::new, net.minecraft.world.flag.FeatureFlags.VANILLA_SET));
 
@@ -1087,7 +1145,7 @@ public class SCContent {
 		LASER_BLOCK_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("laser_block"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.LaserBlockBlockEntity::new, LASER_BLOCK).build());
 		//every reinforced block carries this block entity purely to remember its owner, so they all have to be
 		//listed as valid for the type; REINFORCED_BLOCKS is already fully populated by this point in init()
-		java.util.List<Block> abstractBeBlocks = new ArrayList<>(java.util.List.of(LASER_FIELD, STONE_MINE, DEEPSLATE_MINE, COBBLED_DEEPSLATE_MINE, DIRT_MINE, COBBLESTONE_MINE, SAND_MINE, GRAVEL_MINE, NETHERRACK_MINE, END_STONE_MINE, COAL_MINE, DEEPSLATE_COAL_MINE, IRON_MINE, DEEPSLATE_IRON_MINE, GOLD_MINE, DEEPSLATE_GOLD_MINE, COPPER_MINE, DEEPSLATE_COPPER_MINE, REDSTONE_MINE, DEEPSLATE_REDSTONE_MINE, EMERALD_MINE, DEEPSLATE_EMERALD_MINE, LAPIS_MINE, DEEPSLATE_LAPIS_MINE, DIAMOND_MINE, DEEPSLATE_DIAMOND_MINE, NETHER_GOLD_MINE, QUARTZ_MINE, ANCIENT_DEBRIS_MINE, GILDED_BLACKSTONE_MINE, FURNACE_MINE, SMOKER_MINE, BLAST_FURNACE_MINE));
+		java.util.List<Block> abstractBeBlocks = new ArrayList<>(java.util.List.of(LASER_FIELD, INVENTORY_SCANNER_FIELD, HORIZONTAL_REINFORCED_IRON_BARS, STONE_MINE, DEEPSLATE_MINE, COBBLED_DEEPSLATE_MINE, DIRT_MINE, COBBLESTONE_MINE, SAND_MINE, GRAVEL_MINE, NETHERRACK_MINE, END_STONE_MINE, COAL_MINE, DEEPSLATE_COAL_MINE, IRON_MINE, DEEPSLATE_IRON_MINE, GOLD_MINE, DEEPSLATE_GOLD_MINE, COPPER_MINE, DEEPSLATE_COPPER_MINE, REDSTONE_MINE, DEEPSLATE_REDSTONE_MINE, EMERALD_MINE, DEEPSLATE_EMERALD_MINE, LAPIS_MINE, DEEPSLATE_LAPIS_MINE, DIAMOND_MINE, DEEPSLATE_DIAMOND_MINE, NETHER_GOLD_MINE, QUARTZ_MINE, ANCIENT_DEBRIS_MINE, GILDED_BLACKSTONE_MINE, FURNACE_MINE, SMOKER_MINE, BLAST_FURNACE_MINE));
 
 		abstractBeBlocks.addAll(REINFORCED_BLOCKS);
 		abstractBeBlocks.add(REINFORCED_PISTON_HEAD);
@@ -1151,6 +1209,18 @@ public class SCContent {
 		SECURITY_CAMERA_ENTITY = Registry.register(BuiltInRegistries.ENTITY_TYPE, id("securitycamera"), FabricEntityTypeBuilder.<net.geforcemods.securitycraft.entity.camera.SecurityCamera>create(MobCategory.MISC, net.geforcemods.securitycraft.entity.camera.SecurityCamera::new).dimensions(EntityDimensions.fixed(0.0001F, 0.0001F)).trackRangeBlocks(256).trackedUpdateRate(20).forceTrackedVelocityUpdates(true).build());
 		BOUNCING_BETTY_ENTITY = Registry.register(BuiltInRegistries.ENTITY_TYPE, id("bouncingbetty"), FabricEntityTypeBuilder.<BouncingBetty>create(MobCategory.MISC, BouncingBetty::new).dimensions(EntityDimensions.fixed(0.5F, 0.2F)).trackRangeBlocks(128).trackedUpdateRate(1).forceTrackedVelocityUpdates(true).build());
 		IMS_BOMB_ENTITY = Registry.register(BuiltInRegistries.ENTITY_TYPE, id("imsbomb"), FabricEntityTypeBuilder.<IMSBomb>create(MobCategory.MISC, IMSBomb::new).dimensions(EntityDimensions.fixed(0.25F, 0.3F)).trackRangeBlocks(256).trackedUpdateRate(1).forceTrackedVelocityUpdates(true).build());
+		SENTRY_ENTITY = Registry.register(BuiltInRegistries.ENTITY_TYPE, id("sentry"), FabricEntityTypeBuilder.<net.geforcemods.securitycraft.entity.sentry.Sentry>create(MobCategory.MISC, net.geforcemods.securitycraft.entity.sentry.Sentry::new).dimensions(EntityDimensions.fixed(1.0F, 1.01F)).trackRangeBlocks(256).trackedUpdateRate(1).forceTrackedVelocityUpdates(true).build());
+		BULLET_ENTITY = Registry.register(BuiltInRegistries.ENTITY_TYPE, id("bullet"), FabricEntityTypeBuilder.<net.geforcemods.securitycraft.entity.sentry.Bullet>create(MobCategory.MISC, net.geforcemods.securitycraft.entity.sentry.Bullet::new).dimensions(EntityDimensions.fixed(0.15F, 0.1F)).trackRangeBlocks(256).trackedUpdateRate(1).forceTrackedVelocityUpdates(true).build());
+		CAGE_TRAP_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("cage_trap"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.CageTrapBlockEntity::new, CAGE_TRAP).build());
+		FLOOR_TRAP_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("floor_trap"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.FloorTrapBlockEntity::new, FLOOR_TRAP).build());
+		INVENTORY_SCANNER_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("inventory_scanner"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.InventoryScannerBlockEntity::new, INVENTORY_SCANNER).build());
+		INVENTORY_SCANNER_MENU = Registry.register(BuiltInRegistries.MENU, id("inventory_scanner"), new net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType<>(net.geforcemods.securitycraft.inventory.InventoryScannerMenu::new));
+		PROTECTO_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("protecto"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.ProtectoBlockEntity::new, PROTECTO).build());
+		RIFT_STABILIZER_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("rift_stabilizer"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.RiftStabilizerBlockEntity::new, RIFT_STABILIZER).build());
+		TROPHY_SYSTEM_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("trophy_system"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.TrophySystemBlockEntity::new, TROPHY_SYSTEM).build());
+		TROPHY_SYSTEM_MENU = Registry.register(BuiltInRegistries.MENU, id("trophy_system"), new net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType<>(net.geforcemods.securitycraft.inventory.TrophySystemMenu::new));
+		REINFORCED_IRON_BARS_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("reinforced_iron_bars"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.ReinforcedIronBarsBlockEntity::new, REINFORCED_IRON_BARS).build());
+		DISGUISABLE_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("disguisable"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.DisguisableBlockEntity::new, SENTRY_DISGUISE).build());
 		CUSTOMIZE_BLOCK_MENU = Registry.register(BuiltInRegistries.MENU, id("customize_block"), new net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType<>((syncId, inv, buf) -> new net.geforcemods.securitycraft.inventory.CustomizeBlockMenu(syncId, inv, buf)));
 		SINGLE_LENS_MENU = Registry.register(BuiltInRegistries.MENU, id("single_lens"), new net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType<>((syncId, inv, buf) -> new net.geforcemods.securitycraft.inventory.SingleLensMenu(syncId, inv, buf)));
 		KEY_PANEL_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("key_panel"), FabricBlockEntityTypeBuilder.create(net.geforcemods.securitycraft.blockentities.KeyPanelBlockEntity::new, KEY_PANEL).build());
@@ -1208,7 +1278,7 @@ public class SCContent {
 		Block block = switch (category) {
 			case "pillar" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedPillarBlock(props);
 			case "glass" -> new BaseReinforcedBlock(props);
-			case "pane" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedPaneBlock(props);
+			case "pane" -> name.equals("reinforced_iron_bars") ? (REINFORCED_IRON_BARS = new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedIronBarsBlock(props)) : new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedPaneBlock(props);
 			case "fence" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedFenceBlock(props);
 			case "fence_gate" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedFenceGateBlock(props, WoodType.OAK);
 			case "wall" -> new net.geforcemods.securitycraft.blocks.reinforced.ReinforcedWallBlock(props);
@@ -1343,17 +1413,25 @@ public class SCContent {
 					output.accept(UNIVERSAL_KEY_CHANGER);
 					output.accept(RETINAL_SCANNER);
 					output.accept(LASER_BLOCK);
+					output.accept(INVENTORY_SCANNER);
 					output.accept(SECURE_TRADING_STATION);
 					output.accept(USERNAME_LOGGER);
 					output.accept(PORTABLE_RADAR);
+					output.accept(TROPHY_SYSTEM);
+					output.accept(RIFT_STABILIZER_ITEM);
 					output.accept(BLOCK_CHANGE_DETECTOR);
 					output.accept(PROJECTOR);
+					output.accept(PROTECTO);
 					output.accept(MOTION_ACTIVATED_LIGHT);
 					output.accept(SECURITY_CAMERA);
 					output.accept(CAMERA_MONITOR);
 					output.accept(ALARM);
 					output.accept(PANIC_BUTTON);
+					output.accept(SENTRY);
+					output.accept(REMOTE_ACCESS_SENTRY);
 					output.accept(MINE_REMOTE_ACCESS_TOOL);
+					output.accept(FLOOR_TRAP);
+					output.accept(CAGE_TRAP);
 					output.accept(WIRE_CUTTERS);
 					output.accept(ELECTRIFIED_IRON_FENCE);
 					output.accept(ELECTRIFIED_IRON_FENCE_GATE);
@@ -1386,6 +1464,7 @@ public class SCContent {
 					output.accept(UNIVERSAL_BLOCK_REINFORCER_LVL2);
 					output.accept(UNIVERSAL_BLOCK_REINFORCER_LVL3);
 					output.accept(UNIVERSAL_BLOCK_REMOVER);
+					output.accept(TASER);
 					output.accept(FAKE_WATER_BUCKET);
 					output.accept(FAKE_LAVA_BUCKET);
 				})

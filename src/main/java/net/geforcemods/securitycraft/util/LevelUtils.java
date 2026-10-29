@@ -5,12 +5,15 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 
 public class LevelUtils {
 	private LevelUtils() {}
@@ -33,6 +36,14 @@ public class LevelUtils {
 
 	public static String toNBTString(GlobalPos pos) {
 		return pos.pos().getX() + " " + pos.pos().getY() + " " + pos.pos().getZ() + " " + pos.dimension().location();
+	}
+
+	public static LightningBolt createLightning(Level level, Vec3 pos, boolean effectOnly) {
+		LightningBolt lightning = EntityType.LIGHTNING_BOLT.create(level);
+
+		lightning.moveTo(pos);
+		lightning.setVisualOnly(effectOnly);
+		return lightning;
 	}
 
 	public static <T extends BlockEntity> void blockEntityTicker(Level level, BlockPos pos, BlockState state, T be) {

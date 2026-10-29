@@ -1,0 +1,574 @@
+package net.geforcemods.securitycraft.blockentities;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+
+import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
+import net.geforcemods.securitycraft.ConfigHandler;
+import net.geforcemods.securitycraft.SCContent;
+import net.geforcemods.securitycraft.api.ILockable;
+import net.geforcemods.securitycraft.api.Option;
+import net.geforcemods.securitycraft.api.Option.BooleanOption;
+import net.geforcemods.securitycraft.api.Option.DisabledOption;
+import net.geforcemods.securitycraft.api.Option.IgnoreOwnerOption;
+import net.geforcemods.securitycraft.api.Option.IntOption;
+import net.geforcemods.securitycraft.api.Option.RespectInvisibilityOption;
+import net.geforcemods.securitycraft.api.Option.SignalLengthOption;
+import net.geforcemods.securitycraft.api.Owner;
+import net.geforcemods.securitycraft.blocks.InventoryScannerBlock;
+import net.geforcemods.securitycraft.blocks.InventoryScannerFieldBlock;
+import net.geforcemods.securitycraft.inventory.InventoryScannerMenu;
+import net.geforcemods.securitycraft.inventory.LensContainer;
+import net.geforcemods.securitycraft.misc.ModuleType;
+import net.geforcemods.securitycraft.network.UpdateLaserColorsPayload;
+import net.geforcemods.securitycraft.util.BlockUtils;
+import net.geforcemods.securitycraft.util.ClientUtils;
+import net.geforcemods.securitycraft.util.ITickingBlockEntity;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.NonNullList;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.Container;
+import net.minecraft.world.ContainerListener;
+import net.minecraft.world.Containers;
+import net.minecraft.world.WorldlyContainer;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+
+public class InventoryScannerBlockEntity extends DisguisableBlockEntity implements WorldlyContainer, ExtendedScreenHandlerFactory, ITickingBlockEntity, ILockable, ContainerListener {
+	private static final int[] STORAGE_SLOTS;
+
+	static {
+		STORAGE_SLOTS = new int[27];
+
+		for (int i = 0; i < 27; i++) {
+			STORAGE_SLOTS[i] = 10 + i;
+		}
+	}
+
+	private BooleanOption horizontal = new BooleanOption("horizontal", false);
+	private BooleanOption solidifyField = new BooleanOption("solidifyField", false);
+	private DisabledOption disabled = new DisabledOption(false);
+	private IgnoreOwnerOption ignoreOwner = new IgnoreOwnerOption(true);
+	private IntOption signalLength = new SignalLengthOption(60);
+	private RespectInvisibilityOption respectInvisibility = new RespectInvisibilityOption();
+	private NonNullList<ItemStack> inventoryContents = NonNullList.<ItemStack>withSize(37, ItemStack.EMPTY);
+	private boolean providePower;
+	private int signalCooldown, togglePowerCooldown;
+	private LensContainer lens = new LensContainer(1);
+
+	public InventoryScannerBlockEntity(BlockPos pos, BlockState state) {
+		super(SCContent.INVENTORY_SCANNER_BLOCK_ENTITY, pos, state);
+		lens.addListener(this);
+	}
+
+	@Override
+	public void tick(Level level, BlockPos pos, BlockState state) {
+		if (togglePowerCooldown > 0)
+			togglePowerCooldown--;
+
+		if (signalCooldown > 0)
+			signalCooldown--;
+		else if (providePower && signalLength.get() > 0)
+			togglePowerOutput();
+	}
+
+	@Override
+	public void onOwnerChanged(BlockState state, Level level, BlockPos pos, Player player, Owner oldOwner, Owner newOwner) {
+		InventoryScannerBlockEntity connectedScanner = InventoryScannerBlock.getConnectedInventoryScanner(level, pos, getBlockState(), be -> be.setOwner(getOwner().getName(), getOwner().getUUID()));
+
+		if (connectedScanner != null) {
+			connectedScanner.setOwner(getOwner().getName(), getOwner().getUUID());
+
+			if (!level.isClientSide)
+				level.getServer().getPlayerList().broadcastAll(connectedScanner.getUpdatePacket());
+		}
+
+		super.onOwnerChanged(state, level, pos, player, oldOwner, newOwner);
+	}
+
+	@Override
+	public void load(CompoundTag tag) {
+		ListTag list = tag.getList("Items", 10);
+
+		super.load(tag);
+		inventoryContents = NonNullList.<ItemStack>withSize(getContainerSize(), ItemStack.EMPTY);
+
+		for (int i = 0; i < list.size(); ++i) {
+			CompoundTag stackTag = list.getCompound(i);
+			int slot = stackTag.getByte("Slot") & 255;
+
+			if (slot < inventoryContents.size())
+				inventoryContents.set(slot, ItemStack.of(stackTag));
+		}
+
+		signalCooldown = tag.getInt("cooldown");
+		providePower = tag.getBoolean("is_providing_power");
+		lens.fromTag(tag.getList("lens", Tag.TAG_COMPOUND));
+		lens.setChanged();
+	}
+
+	@Override
+	public void saveAdditional(CompoundTag tag) {
+		super.saveAdditional(tag);
+
+		ListTag list = new ListTag();
+
+		for (int i = 0; i < inventoryContents.size(); ++i) {
+			if (!inventoryContents.get(i).isEmpty()) {
+				CompoundTag stackTag = new CompoundTag();
+
+				stackTag.putByte("Slot", (byte) i);
+				inventoryContents.get(i).save(stackTag);
+				list.add(stackTag);
+			}
+		}
+
+		tag.put("Items", list);
+		tag.putInt("cooldown", signalCooldown);
+		tag.putBoolean("is_providing_power", providePower);
+		tag.put("lens", lens.createTag());
+	}
+
+	@Override
+	public int getContainerSize() {
+		return 37;
+	}
+
+	@Override
+	public ItemStack removeItem(int index, int count) {
+		if (!inventoryContents.get(index).isEmpty()) {
+			ItemStack stack;
+
+			if (inventoryContents.get(index).getCount() <= count) {
+				stack = inventoryContents.get(index);
+				inventoryContents.set(index, ItemStack.EMPTY);
+				setChanged();
+				return stack;
+			}
+			else {
+				stack = inventoryContents.get(index).split(count);
+
+				if (inventoryContents.get(index).getCount() == 0)
+					inventoryContents.set(index, ItemStack.EMPTY);
+
+				setChanged();
+				return stack;
+			}
+		}
+		else
+			return ItemStack.EMPTY;
+	}
+
+	@Override
+	public boolean enableHack() {
+		return true;
+	}
+
+	@Override
+	public ItemStack getStackInSlot(int slot) {
+		return slot >= 100 ? getModuleInSlot(slot) : inventoryContents.get(slot);
+	}
+
+	@Override
+	public ItemStack getItem(int slot) {
+		return getStackInSlot(slot);
+	}
+
+	public ItemStack getStackInSlotCopy(int index) {
+		return inventoryContents.get(index);
+	}
+
+	public List<ItemStack> getAllProhibitedItems() {
+		List<ItemStack> stacks = new ArrayList<>();
+
+		for (int i = 0; i < 10; i++) {
+			if (!inventoryContents.get(i).isEmpty())
+				stacks.add(inventoryContents.get(i));
+		}
+
+		return stacks;
+	}
+
+	@Override
+	public void setItem(int index, ItemStack stack) {
+		inventoryContents.set(index, stack);
+
+		if (!stack.isEmpty() && stack.getCount() > getMaxStackSize())
+			stack.setCount(getMaxStackSize());
+
+		setChanged();
+	}
+
+	public LensContainer getLensContainer() {
+		return lens;
+	}
+
+	@Override
+	public void containerChanged(Container container) {
+		if (level == null)
+			return;
+
+		List<BlockPos> positionsToUpdate = new ArrayList<>();
+		InventoryScannerBlockEntity otherScanner = InventoryScannerBlock.getConnectedInventoryScanner(level, worldPosition, getBlockState(), be -> {
+			if (be.getLevel().isClientSide)
+				ClientUtils.recompileChunk(be.getBlockPos());
+			else
+				positionsToUpdate.add(be.getBlockPos());
+		});
+
+		if (otherScanner != null) {
+			otherScanner.getLensContainer().setItemExclusively(0, lens.getItem(0));
+
+			if (!level.isClientSide && level instanceof ServerLevel serverLevel) {
+				UpdateLaserColorsPayload payload = new UpdateLaserColorsPayload(positionsToUpdate);
+
+				for (ServerPlayer player : PlayerLookup.world(serverLevel)) {
+					ServerPlayNetworking.send(player, UpdateLaserColorsPayload.CHANNEL, payload.write());
+				}
+
+				level.sendBlockUpdated(otherScanner.getBlockPos(), otherScanner.getBlockState(), otherScanner.getBlockState(), 2);
+				level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
+			}
+		}
+
+		setChanged();
+	}
+
+	@Override
+	public int[] getSlotsForFace(Direction side) {
+		return STORAGE_SLOTS;
+	}
+
+	@Override
+	public boolean canPlaceItemThroughFace(int index, ItemStack itemStack, Direction direction) {
+		return false;
+	}
+
+	@Override
+	public boolean canTakeItemThroughFace(int index, ItemStack stack, Direction direction) {
+		return index >= 10;
+	}
+
+	@Override
+	public int getMaxStackSize() {
+		return 64;
+	}
+
+	@Override
+	public boolean stillValid(Player player) {
+		return true;
+	}
+
+	@Override
+	public void startOpen(Player player) {}
+
+	@Override
+	public void stopOpen(Player player) {}
+
+	@Override
+	public boolean canPlaceItem(int index, ItemStack stack) {
+		return false;
+	}
+
+	public boolean isProvidingPower() {
+		return isModuleEnabled(ModuleType.REDSTONE) && providePower;
+	}
+
+	public boolean wantsToProvidePower() {
+		return providePower;
+	}
+
+	public void togglePowerOutput() {
+		int signalLength = this.signalLength.get();
+		boolean shouldTurnOffAgain = signalLength > 0;
+
+		if (!shouldTurnOffAgain && togglePowerCooldown > 0)
+			togglePowerCooldown = 5;
+		else {
+			if (!shouldTurnOffAgain || signalCooldown <= 0) {
+				togglePowerCooldown = 5;
+				providePower = !providePower;
+				BlockUtils.updateIndirectNeighbors(level, worldPosition, SCContent.INVENTORY_SCANNER);
+				setChanged();
+			}
+
+			if (providePower && shouldTurnOffAgain)
+				signalCooldown = signalLength;
+		}
+	}
+
+	public NonNullList<ItemStack> getContents() {
+		return inventoryContents;
+	}
+
+	public void setContents(NonNullList<ItemStack> contents) {
+		inventoryContents = contents;
+		setChanged();
+	}
+
+	@Override
+	public void onModuleInserted(ItemStack stack, ModuleType module, boolean toggled) {
+		super.onModuleInserted(stack, module, toggled);
+
+		InventoryScannerBlockEntity connectedScanner = InventoryScannerBlock.getConnectedInventoryScanner(level, worldPosition);
+
+		if (connectedScanner != null && (toggled ? !connectedScanner.isModuleEnabled(module) : !connectedScanner.hasModule(module)))
+			connectedScanner.insertModule(stack, toggled);
+
+		if (module == ModuleType.DISGUISE) {
+			onInsertDisguiseModule(this, stack);
+
+			if (connectedScanner != null)
+				onInsertDisguiseModule(connectedScanner, stack);
+		}
+	}
+
+	@Override
+	public void onModuleRemoved(ItemStack stack, ModuleType module, boolean toggled) {
+		super.onModuleRemoved(stack, module, toggled);
+
+		InventoryScannerBlockEntity connectedScanner = InventoryScannerBlock.getConnectedInventoryScanner(level, worldPosition);
+
+		if (connectedScanner != null && (toggled ? connectedScanner.isModuleEnabled(module) : connectedScanner.hasModule(module)))
+			connectedScanner.removeModule(module, toggled);
+
+		if (module == ModuleType.STORAGE) {
+			//first 10 slots (0-9) are the prohibited slots
+			for (int i = 10; i < getContainerSize(); i++) {
+				Containers.dropItemStack(level, worldPosition.getX(), worldPosition.getY(), worldPosition.getZ(), getContents().get(i));
+			}
+
+			if (connectedScanner != null) {
+				for (int i = 10; i < connectedScanner.getContainerSize(); i++) {
+					connectedScanner.getContents().set(i, ItemStack.EMPTY);
+				}
+			}
+		}
+		else if (module == ModuleType.DISGUISE) {
+			onRemoveDisguiseModule(this);
+
+			if (connectedScanner != null)
+				onRemoveDisguiseModule(connectedScanner);
+		}
+	}
+
+	private void onInsertDisguiseModule(BlockEntity be, ItemStack stack) {
+		if (!be.getLevel().isClientSide)
+			be.getLevel().sendBlockUpdated(be.getBlockPos(), be.getBlockState(), be.getBlockState(), 3);
+		else
+			DisguisableBlockEntity.DISGUISED_BLOCK_RENDER_DELEGATE.putDelegateFor(be, net.geforcemods.securitycraft.api.IDisguisable.getDisguisedBlockStateFromStack(be, stack));
+	}
+
+	private void onRemoveDisguiseModule(BlockEntity be) {
+		if (!be.getLevel().isClientSide)
+			be.getLevel().sendBlockUpdated(be.getBlockPos(), be.getBlockState(), be.getBlockState(), 3);
+		else
+			DisguisableBlockEntity.DISGUISED_BLOCK_RENDER_DELEGATE.removeDelegateOf(be);
+	}
+
+	@Override
+	public boolean shouldDropModules() {
+		return InventoryScannerBlock.getConnectedInventoryScanner(level, worldPosition) == null;
+	}
+
+	@Override
+	public ModuleType[] acceptedModules() {
+		return new ModuleType[] {
+				ModuleType.ALLOWLIST, ModuleType.SMART, ModuleType.STORAGE, ModuleType.DISGUISE, ModuleType.REDSTONE
+		};
+	}
+
+	@Override
+	public <T> void onOptionChanged(Option<T> option) {
+		if (option instanceof BooleanOption bo) {
+			if (option == horizontal) {
+				modifyFields((offsetPos, state) -> level.setBlockAndUpdate(offsetPos, state.setValue(InventoryScannerFieldBlock.HORIZONTAL, bo.get())), connectedScanner -> connectedScanner.setHorizontal(bo.get()));
+				level.setBlockAndUpdate(worldPosition, getBlockState().setValue(InventoryScannerBlock.HORIZONTAL, bo.get()));
+			}
+			else if (option == solidifyField) {
+				InventoryScannerBlockEntity connectedScanner = InventoryScannerBlock.getConnectedInventoryScanner(level, worldPosition);
+
+				if (connectedScanner != null)
+					connectedScanner.setSolidifyField(bo.get());
+			}
+			else if (option == disabled) {
+				if (!bo.get())
+					InventoryScannerBlock.checkAndPlaceAppropriately(level, worldPosition, true);
+				else
+					modifyFields((offsetPos, state) -> level.destroyBlock(offsetPos, false), connectedScanner -> connectedScanner.setDisabled(true));
+			}
+			else if (option == ignoreOwner) {
+				InventoryScannerBlockEntity connectedScanner = InventoryScannerBlock.getConnectedInventoryScanner(level, worldPosition);
+
+				if (connectedScanner != null)
+					connectedScanner.setIgnoresOwner(bo.get());
+			}
+			else if (option != respectInvisibility)
+				throw new UnsupportedOperationException("Unhandled option synchronization in inventory scanner! " + option.getName());
+		}
+		else if (option instanceof IntOption io && option == signalLength) {
+			InventoryScannerBlockEntity connectedScanner = InventoryScannerBlock.getConnectedInventoryScanner(level, worldPosition);
+
+			if (connectedScanner != null)
+				connectedScanner.setSignalLength(io.get());
+		}
+		else
+			throw new UnsupportedOperationException("Unhandled option synchronization in inventory scanner! " + option.getName());
+
+		super.onOptionChanged(option);
+	}
+
+	private void modifyFields(BiConsumer<BlockPos, BlockState> blockSetter, Consumer<InventoryScannerBlockEntity> connectedScannerModifier) {
+		InventoryScannerBlockEntity connectedScanner = InventoryScannerBlock.getConnectedInventoryScanner(level, worldPosition);
+
+		if (connectedScanner != null) {
+			Direction facing = getBlockState().getValue(InventoryScannerBlock.FACING);
+
+			connectedScannerModifier.accept(connectedScanner);
+
+			for (int i = 0; i <= ConfigHandler.inventoryScannerRange; i++) {
+				BlockPos offsetPos = worldPosition.relative(facing, i);
+				BlockState state = level.getBlockState(offsetPos);
+				Block block = state.getBlock();
+
+				if (block == SCContent.INVENTORY_SCANNER_FIELD)
+					blockSetter.accept(offsetPos, state);
+				else if (!state.isAir() && block != SCContent.INVENTORY_SCANNER_FIELD && block != SCContent.INVENTORY_SCANNER)
+					break;
+				else if (block == SCContent.INVENTORY_SCANNER && state.getValue(InventoryScannerBlock.FACING) == facing.getOpposite())
+					break;
+			}
+		}
+	}
+
+	public void setHorizontal(boolean isHorizontal) {
+		if (horizontal.get() != isHorizontal) {
+			horizontal.setValue(isHorizontal);
+			level.setBlockAndUpdate(worldPosition, getBlockState().setValue(InventoryScannerBlock.HORIZONTAL, isHorizontal));
+			setChanged();
+		}
+	}
+
+	public boolean isHorizontal() {
+		return horizontal.get();
+	}
+
+	public boolean doesFieldSolidify() {
+		return solidifyField.get();
+	}
+
+	public void setSolidifyField(boolean shouldSolidify) {
+		if (doesFieldSolidify() != shouldSolidify) {
+			solidifyField.setValue(shouldSolidify);
+			level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3); //sync option change to client
+			setChanged();
+		}
+	}
+
+	public boolean isDisabled() {
+		return disabled.get();
+	}
+
+	public void setDisabled(boolean disabled) {
+		if (isDisabled() != disabled) {
+			this.disabled.setValue(disabled);
+			level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3); //sync option change to client
+			setChanged();
+		}
+	}
+
+	@Override
+	public boolean ignoresOwner() {
+		return ignoreOwner.get();
+	}
+
+	public void setIgnoresOwner(boolean ignoresOwner) {
+		if (ignoresOwner() != ignoresOwner) {
+			ignoreOwner.setValue(ignoresOwner);
+			level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3); //sync option change to client
+			setChanged();
+		}
+	}
+
+	public void setSignalLength(int signalLength) {
+		this.signalLength.setValue(signalLength);
+		togglePowerCooldown = 5;
+		providePower = false;
+		level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3); //sync option change to client
+		setChanged();
+	}
+
+	public int getSignalLength() {
+		return signalLength.get();
+	}
+
+	public boolean isConsideredInvisible(LivingEntity entity) {
+		return respectInvisibility.isConsideredInvisible(entity);
+	}
+
+	@Override
+	public Option<?>[] customOptions() {
+		return new Option[] {
+				horizontal, solidifyField, disabled, ignoreOwner, signalLength, respectInvisibility
+		};
+	}
+
+	@Override
+	public AbstractContainerMenu createMenu(int windowId, Inventory inv, Player player) {
+		return new InventoryScannerMenu(windowId, level, worldPosition, inv);
+	}
+
+	@Override
+	public void writeScreenOpeningData(ServerPlayer player, FriendlyByteBuf buf) {
+		buf.writeBlockPos(worldPosition);
+	}
+
+	@Override
+	public Component getDisplayName() {
+		return super.getDisplayName();
+	}
+
+	@Override
+	public void clearContent() {
+		inventoryContents.clear();
+	}
+
+	@Override
+	public boolean isEmpty() {
+		for (ItemStack stack : inventoryContents) {
+			if (!stack.isEmpty())
+				return false;
+		}
+
+		return true;
+	}
+
+	@Override
+	public ItemStack removeItemNoUpdate(int index) {
+		ItemStack stack = inventoryContents.get(index);
+
+		if (stack.isEmpty())
+			return ItemStack.EMPTY;
+
+		inventoryContents.set(index, ItemStack.EMPTY);
+		return stack;
+	}
+}
