@@ -312,8 +312,11 @@ public class Sentry extends PathfinderMob implements RangedAttackMob, IEMPAffect
 
 		entityData.set(MODE, mode);
 
-		if (sendMessage)
-			player.displayClientMessage(Utils.localize(SentryMode.values()[mode].getModeKey()).append(Utils.localize(SentryMode.values()[mode].getDescriptionKey())), true);
+		if (sendMessage) {
+			SentryMode sentryMode = SentryMode.values()[mode];
+			player.displayClientMessage(Utils.localize(sentryMode.getModeKey()), true);
+			player.displayClientMessage(Utils.localize(sentryMode.getModeKey()).append(Utils.localize(sentryMode.getDescriptionKey())), false);
+		}
 	}
 
 	@Override
