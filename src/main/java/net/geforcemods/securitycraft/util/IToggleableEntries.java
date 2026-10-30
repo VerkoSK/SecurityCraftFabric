@@ -4,19 +4,23 @@ import java.util.Map;
 import java.util.function.ToIntFunction;
 
 public interface IToggleableEntries<T> {
-	public void setFilter(T type, boolean allowed);
+	default void toggleFilter(T type) {
+		setFilter(type, !getFilter(type));
+	}
+
+	void setFilter(T type, boolean allowed);
 
 	public boolean getFilter(T type);
 
-	public Map<T, Boolean> getFilters();
-
-	public T getDefaultType();
+	Map<T, Boolean> getFilters();
 
 	default ToIntFunction<T> getComparatorOutputFunction() {
 		return t -> 0;
 	}
 
+	T getDefaultType();
+
 	default String getDefaultTypeName() {
-		return "gui.securitycraft:SmartModule.default";
+		return getDefaultType().toString();
 	}
 }

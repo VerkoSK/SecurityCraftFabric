@@ -3,7 +3,10 @@ package net.geforcemods.securitycraft.entity.sentry;
 import java.util.Collections;
 import java.util.List;
 
+import net.geforcemods.securitycraft.ConfigHandler;
+import net.geforcemods.securitycraft.api.SecurityCraftAPI;
 import net.geforcemods.securitycraft.entity.sentry.Sentry.SentryMode;
+import net.geforcemods.securitycraft.util.Utils;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.FlyingMob;
@@ -29,11 +32,13 @@ public class TargetNearestPlayerOrMobGoal extends NearestAttackableTargetGoal<Li
 
 	@Override
 	public boolean canUse() {
-		List<LivingEntity> list = mob.level().<LivingEntity>getEntitiesOfClass(targetType, getTargetSearchArea(getFollowDistance()), e -> sentry.getSensing().hasLineOfSight(e) && !e.hasEffect(MobEffects.INVISIBILITY) && sentry.SENTRY_PREDICATE.test(e));
-
-		if (list.isEmpty() || sentry.isShutDown())
+		if (sentry.isShutDown())
 			return false;
-		else {
+
+		List<LivingEntity> list = mob.level().<LivingEntity>getEntitiesOfClass(targetType, getTargetSearchArea(getFollowDistance()), e -> sentry.getSensing().hasLineOfSight(e) && !e.hasEffect(MobEffects.INVISIBILITY));
+
+		if (!list.isEmpty()) {
+			SentryMode sentryMode = sentry.getMode();
 			int i;
 
 			Collections.sort(list, (e1, e2) -> {
@@ -50,29 +55,36 @@ public class TargetNearestPlayerOrMobGoal extends NearestAttackableTargetGoal<Li
 			for (i = 0; i < list.size(); i++) {
 				LivingEntity potentialTarget = list.get(i);
 
-				if (potentialTarget instanceof Player player && !player.isSpectator() && !player.isCreative() && !((Sentry) mob).isOwnedBy(player) && !sentry.isAllowed(potentialTarget))
-					break;
-				else if (sentry.isTargetingAllowedPlayer(potentialTarget))
-					break;
-				else if (sentry.getMode().attacksHostile() && isSupportedTarget(potentialTarget))
-					break;
-			}
+				if (potentialTarget.isInvulnerable())
+					continue;
 
-			if (i < list.size()) {
-				if (isCloseEnough(list.get(i))) {
-					target = list.get(i);
-					mob.setTarget(target);
-					return true;
+				//@formatter:off
+				if (sentryMode.attacksPlayers() && potentialTarget instanceof Player player
+						&& !player.isSpectator()
+						&& !player.isCreative()
+						&& !((Sentry) mob).isOwnedBy(player)
+						&& !sentry.isTargetingAllowedPlayer(potentialTarget)) {
+					break;
 				}
+				//@formatter:on
+
+				if (sentryMode.attacksHostile() && isSupportedTarget(potentialTarget))
+					break;
 			}
 
-			return false;
+			if (i < list.size() && isCloseEnough(list.get(i))) {
+				target = list.get(i);
+				mob.setTarget(target);
+				return true;
+			}
 		}
+
+		return false;
 	}
 
 	@Override
 	public boolean canContinueToUse() {
-		return (isSupportedTarget(target) || target instanceof Player) && isCloseEnough(target) && canUse() && !sentry.isAllowed(target) && super.canContinueToUse();
+		return (isSupportedTarget(target) || target instanceof Player) && isCloseEnough(target) && canUse() && !sentry.isTargetingAllowedPlayer(targetMob) && super.canContinueToUse();
 	}
 
 	public boolean isCloseEnough(Entity entity) {
@@ -80,7 +92,16 @@ public class TargetNearestPlayerOrMobGoal extends NearestAttackableTargetGoal<Li
 	}
 
 	public boolean isSupportedTarget(LivingEntity potentialTarget) {
-		return potentialTarget.deathTime == 0 && (potentialTarget instanceof Monster || potentialTarget instanceof FlyingMob || potentialTarget instanceof Slime || potentialTarget instanceof Shulker || potentialTarget instanceof EnderDragon || Sentry.isAllowedToAttack(potentialTarget));
+		//@formatter:off
+		return potentialTarget.deathTime == 0 &&
+				!ConfigHandler.SERVER.sentryAttackableEntitiesDenylist.get().contains(Utils.getRegistryName(potentialTarget.getType()).toString()) &&
+				(potentialTarget instanceof Monster ||
+						potentialTarget instanceof FlyingMob ||
+						potentialTarget instanceof Slime ||
+						potentialTarget instanceof Shulker ||
+						potentialTarget instanceof EnderDragon ||
+						SecurityCraftAPI.getRegisteredSentryAttackTargetChecks().stream().anyMatch(check -> check.canAttack(potentialTarget)));
+		//@formatter:on
 	}
 
 	@Override

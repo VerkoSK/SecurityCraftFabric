@@ -520,8 +520,8 @@ public final class NetworkHandler {
 		ServerPlayNetworking.send(player, OpenRiftStabilizerScreenPayload.CHANNEL, new OpenRiftStabilizerScreenPayload(pos).write());
 	}
 
-	public static void openSRATScreen(ServerPlayer player) {
-		ServerPlayNetworking.send(player, OpenSRATScreenPayload.CHANNEL, new OpenSRATScreenPayload().write());
+	public static void openSRATScreen(ServerPlayer player, net.minecraft.nbt.CompoundTag tag) {
+		ServerPlayNetworking.send(player, OpenSRATScreenPayload.CHANNEL, new OpenSRATScreenPayload(tag).write());
 	}
 
 	private static void handleSyncTrophySystem(ServerPlayer player, SyncTrophySystemPayload payload) {

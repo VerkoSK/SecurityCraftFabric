@@ -7,6 +7,6 @@ import net.minecraft.world.phys.Vec3;
 
 public interface ISentryBulletContainer {
 	default Projectile getProjectileFromItem(Sentry sentry, Level level, Vec3 pos, ItemStack stack) {
-		return new Bullet(level, sentry, java.util.Collections.emptyList());
+		return new Bullet(level, sentry);
 	}
 }

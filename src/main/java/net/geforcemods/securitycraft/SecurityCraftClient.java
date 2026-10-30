@@ -395,14 +395,16 @@ public class SecurityCraftClient implements ClientModInitializer {
 			});
 		});
 		ClientPlayNetworking.registerGlobalReceiver(net.geforcemods.securitycraft.network.OpenSRATScreenPayload.CHANNEL, (client, handler, buf, responseSender) -> {
-			net.geforcemods.securitycraft.network.OpenSRATScreenPayload.read(buf);
+			net.geforcemods.securitycraft.network.OpenSRATScreenPayload payload = net.geforcemods.securitycraft.network.OpenSRATScreenPayload.read(buf);
 
 			client.execute(() -> {
 				if (client.player != null) {
 					net.minecraft.world.item.ItemStack stack = net.geforcemods.securitycraft.util.PlayerUtils.getItemStackFromAnyHand(client.player, SCContent.REMOTE_ACCESS_SENTRY);
 
-					if (!stack.isEmpty())
+					if (!stack.isEmpty()) {
+						stack.setTag(payload.tag());
 						client.setScreen(new net.geforcemods.securitycraft.screen.SentryRemoteAccessToolScreen(stack));
+					}
 				}
 			});
 		});

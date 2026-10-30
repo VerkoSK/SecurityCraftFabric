@@ -5,6 +5,7 @@ import net.geforcemods.securitycraft.blockentities.TrophySystemBlockEntity;
 import net.geforcemods.securitycraft.inventory.TrophySystemMenu;
 import net.geforcemods.securitycraft.misc.ModuleType;
 import net.geforcemods.securitycraft.screen.components.ToggleScrollList;
+import net.geforcemods.securitycraft.util.ClientUtils;
 import net.geforcemods.securitycraft.util.Utils;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -14,58 +15,71 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Inventory;
 
 public class TrophySystemScreen extends AbstractContainerScreen<TrophySystemMenu> {
-	private static final ResourceLocation GUI_TEXTURE = new ResourceLocation(SecurityCraft.MODID, "textures/gui/container/trophy_system.png");
-	private final Component smartModuleTooltip;
-	private TrophySystemBlockEntity be;
+	private static final ResourceLocation GUI_TEXTURE = SecurityCraft.resLoc("textures/gui/container/trophy_system.png");
+	public final Component scrollListTitle, smartModuleTooltip;
+	private final boolean hasSmartModule;
+	private final boolean hasRedstoneModule;
+	private final TrophySystemBlockEntity be;
 	private ToggleScrollList<EntityType<?>> scrollList;
 
-	public TrophySystemScreen(TrophySystemMenu menu, Inventory inv, Component title) {
-		super(menu, inv, title);
+	public TrophySystemScreen(TrophySystemMenu menu, Inventory playerInventory, Component title) {
+		super(menu, playerInventory, title);
+
+		imageHeight = 248;
 		this.be = menu.be;
-		imageWidth = 176;
-		imageHeight = 256;
-		inventoryLabelY = imageHeight - 94;
-		smartModuleTooltip = Utils.localize(be.isModuleEnabled(ModuleType.SMART) ? "gui.securitycraft:trophy_system.toggle" : "gui.securitycraft:trophy_system.moduleRequired");
+		hasSmartModule = be.isModuleEnabled(ModuleType.SMART);
+		hasRedstoneModule = be.isModuleEnabled(ModuleType.REDSTONE);
+		scrollListTitle = Utils.localize("gui.securitycraft:trophy_system.targetableProjectiles");
+		smartModuleTooltip = hasSmartModule ? Utils.localize("gui.securitycraft:trophy_system.toggle") : Utils.localize("gui.securitycraft:trophy_system.moduleRequired");
 	}
 
 	@Override
 	protected void init() {
 		super.init();
+		inventoryLabelY = imageHeight - 94;
 		titleLabelX = imageWidth / 2 - font.width(title) / 2;
-		scrollList = addRenderableWidget(new ToggleScrollList<>(be, be.isModuleEnabled(ModuleType.SMART), false, minecraft, imageWidth - 40, 106, topPos + 30, leftPos + 20));
-	}
-
-	@Override
-	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
-		renderBackground(guiGraphics);
-		super.render(guiGraphics, mouseX, mouseY, partialTicks);
-		renderTooltip(guiGraphics, mouseX, mouseY);
-	}
-
-	@Override
-	protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
-		super.renderLabels(guiGraphics, mouseX, mouseY);
-
-		if (font.width(smartModuleTooltip) > imageWidth - 12) {
-			guiGraphics.pose().pushPose();
-			guiGraphics.pose().scale(0.8F, 0.8F, 0.8F);
-			guiGraphics.drawWordWrap(font, smartModuleTooltip, (int) ((imageWidth / 2 - (imageWidth - 20) / 2) * 1.25F), (int) (142 * 1.25F), (int) ((imageWidth - 20) * 1.25F), 0x404040);
-			guiGraphics.pose().popPose();
-		}
-		else
-			guiGraphics.drawString(font, smartModuleTooltip, imageWidth / 2 - font.width(smartModuleTooltip) / 2, 145, 0x404040, false);
-	}
-
-	@Override
-	protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int mouseX, int mouseY) {
-		guiGraphics.blit(GUI_TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight);
+		scrollList = addRenderableWidget(new ToggleScrollList<>(be, hasSmartModule, hasRedstoneModule, minecraft, imageWidth - 24, 106, topPos + 40, leftPos + 12));
 	}
 
 	@Override
 	public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
 		if (scrollList != null && scrollList.mouseDragged(mouseX, mouseY, button, dragX, dragY))
 			return true;
+		else
+			return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+	}
 
-		return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+	@Override
+	protected void renderBg(GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
+		renderBackground(guiGraphics);
+		guiGraphics.blit(GUI_TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight);
+	}
+
+	@Override
+	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+		super.render(guiGraphics, mouseX, mouseY, partialTick);
+		renderTooltip(guiGraphics, mouseX, mouseY);
+		ClientUtils.renderModuleInfo(guiGraphics, font, ModuleType.SMART, smartModuleTooltip, hasSmartModule, leftPos + 5, topPos + 5, mouseX, mouseY);
+	}
+
+	@Override
+	public void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+		super.renderLabels(guiGraphics, mouseX, mouseY);
+		guiGraphics.drawString(font, scrollListTitle, imageWidth / 2 - font.width(scrollListTitle) / 2, 31, 4210752, false);
+	}
+
+	@Override
+	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+		if (minecraft.options.keyInventory.matches(keyCode, scanCode)) {
+			onClose();
+			return true;
+		}
+
+		return super.keyPressed(keyCode, scanCode, modifiers);
+	}
+
+	@Override
+	public boolean isPauseScreen() {
+		return false;
 	}
 }

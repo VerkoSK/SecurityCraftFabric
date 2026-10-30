@@ -1,29 +1,24 @@
 package net.geforcemods.securitycraft.entity.sentry;
 
 import java.util.Collection;
-import java.util.Collections;
 
 import com.google.common.collect.Sets;
 
 import net.geforcemods.securitycraft.ConfigHandler;
 import net.geforcemods.securitycraft.SCContent;
 import net.geforcemods.securitycraft.api.Owner;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.TamableAnimal;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.decoration.ItemFrame;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -36,20 +31,19 @@ public class Bullet extends AbstractArrow {
 
 	public Bullet(EntityType<Bullet> type, Level level) {
 		super(SCContent.BULLET_ENTITY, level);
-		pickup = Pickup.DISALLOWED;
 	}
 
-	public Bullet(Level level, Sentry shooter, Collection<MobEffectInstance> potionEffects) {
+	public Bullet(Level level, Sentry shooter) {
 		super(SCContent.BULLET_ENTITY, shooter, level);
+
 		Owner owner = shooter.getOwner();
 
-		this.potionEffects = potionEffects;
+		potionEffects = shooter.getActiveEffects();
 		entityData.set(OWNER, new Owner(owner.getName(), owner.getUUID()));
-		pickup = Pickup.DISALLOWED;
 	}
 
 	/**
-	 * @return The owner of the sentry that shot this bullet
+	 * @return The owner of the sentry which shot this bullet
 	 */
 	public Owner getSCOwner() {
 		return entityData.get(OWNER);
@@ -72,7 +66,7 @@ public class Bullet extends AbstractArrow {
 				list.add(effect.save(new CompoundTag()));
 			}
 
-			tag.put("CustomPotionEffects", list);
+			tag.put("PotionEffects", list);
 		}
 	}
 
@@ -80,14 +74,16 @@ public class Bullet extends AbstractArrow {
 	public void readAdditionalSaveData(CompoundTag tag) {
 		super.readAdditionalSaveData(tag);
 
-		if (tag.contains("CustomPotionEffects", Tag.TAG_LIST)) {
-			ListTag list = tag.getList("CustomPotionEffects", Tag.TAG_COMPOUND);
+		if (tag.contains("PotionEffects", 9)) {
+			ListTag potionList = tag.getList("PotionEffects", 10);
 
-			for (int i = 0; i < list.size(); ++i) {
-				MobEffectInstance effect = MobEffectInstance.load(list.getCompound(i));
+			if (!potionList.isEmpty()) {
+				for (int i = 0; i < potionList.size(); ++i) {
+					MobEffectInstance effect = MobEffectInstance.load(potionList.getCompound(i));
 
-				if (effect != null)
-					potionEffects.add(effect);
+					if (effect != null)
+						potionEffects.add(effect);
+				}
 			}
 		}
 	}
@@ -96,7 +92,7 @@ public class Bullet extends AbstractArrow {
 	protected void onHitEntity(EntityHitResult raytraceResult) {
 		Entity target = raytraceResult.getEntity();
 
-		if (!(target instanceof Sentry) && !(target instanceof TamableAnimal animal && animal.getOwnerUUID() != null && animal.getOwnerUUID().toString().equals(entityData.get(OWNER).getUUID()))) {
+		if (!(target instanceof Sentry) && !(target instanceof ItemFrame)) {
 			target.hurt(damageSources().arrow(this, getOwner()), (float) ConfigHandler.SERVER.sentryBulletDamage.get());
 
 			if (target instanceof LivingEntity lEntity && !potionEffects.isEmpty()) {
@@ -111,25 +107,12 @@ public class Bullet extends AbstractArrow {
 
 	@Override
 	protected void onHitBlock(BlockHitResult raytraceResult) {
-		playSound(SoundEvents.STONE_HIT, 1.0F, 1.2F / (random.nextFloat() * 0.2F + 0.9F));
 		discard();
 	}
-
-	@Override
-	protected void doPostHurtEffects(LivingEntity living) {
-		discard();
-	}
-
-	@Override
-	public void playerTouch(Player entity) {}
 
 	@Override
 	protected ItemStack getPickupItem() {
 		return ItemStack.EMPTY;
-	}
-
-	public Collection<MobEffectInstance> getPotionEffects() {
-		return Collections.unmodifiableCollection(potionEffects);
 	}
 
 	@Override

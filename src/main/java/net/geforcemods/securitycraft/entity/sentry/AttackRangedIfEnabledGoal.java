@@ -4,7 +4,6 @@ import java.util.EnumSet;
 import java.util.function.Supplier;
 
 import net.geforcemods.securitycraft.entity.sentry.Sentry.SentryMode;
-import net.geforcemods.securitycraft.misc.ModuleType;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.Goal;
@@ -12,18 +11,16 @@ import net.minecraft.world.entity.monster.RangedAttackMob;
 
 public class AttackRangedIfEnabledGoal extends Goal {
 	private Sentry sentry;
-	private final RangedAttackMob rangedAttackEntityHost;
 	private LivingEntity attackTarget;
 	private int rangedAttackTime;
 	private final Supplier<Integer> maxAttackTime;
 	private final float attackRadius;
 
-	public AttackRangedIfEnabledGoal(RangedAttackMob attacker, Supplier<Integer> maxAttackTime, float maxAttackDistanceIn) {
+	public AttackRangedIfEnabledGoal(RangedAttackMob attacker, Supplier<Integer> maxAttackTime, float maxAttackDistance) {
 		sentry = (Sentry) attacker;
-		rangedAttackEntityHost = attacker;
 		rangedAttackTime = -1;
 		this.maxAttackTime = maxAttackTime;
-		attackRadius = maxAttackDistanceIn;
+		attackRadius = maxAttackDistance;
 		setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
 	}
 
@@ -31,12 +28,8 @@ public class AttackRangedIfEnabledGoal extends Goal {
 	public boolean canUse() {
 		LivingEntity potentialTarget = sentry.getTarget();
 
-		if (potentialTarget == null)
+		if (potentialTarget == null || sentry.isShutDown())
 			return false;
-		else if (sentry.isShutDown()) {
-			sentry.setTarget(null);
-			return false;
-		}
 		else {
 			attackTarget = potentialTarget;
 			return sentry.getMode() != SentryMode.IDLE;
@@ -50,23 +43,22 @@ public class AttackRangedIfEnabledGoal extends Goal {
 	}
 
 	@Override
-	public void tick() {
-		double distanceToTarget = sentry.distanceToSqr(attackTarget.getX(), attackTarget.getBoundingBox().minY, attackTarget.getZ());
-		boolean canSee = sentry.getSensing().hasLineOfSight(attackTarget);
+	public void tick() { //copied from vanilla to remove pathfinding code
+		double targetDistance = sentry.distanceToSqr(attackTarget.getX(), attackTarget.getBoundingBox().minY, attackTarget.getZ());
 
-		if (!canSee) {
-			sentry.setTarget(null);
-			return;
-		}
+		sentry.getLookControl().setLookAt(attackTarget, 30.0F, 30.0F);
 
 		if (--rangedAttackTime == 0) {
-			float f = Mth.sqrt((float) distanceToTarget) / attackRadius;
-			float lvt_5_1_ = Mth.clamp(f, 0.1F, 1.0F);
+			if (!sentry.getSensing().hasLineOfSight(attackTarget))
+				return;
 
-			rangedAttackEntityHost.performRangedAttack(attackTarget, lvt_5_1_);
-			rangedAttackTime = maxAttackTime.get();
+			float f = Mth.sqrt((float) targetDistance) / attackRadius;
+			float distanceFactor = Mth.clamp(f, 0.1F, 1.0F);
+
+			sentry.performRangedAttack(attackTarget, distanceFactor);
+			rangedAttackTime = Mth.floor(maxAttackTime.get());
 		}
 		else if (rangedAttackTime < 0)
-			rangedAttackTime = Mth.floor(Mth.lerp(Math.sqrt(distanceToTarget) / attackRadius, maxAttackTime.get(), maxAttackTime.get()));
+			rangedAttackTime = Mth.floor(maxAttackTime.get());
 	}
 }
