@@ -1,5 +1,6 @@
 package net.geforcemods.securitycraft.blocks;
 
+import net.geforcemods.securitycraft.SCContent;
 import net.geforcemods.securitycraft.blockentities.DisguisableBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
@@ -19,26 +20,31 @@ public class SometimesVisibleBlock extends DisguisableBlock {
 
 	public SometimesVisibleBlock(BlockBehaviour.Properties properties) {
 		super(properties);
-		registerDefaultState(stateDefinition.any().setValue(INVISIBLE, false).setValue(WATERLOGGED, false));
+		registerDefaultState(stateDefinition.any().setValue(INVISIBLE, true).setValue(WATERLOGGED, false));
 	}
 
 	@Override
-	public RenderShape getRenderShape(BlockState state) {
-		return state.getValue(INVISIBLE) ? RenderShape.INVISIBLE : RenderShape.MODEL;
+	public boolean propagatesSkylightDown(BlockState state, BlockGetter level, BlockPos pos) {
+		return state.getValue(INVISIBLE);
 	}
 
 	@Override
 	public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext ctx) {
-		return state.getValue(INVISIBLE) ? Shapes.empty() : getCollisionShapeWhenNotInvisible(state, level, pos, ctx);
+		return state.getValue(INVISIBLE) ? Shapes.empty() : super.getShape(state, level, pos, ctx);
+	}
+
+	@Override
+	public RenderShape getRenderShape(BlockState state) {
+		return state.getValue(INVISIBLE) ? RenderShape.INVISIBLE : super.getRenderShape(state);
 	}
 
 	@Override
 	public VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext ctx) {
-		return state.getValue(INVISIBLE) ? Shapes.empty() : getCollisionShapeWhenNotInvisible(state, level, pos, ctx);
+		return state.getValue(INVISIBLE) ? getCollisionShapeWhenInvisible() : super.getCollisionShape(state, level, pos, ctx);
 	}
 
-	public VoxelShape getCollisionShapeWhenNotInvisible(BlockState state, BlockGetter level, BlockPos pos, CollisionContext ctx) {
-		return super.getCollisionShape(state, level, pos, ctx);
+	public VoxelShape getCollisionShapeWhenInvisible() {
+		return Shapes.block();
 	}
 
 	@Override
@@ -47,12 +53,12 @@ public class SometimesVisibleBlock extends DisguisableBlock {
 	}
 
 	@Override
-	protected void createBlockStateDefinition(Builder<Block, BlockState> builder) {
-		builder.add(INVISIBLE, WATERLOGGED);
+	public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+		return new DisguisableBlockEntity(SCContent.DISGUISABLE_BLOCK_ENTITY, pos, state);
 	}
 
 	@Override
-	public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-		return new DisguisableBlockEntity(pos, state);
+	protected void createBlockStateDefinition(Builder<Block, BlockState> builder) {
+		builder.add(INVISIBLE, WATERLOGGED);
 	}
 }

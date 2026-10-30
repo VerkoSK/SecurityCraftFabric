@@ -8,18 +8,17 @@ import net.geforcemods.securitycraft.api.Option.DisabledOption;
 import net.geforcemods.securitycraft.api.Option.IgnoreOwnerOption;
 import net.geforcemods.securitycraft.api.Option.RespectInvisibilityOption;
 import net.geforcemods.securitycraft.blocks.ProtectoBlock;
-import net.geforcemods.securitycraft.entity.camera.SecurityCamera;
 import net.geforcemods.securitycraft.entity.sentry.Sentry;
 import net.geforcemods.securitycraft.misc.ModuleType;
 import net.geforcemods.securitycraft.util.ITickingBlockEntity;
 import net.geforcemods.securitycraft.util.LevelUtils;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.OwnableEntity;
+import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 
@@ -39,13 +38,10 @@ public class ProtectoBlockEntity extends DisguisableBlockEntity implements ITick
 
 	@Override
 	public void tick(Level level, BlockPos pos, BlockState state) {
-		if (isDisabled())
-			return;
-
-		if (cooldown++ < ticksBetweenAttacks)
-			return;
-
 		if (level.isRaining() && level.canSeeSkyFromBelowWater(pos)) {
+			if (isDisabled() || cooldown++ < ticksBetweenAttacks)
+				return;
+
 			List<LivingEntity> entities = level.getEntitiesOfClass(LivingEntity.class, new AABB(pos).inflate(ATTACK_RANGE));
 
 			if (!state.getValue(ProtectoBlock.ACTIVATED))
@@ -54,23 +50,15 @@ public class ProtectoBlockEntity extends DisguisableBlockEntity implements ITick
 			if (!entities.isEmpty()) {
 				boolean shouldDeactivate = false;
 
-				if (!level.isClientSide) {
-					for (LivingEntity entity : entities) {
-						if (!(entity instanceof Sentry) && !respectInvisibility.isConsideredInvisible(entity)) {
-							if (entity instanceof Player player) {
-								if (player.isCreative() || player.isSpectator() || player.getVehicle() instanceof SecurityCamera || (isOwnedBy(player) && ignoresOwner()) || isAllowed(entity))
-									continue;
-							}
-							else if (entity instanceof OwnableEntity ownableEntity) {
-								LivingEntity owner = ownableEntity.getOwner();
+				for (LivingEntity entity : entities) {
+					if (!(entity instanceof Sentry || entity instanceof ArmorStand) && !respectInvisibility.isConsideredInvisible(entity)) {
+						if (entity instanceof Player player && (player.isCreative() || !player.canBeSeenByAnyone() || (isOwnedBy(player) && ignoresOwner()) || isAllowed(entity)) || entity instanceof OwnableEntity ownableEntity && allowsOwnableEntity(ownableEntity))
+							continue;
 
-								if (owner != null && ((isOwnedBy(owner) && ignoresOwner()) || isAllowed(owner)))
-									continue;
-							}
-
+						if (!level.isClientSide)
 							level.addFreshEntity(LevelUtils.createLightning(level, entity.position(), false));
-							shouldDeactivate = true;
-						}
+
+						shouldDeactivate = true;
 					}
 				}
 
@@ -85,7 +73,7 @@ public class ProtectoBlockEntity extends DisguisableBlockEntity implements ITick
 	}
 
 	@Override
-	public void onModuleInserted( net.minecraft.world.item.ItemStack stack, ModuleType module, boolean toggled) {
+	public void onModuleInserted(ItemStack stack, ModuleType module, boolean toggled) {
 		super.onModuleInserted(stack, module, toggled);
 
 		if (module == ModuleType.SPEED)
@@ -93,7 +81,7 @@ public class ProtectoBlockEntity extends DisguisableBlockEntity implements ITick
 	}
 
 	@Override
-	public void onModuleRemoved(net.minecraft.world.item.ItemStack stack, ModuleType module, boolean toggled) {
+	public void onModuleRemoved(ItemStack stack, ModuleType module, boolean toggled) {
 		super.onModuleRemoved(stack, module, toggled);
 
 		if (module == ModuleType.SPEED)
@@ -121,13 +109,5 @@ public class ProtectoBlockEntity extends DisguisableBlockEntity implements ITick
 	@Override
 	public boolean ignoresOwner() {
 		return ignoreOwner.get();
-	}
-
-	@Override
-	public <T> void onOptionChanged(Option<T> option) {
-		if (option == disabled && disabled.get() && getBlockState().getValue(ProtectoBlock.ACTIVATED))
-			level.setBlockAndUpdate(worldPosition, getBlockState().setValue(ProtectoBlock.ACTIVATED, false));
-
-		super.onOptionChanged(option);
 	}
 }

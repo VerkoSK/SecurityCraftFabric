@@ -463,7 +463,7 @@ public class Sentry extends PathfinderMob implements RangedAttackMob, IEMPAffect
 	}
 
 	@Override
-	public void setOwner(String uuid, String name) {
+	public void setOwner(String name, String uuid) {
 		entityData.set(OWNER, new Owner(name, uuid));
 	}
 
@@ -569,7 +569,7 @@ public class Sentry extends PathfinderMob implements RangedAttackMob, IEMPAffect
 			if (be instanceof IOwnable ownable) {
 				Owner owner = getOwner();
 
-				ownable.setOwner(owner.getUUID(), owner.getName());
+				ownable.setOwner(owner.getName(), owner.getUUID());
 			}
 		}
 		else

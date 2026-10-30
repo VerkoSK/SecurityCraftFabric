@@ -1,15 +1,11 @@
 package net.geforcemods.securitycraft.blockentities;
 
-import java.util.List;
-
 import net.geforcemods.securitycraft.SCContent;
 import net.geforcemods.securitycraft.api.Option;
 import net.geforcemods.securitycraft.api.Option.BooleanOption;
-import net.geforcemods.securitycraft.api.Option.DisabledOption;
 import net.geforcemods.securitycraft.api.Option.IgnoreOwnerOption;
 import net.geforcemods.securitycraft.api.Option.IntOption;
 import net.geforcemods.securitycraft.api.Option.TargetingModeOption;
-import net.geforcemods.securitycraft.api.Owner;
 import net.geforcemods.securitycraft.blocks.SometimesVisibleBlock;
 import net.geforcemods.securitycraft.misc.ModuleType;
 import net.geforcemods.securitycraft.misc.TargetingMode;
@@ -20,6 +16,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.OwnableEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -30,89 +27,66 @@ public class FloorTrapBlockEntity extends DisguisableBlockEntity implements ITic
 	private IntOption disappearDelay = new IntOption("disappearDelay", 5, 0, 200, 1);
 	private IntOption reappearDelay = new IntOption("reappearDelay", 20, 5, 200, 1);
 	private TargetingModeOption targetingMode = new TargetingModeOption(TargetingMode.PLAYERS);
-	private DisabledOption disabled = new DisabledOption(false);
-	private boolean shouldDisappear, shouldReappear;
-	private int disappearTicks = -1, reappearTicks = -1;
+	private boolean shouldDisappear = false, shouldReappear = false;
+	private int ticksUntilDisappearing = -1, ticksUntilReappearing = -1;
 
 	public FloorTrapBlockEntity(BlockPos pos, BlockState state) {
 		super(SCContent.FLOOR_TRAP_BLOCK_ENTITY, pos, state);
 	}
 
 	@Override
-	public void tick(Level level, BlockPos pos, BlockState state) {
-		if (level.isClientSide) {
-			if (shouldReappear && reappearTicks-- <= 0)
-				shouldReappear = false;
-
-			return;
-		}
-
-		if (isDisabled())
-			return;
-
-		if (shouldReappear) {
-			if (reappearTicks-- <= 0)
-				reappear();
-
-			return;
-		}
-
-		if (shouldDisappear) {
-			if (disappearTicks-- <= 0)
+	public void tick(Level level, BlockPos pos, BlockState state) { //server only as per FloorTrapBlock
+		if (!shouldReappear && shouldDisappear) {
+			if (ticksUntilDisappearing-- <= 0)
 				disappear();
 
 			return;
 		}
 
-		TargetingMode mode = getTargetingMode();
-		List<LivingEntity> entities = level.getEntitiesOfClass(LivingEntity.class, new AABB(pos.above()).setMaxY(pos.getY() + 1.1666D), e -> mode.canAttackEntity(e, this, entity -> false));
+		TargetingMode mode = targetingMode.get();
 
-		if (!entities.isEmpty())
-			scheduleDisappear();
+		//@formatter:off
+		shouldDisappear = level.getEntitiesOfClass(LivingEntity.class, new AABB(pos.above()).setMaxY(pos.getY() + 1.1666D), e -> e.canBeSeenByAnyone() && !(e instanceof OwnableEntity ownableEntity && allowsOwnableEntity(ownableEntity)) && !isAllowed(e) && !(isOwnedBy(e) && ignoresOwner()))
+			.stream()
+			.anyMatch(entity -> mode.allowsPlayers() && entity instanceof Player || mode.allowsMobs());
+		//@formatter:on
+
+		if (shouldReappear && ticksUntilReappearing-- <= 0 && !shouldDisappear)
+			reappear();
+
+		scheduleDisappear(false);
 	}
 
-	public boolean onlyAllowsOwnedEntities(LivingEntity entity) {
-		if (entity instanceof OwnableEntity ownableEntity) {
-			Owner otherOwner = new Owner();
-			LivingEntity owner = ownableEntity.getOwner();
-
-			if (owner != null)
-				otherOwner.set(owner.getName().getString(), owner.getUUID().toString());
-			else if (ownableEntity.getOwnerUUID() != null)
-				otherOwner.set("owner", ownableEntity.getOwnerUUID().toString());
-
-			return ignoresOwner() && isOwnedBy(otherOwner) || !ignoresOwner() && isAllowed(otherOwner.getName());
-		}
-
-		return false;
+	public static void particleTick(Level level, BlockPos pos, BlockState state, FloorTrapBlockEntity blockEntity) { //client only, and is only called when invisible
+		level.addParticle(SCContent.FLOOR_TRAP_CLOUD, false, pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D, 0.0D, 0.0D, 0.0D);
 	}
 
-	public void scheduleDisappear() {
-		scheduleDisappear(disappearDelay.get(), false);
+	public void scheduleDisappear(boolean force) {
+		scheduleDisappear(disappearDelay.get(), force);
 	}
 
 	public void scheduleDisappear(int delay, boolean force) {
-		if (shouldDisappear && !force)
-			return;
+		if (force)
+			shouldDisappear = true;
 
-		disappearTicks = delay;
-		shouldDisappear = true;
+		if (shouldDisappear)
+			ticksUntilDisappearing = delay;
 	}
 
 	public void disappear() {
 		level.setBlockAndUpdate(worldPosition, getBlockState().setValue(SometimesVisibleBlock.INVISIBLE, true));
-		level.playSound(null, worldPosition, SoundEvents.ENDERMAN_TELEPORT, SoundSource.BLOCKS, 1.0F, 1.0F);
+		level.playSound(null, worldPosition, SoundEvents.ENDER_DRAGON_FLAP, SoundSource.BLOCKS, 1.0F, 2.0F);
 		shouldDisappear = false;
+		scheduleReappear();
+	}
+
+	public void scheduleReappear() {
 		scheduleReappear(reappearDelay.get());
-		level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 2);
 	}
 
 	public void scheduleReappear(int delay) {
-		if (shouldReappear)
-			return;
-
-		reappearTicks = delay;
 		shouldReappear = true;
+		ticksUntilReappearing = delay;
 	}
 
 	public void reappear() {
@@ -123,35 +97,32 @@ public class FloorTrapBlockEntity extends DisguisableBlockEntity implements ITic
 	@Override
 	public void saveAdditional(CompoundTag tag) {
 		super.saveAdditional(tag);
+		tag.putBoolean("should_disappear", shouldDisappear);
 		tag.putBoolean("should_reappear", shouldReappear);
-		tag.putInt("reappear_ticks", reappearTicks);
+		tag.putInt("ticks_until_disappearing", ticksUntilDisappearing);
+		tag.putInt("ticks_until_reappearing", ticksUntilReappearing);
 	}
 
 	@Override
 	public void load(CompoundTag tag) {
 		super.load(tag);
+		shouldDisappear = tag.getBoolean("should_disappear");
 		shouldReappear = tag.getBoolean("should_reappear");
-		reappearTicks = tag.getInt("reappear_ticks");
-
-		if (level != null && level.isClientSide && shouldReappear && getBlockState().getValue(SometimesVisibleBlock.INVISIBLE))
-			spawnParticles();
-	}
-
-	private void spawnParticles() {
-		level.addParticle(SCContent.FLOOR_TRAP_CLOUD, worldPosition.getX() + 0.5D, worldPosition.getY() + 0.5D, worldPosition.getZ() + 0.5D, 0.0D, 0.0D, 0.0D);
+		ticksUntilDisappearing = tag.getInt("ticks_until_disappearing");
+		ticksUntilReappearing = tag.getInt("ticks_until_reappearing");
 	}
 
 	@Override
 	public ModuleType[] acceptedModules() {
 		return new ModuleType[] {
-				ModuleType.DISGUISE, ModuleType.ALLOWLIST
+				ModuleType.DISGUISE, ModuleType.ALLOWLIST, ModuleType.SMART
 		};
 	}
 
 	@Override
 	public Option<?>[] customOptions() {
 		return new Option[] {
-				ignoreOwner, disappearInstantlyInChains, disappearDelay, reappearDelay, targetingMode, disabled
+				ignoreOwner, targetingMode, disappearInstantlyInChains, disappearDelay, reappearDelay
 		};
 	}
 
@@ -162,13 +133,5 @@ public class FloorTrapBlockEntity extends DisguisableBlockEntity implements ITic
 
 	public boolean shouldDisappearInstantlyInChains() {
 		return disappearInstantlyInChains.get();
-	}
-
-	public boolean isDisabled() {
-		return disabled.get();
-	}
-
-	public TargetingMode getTargetingMode() {
-		return targetingMode.get();
 	}
 }
