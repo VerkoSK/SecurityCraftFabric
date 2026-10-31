@@ -2,15 +2,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "redstone",
   "key": {
-    "B": {
-      "item": "securitycraft:reinforced_stone_button"
-    },
-    "I": {
-      "item": "minecraft:iron_ingot"
-    },
-    "R": {
-      "item": "minecraft:redstone"
-    }
+    "B": "securitycraft:reinforced_stone_button",
+    "I": "#c:ingots/iron",
+    "R": "minecraft:redstone"
   },
   "pattern": [
     " I ",
