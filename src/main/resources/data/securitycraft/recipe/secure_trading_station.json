@@ -2,18 +2,10 @@
   "type": "minecraft:crafting_shaped",
   "category": "redstone",
   "key": {
-    "G": {
-      "item": "securitycraft:reinforced_glass"
-    },
-    "H": {
-      "item": "securitycraft:reinforced_hopper"
-    },
-    "R": {
-      "item": "securitycraft:reinforced_redstone_block"
-    },
-    "S": {
-      "item": "securitycraft:reinforced_stone_slab"
-    }
+    "G": "securitycraft:reinforced_glass",
+    "H": "securitycraft:reinforced_hopper",
+    "R": "securitycraft:reinforced_redstone_block",
+    "S": "securitycraft:reinforced_stone_slab"
   },
   "pattern": [
     "GGG",
