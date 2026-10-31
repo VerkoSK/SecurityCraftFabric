@@ -44,7 +44,7 @@ import snownee.jade.api.config.IPluginConfig;
  * data, so it needs its own {@link IServerDataProvider} to sync the "is this locked" flag to the client.
  */
 @WailaPlugin(SecurityCraft.MODID)
-public final class SCJadePlugin implements IWailaPlugin, IBlockComponentProvider, IServerDataProvider<BlockAccessor> {
+public final class SCJadePlugin implements IWailaPlugin, IBlockComponentProvider {
 	private static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(SecurityCraft.MODID, "info");
 	private static final ResourceLocation SHOW_OWNER = ResourceLocation.fromNamespaceAndPath(SecurityCraft.MODID, "showowner");
 	private static final ResourceLocation SHOW_MODULES = ResourceLocation.fromNamespaceAndPath(SecurityCraft.MODID, "showmodules");
@@ -53,9 +53,31 @@ public final class SCJadePlugin implements IWailaPlugin, IBlockComponentProvider
 	private static final String LOCKED_OWNER_NAME_TAG = "securitycraft_locked_owner_name";
 	private static final String LOCKED_OWNER_UUID_TAG = "securitycraft_locked_owner_uuid";
 
+	public static final class ServerDataProvider implements IServerDataProvider<BlockAccessor> {
+		public static final ServerDataProvider INSTANCE = new ServerDataProvider();
+
+		@Override
+		public ResourceLocation getUid() {
+			return ID;
+		}
+
+		@Override
+		public void appendServerData(CompoundTag tag, BlockAccessor accessor) {
+			if (accessor.getLevel() instanceof ServerLevel level) {
+				ContainerLockData.LockedContainer lock = ContainerLockData.get(level).get(accessor.getPosition());
+
+				if (lock != null) {
+					tag.putBoolean(LOCKED_TAG, true);
+					tag.putString(LOCKED_OWNER_NAME_TAG, lock.getOwner().getName());
+					tag.putString(LOCKED_OWNER_UUID_TAG, lock.getOwner().getUUID());
+				}
+			}
+		}
+	}
+
 	@Override
 	public void register(IWailaCommonRegistration registration) {
-		registration.registerBlockDataProvider(this, BlockEntity.class);
+		registration.registerBlockDataProvider(ServerDataProvider.INSTANCE, BlockEntity.class);
 	}
 
 	@Override
@@ -90,20 +112,6 @@ public final class SCJadePlugin implements IWailaPlugin, IBlockComponentProvider
 
 			return accessor;
 		});
-	}
-
-	/** Server side: does this generic Key Panel lock cover the position being looked at, and if so, by whom? */
-	@Override
-	public void appendServerData(CompoundTag tag, BlockAccessor accessor) {
-		if (accessor.getLevel() instanceof ServerLevel level) {
-			ContainerLockData.LockedContainer lock = ContainerLockData.get(level).get(accessor.getPosition());
-
-			if (lock != null) {
-				tag.putBoolean(LOCKED_TAG, true);
-				tag.putString(LOCKED_OWNER_NAME_TAG, lock.getOwner().getName());
-				tag.putString(LOCKED_OWNER_UUID_TAG, lock.getOwner().getUUID());
-			}
-		}
 	}
 
 	@Override
