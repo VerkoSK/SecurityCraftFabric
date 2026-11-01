@@ -159,10 +159,10 @@ public class StateSelector extends Screen implements GuiEventListener, Narratabl
 		for (int i = 0; i < propertyButtons.size(); i++) {
 			String propertyName = propertyButtons.get(i).getProperty().getName();
 
-			guiGraphics.drawString(font, propertyName, xStart + 91 - font.width(propertyName) - 2, yStart + i * 23 + 10, 0x404040, false);
+			guiGraphics.drawString(font, propertyName, xStart + 91 - font.width(propertyName) - 2, yStart + i * 23 + 10, 0xFF404040, false);
 		}
 
-		guiGraphics.drawString(font, page + "/" + amountOfPages, xStart + 100, yStart + 130, 0x404040, false);
+		guiGraphics.drawString(font, page + "/" + amountOfPages, xStart + 100, yStart + 130, 0xFF404040, false);
 	}
 
 	private void mulPoseMatrix(PoseStack pose, Matrix4f matrix) {
