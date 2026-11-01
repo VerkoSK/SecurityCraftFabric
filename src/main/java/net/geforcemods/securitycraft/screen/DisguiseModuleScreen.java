@@ -84,6 +84,9 @@ public class DisguiseModuleScreen extends AbstractContainerScreen<DisguiseModule
 
 		module.set(SCContent.SAVED_BLOCK_STATE, new SavedBlockState(state, standingOrWall));
 		ClientPlayNetworking.send(new SetStateOnDisguiseModulePayload(state, standingOrWall));
+
+		if (stateSelector != null)
+			stateSelector.close();
 	}
 
 	@Override

@@ -8,7 +8,19 @@ import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
+import com.mojang.blaze3d.ProjectionType;
 import com.mojang.blaze3d.platform.Lighting;
+import com.mojang.blaze3d.systems.CommandEncoder;
+import com.mojang.blaze3d.systems.GpuDevice;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.textures.FilterMode;
+import com.mojang.blaze3d.textures.GpuTexture;
+import com.mojang.blaze3d.textures.GpuTextureView;
+import com.mojang.blaze3d.textures.TextureFormat;
+import net.minecraft.client.gui.render.TextureSetup;
+import net.minecraft.client.gui.render.state.BlitRenderState;
+import net.minecraft.client.renderer.CachedOrthoProjectionMatrixBuffer;
+import org.joml.Matrix3x2f;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 
@@ -82,6 +94,11 @@ public class StateSelector extends Screen implements GuiEventListener, Narratabl
 	private Matrix4f dragRotation = new Matrix4f();
 	private boolean clickedInDragRegion = false;
 	private StandingOrWallType standingOrWallType = StandingOrWallType.NONE;
+	private GpuTexture previewTexture;
+	private GpuTextureView previewTextureView;
+	private GpuTexture previewDepthTexture;
+	private GpuTextureView previewDepthTextureView;
+	private CachedOrthoProjectionMatrixBuffer previewProjectionMatrixBuffer;
 
 	public StateSelector(StateSelectorAccessMenu menu, Component title, int xStart, int yStart, int slotToCheck, int dragStartX, int dragStartY, int previewXTranslation, int previewYTranslation) {
 		super(title);
@@ -133,28 +150,12 @@ public class StateSelector extends Screen implements GuiEventListener, Narratabl
 
 	@Override
 	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-		BufferSource bufferSource = minecraft.renderBuffers().bufferSource();
-		PoseStack pose = new PoseStack();
-
 		guiGraphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, xStart, yStart, 0, 0, 193, 150, 256, 256);
 		super.render(guiGraphics, mouseX, mouseY, partialTick);
 		previousPageButton.render(guiGraphics, mouseX, mouseY, partialTick);
 		nextPageButton.render(guiGraphics, mouseX, mouseY, partialTick);
-		pose.pushPose();
-		pose.translate(xStart + previewXTranslation, yStart + previewYTranslation, 100);
-		pose.scale(-24.0F, -24.0F, -24.0F);
-		pose.translate(0.5F, 0.5F, 0.5F);
-		pose.mulPose(DEFAULT_ROTATION_1);
-		mulPoseMatrix(pose, DEFAULT_ROTATION_2);
-		mulPoseMatrix(pose, dragRotation);
-		pose.translate(-0.5F, -0.5F, -0.5F);
-		renderBlockModel(state, pose, bufferSource);
 
-		if (beRenderer != null)
-			beRenderer.render(be, partialTick, pose, bufferSource, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, net.minecraft.world.phys.Vec3.ZERO);
-
-		bufferSource.endBatch();
-		pose.popPose();
+		renderBlockPreview(guiGraphics, partialTick);
 
 		for (int i = 0; i < propertyButtons.size(); i++) {
 			String propertyName = propertyButtons.get(i).getProperty().getName();
@@ -163,6 +164,111 @@ public class StateSelector extends Screen implements GuiEventListener, Narratabl
 		}
 
 		guiGraphics.drawString(font, page + "/" + amountOfPages, xStart + 100, yStart + 130, 0xFF404040, false);
+	}
+
+	private void renderBlockPreview(GuiGraphics guiGraphics, float partialTick) {
+		if (state == null || state.isAir())
+			return;
+
+		int previewSize = 56;
+		int centerX = xStart + previewXTranslation;
+		int centerY = yStart + previewYTranslation;
+		int x0 = centerX - previewSize / 2;
+		int y0 = centerY - previewSize / 2;
+		int x1 = x0 + previewSize;
+		int y1 = y0 + previewSize;
+
+		int guiScale = Math.max(1, (int) minecraft.getWindow().getGuiScale());
+		int texW = previewSize * guiScale;
+		int texH = previewSize * guiScale;
+
+		if (previewProjectionMatrixBuffer == null)
+			previewProjectionMatrixBuffer = new CachedOrthoProjectionMatrixBuffer("state_selector_preview", -1000.0F, 1000.0F, true);
+
+		GpuDevice device = RenderSystem.getDevice();
+		if (previewTexture == null || previewTexture.getWidth(0) != texW || previewTexture.getHeight(0) != texH) {
+			destroyPreviewTextures();
+			previewTexture = device.createTexture(() -> "sc_state_selector", 12, TextureFormat.RGBA8, texW, texH, 1, 1);
+			previewTexture.setTextureFilter(FilterMode.NEAREST, false);
+			previewTextureView = device.createTextureView(previewTexture);
+
+			previewDepthTexture = device.createTexture(() -> "sc_state_selector_depth", 8, TextureFormat.DEPTH32, texW, texH, 1, 1);
+			previewDepthTextureView = device.createTextureView(previewDepthTexture);
+		}
+
+		CommandEncoder encoder = device.createCommandEncoder();
+		encoder.clearColorAndDepthTextures(previewTexture, 0, previewDepthTexture, 1.0D);
+
+		RenderSystem.setProjectionMatrix(previewProjectionMatrixBuffer.getBuffer(texW, texH), ProjectionType.ORTHOGRAPHIC);
+		RenderSystem.outputColorTextureOverride = previewTextureView;
+		RenderSystem.outputDepthTextureOverride = previewDepthTextureView;
+
+		minecraft.gameRenderer.getLighting().setupFor(Lighting.Entry.ITEMS_3D);
+
+		PoseStack pose = new PoseStack();
+		pose.translate(texW / 2.0F, texH / 2.0F, 0.0F);
+		float scale = 24.0F * guiScale;
+		pose.scale(-scale, -scale, -scale);
+		pose.translate(0.5F, 0.5F, 0.5F);
+		pose.mulPose(DEFAULT_ROTATION_1);
+		mulPoseMatrix(pose, DEFAULT_ROTATION_2);
+		mulPoseMatrix(pose, dragRotation);
+		pose.translate(-0.5F, -0.5F, -0.5F);
+
+		BufferSource bufferSource = minecraft.renderBuffers().bufferSource();
+		renderBlockModel(state, pose, bufferSource);
+
+		if (beRenderer != null)
+			beRenderer.render(be, partialTick, pose, bufferSource, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, net.minecraft.world.phys.Vec3.ZERO);
+
+		bufferSource.endBatch();
+
+		RenderSystem.outputColorTextureOverride = null;
+		RenderSystem.outputDepthTextureOverride = null;
+		minecraft.gameRenderer.getLighting().setupFor(Lighting.Entry.LEVEL);
+
+		guiGraphics.guiRenderState.submitBlitToCurrentLayer(new BlitRenderState(
+				RenderPipelines.GUI_TEXTURED_PREMULTIPLIED_ALPHA,
+				TextureSetup.singleTexture(previewTextureView),
+				new Matrix3x2f(guiGraphics.pose()),
+				x0, y0, x1, y1,
+				0.0F, 1.0F, 1.0F, 0.0F,
+				-1,
+				guiGraphics.scissorStack.peek()
+		));
+	}
+
+	public void destroyPreviewTextures() {
+		if (previewTexture != null) {
+			previewTexture.close();
+			previewTexture = null;
+		}
+		if (previewTextureView != null) {
+			previewTextureView.close();
+			previewTextureView = null;
+		}
+		if (previewDepthTexture != null) {
+			previewDepthTexture.close();
+			previewDepthTexture = null;
+		}
+		if (previewDepthTextureView != null) {
+			previewDepthTextureView.close();
+			previewDepthTextureView = null;
+		}
+	}
+
+	public void close() {
+		destroyPreviewTextures();
+		if (previewProjectionMatrixBuffer != null) {
+			previewProjectionMatrixBuffer.close();
+			previewProjectionMatrixBuffer = null;
+		}
+	}
+
+	@Override
+	public void removed() {
+		super.removed();
+		close();
 	}
 
 	private void mulPoseMatrix(PoseStack pose, Matrix4f matrix) {
