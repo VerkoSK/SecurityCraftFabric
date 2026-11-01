@@ -261,7 +261,7 @@ public class SecurityCraftClient implements ClientModInitializer {
 
 
 
-			guiGraphics.drawString(font, cameraName, scaledWidth - font.width(cameraName) - 8, 25, 0xFFFFFF, true);
+			guiGraphics.drawString(font, cameraName, scaledWidth - font.width(cameraName) - 8, 25, 0xFFFFFFFF, true);
 
 			timeY += 10;
 
@@ -269,7 +269,7 @@ public class SecurityCraftClient implements ClientModInitializer {
 
 
 
-		guiGraphics.drawString(font, time, scaledWidth - font.width(time) - 4, timeY, 0xFFFFFF, true);
+		guiGraphics.drawString(font, time, scaledWidth - font.width(time) - 4, timeY, 0xFFFFFFFF, true);
 
 
 

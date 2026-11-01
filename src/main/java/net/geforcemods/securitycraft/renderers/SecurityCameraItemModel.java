@@ -28,6 +28,7 @@ public class SecurityCameraItemModel implements ItemModel {
 
 	@Override
 	public void update(ItemStackRenderState renderState, ItemStack stack, ItemModelResolver resolver, ItemDisplayContext displayContext, ClientLevel level, LivingEntity entity, int seed) {
+		renderState.appendModelIdentityElement(this);
 		ItemStackRenderState.LayerRenderState layer = renderState.newLayer();
 
 		layer.setupSpecialModel(SecurityCameraSpecialModelRenderer.INSTANCE, null);
