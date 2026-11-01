@@ -170,9 +170,9 @@ public class StateSelector extends Screen implements GuiEventListener, Narratabl
 		if (state == null || state.isAir())
 			return;
 
-		int previewSize = 56;
-		int centerX = xStart + previewXTranslation;
-		int centerY = yStart + previewYTranslation;
+		int previewSize = 68;
+		int centerX = xStart + previewXTranslation - 12;
+		int centerY = yStart + previewYTranslation - 12;
 		int x0 = centerX - previewSize / 2;
 		int y0 = centerY - previewSize / 2;
 		int x1 = x0 + previewSize;
@@ -209,7 +209,6 @@ public class StateSelector extends Screen implements GuiEventListener, Narratabl
 		pose.translate(texW / 2.0F, texH / 2.0F, 0.0F);
 		float scale = 24.0F * guiScale;
 		pose.scale(-scale, -scale, -scale);
-		pose.translate(0.5F, 0.5F, 0.5F);
 		pose.mulPose(DEFAULT_ROTATION_1);
 		mulPoseMatrix(pose, DEFAULT_ROTATION_2);
 		mulPoseMatrix(pose, dragRotation);
