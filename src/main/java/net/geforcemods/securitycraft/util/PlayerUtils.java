@@ -94,4 +94,39 @@ public class PlayerUtils {
 
 		return ItemStack.EMPTY;
 	}
+
+	/**
+	 * Resolves a player name to a UUID even when that player is offline, by falling back to the server's
+	 * {@link net.minecraft.server.players.GameProfileCache} (the same lookup vanilla commands like {@code /whitelist
+	 * add} use). Online players are checked first to avoid an unnecessary cache/Mojang lookup.
+	 *
+	 * @param name The player name to resolve
+	 * @return The player's UUID as a string, or empty if the name doesn't belong to a real account
+	 */
+	public static java.util.Optional<String> resolveUUID(String name) {
+		ServerPlayer online = getPlayerFromName(name);
+
+		if (online != null)
+			return java.util.Optional.of(online.getUUID().toString());
+
+		net.minecraft.server.MinecraftServer server = SecurityCraft.SERVER;
+
+		if (server == null)
+			return java.util.Optional.empty();
+
+		return server.services().nameToIdCache().get(name).map(nameAndId -> nameAndId.id().toString());
+	}
+
+	public static boolean isPlayerMountedOnCamera(net.minecraft.world.entity.LivingEntity entity) {
+		if (!(entity instanceof Player player))
+			return false;
+
+		if (player.level().isClientSide())
+			return net.fabricmc.api.EnvType.CLIENT == net.fabricmc.loader.api.FabricLoader.getInstance().getEnvironmentType() && net.geforcemods.securitycraft.SecurityCraftClient.isPlayerMountedOnCamera();
+		else if (player instanceof ServerPlayer serverPlayer)
+			return serverPlayer.getCamera() instanceof net.geforcemods.securitycraft.entity.camera.SecurityCamera;
+		else
+			return false;
+	}
 }
+

@@ -32,6 +32,8 @@ public class OwnableBlockEntity extends BlockEntity implements IOwnable {
 		sync();
 	}
 
+	public void onOwnerChanged(BlockState state, net.minecraft.world.level.Level level, BlockPos pos, net.minecraft.world.entity.player.Player player, Owner oldOwner, Owner newOwner) {}
+
 	/** Push the current state to nearby clients. */
 	protected void sync() {
 		if (level != null && !level.isClientSide())

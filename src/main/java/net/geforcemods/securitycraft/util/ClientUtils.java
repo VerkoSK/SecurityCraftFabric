@@ -26,6 +26,7 @@ public class ClientUtils {
 		else if (module == ModuleType.SPEED)
 			extractor.blit(RenderPipelines.GUI_TEXTURED, net.minecraft.resources.Identifier.withDefaultNamespace("textures/item/sugar.png"), x, y, 0.0F, 0.0F, 16, 16, 16, 16, color);
 
+		//a single long Component doesn't wrap on its own - split it into lines first, or it renders edge to edge
 		if (tooltip != null && mouseX >= x && mouseX < x + 16 && mouseY >= y && mouseY <= y + 16)
 			extractor.setComponentTooltipForNextFrame(font, java.util.List.of(tooltip), mouseX, mouseY);
 	}
@@ -45,6 +46,19 @@ public class ClientUtils {
 	/** Forces every rendered chunk to rebuild, so a live tint change is reflected immediately. */
 	public static void recompileAllChunksInRange() {
 		Minecraft.getInstance().levelExtractor.allChanged();
+	}
+
+	public static org.joml.Quaternionf fromXYZDegrees(float x, float y, float z) {
+		return fromXYZ((float) Math.toRadians(x), (float) Math.toRadians(y), (float) Math.toRadians(z));
+	}
+
+	public static org.joml.Quaternionf fromXYZ(float x, float y, float z) {
+		org.joml.Quaternionf quaternion = new org.joml.Quaternionf();
+
+		quaternion.mul(new org.joml.Quaternionf((float) Math.sin(x / 2.0F), 0.0F, 0.0F, (float) Math.cos(x / 2.0F)));
+		quaternion.mul(new org.joml.Quaternionf(0.0F, (float) Math.sin(y / 2.0F), 0.0F, (float) Math.cos(y / 2.0F)));
+		quaternion.mul(new org.joml.Quaternionf(0.0F, 0.0F, (float) Math.sin(z / 2.0F), (float) Math.cos(z / 2.0F)));
+		return quaternion;
 	}
 
 	/** Fills a rectangle with a left-to-right colour gradient (ARGB), drawn as 1px vertical strips. */
