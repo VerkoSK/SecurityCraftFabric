@@ -1,0 +1,7 @@
+{
+	"_comment": "Blocks the Key Panel/Keypad can convert into SecurityCraft's keypad chest (and restore back to on unprotect). Must be a ChestBlock (or a subclass) whose block entity is a ChestBlockEntity (or a subclass) - most modded 'wooden chest' blocks that reuse vanilla's chest mechanics qualify. Add your own via a datapack.",
+	"replace": false,
+	"values": [
+		"minecraft:chest"
+	]
+}

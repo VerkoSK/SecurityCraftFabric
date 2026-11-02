@@ -1,17 +1,18 @@
 package net.geforcemods.securitycraft.inventory;
 
 import net.geforcemods.securitycraft.SCContent;
+import net.geforcemods.securitycraft.components.SavedBlockState;
 import net.geforcemods.securitycraft.util.PlayerUtils;
+import net.geforcemods.securitycraft.util.StandingOrWallType;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.state.BlockState;
 
-/** Container for the disguise module: a single slot holding the block the module disguises as (stored in its CONTAINER component). */
-public class DisguiseModuleMenu extends AbstractContainerMenu {
+public class DisguiseModuleMenu extends StateSelectorAccessMenu {
 	private final ModuleItemContainer inventory;
 
 	public DisguiseModuleMenu(int windowId, Inventory playerInventory) {
@@ -79,6 +80,21 @@ public class DisguiseModuleMenu extends AbstractContainerMenu {
 	@Override
 	public boolean stillValid(Player player) {
 		return true;
+	}
+
+	@Override
+	public ItemStack getStateStack() {
+		return slots.get(0).getItem();
+	}
+
+	@Override
+	public BlockState getSavedState() {
+		return inventory.getModule().getOrDefault(SCContent.SAVED_BLOCK_STATE, SavedBlockState.EMPTY).state();
+	}
+
+	@Override
+	public StandingOrWallType getStandingOrWallType() {
+		return inventory.getModule().getOrDefault(SCContent.SAVED_BLOCK_STATE, SavedBlockState.EMPTY).standingOrWallType();
 	}
 
 	public ModuleItemContainer getInventory() {

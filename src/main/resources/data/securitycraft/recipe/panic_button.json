@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "B": {
+      "item": "securitycraft:reinforced_stone_button"
+    },
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    }
+  },
+  "pattern": [
+    " I ",
+    "IBI",
+    " R "
+  ],
+  "result": {
+    "id": "securitycraft:panic_button"
+  },
+  "show_notification": true
+}

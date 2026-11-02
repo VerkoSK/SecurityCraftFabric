@@ -25,6 +25,10 @@ public class PictureButton extends Button.Plain {
 	private int drawWidth;
 	private int drawHeight;
 
+	public PictureButton(int xPos, int yPos, int width, int height, Identifier sprite, int textureX, int textureY, int drawOffsetX, int drawOffsetY, int drawWidth, int drawHeight, int textureWidth, int textureHeight, OnPress onPress) {
+		this(xPos, yPos, width, height, sprite, drawOffsetX, drawOffsetY, drawWidth, drawHeight, onPress);
+	}
+
 	public PictureButton(int xPos, int yPos, int width, int height, Identifier sprite, int drawOffsetX, int drawOffsetY, int drawWidth, int drawHeight, OnPress onPress) {
 		super(xPos, yPos, width, height, Component.empty(), onPress, DEFAULT_NARRATION);
 		this.sprite = sprite;
