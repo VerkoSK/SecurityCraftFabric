@@ -4,6 +4,9 @@
 	"version": "${version}",
 	"name": "SecurityCraft",
 	"accessWidener": "securitycraft.accesswidener",
+	"mixins": [
+		"securitycraft.mixins.json"
+	],
 	"description": "Adds a load of things to keep your house safe with and defend yourself from attackers. Fabric port by Verkos, based on the original NeoForge/Forge mod by the SecurityCraft team.",
 	"authors": [
 		"Verkos"
@@ -39,7 +42,7 @@
 	"depends": {
 		"fabricloader": ">=0.16.0",
 		"fabric-api": "*",
-		"minecraft": ">=26.1.1",
+		"minecraft": ">=26.1",
 		"java": ">=21"
 	},
 	"suggests": {

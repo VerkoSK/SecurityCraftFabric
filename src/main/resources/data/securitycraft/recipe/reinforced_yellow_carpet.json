@@ -9,8 +9,8 @@
     "MM"
   ],
   "result": {
-    "id": "securitycraft:reinforced_yellow_carpet",
-    "count": 3
+    "count": 3,
+    "id": "securitycraft:reinforced_yellow_carpet"
   },
   "show_notification": true
 }

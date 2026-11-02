@@ -11,6 +11,11 @@ public class ActiveBasedTextureButton extends PictureButton {
 		this.inactiveSprite = inactiveSprite;
 	}
 
+	public ActiveBasedTextureButton(int xPos, int yPos, int width, int height, Identifier sprite, Identifier inactiveSprite, int textureX, int textureY, int drawOffsetX, int drawOffsetY, int drawWidth, int drawHeight, int textureWidth, int textureHeight, OnPress onPress) {
+		super(xPos, yPos, width, height, sprite, textureX, textureY, drawOffsetX, drawOffsetY, drawWidth, drawHeight, textureWidth, textureHeight, onPress);
+		this.inactiveSprite = inactiveSprite;
+	}
+
 	@Override
 	public Identifier getSpriteLocation() {
 		return active ? super.getSpriteLocation() : inactiveSprite;
