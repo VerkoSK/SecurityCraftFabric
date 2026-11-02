@@ -8,7 +8,7 @@ import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.item.ItemModel;
 import net.minecraft.client.renderer.item.ItemModelResolver;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ItemOwner;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 
@@ -22,12 +22,14 @@ public class SecurityCameraItemModel implements ItemModel {
 			new ItemTransform(new Vector3f(0, 0, 180), new Vector3f(-2.0F / 16.0F, 7.0F / 16.0F, -6.25F / 16.0F), new Vector3f(0.25F, 0.25F, 0.25F)),
 			new ItemTransform(new Vector3f(0, 225, 180), new Vector3f(1.5F / 16.0F, 8.0F / 16.0F, 0), new Vector3f(1.0F, 1.0F, 1.0F)),
 			new ItemTransform(new Vector3f(0, 0, 180), new Vector3f(-4.0F / 16.0F, 6.0F / 16.0F, 2.0F / 16.0F), new Vector3f(0.5F, 0.5F, 0.5F)),
-			new ItemTransform(new Vector3f(0, 0, 180), new Vector3f(-8.0F / 16.0F, 8.0F / 16.0F, 0.5F / 16.0F), new Vector3f(1.0F, 1.0F, 1.0F)));
+			new ItemTransform(new Vector3f(0, 0, 180), new Vector3f(-8.0F / 16.0F, 8.0F / 16.0F, 0.5F / 16.0F), new Vector3f(1.0F, 1.0F, 1.0F)),
+			ItemTransform.NO_TRANSFORM);
 
 	private SecurityCameraItemModel() {}
 
 	@Override
-	public void update(ItemStackRenderState renderState, ItemStack stack, ItemModelResolver resolver, ItemDisplayContext displayContext, ClientLevel level, LivingEntity entity, int seed) {
+	public void update(ItemStackRenderState renderState, ItemStack stack, ItemModelResolver resolver, ItemDisplayContext displayContext, ClientLevel level, ItemOwner itemOwner, int seed) {
+		renderState.appendModelIdentityElement(this);
 		ItemStackRenderState.LayerRenderState layer = renderState.newLayer();
 
 		layer.setupSpecialModel(SecurityCameraSpecialModelRenderer.INSTANCE, null);

@@ -55,7 +55,7 @@ public class DisguiseModuleScreen extends AbstractContainerScreen<DisguiseModule
 
 	@Override
 	protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
-		guiGraphics.drawString(font, title, imageWidth / 2 - font.width(title) / 2, 6, 0x404040, false);
+		guiGraphics.drawString(font, title, imageWidth / 2 - font.width(title) / 2, 6, 0xFF404040, false);
 	}
 
 	@Override
@@ -73,6 +73,8 @@ public class DisguiseModuleScreen extends AbstractContainerScreen<DisguiseModule
 
 	@Override
 	public void onClose() {
+		if (stateSelector != null)
+			stateSelector.onClose();
 		super.onClose();
 
 		ItemStack module = menu.getInventory().getModule();

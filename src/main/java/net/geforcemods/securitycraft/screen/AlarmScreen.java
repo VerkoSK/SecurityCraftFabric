@@ -253,7 +253,7 @@ public class AlarmScreen extends Screen {
 				ResourceLocation soundEvent = filteredSoundEvents.get(i);
 				Component name = getSoundEventComponent(soundEvent);
 
-				guiGraphics.drawString(font, name, left + TEXT_OFFSET, yStart, 0xC6C6C6, false);
+				guiGraphics.drawString(font, name, left + TEXT_OFFSET, yStart, 0xFFC6C6C6, false);
 				guiGraphics.blit(RenderPipelines.GUI_TEXTURED, GUI_TEXTURE, left, yStart - 1, i == slotIndex && mouseX >= left && mouseX < min && mouseY >= top && mouseY <= bottom ? 9 : 0, 246, 10, 10, 256, 256);
 			}
 		}

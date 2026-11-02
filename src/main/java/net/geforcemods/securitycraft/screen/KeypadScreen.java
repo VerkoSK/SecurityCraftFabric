@@ -61,8 +61,8 @@ public class KeypadScreen extends Screen {
 	@Override
 	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
 		super.render(guiGraphics, mouseX, mouseY, partialTick);
-		guiGraphics.drawCenteredString(font, title, width / 2, height / 2 - 40, 0xFFFFFF);
-		guiGraphics.drawCenteredString(font, Component.translatable("gui.securitycraft:keypad.owner", ownerName), width / 2, height / 2 - 28, 0xA0A0A0);
+		guiGraphics.drawCenteredString(font, title, width / 2, height / 2 - 40, 0xFFFFFFFF);
+		guiGraphics.drawCenteredString(font, Component.translatable("gui.securitycraft:keypad.owner", ownerName), width / 2, height / 2 - 28, 0xFFA0A0A0);
 	}
 
 	@Override
