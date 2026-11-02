@@ -12,17 +12,23 @@ import net.minecraft.client.model.geom.builders.PartDefinition;
 
 public class SecurityCameraModel {
 	public static final float DEFAULT_X_ROT = 0.2617993877991494F;
-	private ModelPart attachment;
-	private ModelPart stickTop;
-	private ModelPart cameraRotationPoint1;
+	private final ModelPart root;
+	public final ModelPart attachment;
+	public final ModelPart stickTop;
+	public final ModelPart cameraRotationPoint1;
 	public final ModelPart cameraRotationPoint2;
 
 	public SecurityCameraModel(ModelPart modelPart) {
+		root = modelPart;
 		attachment = modelPart.getChild("attachment");
 		stickTop = modelPart.getChild("stick_top");
 		stickTop.xRot = -(DEFAULT_X_ROT * 2);
 		cameraRotationPoint1 = setUpRotationPoint(modelPart, "camera_rotation_point_1", "camera_body");
 		cameraRotationPoint2 = setUpRotationPoint(modelPart, "camera_rotation_point_2", "camera_lens");
+	}
+
+	public ModelPart root() {
+		return root;
 	}
 
 	public static LayerDefinition createLayer() {

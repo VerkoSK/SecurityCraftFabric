@@ -111,10 +111,12 @@ public class SecurityCameraRenderer implements BlockEntityRenderer<SecurityCamer
 			model.cameraRotationPoint2.visible = false;
 
 		int tint = ARGB.colorFromFloat(1.0F, r, g, b);
-		collector.submitCustomGeometry(pose, RenderType.entitySolid(state.texture), (vertexPose, vertexBuilder) -> {
-			model.renderToBuffer(pose, vertexBuilder, state.lightCoords, OverlayTexture.NO_OVERLAY, tint);
-		});
-		model.cameraRotationPoint2.visible = true;
+		collector.submitModelPart(model.attachment, pose, RenderType.entitySolid(state.texture), state.lightCoords, OverlayTexture.NO_OVERLAY, null, false, false, -1, null, 0);
+		collector.submitModelPart(model.stickTop, pose, RenderType.entitySolid(state.texture), state.lightCoords, OverlayTexture.NO_OVERLAY, null, false, false, -1, null, 0);
+		collector.submitModelPart(model.cameraRotationPoint1, pose, RenderType.entitySolid(state.texture), state.lightCoords, OverlayTexture.NO_OVERLAY, null, false, false, -1, null, 0);
+		if (state.hasColor) {
+			collector.submitModelPart(model.cameraRotationPoint2, pose, RenderType.entitySolid(state.texture), state.lightCoords, OverlayTexture.NO_OVERLAY, null, false, false, tint, null, 0);
+		}
 		pose.popPose();
 	}
 }

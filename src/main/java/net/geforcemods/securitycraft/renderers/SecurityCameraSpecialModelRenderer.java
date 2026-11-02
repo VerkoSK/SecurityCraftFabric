@@ -6,9 +6,7 @@ import net.geforcemods.securitycraft.models.SecurityCameraModel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.SubmitNodeCollector;
-import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.special.NoDataSpecialModelRenderer;
-import net.minecraft.util.ARGB;
 import net.minecraft.world.item.ItemDisplayContext;
 
 public class SecurityCameraSpecialModelRenderer implements NoDataSpecialModelRenderer {
@@ -23,14 +21,22 @@ public class SecurityCameraSpecialModelRenderer implements NoDataSpecialModelRen
 			model = new SecurityCameraModel(Minecraft.getInstance().getEntityModels().bakeLayer(SecurityCraftClient.SECURITY_CAMERA_LOCATION));
 			model.cameraRotationPoint2.visible = false;
 			model.rotateCameraY(0.0F);
+			model.rotateCameraX(SecurityCameraModel.DEFAULT_X_ROT);
 		}
 
-		int tint = ARGB.colorFromFloat(1.0F, 0.4392156862745098F, 1.0F, 1.0F);
-		collector.submitCustomGeometry(pose, RenderType.entitySolid(SecurityCameraRenderer.TEXTURE), (vertexPose, vertexBuilder) -> {
-			model.renderToBuffer(pose, vertexBuilder, light, overlay, tint);
-		});
+		collector.submitModelPart(model.root(), pose, RenderType.entitySolid(SecurityCameraRenderer.TEXTURE), light, overlay, null, false, hasFoil, -1, null, seed);
 	}
 
 	@Override
-	public void getExtents(java.util.Set<org.joml.Vector3f> extents) {}
+	public void getExtents(java.util.Set<org.joml.Vector3f> extents) {
+		if (model == null) {
+			model = new SecurityCameraModel(Minecraft.getInstance().getEntityModels().bakeLayer(SecurityCraftClient.SECURITY_CAMERA_LOCATION));
+			model.cameraRotationPoint2.visible = false;
+			model.rotateCameraY(0.0F);
+			model.rotateCameraX(SecurityCameraModel.DEFAULT_X_ROT);
+		}
+
+		PoseStack pose = new PoseStack();
+		model.root().getExtentsForGui(pose, extents);
+	}
 }
