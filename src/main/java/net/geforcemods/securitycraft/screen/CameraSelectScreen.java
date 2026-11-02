@@ -142,7 +142,7 @@ public abstract class CameraSelectScreen extends Screen implements StillValid {
 				redstoneModuleState.render(guiGraphics, button.getX() + 4, button.getY() + 25);
 		}
 
-		guiGraphics.drawString(font, title, leftPos + xSize / 2 - font.width(title) / 2, topPos + 6, 4210752, false);
+		guiGraphics.drawString(font, title, leftPos + xSize / 2 - font.width(title) / 2, topPos + 6, 0xFF404040, false);
 	}
 
 	@Override
