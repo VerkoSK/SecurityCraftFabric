@@ -191,7 +191,6 @@ public class StateSelector extends Screen implements GuiEventListener, Narratabl
 		if (previewTexture == null || previewTexture.getWidth(0) != texW || previewTexture.getHeight(0) != texH) {
 			destroyPreviewTextures();
 			previewTexture = device.createTexture(() -> "sc_state_selector", 12, TextureFormat.RGBA8, texW, texH, 1, 1);
-			previewTexture.setTextureFilter(FilterMode.NEAREST, false);
 			previewTextureView = device.createTextureView(previewTexture);
 
 			previewDepthTexture = device.createTexture(() -> "sc_state_selector_depth", 8, TextureFormat.DEPTH32, texW, texH, 1, 1);
@@ -227,7 +226,7 @@ public class StateSelector extends Screen implements GuiEventListener, Narratabl
 
 		guiGraphics.guiRenderState.submitBlitToCurrentLayer(new BlitRenderState(
 				RenderPipelines.GUI_TEXTURED_PREMULTIPLIED_ALPHA,
-				TextureSetup.singleTexture(previewTextureView),
+				TextureSetup.singleTexture(previewTextureView, RenderSystem.getSamplerCache().getClampToEdge(FilterMode.NEAREST)),
 				new Matrix3x2f(guiGraphics.pose()),
 				x0, y0, x1, y1,
 				0.0F, 1.0F, 1.0F, 0.0F,

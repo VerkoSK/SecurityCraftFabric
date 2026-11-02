@@ -111,10 +111,12 @@ public class SecurityCameraRenderer implements BlockEntityRenderer<SecurityCamer
 			model.cameraRotationPoint2.visible = false;
 
 		int tint = ARGB.colorFromFloat(1.0F, r, g, b);
-		collector.submitCustomGeometry(pose, net.minecraft.client.renderer.rendertype.RenderTypes.entitySolid(state.texture), (vertexPose, vertexBuilder) -> {
-			model.renderToBuffer(pose, vertexBuilder, state.lightCoords, OverlayTexture.NO_OVERLAY, tint);
-		});
-		model.cameraRotationPoint2.visible = true;
+		collector.submitModelPart(model.attachment, pose, net.minecraft.client.renderer.rendertype.RenderTypes.entitySolid(state.texture), state.lightCoords, OverlayTexture.NO_OVERLAY, null, false, false, -1, null, 0);
+		collector.submitModelPart(model.stickTop, pose, net.minecraft.client.renderer.rendertype.RenderTypes.entitySolid(state.texture), state.lightCoords, OverlayTexture.NO_OVERLAY, null, false, false, -1, null, 0);
+		collector.submitModelPart(model.cameraRotationPoint1, pose, net.minecraft.client.renderer.rendertype.RenderTypes.entitySolid(state.texture), state.lightCoords, OverlayTexture.NO_OVERLAY, null, false, false, -1, null, 0);
+		if (state.hasColor) {
+			collector.submitModelPart(model.cameraRotationPoint2, pose, net.minecraft.client.renderer.rendertype.RenderTypes.entitySolid(state.texture), state.lightCoords, OverlayTexture.NO_OVERLAY, null, false, false, tint, null, 0);
+		}
 		pose.popPose();
 	}
 }
