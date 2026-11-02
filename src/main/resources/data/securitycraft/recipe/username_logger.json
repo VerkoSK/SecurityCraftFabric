@@ -2,15 +2,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "P": {
-      "item": "securitycraft:portable_radar"
-    },
-    "R": {
-      "item": "minecraft:redstone"
-    },
-    "S": {
-      "tag": "securitycraft:reinforced/stone_crafting_materials"
-    }
+    "P": "securitycraft:portable_radar",
+    "R": "minecraft:redstone",
+    "S": "#securitycraft:reinforced/stone_crafting_materials"
   },
   "pattern": [
     "SPS",
@@ -18,6 +12,7 @@
     "SSS"
   ],
   "result": {
+    "count": 1,
     "id": "securitycraft:username_logger"
   },
   "show_notification": true
