@@ -158,7 +158,7 @@ public class UsernameLoggerScreen extends Screen implements StillValid {
 						Component localized = Utils.localize("gui.securitycraft:logger.date", dateFormat.format(new Date(entry.timestamp())));
 
 						guiGraphics.setTooltipForNextFrame(font, Component.literal(entry.uuid().toString()), mouseX, mouseY);
-						guiGraphics.drawString(font, localized, leftPos + (imageWidth / 2 - font.width(localized) / 2), bottom + 5, 0x404040, false);
+						guiGraphics.drawString(font, localized, leftPos + (imageWidth / 2 - font.width(localized) / 2), bottom + 5, 0xFF404040, false);
 					}
 				}
 			}

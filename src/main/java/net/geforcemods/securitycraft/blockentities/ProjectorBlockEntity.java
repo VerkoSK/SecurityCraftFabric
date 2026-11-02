@@ -18,6 +18,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.level.Level;
@@ -74,12 +75,21 @@ public class ProjectorBlockEntity extends DisguisableBlockEntity implements Cont
 	}
 
 	@Override
+	public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+		return saveCustomOnly(registries);
+	}
+
+	@Override
+	public ClientboundBlockEntityDataPacket getUpdatePacket() {
+		return ClientboundBlockEntityDataPacket.create(this);
+	}
+
 	public void loadAdditional(ValueInput input) {
 		super.loadAdditional(input);
 
-		projectionWidth = input.getIntOr("width", 0);
-		projectionHeight = input.getIntOr("height", 0);
-		projectionRange = input.getIntOr("range", 0);
+		projectionWidth = input.getIntOr("width", 1);
+		projectionHeight = input.getIntOr("height", 1);
+		projectionRange = input.getIntOr("range", 5);
 		projectionOffset = input.getIntOr("offset", 0);
 		activatedByRedstone = isModuleEnabled(ModuleType.REDSTONE);
 		active = input.getBooleanOr("active", false);
