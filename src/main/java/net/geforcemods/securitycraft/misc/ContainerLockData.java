@@ -49,7 +49,7 @@ public class ContainerLockData extends SavedData {
 	private final Map<Long, LockedContainer> locks = new HashMap<>();
 
 	private static final Codec<ContainerLockData> CODEC = CompoundTag.CODEC.xmap(ContainerLockData::load, data -> data.save(new CompoundTag()));
-	private static final SavedDataType<ContainerLockData> TYPE = new SavedDataType<>(net.minecraft.resources.Identifier.fromNamespaceAndPath("securitycraft", "securitycraft_container_locks"), ContainerLockData::new, CODEC, null);
+	private static final SavedDataType<ContainerLockData> TYPE = new SavedDataType<>(net.geforcemods.securitycraft.SCContent.id("securitycraft_container_locks"), ContainerLockData::new, CODEC, null);
 
 	public static ContainerLockData get(ServerLevel level) {
 		return level.getDataStorage().computeIfAbsent(TYPE);
@@ -158,6 +158,10 @@ public class ContainerLockData extends SavedData {
 		}
 
 		setDirty();
+	}
+
+	public List<BlockPos> getAllLockedPositions() {
+		return locks.keySet().stream().map(BlockPos::of).toList();
 	}
 
 	/** A same-block horizontal neighbour that also holds an inventory, i.e. likely the other half of a double container. */

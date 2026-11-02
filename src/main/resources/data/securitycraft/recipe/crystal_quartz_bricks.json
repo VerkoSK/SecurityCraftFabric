@@ -9,8 +9,8 @@
     "BB"
   ],
   "result": {
-    "id": "securitycraft:crystal_quartz_bricks",
-    "count": 4
+    "count": 4,
+    "id": "securitycraft:crystal_quartz_bricks"
   },
   "show_notification": true
 }
