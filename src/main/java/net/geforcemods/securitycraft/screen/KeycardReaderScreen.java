@@ -213,18 +213,18 @@ public class KeycardReaderScreen extends AbstractContainerScreen<KeycardReaderMe
 
 	@Override
 	protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
-		guiGraphics.drawString(font, title, imageWidth / 2 - font.width(title) / 2, 6, 4210752, false);
-		guiGraphics.drawString(font, signatureText, signatureTextStartX, 23, 4210752, false);
+		guiGraphics.drawString(font, title, imageWidth / 2 - font.width(title) / 2, 6, 0xFF404040, false);
+		guiGraphics.drawString(font, signatureText, signatureTextStartX, 23, 0xFF404040, false);
 
 		Component keycardLevels = Utils.localize("gui.securitycraft:keycard_reader.keycard_levels");
 
-		guiGraphics.drawString(font, keycardLevels, 170 - font.width(keycardLevels), 56, 4210752, false);
+		guiGraphics.drawString(font, keycardLevels, 170 - font.width(keycardLevels), 56, 0xFF404040, false);
 
 		for (int i = 1; i <= 5; i++) {
-			guiGraphics.drawString(font, "" + i, 91, 55 + 17 * i, 4210752, false);
+			guiGraphics.drawString(font, "" + i, 91, 55 + 17 * i, 0xFF404040, false);
 		}
 
-		guiGraphics.drawString(font, playerInventoryTitle, 8, imageHeight - 93, 4210752, false);
+		guiGraphics.drawString(font, playerInventoryTitle, 8, imageHeight - 93, 0xFF404040, false);
 	}
 
 	@Override

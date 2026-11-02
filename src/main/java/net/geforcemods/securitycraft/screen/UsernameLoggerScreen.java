@@ -72,7 +72,7 @@ public class UsernameLoggerScreen extends Screen implements StillValid {
 	@Override
 	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
 		super.render(guiGraphics, mouseX, mouseY, partialTick);
-		guiGraphics.drawString(font, logged, width / 2 - font.width(logged) / 2, topPos + 6, 4210752, false);
+		guiGraphics.drawString(font, logged, width / 2 - font.width(logged) / 2, topPos + 6, 0xFF404040, false);
 	}
 
 	@Override
