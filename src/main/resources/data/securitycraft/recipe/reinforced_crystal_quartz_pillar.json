@@ -9,8 +9,8 @@
     "B"
   ],
   "result": {
-    "id": "securitycraft:reinforced_crystal_quartz_pillar",
-    "count": 2
+    "count": 2,
+    "id": "securitycraft:reinforced_crystal_quartz_pillar"
   },
   "show_notification": true
 }

@@ -1,71 +1,68 @@
 package net.geforcemods.securitycraft.recipe;
 
+import java.util.List;
+import java.util.function.Function;
+import java.util.function.Supplier;
+
 import net.geforcemods.securitycraft.SCContent;
-import net.geforcemods.securitycraft.components.BoundMines;
+import net.geforcemods.securitycraft.components.GlobalPositionComponent;
+import net.geforcemods.securitycraft.components.GlobalPositions;
+import net.geforcemods.securitycraft.components.NamedPositions;
+import net.geforcemods.securitycraft.items.CameraMonitorItem;
 import net.geforcemods.securitycraft.items.MineRemoteAccessToolItem;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.CraftingInput;
+import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 
-/**
- * Combines a bound mine remote access tool with an empty one, copying the bound mine positions onto both results.
- * Fabric adaptation of upstream's {@code CopyPositionComponentItemRecipe}: the upstream version compares raw NBT
- * tags, but this port stores the bound mines in the {@link BoundMines} data component instead, so the "has data"
- * check goes through {@link MineRemoteAccessToolItem#hasMineAdded} and the copy is a component merge instead of an
- * NBT merge.
- */
-public class CopyPositionComponentItemRecipe extends CustomRecipe {
-	@Override
-	public boolean matches(CraftingInput inv, net.minecraft.world.level.Level level) {
-		ItemStack withData = ItemStack.EMPTY;
-		ItemStack withoutData = ItemStack.EMPTY;
+@SuppressWarnings("rawtypes")
+public class CopyPositionComponentItemRecipe<T extends GlobalPositionComponent> extends CombineRecipe {
+	private final Supplier<Item> item;
+	private final Supplier<DataComponentType<T>> component;
+	private final Function<List, T> creator;
+	private final T defaultInstance;
+	private final Supplier<RecipeSerializer<? extends CustomRecipe>> serializer;
 
-		for (int i = 0; i < inv.size(); i++) {
-			ItemStack stack = inv.getItem(i);
+	public CopyPositionComponentItemRecipe(CraftingBookCategory craftingBookCategory, Supplier<Item> item, Supplier<DataComponentType<T>> component, Function<List, T> creator, T defaultInstance, Supplier<RecipeSerializer<? extends CustomRecipe>> serializer) {
+		super(craftingBookCategory);
+		this.item = item;
+		this.component = component;
+		this.creator = creator;
+		this.defaultInstance = defaultInstance;
+		this.serializer = serializer;
+	}
 
-			if (stack.isEmpty())
-				continue;
+	public static CopyPositionComponentItemRecipe<NamedPositions> cameraMonitor(CraftingBookCategory craftingBookCategory) {
+		return new CopyPositionComponentItemRecipe<>(craftingBookCategory, () -> SCContent.CAMERA_MONITOR, () -> SCContent.BOUND_CAMERAS, NamedPositions::new, CameraMonitorItem.DEFAULT_NAMED_POSITIONS, () -> SCContent.COPY_CAMERA_MONITOR_RECIPE_SERIALIZER);
+	}
 
-			if (!(stack.getItem() instanceof Item item) || item != SCContent.MINE_REMOTE_ACCESS_TOOL)
-				return false;
-
-			if (MineRemoteAccessToolItem.hasMineAdded(stack)) {
-				if (!withData.isEmpty())
-					return false;
-
-				withData = stack;
-			}
-			else {
-				if (!withoutData.isEmpty())
-					return false;
-
-				withoutData = stack;
-			}
-		}
-
-		return !withData.isEmpty() && !withoutData.isEmpty();
+	public static CopyPositionComponentItemRecipe<GlobalPositions> mineRemoteAccessTool(CraftingBookCategory craftingBookCategory) {
+		return new CopyPositionComponentItemRecipe<>(craftingBookCategory, () -> SCContent.MINE_REMOTE_ACCESS_TOOL, () -> SCContent.BOUND_MINES, GlobalPositions::new, MineRemoteAccessToolItem.DEFAULT_POSITIONS, () -> SCContent.COPY_MINE_REMOTE_ACCESS_TOOL_RECIPE_SERIALIZER);
 	}
 
 	@Override
-	public ItemStack assemble(CraftingInput inv) {
-		for (int i = 0; i < inv.size(); i++) {
-			ItemStack stack = inv.getItem(i);
+	public boolean matchesFirstItem(ItemStack stack) {
+		return stack.is(item.get()) && !stack.getOrDefault(component.get(), defaultInstance).isEmpty();
+	}
 
-			if (!stack.isEmpty() && MineRemoteAccessToolItem.hasMineAdded(stack)) {
-				ItemStack result = new ItemStack(SCContent.MINE_REMOTE_ACCESS_TOOL, 2);
+	@Override
+	public boolean matchesSecondItem(ItemStack stack) {
+		return stack.is(item.get()) && stack.getOrDefault(component.get(), defaultInstance).isEmpty();
+	}
 
-				result.set(SCContent.BOUND_MINES, stack.get(SCContent.BOUND_MINES));
-				return result;
-			}
-		}
+	@Override
+	public ItemStack combine(ItemStack itemWithPositions, ItemStack emptyItem) {
+		T positionsToCopy = itemWithPositions.getOrDefault(component.get(), defaultInstance);
+		ItemStack result = new ItemStack(item.get(), 2);
 
-		return ItemStack.EMPTY;
+		result.set(component.get(), creator.apply(positionsToCopy.positions()));
+		return result;
 	}
 
 	@Override
 	public RecipeSerializer<? extends CustomRecipe> getSerializer() {
-		return SCContent.COPY_MINE_REMOTE_ACCESS_TOOL_RECIPE_SERIALIZER;
+		return serializer.get();
 	}
 }

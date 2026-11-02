@@ -68,7 +68,9 @@ public abstract class CombineRecipe extends CustomRecipe {
 
 	public abstract boolean matchesSecondItem(ItemStack stack);
 
-	public abstract boolean canBeCombined(ItemStack firstItem, ItemStack secondItem);
+	public boolean canBeCombined(ItemStack firstItem, ItemStack secondItem) {
+		return !firstItem.isEmpty() && !secondItem.isEmpty();
+	}
 
 	public abstract ItemStack combine(ItemStack firstItem, ItemStack secondItem);
 }

@@ -206,21 +206,25 @@ public class MineRemoteAccessToolScreen extends Screen implements StillValid {
 		if (mrat.getItem() != SCContent.MINE_REMOTE_ACCESS_TOOL)
 			return null;
 
-		BoundMines mines = mrat.get(SCContent.BOUND_MINES);
+		net.geforcemods.securitycraft.components.GlobalPositions mines = mrat.get(SCContent.BOUND_MINES);
 
-		return mines == null ? null : mines.positions().get(mine);
+		if (mines == null || mine < 0 || mine >= mines.positions().size())
+			return null;
+
+		net.minecraft.core.GlobalPos globalPos = mines.positions().get(mine);
+		return globalPos == null ? null : globalPos.pos();
 	}
 
 	/**
 	 * @param mine 0 based
 	 */
 	private void removeFromToolAndUpdate(int mine) {
-		BoundMines mines = mrat.get(SCContent.BOUND_MINES);
+		net.geforcemods.securitycraft.components.GlobalPositions mines = mrat.get(SCContent.BOUND_MINES);
 
 		if (mines == null)
 			return;
 
-		mrat.set(SCContent.BOUND_MINES, mines.withoutSlot(mine));
+		mines.remove(SCContent.BOUND_MINES, mrat, mine);
 		ClientPlayNetworking.send(new RemoveMineFromMRATPayload(mine));
 	}
 

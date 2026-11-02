@@ -55,11 +55,21 @@ public class PlayerUtils {
 	}
 
 	public static void sendMessageToPlayer(Player player, MutableComponent title, MutableComponent message, ChatFormatting color) {
-		//only the name in the brackets carries the colour; the message itself stays white, like upstream.
-		//withStyle on the whole component would tint the message too, which is what this used to do.
-		MutableComponent line = Component.literal("[").append(title.setStyle(Style.EMPTY.withColor(color))).append(Component.literal("] ")).setStyle(Style.EMPTY.withColor(ChatFormatting.WHITE)).append(message);
+		sendMessageToPlayer(player, title, message, color, false);
+	}
 
-		player.sendSystemMessage(line);
+	/**
+	 * Sends a chat message from one side only, matching upstream. Callers like the mine remote access tool run on both
+	 * the client and the server, so without this check the same message would be printed to chat twice.
+	 */
+	public static void sendMessageToPlayer(Player player, MutableComponent title, MutableComponent message, ChatFormatting color, boolean shouldSendFromClient) {
+		if (player != null && player.level().isClientSide() == shouldSendFromClient) {
+			//only the name in the brackets carries the colour; the message itself stays white, like upstream.
+			//withStyle on the whole component would tint the message too, which is what this used to do.
+			MutableComponent line = Component.literal("[").append(title.setStyle(Style.EMPTY.withColor(color))).append(Component.literal("] ")).setStyle(Style.EMPTY.withColor(ChatFormatting.WHITE)).append(message);
+
+			player.sendSystemMessage(line);
+		}
 	}
 
 	/**
@@ -99,7 +109,24 @@ public class PlayerUtils {
 		if (online != null)
 			return java.util.Optional.of(online.getUUID().toString());
 
-		return java.util.Optional.empty();
+		net.minecraft.server.MinecraftServer server = SecurityCraft.SERVER;
+
+		if (server == null)
+			return java.util.Optional.empty();
+
+		return server.services().nameToIdCache().get(name).map(nameAndId -> nameAndId.id().toString());
+	}
+
+	public static boolean isPlayerMountedOnCamera(net.minecraft.world.entity.LivingEntity entity) {
+		if (!(entity instanceof Player player))
+			return false;
+
+		if (player.level().isClientSide())
+			return net.fabricmc.api.EnvType.CLIENT == net.fabricmc.loader.api.FabricLoader.getInstance().getEnvironmentType() && net.geforcemods.securitycraft.SecurityCraftClient.isPlayerMountedOnCamera();
+		else if (player instanceof ServerPlayer serverPlayer)
+			return serverPlayer.getCamera() instanceof net.geforcemods.securitycraft.entity.camera.SecurityCamera;
+		else
+			return false;
 	}
 }
 

@@ -3,10 +3,7 @@
     "type": "minecraft:model",
     "model": "securitycraft:item/reinforced_purple_glazed_terracotta",
     "tints": [
-      {
-        "type": "minecraft:constant",
-        "value": -6710887
-      }
+      { "type": "minecraft:constant", "value": -6710887 }
     ]
   }
 }

@@ -8,8 +8,8 @@
     "BBB"
   ],
   "result": {
-    "id": "securitycraft:smooth_crystal_quartz_slab",
-    "count": 6
+    "count": 6,
+    "id": "securitycraft:smooth_crystal_quartz_slab"
   },
   "show_notification": true
 }
