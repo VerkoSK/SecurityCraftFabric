@@ -1,0 +1,561 @@
+package net.geforcemods.securitycraft.screen.components;
+
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.input.InputWithModifiers;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import org.joml.Matrix4f;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
+
+import com.mojang.blaze3d.platform.Lighting;
+import com.mojang.blaze3d.ProjectionType;
+import com.mojang.blaze3d.platform.Lighting;
+import com.mojang.blaze3d.systems.CommandEncoder;
+import com.mojang.blaze3d.systems.GpuDevice;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.textures.FilterMode;
+import com.mojang.blaze3d.textures.GpuTexture;
+import com.mojang.blaze3d.textures.GpuTextureView;
+import com.mojang.blaze3d.textures.TextureFormat;
+import net.minecraft.client.renderer.ProjectionMatrixBuffer;
+import org.joml.Matrix3x2f;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
+
+import net.geforcemods.securitycraft.SCContent;
+import net.geforcemods.securitycraft.inventory.StateSelectorAccessMenu;
+import net.geforcemods.securitycraft.util.ClientUtils;
+import net.geforcemods.securitycraft.util.FullbrightBlockAndTintGetter;
+import net.geforcemods.securitycraft.util.StandingOrWallType;
+import net.geforcemods.securitycraft.util.Utils;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.ComponentPath;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.narration.NarratableEntry;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.util.LightCoordsUtil;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
+import net.minecraft.client.renderer.Rect2i;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerListener;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.StandingAndWallBlockItem;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.level.block.state.properties.Property;
+
+public class StateSelector extends Screen implements GuiEventListener, NarratableEntry, ContainerListener {
+	private static final Identifier TEXTURE = SCContent.id("textures/gui/container/state_selector.png");
+	private static final int PAGE_LENGTH = 5;
+	private static final float ROTATION_SENSITIVITY = 0.1F;
+	private static final Vector3f Y_DRAG_ROTATION_VECTOR = new Vector3f((float) (1.0D / Math.sqrt(2)), 0, (float) (1.0D / Math.sqrt(2)));
+	private static final Quaternionf DEFAULT_ROTATION_1 = ClientUtils.fromXYZDegrees(15.0F, -135.0F, 0.0F);
+	private static final Matrix4f DEFAULT_ROTATION_2 = new Matrix4f().rotate(30.0F * ((float) Math.PI / 180.0F), Y_DRAG_ROTATION_VECTOR).rotate(Axis.YP.rotationDegrees(-180.0F));
+	private static final EnumProperty<StandingOrWallType> STANDING_OR_WALL_TYPE_PROPERTY = EnumProperty.create("standing_or_wall", StandingOrWallType.class);
+	private final StateSelectorAccessMenu menu;
+	private final int xStart, yStart, slotToCheck;
+	private final int previewXTranslation, previewYTranslation;
+	private final HoverChecker dragHoverChecker;
+	private final List<Rect2i> extraAreas = new ArrayList<>();
+	private FullbrightBlockAndTintGetter fullbrightBlockAndTintGetter;
+	private Item blockItem = Items.AIR;
+	private BlockState state = Blocks.AIR.defaultBlockState();
+	private List<Property<?>> properties = List.of();
+	private BlockEntity be = null;
+	private List<BlockStatePropertyButton<?>> propertyButtons = new ArrayList<>();
+	private int page, amountOfPages;
+	private Button previousPageButton, nextPageButton;
+	private Matrix4f dragRotation = new Matrix4f();
+	private boolean clickedInDragRegion = false;
+	private StandingOrWallType standingOrWallType = StandingOrWallType.NONE;
+	private GpuTexture previewTexture;
+	private GpuTextureView previewTextureView;
+	private GpuTexture previewDepthTexture;
+	private GpuTextureView previewDepthTextureView;
+	private ProjectionMatrixBuffer previewProjectionMatrixBuffer;
+
+	public StateSelector(StateSelectorAccessMenu menu, Component title, int xStart, int yStart, int slotToCheck, int dragStartX, int dragStartY, int previewXTranslation, int previewYTranslation) {
+		super(title);
+		this.menu = menu;
+		this.xStart = xStart;
+		this.yStart = yStart;
+		this.slotToCheck = slotToCheck;
+		this.previewXTranslation = previewXTranslation;
+		this.previewYTranslation = previewYTranslation;
+		dragStartX += xStart;
+		dragStartY += yStart;
+		dragHoverChecker = new HoverChecker(dragStartY, dragStartY + 47, dragStartX, dragStartX + 47);
+		copyStateFromMenu();
+		menu.addSlotListener(this);
+	}
+
+	@Override
+	protected void init() {
+		previousPageButton = Button.builder(Component.literal("<"), button -> turnPage(-1)).bounds(xStart + 69, yStart + 125, 20, 20).build();
+		nextPageButton = Button.builder(Component.literal(">"), button -> turnPage(1)).bounds(xStart + 126, yStart + 125, 20, 20).build();
+		updateButtons(true, false);
+		extraAreas.add(new Rect2i(xStart, 0, 193, minecraft.getWindow().getGuiScaledHeight()));
+		fullbrightBlockAndTintGetter = new FullbrightBlockAndTintGetter(minecraft.level);
+	}
+
+	private void copyStateFromMenu() {
+		if (menu.getStateStack().getItem() instanceof BlockItem item) {
+			BlockState savedState = menu.getSavedState();
+			Block blockToCheck = item.getBlock();
+
+			standingOrWallType = menu.getStandingOrWallType();
+
+			if (item instanceof StandingAndWallBlockItem sawbi && standingOrWallType == StandingOrWallType.WALL)
+				blockToCheck = sawbi.wallBlock;
+
+			if (savedState != null && blockToCheck == savedState.getBlock())
+				state = savedState;
+			else
+				state = item.getBlock().defaultBlockState();
+
+			blockItem = item;
+		}
+	}
+
+	@Override
+	public void extractBackground(GuiGraphicsExtractor extractor, int mouseX, int mouseY, float partialTick) {
+		// No-op: StateSelector is an embedded component of a container screen; the parent screen renders the background.
+	}
+
+	@Override
+	public void extractRenderState(GuiGraphicsExtractor extractor, int mouseX, int mouseY, float partialTick) {
+		extractor.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, xStart, yStart, 0.0F, 0.0F, 193, 150, 256, 256);
+		super.extractRenderState(extractor, mouseX, mouseY, partialTick);
+		previousPageButton.extractRenderState(extractor, mouseX, mouseY, partialTick);
+		nextPageButton.extractRenderState(extractor, mouseX, mouseY, partialTick);
+
+		renderBlockPreview(extractor, partialTick);
+
+		for (int i = 0; i < propertyButtons.size(); i++) {
+			String propertyName = propertyButtons.get(i).getProperty().getName();
+
+			extractor.text(font, propertyName, xStart + 91 - font.width(propertyName) - 2, yStart + i * 23 + 10, 0xFF404040, false);
+		}
+
+		extractor.text(font, page + "/" + amountOfPages, xStart + 100, yStart + 130, 0xFF404040, false);
+	}
+
+	private void renderBlockPreview(GuiGraphicsExtractor extractor, float partialTick) {
+		if (state == null || state.isAir())
+			return;
+
+		int previewSize = 68;
+		int centerX = xStart + previewXTranslation - 12;
+		int centerY = yStart + previewYTranslation - 12;
+		int x0 = centerX - previewSize / 2;
+		int y0 = centerY - previewSize / 2;
+
+		int guiScale = Math.max(1, (int) minecraft.getWindow().getGuiScale());
+		int texW = previewSize * guiScale;
+		int texH = previewSize * guiScale;
+
+		if (previewProjectionMatrixBuffer == null)
+			previewProjectionMatrixBuffer = new ProjectionMatrixBuffer("state_selector_preview");
+
+		GpuDevice device = RenderSystem.getDevice();
+		if (previewTexture == null || previewTexture.getWidth(0) != texW || previewTexture.getHeight(0) != texH) {
+			destroyPreviewTextures();
+			previewTexture = device.createTexture(() -> "sc_state_selector", 12, TextureFormat.RGBA8, texW, texH, 1, 1);
+			previewTextureView = device.createTextureView(previewTexture);
+
+			previewDepthTexture = device.createTexture(() -> "sc_state_selector_depth", 8, TextureFormat.DEPTH32, texW, texH, 1, 1);
+			previewDepthTextureView = device.createTextureView(previewDepthTexture);
+		}
+
+		CommandEncoder encoder = device.createCommandEncoder();
+		encoder.clearColorAndDepthTextures(previewTexture, 0, previewDepthTexture, 1.0D);
+
+		RenderSystem.setProjectionMatrix(previewProjectionMatrixBuffer.getBuffer(new Matrix4f().setOrtho(0.0F, texW, texH, 0.0F, -1000.0F, 1000.0F)), ProjectionType.ORTHOGRAPHIC);
+		RenderSystem.outputColorTextureOverride = previewTextureView;
+		RenderSystem.outputDepthTextureOverride = previewDepthTextureView;
+
+		minecraft.gameRenderer.getLighting().setupFor(Lighting.Entry.ITEMS_3D);
+
+		PoseStack pose = new PoseStack();
+		pose.translate(texW / 2.0F, texH / 2.0F, 0.0F);
+		float scale = 24.0F * guiScale;
+		pose.scale(-scale, -scale, -scale);
+		pose.mulPose(DEFAULT_ROTATION_1);
+		mulPoseMatrix(pose, DEFAULT_ROTATION_2);
+		mulPoseMatrix(pose, dragRotation);
+		pose.translate(-0.5F, -0.5F, -0.5F);
+
+		BufferSource bufferSource = minecraft.renderBuffers().bufferSource();
+		renderBlockModel(state, pose, bufferSource);
+
+		bufferSource.endBatch();
+
+		RenderSystem.outputColorTextureOverride = null;
+		RenderSystem.outputDepthTextureOverride = null;
+		minecraft.gameRenderer.getLighting().setupFor(Lighting.Entry.LEVEL);
+
+		extractor.blit(previewTextureView, RenderSystem.getSamplerCache().getClampToEdge(FilterMode.NEAREST), x0, y0, previewSize, previewSize, 0.0F, 1.0F, 1.0F, 0.0F);
+	}
+
+	public void destroyPreviewTextures() {
+		if (previewTexture != null) {
+			previewTexture.close();
+			previewTexture = null;
+		}
+		if (previewTextureView != null) {
+			previewTextureView.close();
+			previewTextureView = null;
+		}
+		if (previewDepthTexture != null) {
+			previewDepthTexture.close();
+			previewDepthTexture = null;
+		}
+		if (previewDepthTextureView != null) {
+			previewDepthTextureView.close();
+			previewDepthTextureView = null;
+		}
+	}
+
+	@Override
+	public void onClose() {
+		destroyPreviewTextures();
+		if (previewProjectionMatrixBuffer != null) {
+			previewProjectionMatrixBuffer.close();
+			previewProjectionMatrixBuffer = null;
+		}
+		super.onClose();
+	}
+
+	@Override
+	public void removed() {
+		destroyPreviewTextures();
+		if (previewProjectionMatrixBuffer != null) {
+			previewProjectionMatrixBuffer.close();
+			previewProjectionMatrixBuffer = null;
+		}
+		super.removed();
+	}
+
+	private void mulPoseMatrix(PoseStack pose, Matrix4f matrix) {
+		pose.last().pose().mul(matrix);
+		pose.last().normal().mul(new org.joml.Matrix3f(matrix));
+	}
+
+	public void updateButtons(boolean updateInfo, boolean slotChanged) {
+		if (updateInfo) {
+			properties = new ArrayList<>(state.getProperties());
+			properties.removeIf(BlockStateProperties.WATERLOGGED::equals);
+
+			if (blockItem instanceof StandingAndWallBlockItem) {
+				properties.add(0, STANDING_OR_WALL_TYPE_PROPERTY);
+
+				if (slotChanged)
+					standingOrWallType = StandingOrWallType.STANDING;
+			}
+			else if (slotChanged)
+				standingOrWallType = StandingOrWallType.NONE;
+
+			amountOfPages = (int) Math.ceil(properties.size() / (float) PAGE_LENGTH);
+
+			page = switch (amountOfPages) {
+				case 0 -> 0;
+				default -> 1;
+			};
+
+			updateBlockEntityInfo(true);
+			dragRotation.identity();
+		}
+
+		int buttonY = 0;
+		int pageStartIndex = (page - 1) * PAGE_LENGTH;
+		int i = 0;
+
+		propertyButtons.forEach(this::removeWidget);
+		propertyButtons.clear();
+
+		for (Property<?> property : properties) {
+			if (i < pageStartIndex) {
+				i++;
+				continue;
+			}
+			else if (i >= pageStartIndex + PAGE_LENGTH)
+				break;
+
+			Collection<?> values = property.getPossibleValues();
+			Object defaultValue = property == STANDING_OR_WALL_TYPE_PROPERTY ? standingOrWallType : state.getValue(property);
+			int defaultValueIndex = 0;
+
+			for (Object o : values) {
+				if (o == defaultValue)
+					break;
+
+				defaultValueIndex++;
+			}
+
+			propertyButtons.add(addRenderableWidget(new BlockStatePropertyButton<>(xStart + 91, yStart + buttonY + 5, 100, 20, defaultValueIndex, property)));
+			buttonY += 23;
+			i++;
+		}
+
+		if (previousPageButton != null)
+			previousPageButton.active = page > 1;
+
+		if (nextPageButton != null)
+			nextPageButton.active = page != amountOfPages;
+	}
+
+	public void turnPage(int direction) {
+		page += Math.signum(direction);
+
+		if (page > amountOfPages)
+			page = 1;
+		else if (page < 1)
+			page = amountOfPages;
+
+		updateButtons(false, false);
+	}
+
+	private void updateBlockEntityInfo(boolean reset) {
+		if (reset) {
+			be = null;
+		}
+
+		if (state.hasBlockEntity()) {
+			if (be == null) {
+				Minecraft mc = Minecraft.getInstance();
+
+				be = ((EntityBlock) state.getBlock()).newBlockEntity(BlockPos.ZERO, state);
+
+				if (be != null) {
+					be.setLevel(mc.level);
+					be.applyComponentsFromItemStack(menu.getStateStack());
+				}
+			}
+			else
+				be.setBlockState(state);
+		}
+	}
+
+	public void renderBlockModel(BlockState state, PoseStack pose, MultiBufferSource bufferSource) {
+		if (state.getRenderShape() == RenderShape.MODEL) {
+			net.minecraft.client.renderer.block.dispatch.BlockStateModel model = minecraft.getModelManager().getBlockStateModelSet().get(state);
+			List<net.minecraft.client.renderer.block.dispatch.BlockStateModelPart> parts = new ArrayList<>();
+			model.collectParts(net.minecraft.util.RandomSource.create(42L), parts);
+
+			com.mojang.blaze3d.vertex.VertexConsumer consumer = bufferSource.getBuffer(net.minecraft.client.renderer.Sheets.cutoutBlockItemSheet());
+			com.mojang.blaze3d.vertex.QuadInstance quadInstance = new com.mojang.blaze3d.vertex.QuadInstance();
+			quadInstance.setColor(-1);
+			quadInstance.setLightCoords(LightCoordsUtil.FULL_BRIGHT);
+			quadInstance.setOverlayCoords(OverlayTexture.NO_OVERLAY);
+
+			for (net.minecraft.client.renderer.block.dispatch.BlockStateModelPart part : parts) {
+				for (net.minecraft.core.Direction dir : net.minecraft.core.Direction.values()) {
+					for (net.minecraft.client.resources.model.geometry.BakedQuad quad : part.getQuads(dir)) {
+						consumer.putBakedQuad(pose.last(), quad, quadInstance);
+					}
+				}
+				for (net.minecraft.client.resources.model.geometry.BakedQuad quad : part.getQuads(null)) {
+					consumer.putBakedQuad(pose.last(), quad, quadInstance);
+				}
+			}
+		}
+	}
+
+	@Override
+	public boolean mouseDragged(MouseButtonEvent event, double dragX, double dragY) {
+		if (event.button() == 0 && clickedInDragRegion) {
+			dragRotation.transpose();
+			dragRotation.mul(new Matrix4f().set(Axis.YN.rotation((float) dragX * ROTATION_SENSITIVITY)));
+			dragRotation.mul(new Matrix4f().set(new Quaternionf().fromAxisAngleRad(Y_DRAG_ROTATION_VECTOR, (float) dragY * ROTATION_SENSITIVITY)));
+			dragRotation.transpose();
+			return true;
+		}
+
+		return false;
+	}
+
+	@Override
+	public boolean isMouseOver(double mouseX, double mouseY) {
+		return (mouseX >= xStart && mouseX < xStart + 193 && mouseY >= yStart && mouseY < yStart + 150)
+				|| (dragHoverChecker != null && dragHoverChecker.checkHover(mouseX, mouseY));
+	}
+
+	@Override
+	public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+		for (int i = 0; i < propertyButtons.size(); i++) {
+			if (propertyButtons.get(i).mouseClicked(event, doubleClick))
+				return true;
+		}
+
+		if (previousPageButton != null && previousPageButton.mouseClicked(event, doubleClick))
+			return true;
+
+		if (nextPageButton != null && nextPageButton.mouseClicked(event, doubleClick))
+			return true;
+
+		if (dragHoverChecker != null && dragHoverChecker.checkHover((int) event.x(), (int) event.y())) {
+			clickedInDragRegion = true;
+			return true;
+		}
+
+		return event.x() >= xStart && event.x() < xStart + 193 && event.y() >= yStart && event.y() < yStart + 150;
+	}
+
+	@Override
+	public boolean mouseReleased(MouseButtonEvent event) {
+		clickedInDragRegion = false;
+
+		for (int i = 0; i < propertyButtons.size(); i++) {
+			if (propertyButtons.get(i).mouseReleased(event))
+				return true;
+		}
+
+		if (previousPageButton != null && previousPageButton.mouseReleased(event))
+			return true;
+
+		if (nextPageButton != null && nextPageButton.mouseReleased(event))
+			return true;
+
+		return false;
+	}
+
+	@Override
+	public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+		for (int i = 0; i < propertyButtons.size(); i++) {
+			if (propertyButtons.get(i).mouseScrolled(mouseX, mouseY, scrollX, scrollY))
+				return true;
+		}
+
+		return false;
+	}
+
+	@Override
+	public void slotChanged(AbstractContainerMenu menu, int slotIndex, ItemStack newStack) {
+		if (slotIndex == slotToCheck) {
+			if (newStack.getItem() instanceof BlockItem item) {
+				if (state == null || item.getBlock() != state.getBlock()) {
+					state = item.getBlock().defaultBlockState();
+					blockItem = item;
+				}
+			}
+			else {
+				state = Blocks.AIR.defaultBlockState();
+				blockItem = Items.AIR;
+			}
+
+			updateButtons(true, true);
+
+			if (this.menu != null)
+				this.menu.onStateChange(state);
+		}
+	}
+
+	@Override
+	public void changeFocus(ComponentPath path) {}
+
+	@Override
+	public List<? extends GuiEventListener> children() {
+		return List.of();
+	}
+
+	@Override
+	public void dataChanged(AbstractContainerMenu menu, int slotIndex, int value) {}
+
+	@Override
+	public void updateNarration(NarrationElementOutput narrationElementOutput) {}
+
+	@Override
+	public NarrationPriority narrationPriority() {
+		return NarrationPriority.NONE;
+	}
+
+	public BlockState getState() {
+		return state;
+	}
+
+	public StandingOrWallType getStandingOrWallType() {
+		return standingOrWallType;
+	}
+
+	public List<Rect2i> getGuiExtraAreas() {
+		return extraAreas;
+	}
+
+	public class BlockStatePropertyButton<T extends Comparable<T>> extends ToggleComponentButton {
+		private final Property<T> property;
+		private T value;
+
+		public BlockStatePropertyButton(int xPos, int yPos, int width, int height, int initialValue, Property<T> property) {
+			super(xPos, yPos, width, height, null, initialValue, property.getPossibleValues().size(), b -> {});
+			this.property = property;
+			onValueChange();
+		}
+
+		@Override
+		public void onValueChange() {
+			if (property != null) {
+				Collection<T> values = property.getPossibleValues();
+				int i = 0;
+
+				for (T t : values) {
+					if (i++ == getCurrentIndex()) {
+						value = t;
+						break;
+					}
+				}
+
+				setMessage(Component.literal(property.getName(value)));
+			}
+		}
+
+		@Override
+		public void onPress(InputWithModifiers input) {
+			super.onPress(input);
+
+			if (property == STANDING_OR_WALL_TYPE_PROPERTY) {
+				state = standingOrWallType.getNewState((StandingAndWallBlockItem) blockItem);
+				standingOrWallType = standingOrWallType == StandingOrWallType.STANDING ? StandingOrWallType.WALL : StandingOrWallType.STANDING;
+				updateButtons(true, false);
+				updateBlockEntityInfo(true);
+			}
+			else {
+				state = state.setValue(property, value);
+				updateBlockEntityInfo(false);
+			}
+
+			menu.onStateChange(state);
+		}
+
+		public Property<T> getProperty() {
+			return property;
+		}
+
+		public T getValue() {
+			return value;
+		}
+	}
+}

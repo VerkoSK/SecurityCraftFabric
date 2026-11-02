@@ -11,8 +11,13 @@ import net.minecraft.sounds.SoundEvent;
  * {@link #register()} has to be called from the mod initializer to put the events into the sound registry.
  */
 public enum SCSounds {
+	ALARM("alarm"),
+	CAMERAZOOMIN("camerazoomin"),
+	CAMERASNAP("camerasnap"),
 	ELECTRIFIED("electrified"),
-	LOCK("lock");
+	LOCK("lock"),
+	PING("ping"),
+	GET_ITEM("get_item");
 
 	public final String path;
 	public final Identifier location;

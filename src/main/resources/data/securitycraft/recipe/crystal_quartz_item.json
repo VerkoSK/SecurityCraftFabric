@@ -11,8 +11,8 @@
     "CQC"
   ],
   "result": {
-    "id": "securitycraft:crystal_quartz_item",
-    "count": 9
+    "count": 9,
+    "id": "securitycraft:crystal_quartz_item"
   },
   "show_notification": true
 }
