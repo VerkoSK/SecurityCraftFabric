@@ -2,15 +2,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "L": {
-      "item": "minecraft:redstone_lamp"
-    },
-    "R": {
-      "item": "securitycraft:portable_radar"
-    },
-    "S": {
-      "item": "minecraft:stick"
-    }
+    "L": "minecraft:redstone_lamp",
+    "R": "securitycraft:portable_radar",
+    "S": "#c:rods/wooden"
   },
   "pattern": [
     "L",
@@ -18,6 +12,7 @@
     "S"
   ],
   "result": {
+    "count": 1,
     "id": "securitycraft:motion_activated_light"
   },
   "show_notification": true
