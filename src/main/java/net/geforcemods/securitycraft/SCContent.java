@@ -858,7 +858,13 @@ public class SCContent {
 			{"reinforced_yellow_stained_glass", "glass"},
 			{"reinforced_yellow_stained_glass_pane", "pane"},
 			{"reinforced_yellow_terracotta", "cube"},
-			{"reinforced_yellow_wool", "cube"}
+			{"reinforced_yellow_wool", "cube"},
+			{"reinforced_chiseled_resin_bricks", "cube"},
+			{"reinforced_resin_block", "cube"},
+			{"reinforced_resin_brick_slab", "slab"},
+			{"reinforced_resin_brick_stairs", "stairs"},
+			{"reinforced_resin_brick_wall", "wall"},
+			{"reinforced_resin_bricks", "cube"}
 	};
 
 	public static ResourceLocation id(String name) {
