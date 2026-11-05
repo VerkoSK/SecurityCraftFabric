@@ -184,10 +184,10 @@ public class StateSelector extends Screen implements GuiEventListener, Narratabl
 		GpuDevice device = RenderSystem.getDevice();
 		if (previewTexture == null || previewTexture.getWidth(0) != texW || previewTexture.getHeight(0) != texH) {
 			destroyPreviewTextures();
-			previewTexture = device.createTexture(() -> "sc_state_selector", 12, GpuFormat.RGBA8_UNORM, texW, texH, 1, 1);
+			previewTexture = device.createTexture(() -> "sc_state_selector", 15, GpuFormat.RGBA8_UNORM, texW, texH, 1, 1);
 			previewTextureView = device.createTextureView(previewTexture);
 
-			previewDepthTexture = device.createTexture(() -> "sc_state_selector_depth", 8, GpuFormat.D32_FLOAT, texW, texH, 1, 1);
+			previewDepthTexture = device.createTexture(() -> "sc_state_selector_depth", 15, GpuFormat.D32_FLOAT, texW, texH, 1, 1);
 			previewDepthTextureView = device.createTextureView(previewDepthTexture);
 		}
 
