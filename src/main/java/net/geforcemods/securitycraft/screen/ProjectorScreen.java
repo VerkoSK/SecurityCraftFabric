@@ -78,7 +78,7 @@ public class ProjectorScreen extends AbstractContainerScreen<ProjectorMenu> impl
 			updateHorizontalToggleButtonTooltip();
 			projectionRangeSlider.setMinValue(projectionRangeSlider.getMinValue() - (horizontal ? 16 : -16));
 			projectionRangeSlider.setMaxValue(projectionRangeSlider.getMaxValue() - (horizontal ? 16 : -16));
-			projectionRangeSlider.setValue(oldValue - (horizontal ? 16 : -16));
+			projectionRangeSlider.setActualValue(oldValue - (horizontal ? 16 : -16));
 			applySliderValue(projectionRangeSlider);
 			ClientPlayNetworking.send(new SyncProjectorPayload(be.getBlockPos(), be.isHorizontal() ? 1 : 0, DataType.HORIZONTAL));
 		}));
