@@ -21,7 +21,9 @@ import com.mojang.blaze3d.textures.FilterMode;
 import com.mojang.blaze3d.textures.GpuTexture;
 import com.mojang.blaze3d.textures.GpuTextureView;
 import com.mojang.blaze3d.GpuFormat;
+import net.minecraft.client.gui.render.TextureSetup;
 import net.minecraft.client.renderer.ProjectionMatrixBuffer;
+import net.minecraft.client.renderer.state.gui.BlitRenderState;
 import org.joml.Matrix3x2f;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
@@ -215,7 +217,17 @@ public class StateSelector extends Screen implements GuiEventListener, Narratabl
 		RenderSystem.outputDepthTextureOverride = null;
 		minecraft.gameRenderer.lighting().setupFor(Lighting.Entry.LEVEL);
 
-		extractor.blit(previewTextureView, RenderSystem.getSamplerCache().getClampToEdge(FilterMode.NEAREST), x0, y0, previewSize, previewSize, 0.0F, 1.0F, 1.0F, 0.0F);
+		int x1 = x0 + previewSize;
+		int y1 = y0 + previewSize;
+		extractor.guiRenderState.addGuiElement(new BlitRenderState(
+				RenderPipelines.GUI_TEXTURED_PREMULTIPLIED_ALPHA,
+				TextureSetup.singleTexture(previewTextureView, RenderSystem.getSamplerCache().getClampToEdge(FilterMode.NEAREST)),
+				new Matrix3x2f(extractor.pose()),
+				x0, y0, x1, y1,
+				0.0F, 1.0F, 1.0F, 0.0F,
+				-1,
+				extractor.scissorStack.peek()
+		));
 	}
 
 	public void destroyPreviewTextures() {
