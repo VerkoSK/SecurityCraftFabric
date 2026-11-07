@@ -82,7 +82,7 @@ public class CallbackSlider extends AbstractSliderButton {
 		return (int) Math.round(getValue());
 	}
 
-	public void setValue(double newValue) {
+	public void setActualValue(double newValue) {
 		double clamped = Mth.clamp(newValue, min, max);
 
 		if (step > 0.0)
