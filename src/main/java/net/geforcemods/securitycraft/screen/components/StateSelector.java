@@ -380,17 +380,34 @@ public class StateSelector extends Screen implements GuiEventListener, Narratabl
 
 			com.mojang.blaze3d.vertex.VertexConsumer consumer = bufferSource.getBuffer(net.minecraft.client.renderer.Sheets.cutoutBlockItemSheet());
 			com.mojang.blaze3d.vertex.QuadInstance quadInstance = new com.mojang.blaze3d.vertex.QuadInstance();
-			quadInstance.setColor(-1);
 			quadInstance.setLightCoords(LightCoordsUtil.FULL_BRIGHT);
 			quadInstance.setOverlayCoords(OverlayTexture.NO_OVERLAY);
 
 			for (net.minecraft.client.renderer.block.dispatch.BlockStateModelPart part : parts) {
 				for (net.minecraft.core.Direction dir : net.minecraft.core.Direction.values()) {
 					for (net.minecraft.client.resources.model.geometry.BakedQuad quad : part.getQuads(dir)) {
+						int color = -1;
+						if (quad.materialInfo().isTinted()) {
+							net.minecraft.client.color.block.BlockTintSource tintSource = minecraft.getBlockColors().getTintSource(state, quad.materialInfo().tintIndex());
+							if (tintSource != null) {
+								int rawColor = fullbrightBlockAndTintGetter != null ? tintSource.colorInWorld(state, fullbrightBlockAndTintGetter, BlockPos.ZERO) : tintSource.color(state);
+								color = net.minecraft.util.ARGB.opaque(rawColor);
+							}
+						}
+						quadInstance.setColor(color);
 						consumer.putBakedQuad(pose.last(), quad, quadInstance);
 					}
 				}
 				for (net.minecraft.client.resources.model.geometry.BakedQuad quad : part.getQuads(null)) {
+					int color = -1;
+					if (quad.materialInfo().isTinted()) {
+						net.minecraft.client.color.block.BlockTintSource tintSource = minecraft.getBlockColors().getTintSource(state, quad.materialInfo().tintIndex());
+						if (tintSource != null) {
+							int rawColor = fullbrightBlockAndTintGetter != null ? tintSource.colorInWorld(state, fullbrightBlockAndTintGetter, BlockPos.ZERO) : tintSource.color(state);
+							color = net.minecraft.util.ARGB.opaque(rawColor);
+						}
+					}
+					quadInstance.setColor(color);
 					consumer.putBakedQuad(pose.last(), quad, quadInstance);
 				}
 			}
