@@ -375,7 +375,17 @@ public class StateSelector extends Screen implements GuiEventListener, Narratabl
 			List<net.minecraft.client.renderer.block.dispatch.BlockStateModelPart> parts = new ArrayList<>();
 			model.collectParts(net.minecraft.util.RandomSource.create(42L), parts);
 
-			storage.submitBlockModel(pose, net.minecraft.client.renderer.rendertype.RenderTypes.cutoutMovingBlock(), parts, new int[0], LightCoordsUtil.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, 0);
+			List<net.minecraft.client.color.block.BlockTintSource> tintSources = minecraft.getBlockColors().getTintSources(state);
+			int[] tintLayers = new int[tintSources.size()];
+
+			for (int i = 0; i < tintSources.size(); i++) {
+				net.minecraft.client.color.block.BlockTintSource source = tintSources.get(i);
+				int rawColor = fullbrightBlockAndTintGetter != null ? source.colorInWorld(state, fullbrightBlockAndTintGetter, BlockPos.ZERO) : source.color(state);
+
+				tintLayers[i] = net.minecraft.util.ARGB.opaque(rawColor);
+			}
+
+			storage.submitBlockModel(pose, net.minecraft.client.renderer.rendertype.RenderTypes.cutoutMovingBlock(), parts, tintLayers, LightCoordsUtil.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, 0);
 		}
 	}
 
