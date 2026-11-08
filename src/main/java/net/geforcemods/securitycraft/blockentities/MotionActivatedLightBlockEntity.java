@@ -26,7 +26,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class MotionActivatedLightBlockEntity extends CustomizableBlockEntity implements ITickingBlockEntity {
 	private static final int TICKS_BETWEEN_ATTACKS = 5;
-	private IntOption searchRadiusOption = new IntOption("searchRadius", 5, 5, 20, 1);
+	private IntOption searchRadiusOption = new IntOption("searchRadius", 5, 1, 20, 1);
 	private DisabledOption disabled = new DisabledOption(false);
 	private RespectInvisibilityOption respectInvisibility = new RespectInvisibilityOption();
 	private int cooldown = TICKS_BETWEEN_ATTACKS;
@@ -51,11 +51,12 @@ public class MotionActivatedLightBlockEntity extends CustomizableBlockEntity imp
 	}
 
 	private boolean canLightSeeEntity(Level level, BlockPos pos, Direction facing, LivingEntity entity) {
-		Vec3 sensorPos = Vec3.atCenterOf(pos).add(facing.getStepX() * 0.25, facing.getStepY() * 0.25, facing.getStepZ() * 0.25);
+		Direction back = facing.getOpposite();
+		Vec3 sensorPos = Vec3.atCenterOf(pos).add(back.getStepX() * 0.35, 0.0, back.getStepZ() * 0.35);
 
 		// Don't detect entities that are behind the wall the light is mounted on
 		Vec3 toEye = entity.getEyePosition().subtract(sensorPos);
-		double dot = toEye.x * facing.getStepX() + toEye.y * facing.getStepY() + toEye.z * facing.getStepZ();
+		double dot = toEye.x * facing.getStepX() + toEye.z * facing.getStepZ();
 		if (dot < -0.15)
 			return false;
 
