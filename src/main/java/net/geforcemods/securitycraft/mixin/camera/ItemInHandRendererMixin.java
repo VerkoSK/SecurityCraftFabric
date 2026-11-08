@@ -14,7 +14,7 @@ import net.minecraft.client.renderer.SubmitNodeCollector;
 
 @Mixin(ItemInHandRenderer.class)
 public class ItemInHandRendererMixin {
-	@Inject(method = "renderHandsWithItems", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "submitHandsWithItems", at = @At("HEAD"), cancellable = true)
 	private void securitycraft$suppressHandsOnCamera(float partialTicks, PoseStack poseStack, SubmitNodeCollector collector, LocalPlayer player, int packedLight, CallbackInfo ci) {
 		if (SecurityCraftClient.isPlayerMountedOnCamera())
 			ci.cancel();
