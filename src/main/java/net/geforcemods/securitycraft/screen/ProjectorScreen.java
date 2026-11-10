@@ -1,5 +1,6 @@
 package net.geforcemods.securitycraft.screen;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.input.MouseButtonEvent;
 
 import net.minecraft.client.renderer.RenderPipelines;
@@ -125,7 +126,15 @@ public class ProjectorScreen extends AbstractContainerScreen<ProjectorMenu> impl
 		if (stateSelector != null && stateSelector.mouseDragged(event, dragX, dragY))
 			return true;
 
-		return (getFocused() != null && isDragging() && event.button() == 0 && getFocused().mouseDragged(event, dragX, dragY)) || super.mouseDragged(event, dragX, dragY);
+		return (getFocused() != null && isDragging() && event.button() == InputConstants.MOUSE_BUTTON_LEFT && getFocused().mouseDragged(event, dragX, dragY)) || super.mouseDragged(event, dragX, dragY);
+	}
+
+	@Override
+	public boolean mouseReleased(MouseButtonEvent event) {
+		if (stateSelector != null)
+			stateSelector.mouseReleased(event);
+
+		return super.mouseReleased(event);
 	}
 
 	@Override

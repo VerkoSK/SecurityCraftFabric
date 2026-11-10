@@ -17,6 +17,7 @@ import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.renderpearl.api.commands.CommandEncoder;
 import com.mojang.renderpearl.api.device.GpuDevice;
 import com.mojang.renderpearl.api.commands.RenderPass;
+import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.renderpearl.api.textures.FilterMode;
 import com.mojang.renderpearl.api.textures.GpuTexture;
@@ -409,7 +410,7 @@ public class StateSelector extends Screen implements GuiEventListener, Narratabl
 
 	@Override
 	public boolean mouseDragged(MouseButtonEvent event, double dragX, double dragY) {
-		if (event.button() == 0 && clickedInDragRegion) {
+		if (event.button() == InputConstants.MOUSE_BUTTON_LEFT && clickedInDragRegion) {
 			dragRotation.transpose();
 			dragRotation.mul(new Matrix4f().set(Axis.YN.rotation((float) dragX * ROTATION_SENSITIVITY)));
 			dragRotation.mul(new Matrix4f().set(new Quaternionf().fromAxisAngleRad(Y_DRAG_ROTATION_VECTOR, (float) dragY * ROTATION_SENSITIVITY)));
@@ -439,7 +440,7 @@ public class StateSelector extends Screen implements GuiEventListener, Narratabl
 		if (nextPageButton != null && nextPageButton.mouseClicked(event, doubleClick))
 			return true;
 
-		if (dragHoverChecker != null && dragHoverChecker.checkHover((int) event.x(), (int) event.y())) {
+		if (event.button() == InputConstants.MOUSE_BUTTON_LEFT && dragHoverChecker != null && dragHoverChecker.checkHover((int) event.x(), (int) event.y())) {
 			clickedInDragRegion = true;
 			return true;
 		}

@@ -1,6 +1,7 @@
 package net.geforcemods.securitycraft.screen.components;
 
 import net.minecraft.client.input.MouseButtonEvent;
+import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Renderable;
@@ -125,7 +126,7 @@ public abstract class ScrollPanel implements Renderable, GuiEventListener, Narra
 		if (superMouseClicked(event.x(), event.y(), event.button()))
 			return true;
 
-		scrolling = event.button() == 0 && event.x() >= barLeft && event.x() < barLeft + barWidth && event.y() >= top && event.y() <= bottom;
+		scrolling = event.button() == InputConstants.MOUSE_BUTTON_LEFT && event.x() >= barLeft && event.x() < barLeft + barWidth && event.y() >= top && event.y() <= bottom;
 
 		if (scrolling)
 			return true;

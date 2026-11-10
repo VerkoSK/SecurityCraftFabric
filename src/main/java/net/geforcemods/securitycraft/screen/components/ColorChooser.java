@@ -15,6 +15,7 @@ import net.minecraft.client.gui.components.AbstractSliderButton;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.KeyEvent;
+import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
@@ -147,7 +148,7 @@ public class ColorChooser extends Screen {
 	public boolean mouseDragged(MouseButtonEvent event, double dragX, double dragY) {
 		super.mouseDragged(event, dragX, dragY);
 
-		if (event.button() == 0 && clickedInDragRegion) {
+		if (event.button() == InputConstants.MOUSE_BUTTON_LEFT && clickedInDragRegion) {
 			setSelection(event.x(), event.y());
 			return true;
 		}
@@ -158,7 +159,7 @@ public class ColorChooser extends Screen {
 	@Override
 	public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
 		super.mouseClicked(event, doubleClick);
-		clickedInDragRegion = colorFieldHoverChecker.checkHover(event.x(), event.y());
+		clickedInDragRegion = event.button() == InputConstants.MOUSE_BUTTON_LEFT && colorFieldHoverChecker.checkHover(event.x(), event.y());
 
 		if (clickedInDragRegion)
 			setSelection(event.x(), event.y());
