@@ -32,7 +32,7 @@ public class SecurityCraftClient implements ClientModInitializer {
 	public static final net.minecraft.client.model.geom.ModelLayerLocation IMS_BOMB_LOCATION = new net.minecraft.client.model.geom.ModelLayerLocation(SCContent.id("ims_bomb"), "main");
 
 	private static final Component REDSTONE_NOTE = Component.translatable("gui.securitycraft:camera.toggleRedstoneNote");
-	private static final Component SMART_MODULE_NOTE = Component.translatable("gui.securitycraft:camera.setDefaultViewingDirectionNote");
+	private static final Component SMART_MODULE_NOTE = Component.translatable("gui.securitycraft:camera.smartModuleNote");
 
 	private static final CameraKeyInfoEntry[] CAMERA_KEY_INFO_LIST = {
 			new CameraKeyInfoEntry(() -> true, options -> Component.translatable("gui.securitycraft:camera.lookAround", options.keyUp.getTranslatedKeyMessage(), options.keyLeft.getTranslatedKeyMessage(), options.keyDown.getTranslatedKeyMessage(), options.keyRight.getTranslatedKeyMessage()), be -> true),
