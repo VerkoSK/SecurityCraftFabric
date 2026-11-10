@@ -16,6 +16,7 @@
         "camera.ClientChunkCacheMixin",
         "camera.CameraMixin",
         "camera.ItemInHandRendererMixin",
+        "camera.LevelExtractorMixin",
         "camera.LocalPlayerMixin",
         "camera.MinecraftMixin",
         "compat.starhud.TargetedCrosshairHUDMixin"

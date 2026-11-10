@@ -22,6 +22,9 @@ import com.mojang.renderpearl.api.textures.FilterMode;
 import com.mojang.renderpearl.api.textures.GpuTexture;
 import com.mojang.renderpearl.api.textures.GpuTextureView;
 import com.mojang.renderpearl.api.GpuFormat;
+import net.minecraft.client.gui.render.GuiRenderer;
+import net.minecraft.client.renderer.Projection;
+import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.feature.FeatureRenderDispatcher;
 import net.minecraft.client.gui.render.TextureSetup;
 import net.minecraft.client.renderer.ProjectionMatrixBuffer;
@@ -98,6 +101,7 @@ public class StateSelector extends Screen implements GuiEventListener, Narratabl
 	private GpuTextureView previewTextureView;
 	private GpuTexture previewDepthTexture;
 	private GpuTextureView previewDepthTextureView;
+	private Projection previewProjection;
 	private ProjectionMatrixBuffer previewProjectionMatrixBuffer;
 
 	public StateSelector(StateSelectorAccessMenu menu, Component title, int xStart, int yStart, int slotToCheck, int dragStartX, int dragStartY, int previewXTranslation, int previewYTranslation) {
@@ -180,25 +184,30 @@ public class StateSelector extends Screen implements GuiEventListener, Narratabl
 		int texW = previewSize * guiScale;
 		int texH = previewSize * guiScale;
 
+		if (previewProjection == null)
+			previewProjection = new Projection();
+
 		if (previewProjectionMatrixBuffer == null)
 			previewProjectionMatrixBuffer = new ProjectionMatrixBuffer("state_selector_preview");
 
 		GpuDevice device = RenderSystem.getDevice();
 		if (previewTexture == null || previewTexture.getWidth(0) != texW || previewTexture.getHeight(0) != texH) {
 			destroyPreviewTextures();
-			previewTexture = device.createTexture(() -> "sc_state_selector", 15, GpuFormat.RGBA8_UNORM, texW, texH, 1, 1);
+			previewTexture = device.createTexture(() -> "sc_state_selector", 13, GpuFormat.RGBA8_UNORM, texW, texH, 1, 1);
 			previewTextureView = device.createTextureView(previewTexture);
 
-			previewDepthTexture = device.createTexture(() -> "sc_state_selector_depth", 15, GpuFormat.D32_FLOAT, texW, texH, 1, 1);
+			previewDepthTexture = device.createTexture(() -> "sc_state_selector_depth", 9, GpuFormat.D32_FLOAT, texW, texH, 1, 1);
 			previewDepthTextureView = device.createTextureView(previewDepthTexture);
 		}
 
 		CommandEncoder encoder = device.createCommandEncoder();
-		// Clear handled by RenderPass
+		encoder.clearColorAndDepthTextures(previewTexture, GuiRenderer.CLEAR_COLOR, previewDepthTexture, 0.0D);
 
-		RenderSystem.setProjectionMatrix(previewProjectionMatrixBuffer.getBuffer(new Matrix4f().setOrtho(0.0F, texW, texH, 0.0F, -1000.0F, 1000.0F)), ProjectionType.ORTHOGRAPHIC);
-		// override not needed
-		// override not needed
+		previewProjection.setupOrtho(-1000.0F, 1000.0F, texW, texH, true);
+		RenderSystem.setProjectionMatrix(previewProjectionMatrixBuffer.getBuffer(previewProjection), ProjectionType.ORTHOGRAPHIC);
+
+		org.joml.Matrix4fStack modelView = RenderSystem.getModelViewStack();
+		modelView.pushMatrix();
 
 		minecraft.gameRenderer.lighting().setupFor(Lighting.Entry.ITEMS_3D);
 
@@ -213,14 +222,14 @@ public class StateSelector extends Screen implements GuiEventListener, Narratabl
 
 		net.minecraft.client.renderer.SubmitNodeStorage storage = new net.minecraft.client.renderer.SubmitNodeStorage();
 		renderBlockModel(state, pose, storage);
-		try (RenderPass renderPass = encoder.createRenderPass(() -> "sc_state_selector_pass", previewTextureView, java.util.Optional.of(new org.joml.Vector4f(0.0F, 0.0F, 0.0F, 0.0F)), previewDepthTextureView, java.util.OptionalDouble.of(1.0))) {
+		try (RenderPass renderPass = encoder.createRenderPass(() -> "sc_state_selector_pass", previewTextureView, java.util.Optional.empty(), previewDepthTextureView, java.util.OptionalDouble.empty())) {
+			RenderSystem.bindDefaultUniforms(renderPass);
 			FeatureRenderDispatcher.PreparedFrame frame = minecraft.gameRenderer.featureRenderDispatcher().prepareFrame(storage);
 			FeatureRenderDispatcher.renderAllFeatures(renderPass, frame);
 		}
 		encoder.submit();
 
-		// override not needed
-		// override not needed
+		modelView.popMatrix();
 		minecraft.gameRenderer.lighting().setupFor(Lighting.Entry.LEVEL);
 
 		int x1 = x0 + previewSize;
@@ -391,7 +400,9 @@ public class StateSelector extends Screen implements GuiEventListener, Narratabl
 				tintLayers[i] = net.minecraft.util.ARGB.opaque(rawColor);
 			}
 
-			storage.submitBlockModel(pose, net.minecraft.client.renderer.rendertype.RenderTypes.cutoutMovingBlock(), parts, tintLayers, LightCoordsUtil.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, 0);
+			boolean isTranslucent = model.hasMaterialFlag(1);
+			RenderType renderType = isTranslucent ? Sheets.translucentBlockItemSheet() : Sheets.cutoutBlockItemSheet();
+			storage.submitBlockModel(pose, renderType, parts, tintLayers, LightCoordsUtil.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, 0);
 		}
 	}
 
