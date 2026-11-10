@@ -31,12 +31,18 @@ public class SecurityCraftClient implements ClientModInitializer {
 	public static final net.minecraft.client.model.geom.ModelLayerLocation SECURITY_CAMERA_LOCATION = new net.minecraft.client.model.geom.ModelLayerLocation(SCContent.id("security_camera"), "main");
 	public static final net.minecraft.client.model.geom.ModelLayerLocation IMS_BOMB_LOCATION = new net.minecraft.client.model.geom.ModelLayerLocation(SCContent.id("ims_bomb"), "main");
 
+	private static final Component REDSTONE_NOTE = Component.translatable("gui.securitycraft:camera.toggleRedstoneNote");
+	private static final Component SMART_MODULE_NOTE = Component.translatable("gui.securitycraft:camera.setDefaultViewingDirectionNote");
+
 	private static final CameraKeyInfoEntry[] CAMERA_KEY_INFO_LIST = {
-			new CameraKeyInfoEntry(() -> net.geforcemods.securitycraft.misc.KeyBindings.cameraZoomIn.isDown(), opt -> Component.translatable("gui.securitycraft:camera.zoomIn", net.geforcemods.securitycraft.misc.KeyBindings.cameraZoomIn.getTranslatedKeyMessage()), be -> true),
-			new CameraKeyInfoEntry(() -> net.geforcemods.securitycraft.misc.KeyBindings.cameraZoomOut.isDown(), opt -> Component.translatable("gui.securitycraft:camera.zoomOut", net.geforcemods.securitycraft.misc.KeyBindings.cameraZoomOut.getTranslatedKeyMessage()), be -> true),
-			new CameraKeyInfoEntry(() -> net.geforcemods.securitycraft.misc.KeyBindings.cameraEmitRedstone.isDown(), opt -> Component.translatable("gui.securitycraft:camera.emitRedstone", net.geforcemods.securitycraft.misc.KeyBindings.cameraEmitRedstone.getTranslatedKeyMessage()), be -> be.isModuleEnabled(net.geforcemods.securitycraft.misc.ModuleType.REDSTONE)),
-			new CameraKeyInfoEntry(() -> net.geforcemods.securitycraft.misc.KeyBindings.cameraActivateNightVision.isDown(), opt -> Component.translatable("gui.securitycraft:camera.activateNightVision", net.geforcemods.securitycraft.misc.KeyBindings.cameraActivateNightVision.getTranslatedKeyMessage()), be -> true),
-			new CameraKeyInfoEntry(() -> net.geforcemods.securitycraft.misc.KeyBindings.setDefaultViewingDirection.isDown(), opt -> Component.translatable("gui.securitycraft:camera.setDefaultViewingDirection", net.geforcemods.securitycraft.misc.KeyBindings.setDefaultViewingDirection.getTranslatedKeyMessage()), be -> be.isModuleEnabled(net.geforcemods.securitycraft.misc.ModuleType.SMART))
+			new CameraKeyInfoEntry(() -> true, options -> Component.translatable("gui.securitycraft:camera.lookAround", options.keyUp.getTranslatedKeyMessage(), options.keyLeft.getTranslatedKeyMessage(), options.keyDown.getTranslatedKeyMessage(), options.keyRight.getTranslatedKeyMessage()), be -> true),
+			new CameraKeyInfoEntry(() -> true, options -> Component.translatable("gui.securitycraft:camera.exit", options.keyShift.getTranslatedKeyMessage()), be -> true),
+			new CameraKeyInfoEntry(() -> true, opt -> Component.translatable("gui.securitycraft:camera.zoom", net.geforcemods.securitycraft.misc.KeyBindings.cameraZoomIn.getTranslatedKeyMessage(), net.geforcemods.securitycraft.misc.KeyBindings.cameraZoomOut.getTranslatedKeyMessage()), be -> true),
+			new CameraKeyInfoEntry(() -> ConfigHandler.allowCameraNightVision, opt -> Component.translatable("gui.securitycraft:camera.activateNightVision", net.geforcemods.securitycraft.misc.KeyBindings.cameraActivateNightVision.getTranslatedKeyMessage()), be -> true),
+			new CameraKeyInfoEntry(() -> true, opt -> Component.translatable("gui.securitycraft:camera.toggleRedstone", net.geforcemods.securitycraft.misc.KeyBindings.cameraEmitRedstone.getTranslatedKeyMessage()), be -> be.isModuleEnabled(net.geforcemods.securitycraft.misc.ModuleType.REDSTONE)),
+			new CameraKeyInfoEntry(() -> true, opt -> REDSTONE_NOTE, be -> be.isModuleEnabled(net.geforcemods.securitycraft.misc.ModuleType.REDSTONE)),
+			new CameraKeyInfoEntry(() -> true, opt -> Component.translatable("gui.securitycraft:camera.setDefaultViewingDirection", net.geforcemods.securitycraft.misc.KeyBindings.setDefaultViewingDirection.getTranslatedKeyMessage()), be -> be.isModuleEnabled(net.geforcemods.securitycraft.misc.ModuleType.SMART)),
+			new CameraKeyInfoEntry(() -> true, opt -> SMART_MODULE_NOTE, be -> be.isModuleEnabled(net.geforcemods.securitycraft.misc.ModuleType.SMART))
 	};
 
 	private static int cameraInfoMessageTime = -1;
