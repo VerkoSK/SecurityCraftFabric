@@ -222,10 +222,11 @@ public class StateSelector extends Screen implements GuiEventListener, Narratabl
 
 		net.minecraft.client.renderer.SubmitNodeStorage storage = new net.minecraft.client.renderer.SubmitNodeStorage();
 		renderBlockModel(state, pose, storage);
-		FeatureRenderDispatcher.PreparedFrame frame = minecraft.gameRenderer.featureRenderDispatcher().prepareFrame(storage);
-		try (RenderPass renderPass = encoder.createRenderPass(() -> "sc_state_selector_pass", previewTextureView, java.util.Optional.empty(), previewDepthTextureView, java.util.OptionalDouble.empty())) {
-			RenderSystem.bindDefaultUniforms(renderPass);
-			FeatureRenderDispatcher.renderAllFeatures(renderPass, frame);
+		try (FeatureRenderDispatcher.PreparedFrame frame = minecraft.gameRenderer.featureRenderDispatcher().prepareFrame(storage)) {
+			try (RenderPass renderPass = encoder.createRenderPass(() -> "sc_state_selector_pass", previewTextureView, java.util.Optional.empty(), previewDepthTextureView, java.util.OptionalDouble.empty())) {
+				RenderSystem.bindDefaultUniforms(renderPass);
+				FeatureRenderDispatcher.renderAllFeatures(renderPass, frame);
+			}
 		}
 		encoder.submit();
 
