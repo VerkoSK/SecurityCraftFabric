@@ -27,7 +27,7 @@ import net.minecraft.client.Minecraft;
 public class SecurityCraftClient implements ClientModInitializer {
 	public static final Identifier CAMERA_DASHBOARD = SCContent.id("textures/gui/camera/camera_dashboard.png");
 	public static final Identifier CAMERA_OVERLAY = SCContent.id("textures/gui/camera/camera_overlay.png");
-	public static final Identifier NIGHT_VISION = SCContent.id("textures/gui/camera/night_vision.png");
+	public static final Identifier NIGHT_VISION = Identifier.withDefaultNamespace("textures/mob_effect/night_vision.png");
 	public static final net.minecraft.client.model.geom.ModelLayerLocation SECURITY_CAMERA_LOCATION = new net.minecraft.client.model.geom.ModelLayerLocation(SCContent.id("security_camera"), "main");
 	public static final net.minecraft.client.model.geom.ModelLayerLocation IMS_BOMB_LOCATION = new net.minecraft.client.model.geom.ModelLayerLocation(SCContent.id("ims_bomb"), "main");
 
