@@ -38,7 +38,7 @@ Universal Key Changer, the Codebreaker, Keypad Door and Keypad Trapdoor on top o
 door work, the Retinal Scanner with the Scanner Door and Scanner Trapdoor, and the version checker
 with its update notification.
 
-**V0.7** — surveillance: the Security Camera and Camera Monitor (with chunk loading, night vision,
+**V0.7** — surveillance (released across all 16 supported Minecraft versions): the Security Camera and Camera Monitor (with chunk loading, night vision,
 rotation, zooming, redstone module, and player view mounting), the Secure Trading Station, Projector,
 Block Change Detector, Username Logger, Motion Activated Light, Panic Button, and Alarm.
 
