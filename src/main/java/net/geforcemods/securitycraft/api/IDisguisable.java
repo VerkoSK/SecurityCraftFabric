@@ -61,13 +61,13 @@ public interface IDisguisable {
 
 			if (disguisedState != null && disguisedState.getBlock() != Blocks.AIR)
 				return Optional.of(disguisedState);
-			else { //fallback, mainly for upgrading old worlds from before the state selector existed
-				Block block = ModuleItem.getBlockAddon(module);
-
-				if (block != null)
-					return Optional.of(block.defaultBlockState());
-			}
 		}
+
+		//fallback when no SavedBlockState is set (e.g. DisguiseModuleScreen or old worlds)
+		Block block = ModuleItem.getBlockAddon(module);
+
+		if (block != null)
+			return Optional.of(block.defaultBlockState());
 
 		return Optional.empty();
 	}
