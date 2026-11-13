@@ -12,6 +12,9 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.DoorBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 
 /**
  * Right-click a passcode-protected block you own to open its set-passcode screen and change the code. Ported from the
@@ -31,6 +34,10 @@ public class UniversalKeyChangerItem extends Item {
 				return InteractionResult.PASS;
 
 			BlockPos pos = hitResult.getBlockPos();
+			BlockState state = level.getBlockState(pos);
+
+			if (state.getBlock() instanceof DoorBlock && state.getValue(DoorBlock.HALF) == DoubleBlockHalf.UPPER)
+				pos = pos.below();
 
 			if (!(level.getBlockEntity(pos) instanceof PasscodeProtected passcode))
 				return InteractionResult.PASS;
