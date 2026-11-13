@@ -20,7 +20,10 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.DoorBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 
 /** Opens the customize screen for the block it is used on, so its owner can fit modules and change its options. */
 public class UniversalBlockModifierItem extends Item {
@@ -44,15 +47,21 @@ public class UniversalBlockModifierItem extends Item {
 			//FAIL on the client makes Fabric swallow the interaction packet, so the server would never run this and
 			//the "not owned" message would never be sent; SUCCESS still lets the packet through
 			if (level.isClientSide())
-				return level.getBlockEntity(hitResult.getBlockPos()) instanceof IModuleInventory ? InteractionResult.SUCCESS : InteractionResult.PASS;
+				return level.getBlockEntity(normalizeDoorPos(level, hitResult.getBlockPos())) instanceof IModuleInventory ? InteractionResult.SUCCESS : InteractionResult.PASS;
 
 			return modifier.onItemUseFirst(new UseOnContext(player, hand, hitResult));
 		});
 	}
 
+	private static BlockPos normalizeDoorPos(Level level, BlockPos pos) {
+		BlockState state = level.getBlockState(pos);
+
+		return state.getBlock() instanceof DoorBlock && state.getValue(DoorBlock.HALF) == DoubleBlockHalf.UPPER ? pos.below() : pos;
+	}
+
 	private InteractionResult onItemUseFirst(UseOnContext ctx) {
 		Level level = ctx.getLevel();
-		BlockPos pos = ctx.getClickedPos();
+		BlockPos pos = normalizeDoorPos(level, ctx.getClickedPos());
 		BlockEntity be = level.getBlockEntity(pos);
 		Player player = ctx.getPlayer();
 

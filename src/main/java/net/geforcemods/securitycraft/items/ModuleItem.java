@@ -21,7 +21,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.DoorBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 
 public class ModuleItem extends Item {
 	private static final MutableComponent MODIFIABLE = Component.translatable("tooltip.securitycraft:module.modifiable").setStyle(Utils.GRAY_STYLE);
@@ -63,7 +67,14 @@ public class ModuleItem extends Item {
 
 	@Override
 	public InteractionResult useOn(UseOnContext ctx) {
-		if (ctx.getLevel().getBlockEntity(ctx.getClickedPos()) instanceof IModuleInventory inv) {
+		Level level = ctx.getLevel();
+		net.minecraft.core.BlockPos pos = ctx.getClickedPos();
+		BlockState state = level.getBlockState(pos);
+
+		if (state.getBlock() instanceof DoorBlock && state.getValue(DoorBlock.HALF) == DoubleBlockHalf.UPPER)
+			pos = pos.below();
+
+		if (level.getBlockEntity(pos) instanceof IModuleInventory inv) {
 			ItemStack stack = ctx.getItemInHand();
 			ModuleType type = ((ModuleItem) stack.getItem()).getModuleType();
 
