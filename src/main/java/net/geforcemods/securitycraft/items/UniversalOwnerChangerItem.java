@@ -19,7 +19,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.DoorBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 
 /**
  * Transfers ownership of an owned block to whoever the tool is renamed to. Renaming it in an anvil sets the new
@@ -43,8 +45,15 @@ public class UniversalOwnerChangerItem extends Item {
 			if (!(stack.getItem() instanceof UniversalOwnerChangerItem changer))
 				return InteractionResult.PASS;
 
-			if (level.isClientSide)
-				return level.getBlockEntity(hitResult.getBlockPos()) instanceof IOwnable ? InteractionResult.SUCCESS : InteractionResult.PASS;
+			if (level.isClientSide) {
+				BlockPos pos = hitResult.getBlockPos();
+				BlockState state = level.getBlockState(pos);
+
+				if (state.getBlock() instanceof DoorBlock && state.getValue(DoorBlock.HALF) == DoubleBlockHalf.UPPER)
+					pos = pos.below();
+
+				return level.getBlockEntity(pos) instanceof IOwnable ? InteractionResult.SUCCESS : InteractionResult.PASS;
+			}
 
 			return changer.changeOwner(stack, new UseOnContext(player, hand, hitResult));
 		});
@@ -54,6 +63,11 @@ public class UniversalOwnerChangerItem extends Item {
 		Level level = ctx.getLevel();
 		BlockPos pos = ctx.getClickedPos();
 		BlockState state = level.getBlockState(pos);
+
+		if (state.getBlock() instanceof DoorBlock && state.getValue(DoorBlock.HALF) == DoubleBlockHalf.UPPER) {
+			pos = pos.below();
+			state = level.getBlockState(pos);
+		}
 		Player player = ctx.getPlayer();
 		String newOwner = stack.getHoverName().getString();
 
@@ -97,6 +111,11 @@ public class UniversalOwnerChangerItem extends Item {
 
 		ownable.setOwner(newOwner, resolvedUUID.get());
 		level.sendBlockUpdated(pos, state, state, 3);
+
+		if (state.getBlock() instanceof DoorBlock && level.getBlockEntity(pos.above()) instanceof IOwnable upperOwnable) {
+			upperOwnable.setOwner(newOwner, resolvedUUID.get());
+			level.sendBlockUpdated(pos.above(), level.getBlockState(pos.above()), level.getBlockState(pos.above()), 3);
+		}
 
 		//the new owner should not inherit the previous one's modules, so they are handed back to the world
 		if (level.getBlockEntity(pos) instanceof IModuleInventory inv) {
