@@ -722,7 +722,7 @@ public class SecurityCraftClient implements ClientModInitializer {
 
 
 
-			if (block == SCContent.LASER_BLOCK || block == SCContent.KEYPAD || block == SCContent.USERNAME_LOGGER || block == SCContent.BLOCK_CHANGE_DETECTOR || block == SCContent.PROJECTOR)
+			if (block == SCContent.LASER_BLOCK || block == SCContent.KEYPAD || block instanceof net.geforcemods.securitycraft.api.IDisguisable || block instanceof net.geforcemods.securitycraft.blocks.AbstractKeypadFurnaceBlock || block instanceof net.geforcemods.securitycraft.blocks.reinforced.ReinforcedDispenserBlock || block instanceof net.geforcemods.securitycraft.blocks.reinforced.ReinforcedHopperBlock)
 
 				return new net.geforcemods.securitycraft.models.DisguisableBakedModel(model);
 
