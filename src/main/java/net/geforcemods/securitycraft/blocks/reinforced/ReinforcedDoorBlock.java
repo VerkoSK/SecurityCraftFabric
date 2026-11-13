@@ -43,10 +43,19 @@ public class ReinforcedDoorBlock extends DoorBlock implements IReinforcedBlock, 
 				pos, other
 		}) {
 			for (Direction dir : Direction.values()) {
-				BlockState neighbor = level.getBlockState(checked.relative(dir));
+				BlockPos neighborPos = checked.relative(dir);
+				BlockState neighbor = level.getBlockState(neighborPos);
 
 				if (neighbor.getBlock() instanceof IDoorActivator && neighbor.getValue(BlockStateProperties.POWERED))
 					return true;
+
+				for (Direction panelDir : Direction.values()) {
+					BlockPos panelPos = neighborPos.relative(panelDir);
+					BlockState panelState = level.getBlockState(panelPos);
+
+					if (panelState.getBlock() instanceof net.geforcemods.securitycraft.blocks.AbstractPanelBlock && panelState.getBlock() instanceof IDoorActivator && panelState.getValue(BlockStateProperties.POWERED) && panelPos.relative(net.geforcemods.securitycraft.blocks.AbstractPanelBlock.getConnectedDirection(panelState).getOpposite()).equals(neighborPos))
+						return true;
+				}
 			}
 		}
 

@@ -19,6 +19,8 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 /**
  * The keypad trapdoor's block entity: owner + salted passcode + the module/option system (allowlist, denylist,
@@ -111,7 +113,26 @@ public class KeypadTrapdoorBlockEntity extends CustomizableBlockEntity implement
 		};
 	}
 
+	@Override
+	public void saveAdditional(ValueOutput output) {
+		super.saveAdditional(output);
 
+		long cooldownLeft = getCooldownEnd() - System.currentTimeMillis();
+
+		output.putString("salt", salt);
+		output.putLong("cooldownLeft", cooldownLeft <= 0 ? -1 : cooldownLeft);
+
+		if (passcodeHash != null)
+			output.putString("passcodeHash", passcodeHash);
+	}
+
+	@Override
+	public void loadAdditional(ValueInput input) {
+		super.loadAdditional(input);
+		salt = input.getStringOr("salt", salt);
+		cooldownEnd = System.currentTimeMillis() + input.getLongOr("cooldownLeft", 0L);
+		passcodeHash = input.getString("passcodeHash").orElse(null);
+	}
 
 	@Override
 	public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
