@@ -1,4 +1,25 @@
 {
+	"alarm": {
+		"category": "block",
+		"sounds": [
+			"securitycraft:alarm"
+		],
+		"subtitle": "securitycraft.subtitle.alarm"
+	},
+	"camerazoomin": {
+		"category": "block",
+		"sounds": [
+			"securitycraft:camerazoomin"
+		],
+		"subtitle": "securitycraft.subtitle.camerazoomin"
+	},
+	"camerasnap": {
+		"category": "block",
+		"sounds": [
+			"securitycraft:camerasnap"
+		],
+		"subtitle": "securitycraft.subtitle.camerasnap"
+	},
 	"electrified": {
 		"category": "block",
 		"sounds": [
