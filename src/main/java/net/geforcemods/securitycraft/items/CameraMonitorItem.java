@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.geforcemods.securitycraft.SCContent;
 import net.geforcemods.securitycraft.SecurityCraftClient;
 import net.geforcemods.securitycraft.blockentities.SecurityCameraBlockEntity;
@@ -112,7 +111,7 @@ public class CameraMonitorItem extends Item {
 	public static void removeCameraOnClient(GlobalPos camera, ItemStack monitor) {
 		if (monitor.has(SCContent.BOUND_CAMERAS)) {
 			monitor.get(SCContent.BOUND_CAMERAS).remove(SCContent.BOUND_CAMERAS, monitor, camera);
-			ClientPlayNetworking.send(new RemoveCameraTagPayload(camera));
+			net.geforcemods.securitycraft.SecurityCraftClient.sendToServer(new RemoveCameraTagPayload(camera));
 		}
 	}
 }
