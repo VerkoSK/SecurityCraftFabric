@@ -7,7 +7,6 @@ import net.geforcemods.securitycraft.api.Option;
 import net.geforcemods.securitycraft.blocks.ProjectorBlock;
 import net.geforcemods.securitycraft.inventory.ProjectorMenu;
 import net.geforcemods.securitycraft.misc.ModuleType;
-import net.geforcemods.securitycraft.util.BlockEntityRenderDelegate;
 import net.geforcemods.securitycraft.util.StandingOrWallType;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
@@ -35,7 +34,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 
 public class ProjectorBlockEntity extends DisguisableBlockEntity implements Container, MenuProvider, ILockable, ExtendedScreenHandlerFactory<BlockPos> {
-	public static final BlockEntityRenderDelegate PROJECTOR_RENDER_DELEGATE = new BlockEntityRenderDelegate();
 	public static final int MIN_WIDTH = 1; //also for height
 	public static final int MAX_WIDTH = 10; //also for height
 	public static final int MIN_RANGE = 1;
@@ -363,7 +361,7 @@ public class ProjectorBlockEntity extends DisguisableBlockEntity implements Cont
 		super.setLevel(level);
 
 		if (level != null && level.isClientSide)
-			PROJECTOR_RENDER_DELEGATE.putDelegateFor(this, projectedState, projectedBlock);
+			net.geforcemods.securitycraft.SecurityCraftClient.putProjectorRenderDelegate(this, projectedState, projectedBlock);
 	}
 
 	@Override
@@ -376,15 +374,15 @@ public class ProjectorBlockEntity extends DisguisableBlockEntity implements Cont
 		super.setRemoved();
 
 		if (level != null && level.isClientSide)
-			PROJECTOR_RENDER_DELEGATE.removeDelegateOf(this);
+			net.geforcemods.securitycraft.SecurityCraftClient.removeProjectorRenderDelegate(this);
 	}
 
 	public void setProjectedState(BlockState projectedState) {
 		if (level != null && level.isClientSide) {
 			if (this.projectedState.getBlock() != projectedState.getBlock())
-				PROJECTOR_RENDER_DELEGATE.removeDelegateOf(this);
+				net.geforcemods.securitycraft.SecurityCraftClient.removeProjectorRenderDelegate(this);
 
-			PROJECTOR_RENDER_DELEGATE.putDelegateFor(this, projectedState, projectedBlock);
+			net.geforcemods.securitycraft.SecurityCraftClient.putProjectorRenderDelegate(this, projectedState, projectedBlock);
 		}
 
 		this.projectedState = projectedState;
@@ -398,7 +396,7 @@ public class ProjectorBlockEntity extends DisguisableBlockEntity implements Cont
 			projectedState = Blocks.AIR.defaultBlockState();
 
 			if (level != null && level.isClientSide)
-				PROJECTOR_RENDER_DELEGATE.removeDelegateOf(this);
+				net.geforcemods.securitycraft.SecurityCraftClient.removeProjectorRenderDelegate(this);
 
 			setChanged();
 		}

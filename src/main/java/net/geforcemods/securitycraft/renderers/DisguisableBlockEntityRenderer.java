@@ -13,6 +13,6 @@ public class DisguisableBlockEntityRenderer<T extends BlockEntity> implements Bl
 
 	@Override
 	public void render(T be, float partialTicks, PoseStack pose, MultiBufferSource buffer, int combinedLight, int combinedOverlay, net.minecraft.world.phys.Vec3 cameraPos) {
-		DisguisableBlockEntity.DISGUISED_BLOCK_RENDER_DELEGATE.tryRenderDelegate(be, partialTicks, pose, buffer, combinedLight, combinedOverlay, cameraPos);
+		net.geforcemods.securitycraft.SecurityCraftClient.DISGUISED_BLOCK_RENDER_DELEGATE.tryRenderDelegate(be, partialTicks, pose, buffer, combinedLight, combinedOverlay, cameraPos);
 	}
 }
