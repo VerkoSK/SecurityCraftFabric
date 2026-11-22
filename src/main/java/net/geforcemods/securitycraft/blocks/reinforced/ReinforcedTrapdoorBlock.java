@@ -24,9 +24,11 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 /** Reinforced iron trapdoor: opens only when a powered {@link IDoorActivator} (Keypad, Retinal Scanner, Keycard Reader or Lock) is adjacent — NOT by regular redstone. */
 public class ReinforcedTrapdoorBlock extends TrapDoorBlock implements IReinforcedBlock, EntityBlock {
 	private final float destroyTimeForOwner;
+	private final BlockSetType blockSetType;
 
 	public ReinforcedTrapdoorBlock(BlockSetType type, BlockBehaviour.Properties properties) {
 		super(type, OwnableBlock.withReinforcedDestroyTime(properties));
+		blockSetType = type;
 		destroyTimeForOwner = OwnableBlock.getStoredDestroyTime();
 	}
 
@@ -81,7 +83,10 @@ public class ReinforcedTrapdoorBlock extends TrapDoorBlock implements IReinforce
 	public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, net.minecraft.world.level.redstone.Orientation orientation, boolean movedByPiston) {
 		boolean active = hasActiveDoorActivatorNextTo(level, pos);
 
-		if (active != state.getValue(BlockStateProperties.OPEN))
+		if (active != state.getValue(BlockStateProperties.OPEN)) {
 			level.setBlock(pos, state.setValue(BlockStateProperties.OPEN, active).setValue(BlockStateProperties.POWERED, active), 2);
+			level.playSound(null, pos, active ? blockSetType.trapdoorOpen() : blockSetType.trapdoorClose(), net.minecraft.sounds.SoundSource.BLOCKS, 1.0F, 1.0F);
+			level.gameEvent(null, active ? net.minecraft.world.level.gameevent.GameEvent.BLOCK_OPEN : net.minecraft.world.level.gameevent.GameEvent.BLOCK_CLOSE, pos);
+		}
 	}
 }
