@@ -28,7 +28,7 @@ public class LevelUtils {
 		if (level instanceof ServerLevel serverLevel)
 			serverLevel.getServer().execute(runnable);
 		else if (level.isClientSide())
-			net.minecraft.client.Minecraft.getInstance().execute(runnable);
+			net.geforcemods.securitycraft.SecurityCraftClient.executeOnClient(runnable);
 		else
 			runnable.run();
 	}
