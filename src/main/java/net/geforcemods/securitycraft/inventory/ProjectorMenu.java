@@ -1,6 +1,5 @@
 package net.geforcemods.securitycraft.inventory;
 
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.geforcemods.securitycraft.SCContent;
 import net.geforcemods.securitycraft.blockentities.ProjectorBlockEntity;
 import net.geforcemods.securitycraft.network.SyncProjectorPayload;
@@ -97,7 +96,7 @@ public class ProjectorMenu extends StateSelectorAccessMenu {
 		broadcastChanges();
 
 		if (be.getLevel().isClientSide)
-			ClientPlayNetworking.send(new SyncProjectorPayload(be.getBlockPos(), state));
+			net.geforcemods.securitycraft.SecurityCraftClient.sendToServer(new SyncProjectorPayload(be.getBlockPos(), state));
 	}
 
 	@Override

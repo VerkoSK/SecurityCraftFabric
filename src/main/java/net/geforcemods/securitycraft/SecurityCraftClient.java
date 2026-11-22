@@ -33,6 +33,33 @@ public class SecurityCraftClient implements ClientModInitializer {
 
 	/** Opens the allow/deny-list editor for the given module stack (called client-side only). */
 
+	public static void executeOnClient(Runnable runnable) {
+		Minecraft.getInstance().execute(runnable);
+	}
+
+	public static void sendToServer(net.minecraft.network.protocol.common.custom.CustomPacketPayload payload) {
+		ClientPlayNetworking.send(payload);
+	}
+
+	public static final net.geforcemods.securitycraft.util.BlockEntityRenderDelegate DISGUISED_BLOCK_RENDER_DELEGATE = new net.geforcemods.securitycraft.util.BlockEntityRenderDelegate();
+	public static final net.geforcemods.securitycraft.util.BlockEntityRenderDelegate PROJECTOR_RENDER_DELEGATE = new net.geforcemods.securitycraft.util.BlockEntityRenderDelegate();
+
+	public static void putDisguisedRenderDelegate(net.minecraft.world.level.block.entity.BlockEntity be, net.minecraft.world.level.block.state.BlockState state) {
+		DISGUISED_BLOCK_RENDER_DELEGATE.putDelegateFor(be, state);
+	}
+
+	public static void removeDisguisedRenderDelegate(net.minecraft.world.level.block.entity.BlockEntity be) {
+		DISGUISED_BLOCK_RENDER_DELEGATE.removeDelegateOf(be);
+	}
+
+	public static void putProjectorRenderDelegate(net.minecraft.world.level.block.entity.BlockEntity be, net.minecraft.world.level.block.state.BlockState state, net.minecraft.world.item.ItemStack stack) {
+		PROJECTOR_RENDER_DELEGATE.putDelegateFor(be, state, stack);
+	}
+
+	public static void removeProjectorRenderDelegate(net.minecraft.world.level.block.entity.BlockEntity be) {
+		PROJECTOR_RENDER_DELEGATE.removeDelegateOf(be);
+	}
+
 	public static void openEditModuleScreen(net.minecraft.world.item.ItemStack stack) {
 
 		Minecraft.getInstance().setScreen(new net.geforcemods.securitycraft.screen.EditModuleScreen(stack));
