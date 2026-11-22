@@ -168,6 +168,14 @@ public class SecurityCraftClient implements ClientModInitializer {
 			net.geforcemods.securitycraft.misc.CameraRedstoneModuleState.ACTIVATED.render(extractor, 12, 2);
 	}
 
+	public static void executeOnClient(Runnable runnable) {
+		Minecraft.getInstance().execute(runnable);
+	}
+
+	public static void sendToServer(net.minecraft.network.protocol.common.custom.CustomPacketPayload payload) {
+		ClientPlayNetworking.send(payload);
+	}
+
 	public static void openEditModuleScreen(net.minecraft.world.item.ItemStack stack) {
 		Minecraft.getInstance().setScreen(new net.geforcemods.securitycraft.screen.EditModuleScreen(stack));
 	}
