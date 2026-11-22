@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.apache.commons.lang3.tuple.Pair;
 
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.geforcemods.securitycraft.SCContent;
 import net.geforcemods.securitycraft.SecurityCraftClient;
 import net.geforcemods.securitycraft.blockentities.SecurityCameraBlockEntity;
@@ -147,7 +146,7 @@ public class CameraMonitorItem extends Item {
 		if (stackTag != null)
 			stackTag.remove(CameraMonitorItem.getTagNameFromPosition(stackTag, CameraMonitorItem.getCameraPositions(stackTag).get(camID - 1).getLeft()));
 
-		ClientPlayNetworking.send(RemoveCameraTagPayload.CHANNEL, new RemoveCameraTagPayload(camID).write());
+		net.geforcemods.securitycraft.SecurityCraftClient.sendToServer(RemoveCameraTagPayload.CHANNEL, new RemoveCameraTagPayload(camID).write());
 	}
 
 	public static List<Pair<GlobalPos, String>> getCameraPositions(CompoundTag tag) {

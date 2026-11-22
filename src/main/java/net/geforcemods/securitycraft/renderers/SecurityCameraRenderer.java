@@ -46,7 +46,7 @@ public class SecurityCameraRenderer implements BlockEntityRenderer<SecurityCamer
 		if (FrameFeedHandler.amIBeingCaptured(be) || PlayerUtils.isPlayerMountedOnCamera(Minecraft.getInstance().player) && Minecraft.getInstance().cameraEntity.blockPosition().equals(be.getBlockPos()))
 			return;
 
-		DisguisableBlockEntity.DISGUISED_BLOCK_RENDER_DELEGATE.tryRenderDelegate(be, partialTicks, pose, buffer, packedLight, packedOverlay);
+		net.geforcemods.securitycraft.SecurityCraftClient.DISGUISED_BLOCK_RENDER_DELEGATE.tryRenderDelegate(be, partialTicks, pose, buffer, packedLight, packedOverlay);
 
 		if (be.isDown())
 			return;

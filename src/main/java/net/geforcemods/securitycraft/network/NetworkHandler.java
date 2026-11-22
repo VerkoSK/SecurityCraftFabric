@@ -507,7 +507,7 @@ public final class NetworkHandler {
 	}
 
 	public static void sendToServer(SCPayload payload) {
-		net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking.send(payload);
+		net.geforcemods.securitycraft.SecurityCraftClient.sendToServer(payload);
 	}
 
 	public static void sendToTracking(ServerLevel level, BlockPos pos, SCPayload payload) {

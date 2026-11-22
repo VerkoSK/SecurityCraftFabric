@@ -22,7 +22,7 @@ public class TrophySystemRenderer implements BlockEntityRenderer<TrophySystemBlo
 
 	@Override
 	public void render(TrophySystemBlockEntity be, float partialTicks, PoseStack pose, MultiBufferSource buffer, int combinedLight, int combinedOverlay) {
-		DisguisableBlockEntity.DISGUISED_BLOCK_RENDER_DELEGATE.tryRenderDelegate(be, partialTicks, pose, buffer, combinedLight, combinedOverlay);
+		net.geforcemods.securitycraft.SecurityCraftClient.DISGUISED_BLOCK_RENDER_DELEGATE.tryRenderDelegate(be, partialTicks, pose, buffer, combinedLight, combinedOverlay);
 
 		Projectile target = be.getTarget();
 

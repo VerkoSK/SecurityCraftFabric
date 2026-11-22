@@ -374,14 +374,14 @@ public class InventoryScannerBlockEntity extends DisguisableBlockEntity implemen
 		if (!be.getLevel().isClientSide)
 			be.getLevel().sendBlockUpdated(be.getBlockPos(), be.getBlockState(), be.getBlockState(), 3);
 		else
-			DisguisableBlockEntity.DISGUISED_BLOCK_RENDER_DELEGATE.putDelegateFor(be, net.geforcemods.securitycraft.api.IDisguisable.getDisguisedBlockStateFromStack(be, stack));
+			net.geforcemods.securitycraft.SecurityCraftClient.putDisguisedRenderDelegate(be, net.geforcemods.securitycraft.api.IDisguisable.getDisguisedBlockStateFromStack(be, stack));
 	}
 
 	private void onRemoveDisguiseModule(BlockEntity be) {
 		if (!be.getLevel().isClientSide)
 			be.getLevel().sendBlockUpdated(be.getBlockPos(), be.getBlockState(), be.getBlockState(), 3);
 		else
-			DisguisableBlockEntity.DISGUISED_BLOCK_RENDER_DELEGATE.removeDelegateOf(be);
+			net.geforcemods.securitycraft.SecurityCraftClient.removeDisguisedRenderDelegate(be);
 	}
 
 	@Override

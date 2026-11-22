@@ -1,7 +1,6 @@
 package net.geforcemods.securitycraft.util;
 
 import net.geforcemods.securitycraft.SecurityCraft;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.resources.ResourceLocation;
@@ -20,7 +19,7 @@ public class LevelUtils {
 
 	public static void addScheduledTask(LevelAccessor level, Runnable runnable) {
 		if (level.isClientSide())
-			Minecraft.getInstance().execute(runnable);
+			net.geforcemods.securitycraft.SecurityCraftClient.executeOnClient(runnable);
 		else if (SecurityCraft.SERVER != null)
 			SecurityCraft.SERVER.execute(runnable);
 	}
