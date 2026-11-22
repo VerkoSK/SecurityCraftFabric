@@ -4,7 +4,6 @@ import net.fabricmc.fabric.api.blockview.v2.RenderDataBlockEntity;
 import net.geforcemods.securitycraft.api.CustomizableBlockEntity;
 import net.geforcemods.securitycraft.api.IDisguisable;
 import net.geforcemods.securitycraft.misc.ModuleType;
-import net.geforcemods.securitycraft.util.BlockEntityRenderDelegate;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -14,8 +13,6 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
 public abstract class DisguisableBlockEntity extends CustomizableBlockEntity implements RenderDataBlockEntity {
-	public static final BlockEntityRenderDelegate DISGUISED_BLOCK_RENDER_DELEGATE = new BlockEntityRenderDelegate();
-
 	protected DisguisableBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
 		super(type, pos, state);
 	}
@@ -27,7 +24,7 @@ public abstract class DisguisableBlockEntity extends CustomizableBlockEntity imp
 		if (level != null && module == ModuleType.DISGUISE) {
 			if (level.isClientSide) {
 				BlockState disguised = IDisguisable.getDisguisedBlockStateFromStack(stack).orElse(null);
-				DISGUISED_BLOCK_RENDER_DELEGATE.putDelegateFor(this, disguised);
+				net.geforcemods.securitycraft.SecurityCraftClient.putDisguisedRenderDelegate(this, disguised);
 				refreshModel();
 			}
 			else
@@ -41,7 +38,7 @@ public abstract class DisguisableBlockEntity extends CustomizableBlockEntity imp
 
 		if (level != null && module == ModuleType.DISGUISE) {
 			if (level.isClientSide) {
-				DISGUISED_BLOCK_RENDER_DELEGATE.removeDelegateOf(this);
+				net.geforcemods.securitycraft.SecurityCraftClient.removeDisguisedRenderDelegate(this);
 				refreshModel();
 			}
 			else
@@ -56,10 +53,10 @@ public abstract class DisguisableBlockEntity extends CustomizableBlockEntity imp
 		if (level != null && level.isClientSide) {
 			if (isModuleEnabled(ModuleType.DISGUISE)) {
 				BlockState disguised = IDisguisable.getDisguisedBlockStateFromStack(getModule(ModuleType.DISGUISE)).orElse(null);
-				DISGUISED_BLOCK_RENDER_DELEGATE.putDelegateFor(this, disguised);
+				net.geforcemods.securitycraft.SecurityCraftClient.putDisguisedRenderDelegate(this, disguised);
 			}
 			else
-				DISGUISED_BLOCK_RENDER_DELEGATE.removeDelegateOf(this);
+				net.geforcemods.securitycraft.SecurityCraftClient.removeDisguisedRenderDelegate(this);
 
 			refreshModel();
 		}
@@ -70,7 +67,7 @@ public abstract class DisguisableBlockEntity extends CustomizableBlockEntity imp
 		super.setRemoved();
 
 		if (level != null && level.isClientSide)
-			DISGUISED_BLOCK_RENDER_DELEGATE.removeDelegateOf(this);
+			net.geforcemods.securitycraft.SecurityCraftClient.removeDisguisedRenderDelegate(this);
 	}
 
 	@Override

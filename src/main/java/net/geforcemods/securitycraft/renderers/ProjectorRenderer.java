@@ -25,7 +25,7 @@ public class ProjectorRenderer implements BlockEntityRenderer<ProjectorBlockEnti
 
 	@Override
 	public void render(ProjectorBlockEntity be, float partialTicks, PoseStack pose, MultiBufferSource buffer, int combinedLight, int combinedOverlay, Vec3 cameraPos) {
-		DisguisableBlockEntity.DISGUISED_BLOCK_RENDER_DELEGATE.tryRenderDelegate(be, partialTicks, pose, buffer, combinedLight, combinedOverlay, cameraPos);
+		net.geforcemods.securitycraft.SecurityCraftClient.DISGUISED_BLOCK_RENDER_DELEGATE.tryRenderDelegate(be, partialTicks, pose, buffer, combinedLight, combinedOverlay, cameraPos);
 
 		if (be.isActive() && !be.isEmpty()) {
 			Level level = be.getLevel();
@@ -46,7 +46,7 @@ public class ProjectorRenderer implements BlockEntityRenderer<ProjectorBlockEnti
 
 				if (be.isOverridingBlocks() || level.isEmptyBlock(projectionPos)) {
 					dispatcher.renderSingleBlock(state, pose, buffer, combinedLight, combinedOverlay);
-					ProjectorBlockEntity.PROJECTOR_RENDER_DELEGATE.tryRenderDelegate(be, partialTicks, pose, buffer, combinedLight, combinedOverlay, cameraPos);
+					net.geforcemods.securitycraft.SecurityCraftClient.PROJECTOR_RENDER_DELEGATE.tryRenderDelegate(be, partialTicks, pose, buffer, combinedLight, combinedOverlay, cameraPos);
 				}
 
 				pose.popPose();
