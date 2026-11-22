@@ -32,7 +32,7 @@ public class SecureTradingStationRenderer implements BlockEntityRenderer<SecureT
 
 	@Override
 	public void render(SecureTradingStationBlockEntity be, float partialTicks, PoseStack pose, MultiBufferSource buffer, int packedLight, int packedOverlay, net.minecraft.world.phys.Vec3 cameraPos) {
-		net.geforcemods.securitycraft.blockentities.DisguisableBlockEntity.DISGUISED_BLOCK_RENDER_DELEGATE.tryRenderDelegate(be, partialTicks, pose, buffer, packedLight, packedOverlay, cameraPos);
+		net.geforcemods.securitycraft.SecurityCraftClient.DISGUISED_BLOCK_RENDER_DELEGATE.tryRenderDelegate(be, partialTicks, pose, buffer, packedLight, packedOverlay, cameraPos);
 
 		if (!be.isModuleEnabled(ModuleType.DISGUISE)) {
 			Level level = be.getLevel();
