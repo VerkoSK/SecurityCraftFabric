@@ -21,7 +21,7 @@ public abstract class ServerPlayerMixin {
 	/**
 	 * Makes sure the server does not move the player mounting a camera to the camera's position
 	 */
-	@WrapWithCondition(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;absMoveTo(DDDFF)V"))
+	@WrapWithCondition(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;absSnapTo(DDDFF)V"), require = 1)
 	private boolean securitycraft$shouldMoveTo(ServerPlayer player, double x, double y, double z, float yaw, float pitch) {
 		return !PlayerUtils.isPlayerMountedOnCamera(player);
 	}
