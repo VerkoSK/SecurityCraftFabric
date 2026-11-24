@@ -316,6 +316,9 @@ public abstract class AbstractKeypadFurnaceBlockEntity extends AbstractFurnaceBl
 			salt = tag.getString("salt");
 
 		passcodeHash = tag.contains("passcodeHash") ? tag.getString("passcodeHash") : null;
+
+		if (level != null && level.isClientSide)
+			level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 8);
 	}
 
 	@Override

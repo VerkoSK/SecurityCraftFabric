@@ -749,7 +749,9 @@ public class SecurityCraftClient implements ClientModInitializer {
 
 
 
-			if (id != null && (id.id().equals(SCContent.id("laser_block")) || id.id().equals(SCContent.id("keypad")) || id.id().equals(SCContent.id("username_logger")) || id.id().equals(SCContent.id("block_change_detector")) || id.id().equals(SCContent.id("projector"))))
+			java.util.Set<String> disguisableModelPaths = java.util.Set.of("laser_block", "keypad", "keycard_reader", "retinal_scanner", "username_logger", "block_change_detector", "projector", "secure_trading_station", "security_camera", "keypad_furnace", "keypad_blast_furnace", "keypad_smoker", "reinforced_dispenser", "reinforced_dropper", "reinforced_hopper", "keypad_door", "keypad_trapdoor", "scanner_trapdoor");
+
+			if (id != null && "securitycraft".equals(id.id().getNamespace()) && disguisableModelPaths.contains(id.id().getPath()))
 
 				return new net.geforcemods.securitycraft.models.DisguisableBakedModel(model);
 
