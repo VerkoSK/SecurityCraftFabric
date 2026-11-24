@@ -52,18 +52,40 @@ public interface IModuleInventory {
 	public default void onModuleInserted(ItemStack stack, ModuleType module, boolean toggled) {
 		toggleModuleState(module, true);
 
-		if (this instanceof BlockEntity be && !be.getLevel().isClientSide) {
-			be.setChanged();
-			be.getLevel().sendBlockUpdated(be.getBlockPos(), be.getBlockState(), be.getBlockState(), 3);
+		if (this instanceof BlockEntity be && be.getLevel() != null) {
+			if (!be.getLevel().isClientSide) {
+				be.setChanged();
+				be.getLevel().sendBlockUpdated(be.getBlockPos(), be.getBlockState(), be.getBlockState(), 3);
+			}
+			else if (module == ModuleType.DISGUISE) {
+				be.getLevel().sendBlockUpdated(be.getBlockPos(), be.getBlockState(), be.getBlockState(), 8);
+
+				if (be.getBlockState().hasProperty(net.minecraft.world.level.block.DoorBlock.HALF) && be.getBlockState().getValue(net.minecraft.world.level.block.DoorBlock.HALF) == net.minecraft.world.level.block.state.properties.DoubleBlockHalf.LOWER) {
+					BlockPos above = be.getBlockPos().above();
+
+					be.getLevel().sendBlockUpdated(above, be.getLevel().getBlockState(above), be.getLevel().getBlockState(above), 8);
+				}
+			}
 		}
 	}
 
 	public default void onModuleRemoved(ItemStack stack, ModuleType module, boolean toggled) {
 		toggleModuleState(module, false);
 
-		if (this instanceof BlockEntity be && !be.getLevel().isClientSide) {
-			be.setChanged();
-			be.getLevel().sendBlockUpdated(be.getBlockPos(), be.getBlockState(), be.getBlockState(), 3);
+		if (this instanceof BlockEntity be && be.getLevel() != null) {
+			if (!be.getLevel().isClientSide) {
+				be.setChanged();
+				be.getLevel().sendBlockUpdated(be.getBlockPos(), be.getBlockState(), be.getBlockState(), 3);
+			}
+			else if (module == ModuleType.DISGUISE) {
+				be.getLevel().sendBlockUpdated(be.getBlockPos(), be.getBlockState(), be.getBlockState(), 8);
+
+				if (be.getBlockState().hasProperty(net.minecraft.world.level.block.DoorBlock.HALF) && be.getBlockState().getValue(net.minecraft.world.level.block.DoorBlock.HALF) == net.minecraft.world.level.block.state.properties.DoubleBlockHalf.LOWER) {
+					BlockPos above = be.getBlockPos().above();
+
+					be.getLevel().sendBlockUpdated(above, be.getLevel().getBlockState(above), be.getLevel().getBlockState(above), 8);
+				}
+			}
 		}
 	}
 
