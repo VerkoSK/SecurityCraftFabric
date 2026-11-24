@@ -34,7 +34,7 @@ import net.minecraft.world.level.block.entity.SkullBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 
-public class RetinalScannerBlockEntity extends CustomizableBlockEntity implements IViewActivated, ITickingBlockEntity {
+public class RetinalScannerBlockEntity extends CustomizableBlockEntity implements IViewActivated, ITickingBlockEntity, net.fabricmc.fabric.api.blockview.v2.RenderDataBlockEntity {
 	private BooleanOption activatedByEntities = new BooleanOption("activatedByEntities", false);
 	private BooleanOption sendMessage = new BooleanOption("sendMessage", true);
 	private SignalLengthOption signalLength = new SignalLengthOption(60);
@@ -229,5 +229,11 @@ public class RetinalScannerBlockEntity extends CustomizableBlockEntity implement
 	@Override
 	public boolean isConsideredInvisible(LivingEntity entity) {
 		return respectInvisibility.isConsideredInvisible(entity);
+	}
+	@Override
+	public Object getRenderData() {
+		BlockState disguised = net.geforcemods.securitycraft.api.IDisguisable.getDisguisedBlockState(this).orElse(null);
+
+		return disguised != null && disguised.getBlock() != SCContent.RETINAL_SCANNER ? disguised : null;
 	}
 }
