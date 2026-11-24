@@ -61,6 +61,9 @@ public class ReinforcedHopperBlockEntity extends HopperBlockEntity implements IO
 		owner = Owner.load(tag);
 		modules = readModuleInventory(tag);
 		moduleStates = readModuleStates(tag);
+
+		if (level != null && level.isClientSide())
+			level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 8);
 	}
 
 	@Override
