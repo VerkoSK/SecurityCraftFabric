@@ -30,7 +30,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 
 /** Block entity for the {@link ScannerTrapdoorBlock}: owner, allowlist module and the view-scan logic. */
-public class ScannerTrapdoorBlockEntity extends CustomizableBlockEntity implements IViewActivated, ITickingBlockEntity {
+public class ScannerTrapdoorBlockEntity extends CustomizableBlockEntity implements IViewActivated, ITickingBlockEntity, net.fabricmc.fabric.api.blockview.v2.RenderDataBlockEntity {
 	private BooleanOption sendMessage = new BooleanOption("sendMessage", true);
 	//upstream defaults this to 0 (no auto-close, pure toggle-on-view) unlike RetinalScannerBlockEntity's redstone
 	//signal, which does default to 60; SignalLengthOption's 0-400 range still lets the owner opt into a timed close
@@ -166,5 +166,22 @@ public class ScannerTrapdoorBlockEntity extends CustomizableBlockEntity implemen
 
 		if (tag.contains("closeTicksLeft"))
 			closeTicksLeft = tag.getInt("closeTicksLeft");
+	}
+	@Override
+	public Object getRenderData() {
+		BlockState selfState = getBlockState();
+		BlockState disguised = net.geforcemods.securitycraft.api.IDisguisable.getDisguisedBlockState(this).orElse(null);
+
+		if (disguised == null || disguised.getBlock() == selfState.getBlock())
+			return null;
+
+		if (disguised.getBlock() instanceof net.minecraft.world.level.block.TrapDoorBlock && selfState.getBlock() instanceof net.minecraft.world.level.block.TrapDoorBlock) {
+			disguised = disguised
+					.setValue(net.minecraft.world.level.block.TrapDoorBlock.FACING, selfState.getValue(net.minecraft.world.level.block.TrapDoorBlock.FACING))
+					.setValue(net.minecraft.world.level.block.TrapDoorBlock.OPEN, selfState.getValue(net.minecraft.world.level.block.TrapDoorBlock.OPEN))
+					.setValue(net.minecraft.world.level.block.TrapDoorBlock.HALF, selfState.getValue(net.minecraft.world.level.block.TrapDoorBlock.HALF));
+		}
+
+		return disguised;
 	}
 }
