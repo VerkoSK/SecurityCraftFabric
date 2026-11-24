@@ -36,6 +36,10 @@ public abstract class CustomizableBlockEntity extends NamedBlockEntity implement
 		modules = readModuleInventory(input);
 		moduleStates = readModuleStates(input);
 		readOptions(input);
+
+
+		if (level != null && level.isClientSide() && this instanceof net.fabricmc.fabric.api.blockview.v2.RenderDataBlockEntity && !(this instanceof net.geforcemods.securitycraft.blockentities.DisguisableBlockEntity))
+			level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 8);
 	}
 
 	@Override

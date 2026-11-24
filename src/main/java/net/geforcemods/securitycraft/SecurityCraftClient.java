@@ -717,7 +717,7 @@ public class SecurityCraftClient implements ClientModInitializer {
 
 
 
-			if (block == SCContent.LASER_BLOCK || block == SCContent.KEYPAD || block instanceof net.geforcemods.securitycraft.api.IDisguisable || block instanceof net.geforcemods.securitycraft.blocks.AbstractKeypadFurnaceBlock || block instanceof net.geforcemods.securitycraft.blocks.reinforced.ReinforcedDispenserBlock || block instanceof net.geforcemods.securitycraft.blocks.reinforced.ReinforcedHopperBlock)
+			if (block == SCContent.LASER_BLOCK || block == SCContent.KEYPAD || block instanceof net.geforcemods.securitycraft.api.IDisguisable || block instanceof net.geforcemods.securitycraft.blocks.AbstractKeypadFurnaceBlock || block instanceof net.geforcemods.securitycraft.blocks.reinforced.ReinforcedDispenserBlock || block instanceof net.geforcemods.securitycraft.blocks.reinforced.ReinforcedHopperBlock || block == SCContent.KEYPAD_DOOR || block == SCContent.KEYPAD_TRAPDOOR || block == SCContent.SCANNER_TRAPDOOR || block == SCContent.RETINAL_SCANNER)
 
 				return new net.geforcemods.securitycraft.models.DisguisableBakedModel(model);
 
