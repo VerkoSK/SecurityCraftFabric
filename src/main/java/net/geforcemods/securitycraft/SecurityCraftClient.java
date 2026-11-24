@@ -768,7 +768,7 @@ public class SecurityCraftClient implements ClientModInitializer {
 
 
 
-			java.util.Set<String> disguisableModelPaths = java.util.Set.of("laser_block", "keypad", "keycard_reader", "retinal_scanner", "username_logger", "block_change_detector", "projector", "secure_trading_station", "security_camera");
+			java.util.Set<String> disguisableModelPaths = java.util.Set.of("laser_block", "keypad", "keycard_reader", "retinal_scanner", "username_logger", "block_change_detector", "projector", "secure_trading_station", "security_camera", "keypad_furnace", "keypad_blast_furnace", "keypad_smoker", "reinforced_dispenser", "reinforced_dropper", "reinforced_hopper", "keypad_door", "keypad_trapdoor", "scanner_trapdoor");
 			if (id != null && "securitycraft".equals(id.getNamespace()) && disguisableModelPaths.contains(id.getPath()) && !(id instanceof net.minecraft.client.resources.model.ModelResourceLocation mrl && "inventory".equals(mrl.getVariant())))
 
 				return new net.geforcemods.securitycraft.models.DisguisableBakedModel(model);
