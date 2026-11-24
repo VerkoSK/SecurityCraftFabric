@@ -315,6 +315,9 @@ public abstract class AbstractKeypadFurnaceBlockEntity extends AbstractFurnaceBl
 		owner = Owner.load(input);
 		salt = input.getStringOr("salt", salt);
 		passcodeHash = input.getString("passcodeHash").orElse(null);
+
+		if (level != null && level.isClientSide)
+			level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 8);
 	}
 
 	@Override

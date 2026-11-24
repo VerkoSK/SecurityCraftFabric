@@ -57,6 +57,9 @@ public class ReinforcedDispenserBlockEntity extends DispenserBlockEntity impleme
 		owner = Owner.load(input);
 		modules = readModuleInventory(input);
 		moduleStates = readModuleStates(input);
+
+		if (level != null && level.isClientSide)
+			level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 8);
 	}
 
 	@Override
