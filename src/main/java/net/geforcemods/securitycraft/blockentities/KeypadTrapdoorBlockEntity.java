@@ -26,7 +26,7 @@ import net.minecraft.world.level.storage.ValueOutput;
  * The keypad trapdoor's block entity: owner + salted passcode + the module/option system (allowlist, denylist,
  * smart, harming, disguise). A correct code toggles the trapdoor open instead of pulsing redstone.
  */
-public class KeypadTrapdoorBlockEntity extends CustomizableBlockEntity implements PasscodeProtected {
+public class KeypadTrapdoorBlockEntity extends CustomizableBlockEntity implements PasscodeProtected, net.fabricmc.fabric.api.blockgetter.v2.RenderDataBlockEntity {
 	private DisabledOption disabled = new DisabledOption(false);
 	private SendAllowlistMessageOption sendAllowlistMessage = new SendAllowlistMessageOption(false);
 	private SendDenylistMessageOption sendDenylistMessage = new SendDenylistMessageOption(true);
@@ -141,5 +141,22 @@ public class KeypadTrapdoorBlockEntity extends CustomizableBlockEntity implement
 		tag.remove("passcodeHash");
 		tag.remove("salt");
 		return tag;
+	}
+	@Override
+	public Object getRenderData() {
+		BlockState selfState = getBlockState();
+		BlockState disguised = net.geforcemods.securitycraft.api.IDisguisable.getDisguisedBlockState(this).orElse(null);
+
+		if (disguised == null || disguised.getBlock() == selfState.getBlock())
+			return null;
+
+		if (disguised.getBlock() instanceof net.minecraft.world.level.block.TrapDoorBlock && selfState.getBlock() instanceof net.minecraft.world.level.block.TrapDoorBlock) {
+			disguised = disguised
+					.setValue(net.minecraft.world.level.block.TrapDoorBlock.FACING, selfState.getValue(net.minecraft.world.level.block.TrapDoorBlock.FACING))
+					.setValue(net.minecraft.world.level.block.TrapDoorBlock.OPEN, selfState.getValue(net.minecraft.world.level.block.TrapDoorBlock.OPEN))
+					.setValue(net.minecraft.world.level.block.TrapDoorBlock.HALF, selfState.getValue(net.minecraft.world.level.block.TrapDoorBlock.HALF));
+		}
+
+		return disguised;
 	}
 }
