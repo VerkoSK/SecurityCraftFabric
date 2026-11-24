@@ -538,7 +538,7 @@ public class SecurityCraftClient implements ClientModInitializer {
 		BlockRenderLayerMap.INSTANCE.putBlock(SCContent.REINFORCED_DOOR, RenderType.cutout());
 
 		// Disguise: wrap disguisable block models so they can render as the disguised block (from the disguise module).
-		java.util.Set<String> disguisableModelPaths = java.util.Set.of("laser_block", "keypad", "keycard_reader", "retinal_scanner", "username_logger", "block_change_detector", "projector", "secure_trading_station", "security_camera", "cage_trap", "floor_trap", "inventory_scanner", "protecto", "rift_stabilizer", "sentry_disguise", "trophy_system");
+		java.util.Set<String> disguisableModelPaths = java.util.Set.of("laser_block", "keypad", "keycard_reader", "retinal_scanner", "username_logger", "block_change_detector", "projector", "secure_trading_station", "security_camera", "keypad_furnace", "keypad_blast_furnace", "keypad_smoker", "reinforced_dispenser", "reinforced_dropper", "reinforced_hopper", "keypad_door", "keypad_trapdoor", "scanner_trapdoor", "cage_trap", "floor_trap", "inventory_scanner", "protecto", "rift_stabilizer", "sentry_disguise", "trophy_system");
 		net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin.register(pluginContext -> pluginContext.modifyModelAfterBake().register((model, context) -> {
 			net.minecraft.resources.ResourceLocation id = context.id();
 

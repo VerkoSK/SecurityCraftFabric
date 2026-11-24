@@ -24,7 +24,7 @@ import net.minecraft.world.level.block.state.BlockState;
  * smart, harming, disguise). Placed on both halves for ownership; only the lower half's copy holds a passcode.
  * A correct code toggles the door open instead of pulsing redstone.
  */
-public class KeypadDoorBlockEntity extends CustomizableBlockEntity implements PasscodeProtected {
+public class KeypadDoorBlockEntity extends CustomizableBlockEntity implements PasscodeProtected, net.fabricmc.fabric.api.blockview.v2.RenderDataBlockEntity {
 	private DisabledOption disabled = new DisabledOption(false);
 	private SendAllowlistMessageOption sendAllowlistMessage = new SendAllowlistMessageOption(false);
 	private SendDenylistMessageOption sendDenylistMessage = new SendDenylistMessageOption(true);
@@ -133,8 +133,37 @@ public class KeypadDoorBlockEntity extends CustomizableBlockEntity implements Pa
 
 		cooldownEnd = System.currentTimeMillis() + tag.getLong("cooldownLeft");
 		passcodeHash = tag.contains("passcodeHash") ? tag.getString("passcodeHash") : null;
+		if (level != null && level.isClientSide && getBlockState().hasProperty(net.minecraft.world.level.block.DoorBlock.HALF) && getBlockState().getValue(net.minecraft.world.level.block.DoorBlock.HALF) == net.minecraft.world.level.block.state.properties.DoubleBlockHalf.LOWER) {
+			BlockPos above = worldPosition.above();
+			BlockState aboveState = level.getBlockState(above);
+
+			level.sendBlockUpdated(above, aboveState, aboveState, 8);
+		}
 	}
 
+	@Override
+	public Object getRenderData() {
+		BlockState selfState = getBlockState();
+		KeypadDoorBlockEntity dataBe = this;
+
+		if (selfState.hasProperty(net.minecraft.world.level.block.DoorBlock.HALF) && selfState.getValue(net.minecraft.world.level.block.DoorBlock.HALF) == net.minecraft.world.level.block.state.properties.DoubleBlockHalf.UPPER && level != null && level.getBlockEntity(worldPosition.below()) instanceof KeypadDoorBlockEntity lowerBe)
+			dataBe = lowerBe;
+
+		BlockState disguised = net.geforcemods.securitycraft.api.IDisguisable.getDisguisedBlockState(dataBe).orElse(null);
+
+		if (disguised == null || disguised.getBlock() == SCContent.KEYPAD_DOOR)
+			return null;
+
+		if (disguised.getBlock() instanceof net.minecraft.world.level.block.DoorBlock && selfState.getBlock() instanceof net.minecraft.world.level.block.DoorBlock) {
+			disguised = disguised
+					.setValue(net.minecraft.world.level.block.DoorBlock.FACING, selfState.getValue(net.minecraft.world.level.block.DoorBlock.FACING))
+					.setValue(net.minecraft.world.level.block.DoorBlock.OPEN, selfState.getValue(net.minecraft.world.level.block.DoorBlock.OPEN))
+					.setValue(net.minecraft.world.level.block.DoorBlock.HINGE, selfState.getValue(net.minecraft.world.level.block.DoorBlock.HINGE))
+					.setValue(net.minecraft.world.level.block.DoorBlock.HALF, selfState.getValue(net.minecraft.world.level.block.DoorBlock.HALF));
+		}
+
+		return disguised;
+	}
 	@Override
 	public CompoundTag getUpdateTag() {
 		CompoundTag tag = super.getUpdateTag();
