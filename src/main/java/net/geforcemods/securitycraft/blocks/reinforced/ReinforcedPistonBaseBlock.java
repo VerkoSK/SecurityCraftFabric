@@ -309,7 +309,7 @@ public class ReinforcedPistonBaseBlock extends PistonBaseBlock implements IReinf
 				PistonType type = isSticky ? PistonType.STICKY : PistonType.DEFAULT;
 				BlockState pistonHead = SCContent.REINFORCED_PISTON_HEAD.defaultBlockState().setValue(FACING, facing).setValue(PistonHeadBlock.TYPE, type);
 				BlockState movingPiston = SCContent.REINFORCED_MOVING_PISTON.defaultBlockState().setValue(MovingPistonBlock.FACING, facing).setValue(MovingPistonBlock.TYPE, isSticky ? PistonType.STICKY : PistonType.DEFAULT);
-				OwnableBlockEntity headBe = new OwnableBlockEntity(SCContent.ABSTRACT_BLOCK_ENTITY, frontPos, movingPiston);
+				OwnableBlockEntity headBe = new OwnableBlockEntity(SCContent.ABSTRACT_BLOCK_ENTITY, frontPos, pistonHead);
 
 				if (pistonBe instanceof IOwnable ownable) //synchronize owner to the piston head
 					headBe.setOwner(ownable.getOwner().getName(), ownable.getOwner().getUUID());
