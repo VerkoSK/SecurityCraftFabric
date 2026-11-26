@@ -16,7 +16,7 @@ public class SecurityCraft implements ModInitializer {
 	public static final String MODID = "securitycraft";
 	public static final String PORT_AUTHOR = "VerkoSK";
 	public static final String PORT_REPO = "https://github.com/VerkoSK/SecurityCraftFabric";
-	public static final String VERSION = FabricLoader.getInstance().getModContainer(MODID).map(c -> c.getMetadata().getVersion().getFriendlyString()).orElse("0.7.1");
+	public static final String VERSION = FabricLoader.getInstance().getModContainer(MODID).map(c -> c.getMetadata().getVersion().getFriendlyString()).orElse("0.7.2");
 	public static final Logger LOGGER = LoggerFactory.getLogger(MODID);
 	public static final net.minecraft.util.RandomSource RANDOM = net.minecraft.util.RandomSource.create();
 	/** The currently running server, or null when none is running. Fabric replacement for NeoForge's {@code ServerLifecycleHooks.getCurrentServer()}. */
