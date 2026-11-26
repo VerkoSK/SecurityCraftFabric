@@ -27,7 +27,7 @@ public final class WelcomeMessage {
 
 		shown = true;
 
-		String version = FabricLoader.getInstance().getModContainer(SecurityCraft.MODID).map(c -> c.getMetadata().getVersion().getFriendlyString()).orElse("0.7.1");
+		String version = FabricLoader.getInstance().getModContainer(SecurityCraft.MODID).map(c -> c.getMetadata().getVersion().getFriendlyString()).orElse("0.7.2");
 		MutableComponent prefix = Component.literal("[").append(Component.literal("SecurityCraft").withStyle(ChatFormatting.GOLD)).append(Component.literal("] "));
 		MutableComponent discordLink = Component.literal("Discord").withStyle(Style.EMPTY.withColor(ChatFormatting.AQUA).withUnderlined(true).withClickEvent(new ClickEvent.OpenUrl(java.net.URI.create(DISCORD_URL))));
 		MutableComponent githubLink = Component.literal("GitHub").withStyle(Style.EMPTY.withColor(ChatFormatting.AQUA).withUnderlined(true).withClickEvent(new ClickEvent.OpenUrl(java.net.URI.create(SecurityCraft.PORT_REPO))));
